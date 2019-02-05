@@ -10,6 +10,7 @@ import java.util.*;
 public class Traverse {
     EdifEnvironment oldNetlist;
 
+    private static Map<EdifCell, Definition> cellDefinitionMap = new HashMap<>();
 
     /**
      * Reads in an EDIF file.
@@ -41,7 +42,7 @@ public class Traverse {
     private static Environment convertOldEnvironment(EdifEnvironment oldNetlist){
         Environment environment = new Environment(oldNetlist);
 
-        List<EdifLibrary> libraries = oldNetlist.getLibraryManager().getLibraries();
+        List<EdifLibrary> libraries = oldNetlist.getLibraryManager().getValidLibraryOrder();
         for (EdifLibrary oldLibrary : libraries) {
             Library newLibrary = convertOldLibrary(oldLibrary);
             environment.addLibrary(newLibrary);
@@ -53,13 +54,9 @@ public class Traverse {
     private static Library convertOldLibrary(EdifLibrary oldLibrary) {
         Library library = new Library(oldLibrary);
 
-        for (EdifCell oldCell : oldLibrary.getCells()) {
+        for (EdifCell oldCell : oldLibrary.getValidCellOrder()) {
             Definition newDefinition;
-            if (oldCell.isLeafCell()) {
-                newDefinition = convertLeafCell2Definition(oldCell);
-            } else {
-                newDefinition = convertNonLeafCell2Definition(oldCell);
-            }
+            newDefinition = convertCell2Definition(oldCell);
             library.addDefinition(newDefinition);
         }
         return library;
@@ -121,14 +118,9 @@ public class Traverse {
         return instancePinMap;
     }
 
-    private static Map<EdifCell, Definition> cellDefinitionMap = new HashMap<>();
-
-    private static Definition convertNonLeafCell2Definition(EdifCell oldCell) {
-        if(oldCell.isLeafCell()){
-            return convertLeafCell2Definition(oldCell);
-        }
-        else {
+    private static Definition convertCell2Definition(EdifCell oldCell) {
             Definition newDefinition = new Definition(oldCell);
+            cellDefinitionMap.put(oldCell, newDefinition);
             addNetsToDefinition(newDefinition, oldCell);
 
             Map<EdifPort, Port> portMap = addPortsToDefinition(oldCell, newDefinition);
@@ -142,15 +134,19 @@ public class Traverse {
                 for (EdifCellInstance edifCellInstance : oldCellInstanceList) {
                     if (cellDefinitionMap.containsKey(edifCellInstance.getCellType())) {
                         newInstance = new Instance(cellDefinitionMap.get(edifCellInstance.getCellType()));
+                        newInstance.setName(edifCellInstance.getName());
+                        newInstance.insertMetadata("OldName", edifCellInstance.getOldName());
+                        newDefinition.addInstance(newInstance);
                     } else {
-                        newInstance = new Instance(convertNonLeafCell2Definition(edifCellInstance.getCellType()));
-                        cellDefinitionMap.put(edifCellInstance.getCellType(),newDefinition);
+                        System.out.println("WARNING cell instanced before it is declared.");
+                        System.out.println(oldCell);
+                        //newInstance = new Instance(convertCell2Definition(edifCellInstance.getCellType()));
+                        //cellDefinitionMap.put(edifCellInstance.getCellType(),newDefinition);
                     }
-                    newDefinition.addInstance(newInstance);
                 }
             }
             return newDefinition;
-        }
+        //}
     }
 
     private static Map<EdifPort, Port> addPortsToDefinition(EdifCell oldCell, Definition newDefinition) {
