@@ -1,8 +1,9 @@
 import re
 from collections import deque
+import pprint
 
 fi = None
-edif_file = "fake.edf"
+edif_file = "temp.edf"
 
 tokens = deque([])
 
@@ -15,7 +16,8 @@ def read_edif():
     tokenize_edif()
     close_edif_file()
     parse_edif()
-    print(json_structure)
+    pp = pprint.PrettyPrinter()
+    pp.pprint(json_structure)
 
 
 
@@ -38,15 +40,19 @@ class token():
     #close_parenthesis
     kind = ""
     def __init__(self, text, line):
-        self.text = text
+        #self.text = text
         self.line = line
         if(text[0] == '"'):
+            self.text = text.strip('"')
             self.kind = "string"
         elif(text == ')'):
+            self.text = text
             self.kind = ")"
         elif(text == '('):
+            self.text = text
             self.kind = "("
         else:
+            self.text = text
             self.kind = "word"
         #right now we don't check for keywords yet
 
@@ -60,6 +66,7 @@ def tokenize_edif():
     for line in fi:
         line_number = line_number +1
         line_tokens = re.findall(token_regex, line)
+
         for text in line_tokens:
             tokens.append(token(text,line_number))
     #tokens = deque(tokens)
@@ -85,13 +92,8 @@ def parse_edif():
     validate(t.text, ["edif"], t)
     json_structure["name"] = parse_name()
     validate(t.kind, ["("], t)
-    metadata = dict()
-    while t.text != "Library":
-        #print("looping")
-        p = make_pair()
-        metadata[p[0]] = p[1]
-        t = next()
-
+    metadata = parse_header_metadata()
+    json_structure["metadata"] = metadata
 
     print("done")
 
@@ -140,31 +142,52 @@ def parse_name():
     #TODO take care of the old name deal.
     return name
 
-def make_pair():
+def parse_header_metadata():
     global t
-    val = None
-    key = None
-    val_out = deque([])
-    validate(t.kind, ["("],t)
+    metadata = dict()
     t = next()
-    validate(t.kind, ["string", "word"], t)
+    validate(t.kind, ["word"], t)
+    while t.text != "Library":
+        key = t.text
+        t = next()
+        validate(t.kind, ["word", "string", "("], t)
+        value = parse_value_list()
+        t = next()
+        validate(t.kind, ["("], t)
+        t = next()
+        validate(t.kind, ["word"], t)
+        metadata[key] = value
+    return metadata
+
+def parse_value_list():
+    global t
+    value_list = []
+    while(t.kind != ")"):
+        value_list.append(parse_value())
+        t = next()
+    if(len(value_list) == 1):
+        return value_list[0]
+    else:
+        return value_list
+
+def parse_value():
+    global t
+    if(t.kind == "("):
+        #the value is a dictionary
+        return parse_dictionary()
+    else:
+        return t.text
+
+def parse_dictionary():
+    global t
+    t = next()
+    validate(t.kind, ["word", "string"], t)
     key = t.text
     t = next()
-    validate(t.kind, ["string", "word", "("], t)
-    while(True):
-        if(t.kind == "("):
-            temp = make_pair()
-            val = dict()
-            val[temp[0]] = temp[1]
-        elif(t.kind == ")"):
-            break
-        else:
-            val = t.text
-        val_out.append(val)
-        t = next()
-    #print(key, val_out)
-    return key,val_out
-
+    value = parse_value_list()
+    out = dict()
+    out[key] = value
+    return out
 
 
 read_edif()
