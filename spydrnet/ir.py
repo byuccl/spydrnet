@@ -1,3 +1,6 @@
+class Element:
+    def __init__(self):
+        self.data = dict()
 
 class Environment:
     def __init__(self):
