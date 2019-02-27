@@ -34,10 +34,9 @@ class token():
     line = 0
     #values are:
     #string
-    #key
     #word
-    #open_parenthesis
-    #close_parenthesis
+    #open parenthesis
+    #close parenthesis
     kind = ""
     def __init__(self, text, line):
         #self.text = text
@@ -92,9 +91,13 @@ def parse_edif():
     validate(t.text, ["edif"], t)
     json_structure["name"] = parse_name()
     validate(t.kind, ["("], t)
-    metadata = parse_header_metadata()
+    metadata = parse_metadata("library")
     json_structure["metadata"] = metadata
-
+    print("done")
+    print("parsing edif Libraries...", end = " ")
+    libraries = []
+    libraries.append(parse_library(json_structure["uid"]))
+    json_structure["libraries"] = libraries
     print("done")
 
 
@@ -142,17 +145,21 @@ def parse_name():
     #TODO take care of the old name deal.
     return name
 
-def parse_header_metadata():
+def parse_metadata(stop_word):
     global t
     metadata = dict()
     t = next()
     validate(t.kind, ["word"], t)
-    while t.text != "Library":
+    while t.text.lower() != stop_word.lower():
+        #print(t.text)
         key = t.text
         t = next()
         validate(t.kind, ["word", "string", "("], t)
         value = parse_value_list()
         t = next()
+        if(t.kind == ")"):
+            metadata[key] = value
+            break
         validate(t.kind, ["("], t)
         t = next()
         validate(t.kind, ["word"], t)
@@ -165,6 +172,8 @@ def parse_value_list():
     while(t.kind != ")"):
         value_list.append(parse_value())
         t = next()
+    if(len(value_list) == 0):
+        return ""
     if(len(value_list) == 1):
         return value_list[0]
     else:
@@ -189,5 +198,42 @@ def parse_dictionary():
     out[key] = value
     return out
 
+def parse_library(parent_uid):
+    global t
+    library = dict()
+    uid = get_uid()
+    library["uid"] = uid
+    library["parent_uid"] = parent_uid
+    validate(t.text.lower(), ["library"], t)
+    library["name"] = parse_name()
+    validate(t.kind, ["("], t)
+    metadata = parse_metadata("cell")
+    library["metadata"] = metadata
+    cells = []
+    while t.text.lower() == "cell":#we are getting a cell
+        cells.append(parse_definition(uid))
+        validate(t.kind, [")"], t)
+        t = next()
+        validate(t.kind, [")", "("], t)
+        t = next()
+    library["definitions"] = cells
+    return library
+
+def parse_definition(parent_uid):
+    global t
+    cell = dict()
+    uid = get_uid()
+    cell["uid"] = uid
+    cell["parent_uid"] = parent_uid
+    validate(t.text.lower(), ["cell"], t)
+    cell["name"] = parse_name()
+    validate(t.kind, ["("], t)
+    metadata = parse_metadata("view")
+    validate(t.text, ["view"], t)
+    metadata["view"] = parse_name()
+    validate(t.kind, ["("], t)
+    view_meta = parse_metadata("interface")
+    metadata["view_metadata"] = view_meta
+    cell["metadata"] = metadata
 
 read_edif()
