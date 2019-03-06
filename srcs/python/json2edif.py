@@ -185,6 +185,7 @@ def output_instance(instance):
     lisp_decrement()
 
 def output_property(key, value):
+    #warning!!! this only handles string properties for now
     lisp_increment()
     output.write("property ")
     output.write(key)
@@ -215,15 +216,23 @@ def output_cable(cable):
     lisp_increment()
     output.write("joined")
     new_line()
-    for port in cable.getPortList(): #TODO fuction cable.getPortList() needs to be created
+    for port in cable.getConnectionList(): #TODO fuction cable.getConnectionList() needs to be created
         output_port_ref(port)
     new_line()
     lisp_decrement()
     new_line()
     lisp_decrement()
 
-def output_port_ref(port):
-    pass
+def output_port_ref(port_ref):
+    lisp_increment()
+    output.write("portref ")
+    output.write(get_edif_name(port_ref))
+    output.write(" ")
+    lisp_increment()
+    output.write("instanceref ")
+    lisp_decrement()
+    lisp_decrement()
+    new_line()
 
 def lisp_increment():
     global output
