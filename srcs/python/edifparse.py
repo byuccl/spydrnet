@@ -233,7 +233,9 @@ def parse_definition(parent_uid):
     metadata["view"] = parse_name()
     validate(t.kind, ["("], t)
     view_meta = parse_metadata("interface")
-    metadata["view_metadata"] = view_meta
+    for k,v in view_meta:
+        metadata[k] = v
+    #metadata["view_metadata"] = view_meta
     cell["metadata"] = metadata
 
 read_edif()
