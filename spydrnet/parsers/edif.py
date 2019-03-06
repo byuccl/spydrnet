@@ -1,46 +1,7 @@
-import re
+from spydrnet.parsers.edif_tokens import *
+from spydrnet.parsers.edif_listener import EdifListener
 
-AUTHOR = 'author'
-BEHAVIOR = 'behavior'
-CELL = 'cell'
-CELL_TYPE = 'celltype'
-COMMENT = 'comment'
-DATA_ORIGIN = 'dataorigin'
-DESIGN = 'design'
-DOCUMENT = 'document'
-EDIF = 'edif'
-EDIF_VERSION = 'edifversion'
-EDIF_LEVEL = 'ediflevel'
-EXTERNAL = 'external'
-GENERIC = 'generic'
-GRAPHIC = 'graphic'
-KEYWORD_MAP = 'keywordmap'
-KEYWORD_LEVEL = 'keywordlevel'
-LEFT_PAREN = '('
-LIBRARY = 'library'
-LOGICMODEL = 'logicmodel'
-MASKLAYOUT = 'masklayout'
-NETLIST = 'netlist'
-PCBLAYOUT = 'netlist'
-PROGRAM = 'program'
-PROPERTY = 'property'
-NUMBER_DEFINITION = 'numberdefinition'
-RENAME = 'rename'
-RIGHT_PAREN = ')'
-RIPPER = 'ripper'
-SCHEMATIC = 'schematic'
-STATUS = 'status'
-STRANGER = 'stranger'
-SYMBOLIC = 'symbolic'
-TECHNOLOGY = 'technology'
-TIE = 'tie'
-TIMESTAMP = 'timestamp'
-USER_DATA = 'userdata'
-VERSION = 'version'
-VIEW = 'view'
-VIEW_MAP = 'viewmap'
-VIEW_TYPE = 'viewtype'
-WRITTEN = 'written'
+import re
 
 DEBUG = False
 
@@ -48,9 +9,11 @@ class EdifParser:
 
 	def __init__(self):
 		self.line_number = 0
-		self.filename = "C:\\Users\\akeller9\\workspace\\SpyDrNet\\data\\large_edif\\osfbm.edf"
+		self.filename = r"C:\Users\keller\workplace\SpyDrNet\data\large_edif\osfbm.edf"
 		self.token_generator = None
 		
+		self.listener = EdifListener()
+
 		self.identifier = None
 		self.stringToken = None
 		self.integerToken = None
@@ -61,42 +24,12 @@ class EdifParser:
 	def parse(self):
 		self.token_generator = self.generate_tokens()
 		self.expect(LEFT_PAREN, self.get_next_token())
+		self.listener.enter_edif()
 		self.parse_header()
-		
-		has_status = False
-		next_token = self.get_next_token()
-		while self.compare_token(LEFT_PAREN, next_token):
-			next_token = self.get_next_token()
-			if self.compare_token(STATUS, next_token):
-				if has_status:
-					raise RuntimeError("Parse error: Multiple occurances of status, line {}".format(self.line_number))
-				else:
-					has_status = True
-					self.parse_status()
-				next_token = self.get_next_token()
-				
-			elif self.compare_token(EXTERNAL, next_token):
-				
-				next_token = self.get_next_token()
-				
-			elif self.compare_token(LIBRARY, next_token):
-				self.parse_library()
-				next_token = self.get_next_token()
-				
-			elif self.compare_token(DESIGN, next_token):
-				
-				next_token = self.get_next_token()
-			elif self.compare_token(COMMENT, next_token):
-				
-				next_token = self.get_next_token()
-			elif self.compare_token(USER_DATA, next_token):
-				
-				next_token = self.get_next_token()
-			else:
-				self.expect("|".join([STATUS, EXTERNAL, LIBRARY, DESIGN, COMMENT, USER_DATA]), next_token)
-		
+		self.parse_body()
+		self.listener.exit_edif()
 		self.expect(RIGHT_PAREN, next_token)
-		
+				
 	def parse_header(self):
 		self.expect(EDIF, self.get_next_token())
 		self.parse_edifFileNameDef()
@@ -142,7 +75,43 @@ class EdifParser:
 		self.expect(KEYWORD_LEVEL, self.get_next_token())
 		self.parse_integerToken()
 		self.expect(RIGHT_PAREN, self.get_next_token())
-		
+	
+	def parse_body(self):
+		has_status = False
+		next_token = self.get_next_token()
+		while not self.compare_token(RIGHT_PAREN, next_token):
+			next_token = self.get_next_token()
+			if self.compare_token(STATUS, next_token):
+				if has_status:
+					raise RuntimeError("Parse error: Multiple occurances of status, line {}".format(self.line_number))
+				else:
+					has_status = True
+					self.parse_status()
+				next_token = self.get_next_token()
+				
+			elif self.compare_token(EXTERNAL, next_token):
+				self.parse_external()
+				next_token = self.get_next_token()
+				
+			elif self.compare_token(LIBRARY, next_token):
+				self.parse_library()
+				next_token = self.get_next_token()
+				
+			elif self.compare_token(DESIGN, next_token):
+				self.parse_design()
+				next_token = self.get_next_token()
+
+			elif self.compare_token(COMMENT, next_token):
+				self.parse_comment()
+				next_token = self.get_next_token()
+
+			elif self.compare_token(USER_DATA, next_token):
+				self.parse_userData()
+				next_token = self.get_next_token()
+
+			else:
+				self.expect("|".join([STATUS, EXTERNAL, LIBRARY, DESIGN, COMMENT, USER_DATA]), next_token)
+
 	def parse_status(self):
 		next_token = self.get_next_token()
 		while self.compare_token(LEFT_PAREN, next_token):
@@ -238,6 +207,9 @@ class EdifParser:
 			self.parse_version()
 		
 		self.expect(RIGHT_PAREN, next_token)
+
+	def parse_external(self):
+		raise NotImplementedError()
 		
 	def parse_library(self):
 		self.parse_nameDef()
@@ -384,6 +356,7 @@ class EdifParser:
 		self.expect(RIGHT_PAREN, self.get_next_token())
 		
 	def parse_interface(self):
+		raise NotImplementedError()
 		
 	def parse_comment(self):
 		next_token = self.get_next_token()
@@ -428,6 +401,7 @@ class EdifParser:
 		self.integerToken = int(integerToken)
 		
 	def parse_nameDef(self):
+		self.listener.enter_nameDef()
 		next_token = self.get_next_token()
 		if self.compare_token(LEFT_PAREN, next_token):
 			self.expect(RENAME, self.get_next_token())
@@ -438,6 +412,7 @@ class EdifParser:
 			self.expect_identifier(next_token)
 			self.identifier = next_token
 			self.external_identifier = None
+		self.listener.exit_nameDef()
 			
 	def parse_identifier(self):
 		identifier = self.get_next_token()
