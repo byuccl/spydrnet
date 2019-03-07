@@ -1,11 +1,29 @@
+import sys
+
 class Element:
     def __init__(self):
         self.data = dict()
+    
+    def set_entry(self, key, value):
+        self.data[sys.intern(key)] = value
 
-class Environment:
+    def get_value(self, key):
+        return self.data.get(key)
+
+class Environment(Element):
     def __init__(self):
+        super().__init__()
         self.libraries = list()
         self.top_instance = None
+
+    def create_library(self):
+        library = library()
+        self.add_library(library)
+        return library
+    
+    def add_library(self, library):
+        self.libraries.append(library)
+        library.environment = self
 
 class Library:
     def __init__(self):

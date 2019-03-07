@@ -1,18 +1,18 @@
-from spydrnet.parsers.edif_tokens import *
-from spydrnet.parsers.edif_listener import EdifListener
+from spydrnet.parsers.edif.edif_tokens import *
+from spydrnet.parsers.edif.edif_listener import EdifListener
 
 import re
 
 DEBUG = False
 
 class EdifParser:
-
 	def __init__(self):
 		self.line_number = 0
 		self.filename = r"C:\Users\keller\workplace\SpyDrNet\data\large_edif\osfbm.edf"
 		self.token_generator = None
 		
 		self.listener = EdifListener()
+		self.listener.parser = self
 
 		self.identifier = None
 		self.stringToken = None
@@ -39,42 +39,44 @@ class EdifParser:
 	
 	def parse_edifFileNameDef(self):
 		self.parse_nameDef()
-		if DEBUG:
-			print(EDIF, self.identifier)
 		
 	def parse_edifVersion(self):
+		self.listener.enter_edifVersion()
+
 		self.expect(LEFT_PAREN, self.get_next_token())
 		self.expect(EDIF_VERSION, self.get_next_token())
-		
 		self.parse_integerToken()
-		version_digit_0 = self.integerToken
 		self.parse_integerToken()
-		version_digit_1 = self.integerToken
-		self.parse_integerToken()
-		version_digit_2 = self.integerToken
-		
-		if version_digit_0 != 2 or version_digit_1 != 0 or version_digit_2 != 0:
-			raise RuntimeError("Parse error: Only EDIF Version 2 0 0 is supported, EDIF Version is {} {} {} on line {}".format(version_digit_0, version_digit_1, version_digit_2, self.line_number))
-			
+		self.parse_integerToken()			
 		self.expect(RIGHT_PAREN, self.get_next_token())
+
+		self.listener.exit_edifVersion()
 				
 	def parse_keywordMap(self):
+		self.listener.enter_keywordMap()
+
 		self.expect(LEFT_PAREN, self.get_next_token())
 		self.expect(KEYWORD_MAP, self.get_next_token())
 		self.parse_keywordLevel()
 		
 		next_token = self.get_next_token()
-		if self.compare_token(LEFT_PAREN, next_token):
+		if not self.compare_token(RIGHT_PAREN, next_token):
 			self.parse_comment()
 			next_token = self.get_next_token()
 		
 		self.expect(RIGHT_PAREN, next_token)
+
+		self.listener.exit_keywordMap()
 		
 	def parse_keywordLevel(self):
+		self.listener.enter_keywordLevel()
+
 		self.expect(LEFT_PAREN, self.get_next_token())
 		self.expect(KEYWORD_LEVEL, self.get_next_token())
 		self.parse_integerToken()
 		self.expect(RIGHT_PAREN, self.get_next_token())
+
+		self.listener.exit_keywordLevel()
 	
 	def parse_body(self):
 		has_status = False
@@ -113,8 +115,10 @@ class EdifParser:
 				self.expect("|".join([STATUS, EXTERNAL, LIBRARY, DESIGN, COMMENT, USER_DATA]), next_token)
 
 	def parse_status(self):
+		self.listener.enter_status()
+
 		next_token = self.get_next_token()
-		while self.compare_token(LEFT_PAREN, next_token):
+		while not self.compare_token(RIGHT_PAREN, next_token):
 			next_token = self.get_next_token()
 			if self.compare_token(WRITTEN, next_token):
 				self.parse_written()
@@ -127,8 +131,12 @@ class EdifParser:
 				self.expect("|".join([WRITTEN|COMMENT|USER_DATA]), next_token)
 			
 		self.expect(RIGHT_PAREN, next_token)
+
+		self.listener.exit_status()
 		
 	def parse_written(self):
+		self.listener.enter_written()
+
 		self.parse_timeStamp()
 		
 		next_token = self.get_next_token()
@@ -169,7 +177,11 @@ class EdifParser:
 			
 		self.expect(RIGHT_PAREN, next_token)
 		
+		self.listener.exit_written()
+		
 	def parse_timeStamp(self):
+		self.listener.enter_timestamp()
+
 		self.expect(LEFT_PAREN, self.get_next_token())
 		self.expect(TIMESTAMP, self.get_next_token())
 		self.parse_integerToken()
@@ -179,12 +191,16 @@ class EdifParser:
 		self.parse_integerToken()
 		self.parse_integerToken()
 		self.expect(RIGHT_PAREN, self.get_next_token())
+
+		self.listener.exit_timestamp()
 		
 	def parse_author(self):
 		self.parse_stringToken()
 		self.expect(RIGHT_PAREN, self.get_next_token())
 		
 	def parse_program(self):
+		self.listener.enter_program()
+
 		self.parse_stringToken()
 		
 		next_token = self.get_next_token()
@@ -193,11 +209,17 @@ class EdifParser:
 			next_token = self.get_next_token()
 		
 		self.expect(RIGHT_PAREN, next_token)
+
+		self.listener.exit_program()
 		
 	def parse_version(self):
+		self.listener.enter_version()
+
 		self.expect(VERSION, self.get_next_token())
 		self.parse_stringToken()
 		self.expect(RIGHT_PAREN, self.get_next_token())
+
+		self.listener.exit_version()
 		
 	def parse_dataOrigin(self):
 		self.parse_stringToken()
@@ -247,10 +269,14 @@ class EdifParser:
 		self.expect(RIGHT_PAREN, next_token)
 		
 	def parse_edifLevel(self):
+		self.listener.enter_edifLevel()
+
 		self.expect(LEFT_PAREN, self.get_next_token())
 		self.expect(EDIF_LEVEL, self.get_next_token())
 		self.parse_integerToken()
 		self.expect(RIGHT_PAREN, self.get_next_token())
+
+		self.listener.exit_edifLevel()
 
 	def parse_technology(self):
 		self.expect(LEFT_PAREN, self.get_next_token())
@@ -359,12 +385,16 @@ class EdifParser:
 		raise NotImplementedError()
 		
 	def parse_comment(self):
+		self.listener.enter_comment()
+
 		next_token = self.get_next_token()
 		while not self.compare_token(RIGHT_PAREN, next_token):
 			self.expect_stringToken(next_token)
-			self.stringToken = next_token
+			self.listener.push_stringToken(next_token)
 			next_token = self.get_next_token()
 		self.expect(RIGHT_PAREN, next_token)
+
+		self.listener.exit_comment()
 		
 	def parse_property(self):
 		self.parse_nameDef()
@@ -398,7 +428,7 @@ class EdifParser:
 	def parse_integerToken(self):
 		integerToken = self.get_next_token()
 		self.expect_integerToken(integerToken)
-		self.integerToken = int(integerToken)
+		self.listener.push_integerToken(integerToken)
 		
 	def parse_nameDef(self):
 		self.listener.enter_nameDef()
@@ -410,19 +440,18 @@ class EdifParser:
 			self.expect(RIGHT_PAREN, self.get_next_token())
 		else:
 			self.expect_identifier(next_token)
-			self.identifier = next_token
-			self.external_identifier = None
+			self.listener.push_identifier(next_token)
 		self.listener.exit_nameDef()
 			
 	def parse_identifier(self):
 		identifier = self.get_next_token()
 		self.expect_identifier(self.identifier)
-		self.identifier = identifier
+		self.listener.push_identifier(identifier)
 		
 	def parse_stringToken(self):
 		stringToken = self.get_next_token()
 		self.expect_stringToken(stringToken)
-		self.stringToken = stringToken[1:-1]
+		self.listener.push_stringToken(stringToken)
 		
 		
 	def compare_token(self, expected_token, recieved_token):
@@ -435,70 +464,9 @@ class EdifParser:
 		if expected_token != recieved_token:
 			if expected_token != recieved_token.lower():
 				raise RuntimeError("Parse error: Expecting {} on line {}, recieved {}".format(expected_token, self.line_number, recieved_token))
-				
-	def expect_identifier(self, token):
-		if not re.match(r"[a-zA-Z]|&\a*", token):
-			raise RuntimeError("Parse error: Expecting EDIF identifier on line {}, recieved {}".format(self.line_number, token))
-			
-	def expect_integerToken(self, token):
-		if not re.match(r"[-+]?\d+", token):
-			raise RuntimeError("Parse error: Expecting integerToken on line {}, recieved {}".format(self.line_number, token))
-			
-	def expect_stringToken(self, token):
-		if not re.match(r'"(?:[a-zA-Z]|(?:%[ \t\n\r]*(?:(?:[-+]?\d+[ \t\n\r]+)*(?:[-+]?\d+))*[ \t\n\r]*%)|[0-9]|[\!\#\$\&\'\(\)\*\+\,\-\.\/\:\;\<\=\>\?\@\[\\\]\^\_\`\{\|\}\~]|[ \t\n\r])*"', token):
-			raise RuntimeError("Parse error: Expecting stringToken on line {}, recieved {}".format(self.line_number, token))
-	
+					
 	def get_next_token(self):
 		return next(self.token_generator)
-		
-	def generate_tokens(self):
-		with open(self.filename, 'r') as fi:
-			self.line_number = 1
-			in_quote = False
-			in_token = False
-			token = list()
-			while True:
-				buffer = fi.read(8192)
-				if not buffer:
-					break
-				for ch in buffer:
-					if ch == '\n':
-						self.line_number += 1
-						
-					if in_quote:
-						if ch == '"':
-							in_quote = False
-							token.append('"')
-							yield ''.join(token)
-						elif ch != '\n' and ch != '\r':
-							token.append(ch)
-							
-					elif ch == '"':
-						in_quote = True
-						token.clear()
-						token.append(ch)
-						
-					elif ch == '(':
-						yield ch
-						
-					elif ch == ')':
-						if in_token == True:
-							in_token = False
-							yield ''.join(token)
-						
-						yield ch
-						
-					elif ch == '\t' or ch == '\n' or ch == '\r' or ch == ' ':
-						if in_token == True:
-							in_token = False
-							yield ''.join(token)
-							
-					else:
-						if in_token == False:
-							in_token = True
-							token.clear()
-							
-						token.append(ch)
 						
 if __name__ == '__main__':
 	import cProfile
