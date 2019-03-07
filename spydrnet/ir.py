@@ -8,19 +8,6 @@ class Element:
         self.uid  = Element._nextUID_
         Element._nextUID_ = Element._nextUID_ + 1
 
-    def getName(self):
-        """return the name of the object"""
-        return self.name
-    
-    def getMetadata(self, key):
-        """
-        return the metadata value mapped to by key or None if no entry exists
-
-        Arguments:
-        key -- the value to dereference
-        """
-        return self.data[key]
-
 class Environment(Element):
     def __init__(self):
         self.libraries = list()

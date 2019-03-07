@@ -6,258 +6,254 @@ import json
 class ComposeEdif:
 
     def __init__(self):
-        #self.filename = "../../data/json_edif/out.json"
-        self.output_filename = "out.edf"
-        self.output = None
-        self.data = None
-        self.lisp_depth = 0
+        #self.filename = "../../_data_/json_edif/out.json"
+        self._output_ = None
+        self._data_ = None
+        self._lisp_depth_ = 0
 
     def run(self, ir=None, file_out="out.edf"):
         """
-        compose an edif file from the IR in either file or object form and output it to a file
-        **currently only object form will work**
+        compose an edif file from the IR in either file or object form and _output_ it to a file
+        **currently only object form will work read the json into an object first**
         
         Keyword Arguments:
         ir          -- the object(environment) or file(json) to be composed to edif
         file_out    -- the path and name of the file to which the edif will be written (default "out.edf")
         """
         self.output_filename = file_out
-        self.data = ir
+        self._data_ = ir
         if(isinstance(ir, str)):
             self.filename = ir
             self._read_data_()  #only needed if we start to accept the json format files
             print("currently json files are unsupported! read into an object first.")
         else:
-            self.data = ir
+            self._data_ = ir
         self._open_output_()
         self._output_environment_()
         self._close_output_()
     
 
     def _read_data_(self):
-        """read data in from a json ir file and store it in data"""
+        """read _data_ in from a json ir file and store it in _data_"""
         with open(self.filename) as fi:
-            self.data = json.load(fi)
+            self._data_ = json.load(fi)
 
     def _open_output_(self):
-        self.output = open(self.output_filename, 'w')
+        self._output_ = open(self.output_filename, 'w')
     
     def _output_environment_(self):
-        global output
-        global lisp_depth
+        self._lisp_increment_()
+        self._output_.write("edif top")
+        self._new_line_()
+        
+        self._lisp_increment_()
+        self._output_.write("edifversion 2 0 0")
+        self._lisp_decrement_()
+        self._new_line_()
+        
+        self._lisp_increment_()
+        self._output_.write("edifLevel 0")
+        self._lisp_decrement_()
+        self._new_line_()
+        
+        self._lisp_increment_()
+        self._output_.write("keywordmap ")
+        self._lisp_increment_()
+        self._output_.write("keywordlevel 0")
+        self._lisp_decrement_()
+        self._lisp_decrement_()
+        self._new_line_()
 
-        self.lisp_increment()
-        self.output.write("edif top")
-        self.new_line()
-        
-        self.lisp_increment()
-        self.output.write("edifversion 2 0 0")
-        self.lisp_decrement()
-        self.new_line()
-        
-        self.lisp_increment()
-        self.output.write("edifLevel 0")
-        self.lisp_decrement()
-        self.new_line()
-        
-        self.lisp_increment()
-        self.output.write("keywordmap ")
-        self.lisp_increment()
-        self.output.write("keywordlevel 0")
-        self.lisp_decrement()
-        self.lisp_decrement()
-        self.new_line()
+        for library in self._data_.libraries:
+            self._output_library_(library)
 
-        for library in self.data['libraries']:
-            self.output_library(library)
-
-        self.lisp_increment()
-        self.output.write("design top")
-        self.new_line()
-        self.lisp_increment()
-        self.output.write("cellref base_mb_wrapper (libraryref work)")
-        self.lisp_decrement()
-        self.new_line()
-        self.lisp_decrement()
-        self.new_line()
+        self._lisp_increment_()
+        self._output_.write("design top")
+        self._new_line_()
+        self._lisp_increment_()
+        self._output_.write("cellref base_mb_wrapper (libraryref work)")
+        self._lisp_decrement_()
+        self._new_line_()
+        self._lisp_decrement_()
+        self._new_line_()
         
-        self.lisp_decrement()
-        print("Current LISP level: {}".format(self.lisp_depth))
+        self._lisp_decrement_()
+        #print for debug only
+        print("Current LISP level: {}".format(self._lisp_depth_))
         
-    def output_library(self, library):
-        self.lisp_increment()
-        self.output.write("Library ")
-        self.output_name_of_object(library)
-        self.new_line()
+    def _output_library_(self, library):
+        self._lisp_increment_()
+        self._output_.write("Library ")
+        self._output_name_of_object_(library)
+        self._new_line_()
 
-        self.lisp_increment()
-        self.output.write("edifLevel 0")
-        self.lisp_decrement()
-        self.new_line()
+        self._lisp_increment_()
+        self._output_.write("edifLevel 0")
+        self._lisp_decrement_()
+        self._new_line_()
 
-        self.lisp_increment()
-        self.output.write("technology ")
-        self.lisp_increment()
-        self.output.write("numberDefinition ")
-        self.lisp_decrement()
-        self.lisp_decrement()
-        self.new_line()
+        self._lisp_increment_()
+        self._output_.write("technology ")
+        self._lisp_increment_()
+        self._output_.write("numberDefinition ")
+        self._lisp_decrement_()
+        self._lisp_decrement_()
+        self._new_line_()
         
-        for definition in library['definitions']:
-            self.output_definition(definition)
+        for definition in library.definitions:
+            self._output_definition_(definition)
         
-        self.lisp_decrement()
-        self.new_line()
+        self._lisp_decrement_()
+        self._new_line_()
 
-    def output_name_of_object(self, object):
-        if 'OldName' in object['metadata']:
-            self.lisp_increment()
-            self.output.write("rename ")
-            self.output.write(object['name'])
-            self.output.write(" \"" + object['metadata']['OldName'] + "\"")
-            self.lisp_decrement()
+    def _output_name_of_object_(self, obj):
+        if 'OldName' in obj.data:
+            self._lisp_increment_()
+            self._output_.write("rename ")
+            self._output_.write(obj.name)
+            self._output_.write(" \"" + obj.data['OldName'] + "\"")
+            self._lisp_decrement_()
         else:
-            self.output.write(object['name'])
+            self._output_.write(obj.name)
 
-    
-    def output_definition(self, definition):
-        self.lisp_increment()
-        self.output.write("Cell ")
-        self.output_name_of_object(definition)
-        self.output.write(" ")
-        self.lisp_increment()
-        self.output.write("celltype GENERIC")
-        self.lisp_decrement()
-        self.new_line()
+    def _output_definition_(self, definition):
+        self._lisp_increment_()
+        self._output_.write("Cell ")
+        self._output_name_of_object_(definition)
+        self._output_.write(" ")
+        self._lisp_increment_()
+        self._output_.write("celltype GENERIC")
+        self._lisp_decrement_()
+        self._new_line_()
         
-        self.lisp_increment()
-        self.output.write("view netlist ")
-        self.lisp_increment()
-        self.output.write("viewtype NETLIST")
-        self.lisp_decrement()
-        self.new_line()
+        self._lisp_increment_()
+        self._output_.write("view netlist ")
+        self._lisp_increment_()
+        self._output_.write("viewtype NETLIST")
+        self._lisp_decrement_()
+        self._new_line_()
 
-        self.lisp_increment()
-        self.output.write("interface")
-        self.new_line()
-        for port in definition['portList']:
-            self.output_port(port)
-        self.lisp_decrement()
-        self.new_line()
+        self._lisp_increment_()
+        self._output_.write("interface")
+        self._new_line_()
+        for port in definition.ports:
+            self._output_port_(port)
+        self._lisp_decrement_()
+        self._new_line_()
 
-        self.lisp_increment()
-        self.output.write("contents")
-        self.new_line()
+        self._lisp_increment_()
+        self._output_.write("contents")
+        self._new_line_()
 
-        for instance in definition['instanceList']:
-            self.output_instance(instance)
-        for cable in definition['busList']:
-            self.output_cable(cable)
+        for instance in definition.instances:
+            self._output_instance_(instance)
+        for cable in definition.cables:
+            self._output_cable_(cable)
 
-        self.lisp_decrement()
-        self.new_line()
-        self.lisp_decrement()
-        self.new_line()
-        self.lisp_decrement()
-        self.new_line()
+        self._lisp_decrement_()
+        self._new_line_()
+        self._lisp_decrement_()
+        self._new_line_()
+        self._lisp_decrement_()
+        self._new_line_()
 
-    def output_port(self, port):
-        self.lisp_increment()
-        self.output.write("port ")
-        self.output.write(port.getName()) #TODO fuction port.getName() needs to be created
-        self.lisp_increment()
-        self.output.write("direction ")
-        self.output.write(port.getDirection()) #TODO function port.getDirection() needs to be created
-        self.lisp_decrement()
-        self.lisp_decrement()
-        self.new_line()
+    def _output_port_(self, port):
+        self._lisp_increment_()
+        self._output_.write("port ")
+        self._output_.write(port.name)
+        self._lisp_increment_()
+        self._output_.write("direction ")
+        self._output_.write(port.direction)
+        self._lisp_decrement_()
+        self._lisp_decrement_()
+        self._new_line_()
         
-    def output_instance(self, instance):
-        self.lisp_increment()
-        self.output.write("instance ")
-        self.output.write(get_edif_name(instance))
-        self.output.write(" ")
-        self.lisp_increment()
-        self.output.write("viewref ")
-        self.output.write("netlist ") #TODO this should be checked against some sort of metadata
-        self.lisp_increment()
-        self.output.write("cellref ")
-        self.definition = instance.getDefinition() #TODO fuction instance.getDefinition() needs to be created
-        self.output.write(get_edif_name(definition))
-        self.lisp_increment()
-        self.output.write("libraryref ")
-        self.output.write(get_edif_name(definition.getLibrary()))  #TODO fuction definition.getLibrary() needs to be created
-        self.lisp_decrement()
-        self.lisp_decrement()
-        self.lisp_decrement()
-        self.new_line()
-        properties = instance.getMetadata("properies")
+    def _output_instance_(self, instance):
+        self._lisp_increment_()
+        self._output_.write("instance ")
+        self._output_.write(self._get_edif_name_(instance))
+        self._output_.write(" ")
+        self._lisp_increment_()
+        self._output_.write("viewref ")
+        self._output_.write("netlist ") #TODO this should be checked against some sort of metadata
+        self._lisp_increment_()
+        self._output_.write("cellref ")
+        definition = instance.definition
+        self._output_.write(self._get_edif_name_(definition))
+        self._lisp_increment_()
+        self._output_.write("libraryref ")
+        self._output_.write(self._get_edif_name_(definition.Library))
+        self._lisp_decrement_()
+        self._lisp_decrement_()
+        self._lisp_decrement_()
+        self._new_line_()
+        properties = instance.data["properties"]
         for key,value in properties:
-            self.output_property(key, value)
-        self.lisp_decrement()
+            self._output_property_(key, value)
+        self._lisp_decrement_()
 
-    def get_edif_name(self, netlistObj):
-        name = netlistObj.getName() #TODO fuction netlistObj.getName() needs to be created
-        oldName = netlistObj.getMetadata("oldName") #TODO function netlistObj.getMetadata(key) needs to be created
+    def _output_cable_(self, cable):
+        self._lisp_increment_()
+        self._output_.write("net ")
+        self._output_.write(self._get_edif_name_(cable))
+        self._output_.write(" ")
+        self._lisp_increment_()
+        self._output_.write("joined")
+        self._new_line_()
+        for port in cable.getConnectionList(): #TODO fuction cable.getConnectionList() needs to be created
+            self._output_port_ref_(port)
+        self._new_line_()
+        self._lisp_decrement_()
+        self._new_line_()
+        self._lisp_decrement_()
+
+    def _output_port_ref_(self, port_ref):
+        self._lisp_increment_()
+        self._output_.write("portref ")
+        self._output_.write(self._get_edif_name_(port_ref))
+        self._output_.write(" ")
+        self._lisp_increment_()
+        self._output_.write("instanceref ")
+        self._lisp_decrement_()
+        self._lisp_decrement_()
+        self._new_line_()
+
+    def _get_edif_name_(self, netlistObj):
+        name = netlistObj.name
+        oldName = netlistObj.data["oldName"]
         if oldName == None:
             return name
         else:
             return "(rename " + name + ' "' + oldName + '")'
 
-    def output_cable(self, cable):
-        self.lisp_increment()
-        self.output.write("net ")
-        self.output.write(self.get_edif_name(cable))
-        self.output.write(" ")
-        self.lisp_increment()
-        self.output.write("joined")
-        self.new_line()
-        for port in cable.getConnectionList(): #TODO fuction cable.getConnectionList() needs to be created
-            self.output_port_ref(port)
-        self.new_line()
-        self.lisp_decrement()
-        self.new_line()
-        self.lisp_decrement()
+    def _lisp_increment_(self):
+        self._output_.write("(")
+        self._lisp_depth_ += 1
 
-    def output_port_ref(self, port_ref):
-        self.lisp_increment()
-        self.output.write("portref ")
-        self.output.write(self.get_edif_name(port_ref))
-        self.output.write(" ")
-        self.lisp_increment()
-        self.output.write("instanceref ")
-        self.lisp_decrement()
-        self.lisp_decrement()
-        self.new_line()
+    def _new_line_(self):
+        self._output_.write("\n")
+        self._output_.write("  "*self._lisp_depth_)
 
-    def lisp_increment(self):
-        self.output.write("(")
-        self.lisp_depth += 1
+    def _lisp_decrement_(self):
+        self._output_.write(")")
+        self._lisp_depth_ -= 1
 
-    def new_line(self):
-        self.output.write("\n")
-        self.output.write("  "*self.lisp_depth)
-
-    def lisp_decrement(self):
-        self.output.write(")")
-        self.lisp_depth -= 1
-
-    def output_property(self, key, value):
+    def _output_property_(self, key, value):
         #TODO this only handles string properties for now
-        self.lisp_increment()
-        self.output.write("property ")
-        self.output.write(key)
-        self.output.write(" ")
-        self.lisp_increment()
-        self.output.write('string "')
-        self.output.write(value)
-        self.output.write('"')
-        self.lisp_decrement()
-        self.lisp_decrement()
-        self.new_line()
+        self._lisp_increment_()
+        self._output_.write("property ")
+        self._output_.write(key)
+        self._output_.write(" ")
+        self._lisp_increment_()
+        self._output_.write('string "')
+        self._output_.write(value)
+        self._output_.write('"')
+        self._lisp_decrement_()
+        self._lisp_decrement_()
+        self._new_line_()
 
     def _close_output_(self):
-        self.output.close()
+        self._output_.close()
     
 
     
