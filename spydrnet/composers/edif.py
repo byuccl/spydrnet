@@ -1,9 +1,12 @@
 
 import json
+#from spydrnet import * why the error here.
 
-"""class that creates an edif file from our IR"""
+
 
 class ComposeEdif:
+
+    """class that creates an edif file from our IR"""
 
     def __init__(self):
         #self.filename = "../../_data_/json_edif/out.json"
@@ -17,8 +20,9 @@ class ComposeEdif:
         **currently only object form will work read the json into an object first**
         
         Keyword Arguments:
-        ir          -- the object(environment) or file(json) to be composed to edif
-        file_out    -- the path and name of the file to which the edif will be written (default "out.edf")
+        ir -- the object(environment) or file(json) to be composed to edif (default None) 
+                        **default should be changed to in.ir**
+        file_out -- the path and name of the file to which the edif will be written (default "out.edf")
         """
         self.output_filename = file_out
         self._data_ = ir
