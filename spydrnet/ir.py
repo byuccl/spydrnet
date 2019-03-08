@@ -17,7 +17,7 @@ class Environment(Element):
         self.top_instance = None
 
     def create_library(self):
-        library = library()
+        library = Library()
         self.add_library(library)
         return library
     
@@ -25,13 +25,15 @@ class Environment(Element):
         self.libraries.append(library)
         library.environment = self
 
-class Library:
+class Library(Element):
     def __init__(self):
+        super().__init__()
         self.environment = None
         self.definitions = list()
 
-class Definition:
+class Definition(Element):
     def __init__(self):
+        super().__init__()
         self.library = None
         self.ports = list()
         self.cables = list()

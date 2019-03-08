@@ -9,18 +9,22 @@ class EdifTokenizer:
     def __init__(self, filename):
         self.filename = filename
         self.generator = self.generate_tokens()
-        # self.lookahead_buffer = None # LookaheadBuffer()
+        self.token = None
+        self.next_token = None
 
-    def next_token(self):
-        return Token(next(self.generator))
+    def peek(self):
+        if self.next_token:
+            return self.next_token
+        else:
+            self.next_token = next(self.generator)
+            return self.next_token
 
-    # def lookahead(self, distance = 0):
-    #     lookahead_count = self.lookahead_buffer.get_count()
-    #     if lookahead_count < distance + 1:
-    #         for _ in range(distance - lookahead_count + 1):
-    #             self.lookahead_buffer.add(next(self.generator))
-
-    #     return self.lookahead_buffer.lookahead(distance)
+    def next(self):
+        if self.next_token:
+            self.token = self.next_token
+            self.next_token = None
+        else:
+            self.token = next(self.generator)
 
     def generate_tokens(self):
         with open(self.filename, 'r') as fi:
@@ -71,125 +75,51 @@ class EdifTokenizer:
                             
                         token.append(ch)
 
-class Token:
-    def __init__(self, value, line_number):
-        self.value = value
-        self.line_number = line_number
-
     def expect(self, other):
-        if self.equals(other):
-            raise RuntimeError("Parse error: Expecting {} on line {}, recieved {}".format(self.value, self.line_number, other))
+        if not self.token_equals(other):
+            raise RuntimeError("Parse error: Expecting {} on line {}, recieved {}".format(other, self.line_number, self.token))
 
-    def equals(self, other):
-        if isinstance(other, Token):
-            other_value = other.value
-        else:
-            other_value = other
-        
-        if isinstance(other_value, str):
-            if self.value == other_value:
-                return True
-            
-            lowercase_token = self.value.lower()
-            if lowercase_token == other_value:
-                return True
-
-            if lowercase_token == other.lower():
-                return True
-            
+    def peek_equals(self, other):
+        peek_token = self.peek()
+        return self.equals(peek_token, other)
+    
+    def token_equals(self, other):
+        return self.equals(self.token, other)
+    
+    @staticmethod
+    def equals(this, that):
+        if this == that or this.lower() == that:
+            return True
         return False
 
     def expect_valid_identifier(self):
         if self.is_valid_identifier() is False:
-            raise RuntimeError("Parse error: Expecting EDIF identifier on line {}, recieved {}".format(self.line_number, self.value))
+            raise RuntimeError("Parse error: Expecting EDIF identifier on line {}, recieved {}".format(self.line_number, self.token))
 
     def is_valid_identifier(self):
-        if re.match(r"[a-zA-Z]|&\a*", self.value):
+        if re.match(r"[a-zA-Z]|&\a*", self.token):
             return True 
         return False
 
     def expect_valid_integerToken(self):
         if self.is_valid_integerToken() is False:
-            raise RuntimeError("Parse error: Expecting integerToken on line {}, recieved {}".format(self.line_number, self.value))
+            raise RuntimeError("Parse error: Expecting integerToken on line {}, recieved {}".format(self.line_number, self.token))
 
     def is_valid_integerToken(self):
-        if re.match(r"[-+]?\d+", self.value):
+        if re.match(r"[-+]?\d+", self.token):
             return True
         return False
 
     def expect_valid_stringToken(self):
         if self.is_valid_stringToken() is False:
-            raise RuntimeError("Parse error: Expecting integerToken on line {}, recieved {}".format(self.line_number, self.value))
+            raise RuntimeError("Parse error: Expecting stringToken on line {}, recieved {}".format(self.line_number, self.token))
 
     def is_valid_stringToken(self):
-        if re.match(r'"(?:[a-zA-Z]|(?:%[ \t\n\r]*(?:(?:[-+]?\d+[ \t\n\r]+)*(?:[-+]?\d+))*[ \t\n\r]*%)|[0-9]|[\!\#\$\&\'\(\)\*\+\,\-\.\/\:\;\<\=\>\?\@\[\\\]\^\_\`\{\|\}\~]|[ \t\n\r])*"', self.value):
+        if re.match(r'"(?:[a-zA-Z]|(?:%[ \t\n\r]*(?:(?:[-+]?\d+[ \t\n\r]+)*(?:[-+]?\d+))*[ \t\n\r]*%)|[0-9]|[\!\#\$\&\'\(\)\*\+\,\-\.\/\:\;\<\=\>\?\@\[\\\]\^\_\`\{\|\}\~]|[ \t\n\r])*"', self.token):
             return True
         return False
 
-class LookaheadBuffer:
-    def __init__(self, size = 10):
-        self.size = size
-        self.out_index = 0
-        self.in_index = 0
-        self.buffer = [None]*10
-        self.is_empty = True
-
-    def add(self, item):
-        if self.is_empty:
-            self.is_empty = False
-        else:
-            assert(self.in_index != self.out_index)
-        self.buffer[self.in_index] = item
-        self.in_index = (self.in_index + 1) % self.size
-
-    def remove(self):
-        assert(not self.is_empty)
-        item = self.buffer[self.out_index]
-        self.out_index = (self.out_index + 1) % self.size
-        if self.out_index == self.in_index:
-            self.is_empty = True
-        return item
-
-    def get_count(self):
-        if self.is_empty:
-            return 0
-        if self.in_index == self.out_index:
-            return self.size
-        return (self.in_index - self.out_index) % self.size
-
-    def lookahead(self, distance = 0):
-        return self.buffer[(self.out_index + distance) % self.size]
-
 if __name__ == "__main__":
-    filename = r"C:\Users\keller\workplace\SpyDrNet\data\large_edif\osfbm.edf"
+    # filename = r"C:\Users\keller\workplace\SpyDrNet\data\large_edif\osfbm.edf"
+    filename = r"C:\Users\akeller9\workspace\SpyDrNet\data\large_edif\osfbm.edf"
     tokenizer = EdifTokenizer.from_filename(filename)
-
-    for i in range(10):
-        print("lookahead", i, "token", tokenizer.lookahead(i))
-
-    for _ in range(10):
-        print("next token", tokenizer.next_token())
-
-    for i in range(10):
-        print("lookahead", i, "token", tokenizer.lookahead(i))
-
-    for _ in range(10):
-        print("next token", tokenizer.next_token())
-
-    for _ in range(10):
-        print("next token", tokenizer.next_token())
-
-    for i in range(7):
-        print("lookahead", i, "token", tokenizer.lookahead(i))
-
-    for _ in range(10):
-        print("next token", tokenizer.next_token())
-
-    for i in range(7):
-        print("lookahead", i, "token", tokenizer.lookahead(i))
-
-    for _ in range(10):
-        print("next token", tokenizer.next_token())
-
-    for i in range(11):
-        print("lookahead", i, "token", tokenizer.lookahead(i))
