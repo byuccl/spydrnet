@@ -28,7 +28,7 @@ class EdifParser:
     def parse(self):
         self.initialize_tokenizer()
 
-        self.parse_construct(self.parse_edif)
+        self.netlist = self.parse_construct(self.parse_edif)
 
     def initialize_tokenizer(self):
         self.tokenizer = EdifTokenizer.from_filename(self.filename)
