@@ -3,22 +3,22 @@ from enum import Enum
 
 class Element:
     def __init__(self):
-        self._data = dict()
+        self._metadata = dict()
     
     def __setitem__(self, key, value):
-        self._data.__setitem__(sys.intern(key), value)
+        self._metadata.__setitem__(sys.intern(key), value)
 
     def __delitem__(self, key):
-        self._data.__delitem__(key)
+        self._metadata.__delitem__(key)
 
     def __getitem__(self, key):
-        return self._data.__getitem__(key)
+        return self._metadata.__getitem__(key)
 
     def __contains__(self, item):
-        return self._data.__contains__(item)
+        return self._metadata.__contains__(item)
 
     def pop(self, item):
-        return self._data.pop(item)
+        return self._metadata.pop(item)
 
 class Environment(Element):
     def __init__(self):
