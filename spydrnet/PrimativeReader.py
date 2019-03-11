@@ -67,10 +67,10 @@ class PrimativeReader:
                     i = 2
                 elif i == 2:
                     l = self._vivado_property_(line, pos)
-                    if l[0].lower() == "name":
-                        if pin != l[0]:
+                    if l[1].lower() == "name":
+                        if pin != l[1]:
                             print("The property name does not match the pin name from above...")
-                            print(l[0] + pin)
+                            print(l[1] + " " + pin)
                     else:
                         prop[l[0]] = l[1]
 
@@ -103,8 +103,11 @@ class PrimativeReader:
         position    -   the return value from _vivado_header_ a ([pos_property, pos_value])
         """
         l = line.split()
-        return l[position[0]], l[position[1]]
+        if(position[1] < len(l)):
+            return l[position[0]], l[position[1]]
+        else:
+            return l[position[0]], ""
 
 
 pr = PrimativeReader()
-print(pr.vivado("fewprimatives.txt"))
+print(pr.vivado("prim.txt"))
