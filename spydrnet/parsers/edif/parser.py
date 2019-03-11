@@ -326,7 +326,11 @@ class EdifParser:
         self.append_new_element(Port())
         self.expect(PORT)
         if self.begin_construct():
-            if self.construct_is(RENAME): self.parse_rename()
+            if self.construct_is(RENAME):
+                self.parse_rename()
+                port = self.elements[-1]
+                port.initialize_pins(1)
+
             elif self.construct_is(ARRAY): 
                 dimension_sizes = self.parse_array()
                 pin_count = reduce((lambda x, y: x * y), dimension_sizes)
@@ -345,7 +349,10 @@ class EdifParser:
 
             else: self.expect('|'.join([RENAME, ARRAY]))
             self.expect_end_construct()
-        else: self.parse_nameDef()
+        else:
+            self.parse_nameDef()
+            port = self.elements[-1]
+            port.initialize_pins(1)
             #TODO: what about single pin array ports with a non_zero starting index.
 
         has_direction = False
@@ -428,7 +435,11 @@ class EdifParser:
         self.expect(INSTANCE)
         self.parse_nameDef()
         if self.begin_construct():
-            if self.construct_is(VIEW_REF): self.parse_viewRef()
+            if self.construct_is(VIEW_REF): 
+                definition = self.parse_viewRef()
+                instance = self.elements[-1]
+                instance.definition = definition
+
             elif self.construct_is(VIEW_LIST): raise NotImplementedError()
             else: self.expect(VIEW_REF)
             self.expect_end_construct()
@@ -442,22 +453,45 @@ class EdifParser:
         return self.pop_element()
 
     def parse_viewRef(self):
+        self.prefix_append('viewRef')
         self.expect(VIEW_REF)
         self.parse_nameRef()
+        view_identifier = self.elements[-1].pop('EDIF.viewRef.identifier')
+        definition = self.elements[-2]
         if self.begin_construct():
-            self.parse_cellRef()
+            definition = self.parse_cellRef()
             self.expect_end_construct()
+        if definition['EDIF.view.identifier'].lower() != view_identifier.lower():
+            raise RuntimeError("Parser error, non-existant view referenced on line {}, revieved {} expected {}".format(
+                self.tokenizer.line_number, view_identifier, definition['EDIF.view.identifier']
+            ))
+        self.prefix_pop()
+        return definition
 
     def parse_cellRef(self):
+        self.prefix_append('cellRef')
         self.expect(CELL_REF)
-        self.parse_nameDef()
+        self.parse_nameRef()
+        definition_identifer = self.elements[-1].pop('EDIF.viewRef.cellRef.identifier')
+        library = self.elements[-3]
         if self.begin_construct():
-            self.parse_libraryRef()
+            library = self.parse_libraryRef()
             self.expect_end_construct()
+        definition = library.get_definition(definition_identifer)
+        self.prefix_pop()
+        return definition
 
     def parse_libraryRef(self):
+        self.prefix_append('libraryRef')
         self.expect(LIBRARY_REF)
-        self.parse_nameDef()
+        self.parse_nameRef()
+        library_identifier = self.elements[-1].pop('EDIF.viewRef.cellRef.libraryRef.identifier')
+        environment = self.elements[-4]
+        library = self.elements[-3]
+        if library['EDIF.identifier'].lower() != library_identifier.lower():
+            library = environment.get_library(library_identifier)
+        self.prefix_pop()
+        return library
 
     def parse_net(self):
         self.append_new_element(Cable())
@@ -476,42 +510,62 @@ class EdifParser:
     def parse_joined(self):
         self.expect(JOINED)
         while self.begin_construct():
-            if self.construct_is(PORT_REF): self.parse_portRef()
+            if self.construct_is(PORT_REF):
+                self.parse_portRef()
             elif self.construct_is(PORT_LIST): raise NotImplementedError()
             elif self.construct_is(GLOBAL_PORT_REF): raise NotImplementedError()
             else: self.expect(PORT_REF)
             self.expect_end_construct()
 
     def parse_portRef(self):
+        self.prefix_append('portRef') 
         self.expect(PORT_REF)
+        index = 0
+        instance_or_definition = self.elements[-2]
         if self.begin_construct():
-            self.parse_member()
+            indicies = self.parse_member()
+            assert (len(indicies) == 1)
+            index = indicies[0]
             self.expect_end_construct()
         else:
             self.parse_nameRef()
         
         while self.begin_construct():
             if self.construct_is(PORT_REF): raise NotImplementedError()
-            elif self.construct_is(INSTANCE_REF): self.parse_instanceRef()
+            elif self.construct_is(INSTANCE_REF): 
+                instance_or_definition = self.parse_instanceRef()
             elif self.construct_is(VIEW_REF): raise NotImplementedError()
             self.expect_end_construct()
+        port_identifier = self.elements[-1].pop('EDIF.portRef.identifier')
+        pin = instance_or_definition.get_pin(port_identifier, index)
+        self.prefix_pop()
+        return pin
+
 
     def parse_instanceRef(self):
+        self.prefix_append('instanceRef')
+        definition = self.elements[-2]
         self.expect(INSTANCE_REF)
         if self.begin_construct():
             self.parse_member()
+            raise NotImplementedError()
             self.expect_end_construct()
         else:
             self.parse_nameRef()
+        instance_identifier = self.elements[-1].pop('EDIF.portRef.instanceRef.identifier')
+        instance = definition.get_instance(instance_identifier)
+        self.prefix_pop()
+        return instance
 
 
     def parse_member(self):
         self.expect(MEMBER)
         self.parse_nameDef()
-        self.parse_integerToken()
+        indicies = [self.parse_integerToken()]
         while self.not_end_construct():
-            self.parse_integerToken()
+            indicies.append(self.parse_integerToken())
             self.expect_end_construct()
+        return indicies
     
     def parse_viewMap(self):
         self.expect(VIEW_MAP)
@@ -530,30 +584,49 @@ class EdifParser:
         raise NotImplementedError()
 
     def parse_comment(self):
+        self.prefix_append('comments')
         self.expect(COMMENT)
+        comment = list()
         while self.not_end_construct():
-            comment = self.parse_stringToken()
+            comment.append(self.parse_stringToken())
+        comment = (*comment,)
+        self.append_attribute(comment)
+        self.prefix_pop()
 
     def parse_property(self):
+        self.prefix_append('properties')
         self.expect(PROPERTY)
         self.parse_nameDef()
 
-        self.parse_construct(self.parse_typedValue)
+        property_ = dict()
+        identifier = self.elements[-1].pop('.'.join([*self.elements[-1]['metadata_prefix'], 'identifier']))
+        property_['identifier'] = identifier
+
+        original_identifier_prefix = '.'.join([*self.elements[-1]['metadata_prefix'], 'original_identifier'])
+        if original_identifier_prefix in self.elements[-1]:
+            original_identifier = self.elements[-1].pop(original_identifier_prefix)
+            property_['original_identifier'] = original_identifier
+
+        value = self.parse_construct(self.parse_typedValue)
+        property_['value'] = value
+
+        self.append_attribute(property_)
 
         has_owner = False
         has_unit = False
         while self.begin_construct():
             if self.construct_is(OWNER):
                 has_owner = self.check_for_multiples(OWNER, has_owner)
-                self.parse_owner()
+                raise NotImplementedError() # self.parse_owner()
 
             elif self.construct_is(UNIT):
                 has_unit = self.check_for_multiples(UNIT, has_unit)
-                self.parse_unit()
+                raise NotImplementedError() # self.parse_unit()
 
-            elif self.construct_is(PROPERTY): self.parse_property()
-            elif self.construct_is(COMMENT): self.parse_comment()
+            elif self.construct_is(PROPERTY): raise NotImplementedError() # self.parse_property()
+            elif self.construct_is(COMMENT): raise NotImplementedError() # self.parse_comment()
             self.expect_end_construct()
+        self.prefix_pop()
 
     def parse_typedValue(self):
         if self.construct_is(BOOLEAN): self.parse_boolean()
@@ -663,6 +736,13 @@ class EdifParser:
     def set_attribute(self, value):
         element = self.elements[-1]
         element['.'.join(element['metadata_prefix'])] = value
+
+    def append_attribute(self, attribute):
+        element = self.elements[-1]
+        key = '.'.join(element['metadata_prefix'])
+        if key not in element:
+            element[key] = list()
+        element[key].append(attribute)
 
     def skip_until_next_construct(self):
         count = 0

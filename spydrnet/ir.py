@@ -15,7 +15,10 @@ class Element:
         return self._data.__getitem__(key)
 
     def __contains__(self, item):
-        return self._data.__getitem__(item)
+        return self._data.__contains__(item)
+
+    def pop(self, item):
+        return self._data.pop(item)
 
 class Environment(Element):
     def __init__(self):
@@ -32,6 +35,13 @@ class Environment(Element):
         self.libraries.append(library)
         library.environment = self
 
+    def get_library(self, identifier):
+        for library in self.libraries:
+            if 'EDIF.identifier' in library:
+                if library['EDIF.identifier'].lower() == identifier.lower():
+                    return library
+        raise KeyError()
+
 class Library(Element):
     def __init__(self):
         super().__init__()
@@ -46,6 +56,13 @@ class Library(Element):
     def add_definition(self, definition):
         self.definitions.append(definition)
         definition.library = self
+
+    def get_definition(self, identifier):
+        for definition in self.definitions:
+            if 'EDIF.identifier' in definition:
+                if definition['EDIF.identifier'].lower() == identifier.lower():
+                    return definition
+        raise KeyError()
 
 class Definition(Element):
     def __init__(self):
@@ -64,6 +81,13 @@ class Definition(Element):
         self.ports.append(port)
         port.definition = self
 
+    def get_port(self, identifier):
+        for port in self.ports:
+            if 'EDIF.identifier' in port:
+                if port['EDIF.identifier'].lower() == identifier.lower():
+                    return port
+        raise KeyError()
+ 
     def create_instance(self):
         instance = Instance()
         self.add_instance(instance)
@@ -71,7 +95,14 @@ class Definition(Element):
     
     def add_instance(self, instance):
         self.instances.append(instance)
-        instance.definition = self
+        instance.parent_definition = self
+
+    def get_instance(self, identifier):
+        for instance in self.instances:
+            if 'EDIF.identifier' in instance:
+                if instance['EDIF.identifier'].lower() == identifier.lower():
+                    return instance
+        raise KeyError()
 
     def create_cable(self):
         cable = Cable()
@@ -81,6 +112,18 @@ class Definition(Element):
     def add_cable(self, cable):
         self.cables.append(cable)
         cable.definition = self
+
+    def get_cable(self, identifier):
+        for cable in self.cables:
+            if 'EDIF.identifier' in cable:
+                if cable['EDIF.identifier'].lower() == identifier.lower():
+                    return cable
+        raise KeyError()
+
+    def get_pin(self, port_identifier, index = 0):
+        port = self.get_port(port_identifier)
+        return port.get_pin(index)
+
 
 class Bundle(Element):
     def __init__(self):
@@ -115,6 +158,9 @@ class Port(Bundle):
         self.inner_pins.append(inner_pin)
         inner_pin.port = self
 
+    def get_pin(self, index = 0):
+        return self.inner_pins[index]
+
 class Pin:
     def __init__(self):
         self.wire = None
@@ -144,5 +190,18 @@ class Wire:
 class Instance(Element):
     def __init__(self):
         super().__init__()
+        self.parent_definition = None
         self.definition = None
-        self.outer_pins = list()
+        self.outer_pins = dict()
+
+    def get_pin(self, port_identifier, index = 0):
+        port = self.definition.get_port(port_identifier)
+        inner_pin = port.get_pin(index)
+        if inner_pin not in self.outer_pins:
+            outer_pin = OuterPin()
+            self.outer_pins[inner_pin] = outer_pin
+            outer_pin.instance = self
+            outer_pin.inner_pin = inner_pin
+            return outer_pin
+        else:
+            return self.outer_pins[inner_pin]
