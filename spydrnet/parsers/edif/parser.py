@@ -1,12 +1,10 @@
 from spydrnet.parsers.edif.tokenizer import EdifTokenizer
 from spydrnet.ir import *
+from spydrnet.data_manager import DataManager
 from spydrnet.parsers.edif.edif_tokens import *
 
 from functools import reduce
 import re
-
-class Design:
-    pass
 
 class EdifParser:
     def parse_construct(self, construct_parser):
@@ -38,7 +36,9 @@ class EdifParser:
         self.design.netlist = Environment()
 
     def parse_edif(self):
-        self.append_new_element(Environment())
+        environment = Environment()
+        environment.add_data_manager(DataManager.from_element_type_and_metadata_key(Library, 'EDIF.identifier'))
+        self.append_new_element(environment)
         self.expect(EDIF)
         self.parse_nameDef()
         self.parse_header()
@@ -177,7 +177,9 @@ class EdifParser:
         self.prefix_pop()
 
     def parse_library(self):
-        self.append_new_element(Library())
+        library = Library()
+        library.add_data_manager(DataManager.from_element_type_and_metadata_key(Definition, 'EDIF.identifier'))
+        self.append_new_element(library)
         
         self.expect(LIBRARY)
         self.parse_nameDef()
@@ -212,7 +214,11 @@ class EdifParser:
             self.expect_end_construct()
 
     def parse_cell(self):
-        self.append_new_element(Definition())
+        definition = Definition()
+        definition.add_data_manager(DataManager.from_element_type_and_metadata_key(Port, 'EDIF.identifier'))
+        definition.add_data_manager(DataManager.from_element_type_and_metadata_key(Cable, 'EDIF.identifier'))
+        definition.add_data_manager(DataManager.from_element_type_and_metadata_key(Instance, 'EDIF.identifier'))
+        self.append_new_element(definition)
 
         self.expect(CELL)
         self.parse_nameDef()

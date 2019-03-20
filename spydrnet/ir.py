@@ -1,4 +1,5 @@
 import sys
+import itertools
 from enum import Enum
 
 class Element:
@@ -12,9 +13,30 @@ class Element:
         Element._nextUID_ = Element._nextUID_ + 1
 
         self._metadata = dict()
+        self._managers = list()
     
+    @property
+    def parent(self):
+        return None
+    
+    @property
+    def children(self):
+        return iter(())
+
+    def add_data_manager(self, manager):
+        manager.set_owner_and_populate_lookup(self)
+        self._managers.append(manager)
+
     def __setitem__(self, key, value):
+        key = sys.intern(key)
         self._metadata.__setitem__(sys.intern(key), value)
+        self.setitem_callback(self)
+
+    def setitem_callback(self, element):
+        for manager in self._managers:
+            manager.add_to_lookup(element)
+        if self.parent:
+            self.parent.setitem_callback(element)
 
     def __delitem__(self, key):
         self._metadata.__delitem__(key)
@@ -28,11 +50,45 @@ class Element:
     def pop(self, item):
         return self._metadata.pop(item)
 
+    def lookup_element(self, cls, key, identifier):
+        for manager in self._managers:
+            element = manager.lookup(cls, key, identifier)
+            if element:
+                return element
+        for child in self.children:
+            if cls == type(child):
+                if key in child:
+                    if identifier == child[key]:
+                        return child
+        raise KeyError()
+
+class Design(Element):
+    def __init__(self):
+        super().__init__()
+        self.environment = None
+
+    @property
+    def parent(self):
+        return None
+
+    @property
+    def children(self):
+        return iter((self.environment,))
+
 class Environment(Element):
     def __init__(self):
         super().__init__()
+        self.design = None
         self.libraries = list()
         self.top_instance = None
+
+    @property
+    def parent(self):
+        return self.design
+
+    @property
+    def children(self):
+        return iter(self.libraries)
 
     def create_library(self):
         library = Library()
@@ -42,19 +98,29 @@ class Environment(Element):
     def add_library(self, library):
         self.libraries.append(library)
         library.environment = self
+        self.setitem_callback(library)
 
     def get_library(self, identifier):
-        for library in self.libraries:
-            if 'EDIF.identifier' in library:
-                if library['EDIF.identifier'].lower() == identifier.lower():
-                    return library
-        raise KeyError()
+        library = self.lookup_element(Library, 'EDIF.identifier', identifier)
+        return library
+        #for library in self.libraries:
+        #    if 'EDIF.identifier' in library:
+        #        if library['EDIF.identifier'].lower() == identifier.lower():
+        #            return library
 
 class Library(Element):
     def __init__(self):
         super().__init__()
         self.environment = None
         self.definitions = list()
+
+    @property
+    def parent(self):
+        return self.environment
+
+    @property
+    def children(self):
+        return iter(self.definitions)
 
     def create_definition(self):
         definition = Definition()
@@ -64,13 +130,16 @@ class Library(Element):
     def add_definition(self, definition):
         self.definitions.append(definition)
         definition.library = self
+        self.setitem_callback(definition)
 
     def get_definition(self, identifier):
-        for definition in self.definitions:
-            if 'EDIF.identifier' in definition:
-                if definition['EDIF.identifier'].lower() == identifier.lower():
-                    return definition
-        raise KeyError()
+        definition = self.lookup_element(Definition, 'EDIF.identifier', identifier)
+        return definition
+        #for definition in self.definitions:
+        #    if 'EDIF.identifier' in definition:
+        #        if definition['EDIF.identifier'].lower() == identifier.lower():
+        #            return definition
+        #raise KeyError()
 
 class Definition(Element):
     def __init__(self):
@@ -80,6 +149,14 @@ class Definition(Element):
         self.cables = list()
         self.instances = list()
 
+    @property
+    def parent(self):
+        return self.library
+
+    @property
+    def children(self):
+        return itertools.chain(self.ports, self.cables, self.instances)
+
     def create_port(self):
         port = Port()
         self.add_port(port)
@@ -88,13 +165,16 @@ class Definition(Element):
     def add_port(self, port):
         self.ports.append(port)
         port.definition = self
+        self.setitem_callback(port)
 
     def get_port(self, identifier):
-        for port in self.ports:
-            if 'EDIF.identifier' in port:
-                if port['EDIF.identifier'].lower() == identifier.lower():
-                    return port
-        raise KeyError()
+        port = self.lookup_element(Port, 'EDIF.identifier', identifier)
+        return port
+        # for port in self.ports:
+        #     if 'EDIF.identifier' in port:
+        #         if port['EDIF.identifier'].lower() == identifier.lower():
+        #             return port
+        # raise KeyError()
  
     def create_instance(self):
         instance = Instance()
@@ -104,13 +184,16 @@ class Definition(Element):
     def add_instance(self, instance):
         self.instances.append(instance)
         instance.parent_definition = self
+        self.setitem_callback(instance)
 
     def get_instance(self, identifier):
-        for instance in self.instances:
-            if 'EDIF.identifier' in instance:
-                if instance['EDIF.identifier'].lower() == identifier.lower():
-                    return instance
-        raise KeyError()
+        instance = self.lookup_element(Instance, 'EDIF.identifier', identifier)
+        return instance
+        # for instance in self.instances:
+        #     if 'EDIF.identifier' in instance:
+        #         if instance['EDIF.identifier'].lower() == identifier.lower():
+        #             return instance
+        # raise KeyError()
 
     def create_cable(self):
         cable = Cable()
@@ -120,13 +203,16 @@ class Definition(Element):
     def add_cable(self, cable):
         self.cables.append(cable)
         cable.definition = self
+        self.setitem_callback(cable)
 
     def get_cable(self, identifier):
-        for cable in self.cables:
-            if 'EDIF.identifier' in cable:
-                if cable['EDIF.identifier'].lower() == identifier.lower():
-                    return cable
-        raise KeyError()
+        cable = self.lookup_element(Cable, 'EDIF.identifier', identifier)
+        return cable
+        # for cable in self.cables:
+        #     if 'EDIF.identifier' in cable:
+        #         if cable['EDIF.identifier'].lower() == identifier.lower():
+        #             return cable
+        # raise KeyError()
 
     def get_pin(self, port_identifier, index = 0):
         port = self.get_port(port_identifier)
@@ -136,9 +222,14 @@ class Definition(Element):
 class Bundle(Element):
     def __init__(self):
         super().__init__()
+        self.definition = None
         self.is_downto = True
         self.is_scalar = False
         self.lower_index = 0
+
+    @property
+    def parent(self):
+        return self.definition
 
 class Port(Bundle):
     class Direction(Enum):
@@ -149,7 +240,6 @@ class Port(Bundle):
     
     def __init__(self):
         super().__init__()
-        self.definition = None
         self.direction = self.Direction.UNDEFINED
         self.inner_pins = list()
 
@@ -187,7 +277,6 @@ class OuterPin(Pin):
 class Cable(Bundle):
     def __init__(self):
         super().__init__()
-        self.definition = None
         self.wires = list()
 
     def initialize_wires(self, wire_count):
