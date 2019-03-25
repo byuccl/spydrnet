@@ -1,5 +1,6 @@
 import sys
 import itertools
+import weakref
 from enum import Enum
 
 class Element:

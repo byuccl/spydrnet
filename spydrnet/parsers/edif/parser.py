@@ -25,7 +25,6 @@ class EdifParser:
     
     def parse(self):
         self.initialize_tokenizer()
-
         self.netlist = self.parse_construct(self.parse_edif)
 
     def initialize_tokenizer(self):

@@ -1,3 +1,4 @@
+from functools import partial
 import re
 
 class EdifTokenizer:
@@ -30,50 +31,40 @@ class EdifTokenizer:
         with open(self.filename, 'r') as fi:
             self.line_number = 1
             in_quote = False
-            in_token = False
-            token = list()
-            while True:
-                buffer = fi.read(8192)
-                if not buffer:
-                    break
+            token_buffer = list()
+            for buffer in iter(partial(fi.read, 32768), ""):
                 for ch in buffer:
-                    if ch == '\n':
-                        self.line_number += 1
-                        
+                    if ch == '\n': self.line_number += 1
                     if in_quote:
+                        if ch in {"\n", "\r"}:
+                            continue
+                        token_buffer.append(ch)
                         if ch == '"':
                             in_quote = False
-                            token.append('"')
-                            yield ''.join(token)
-                        elif ch != '\n' and ch != '\r':
-                            token.append(ch)
-                            
+                            token = ''.join(token_buffer)
+                            token_buffer.clear()
+                            yield token
                     elif ch == '"':
                         in_quote = True
-                        token.clear()
-                        token.append(ch)
-                        
-                    elif ch == '(':
+                        token_buffer.append(ch)
+                    elif ch in {'(', ')'}:
+                        if token_buffer:
+                            token = ''.join(token_buffer)
+                            token_buffer.clear()
+                            yield token
                         yield ch
-                        
-                    elif ch == ')':
-                        if in_token == True:
-                            in_token = False
-                            yield ''.join(token)
-                        
-                        yield ch
-                        
-                    elif ch == '\t' or ch == '\n' or ch == '\r' or ch == ' ':
-                        if in_token == True:
-                            in_token = False
-                            yield ''.join(token)
-                            
+                    elif ch in {'\r', '\n', '\t', ' '}:
+                        if token_buffer:
+                            token = ''.join(token_buffer)
+                            token_buffer.clear()
+                            yield token
                     else:
-                        if in_token == False:
-                            in_token = True
-                            token.clear()
-                            
-                        token.append(ch)
+                        token_buffer.append(ch)
+
+            if token_buffer:
+                    token = ''.join(token_buffer)
+                    token_buffer.clear()
+                    yield token
 
     def expect(self, other):
         if not self.token_equals(other):
@@ -121,5 +112,14 @@ class EdifTokenizer:
 
 if __name__ == "__main__":
     # filename = r"C:\Users\keller\workplace\SpyDrNet\data\large_edif\osfbm.edf"
-    filename = r"C:\Users\akeller9\workspace\SpyDrNet\data\large_edif\osfbm.edf"
-    tokenizer = EdifTokenizer.from_filename(filename)
+    import cProfile
+    def run():
+        filename = r"C:\Users\akeller9\workspace\SpyDrNet\data\large_edif\osfbm.edf"
+        tokenizer = EdifTokenizer.from_filename(filename)
+        count = 0
+        for token in tokenizer.generator:
+            if count < 100:
+                print(token)
+            count += 1
+        print(count)
+    cProfile.run("run()")
