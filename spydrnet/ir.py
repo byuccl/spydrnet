@@ -8,8 +8,8 @@ class Element:
     _nextUID_ = 0
     def __init__(self):
         """set up the members and generate a unique identifier (uid) that is one greater than the last uid"""
-        self.data = dict()
-        self.name = None
+        #self.data = dict()
+        #self.name = None
         self.uid  = Element._nextUID_
         Element._nextUID_ = Element._nextUID_ + 1
 

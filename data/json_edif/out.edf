@@ -1,0 +1,11 @@
+(edif top
+  (edifversion 2 0 0)
+  (edifLevel 0)
+  (keywordmap (keywordlevel 0))
+  (Library (rename hdi_primitives "hdi_primitives")
+    (edifLevel 0)
+    (technology (numberDefinition ))
+    (Cell LUT6 (celltype GENERIC)
+      (view netlist (viewtype NETLIST)
+        (interface
+          (port 

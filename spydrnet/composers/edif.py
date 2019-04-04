@@ -1,6 +1,8 @@
 
 import json
-#from spydrnet import * why the error here.
+from spydrnet.ir import *
+import inspect #used for debug.
+from datetime import datetime
 
 
 
@@ -11,7 +13,7 @@ class ComposeEdif:
     def __init__(self):
         #self.filename = "../../_data_/json_edif/out.json"
         self._output_ = None
-        self._data_ = None
+        self._data_  = None
         self._lisp_depth_ = 0
 
     def run(self, ir=None, file_out="out.edf"):
@@ -66,8 +68,10 @@ class ComposeEdif:
         self._output_.write("keywordlevel 0")
         self._lisp_decrement_()
         self._lisp_decrement_()
+        now = datetime.now()
+        self._output_.write("""\n(status\n (written\n  (timeStamp {})\n  (program "Vivado" (version "2018.2"))\n  (comment "Built on '{}'")\n  (comment "Built by 'BYU's spydrnet tool'")\n )\n)""".format(now.strftime("%Y %m %d %H %M %S"), now.strftime("%a %b %d %H:%M:%S %Z %Y")))
+        print("WARNING: edif.py Line: {} - hard coded vivado version".format(self._lineno_()-1))
         self._new_line_()
-
         for library in self._data_.libraries:
             self._output_library_(library)
 
@@ -75,7 +79,8 @@ class ComposeEdif:
         self._output_.write("design top")
         self._new_line_()
         self._lisp_increment_()
-        self._output_.write("cellref base_mb_wrapper (libraryref work)")
+        self._output_.write("cellref base_mb_wrapper (libraryref work)") #TODO: don't Hard code!!
+        print("WARNING: edif.py Line: {} - hard coded top instance".format(self._lineno_()-1))
         self._lisp_decrement_()
         self._new_line_()
         self._lisp_decrement_()
@@ -85,6 +90,9 @@ class ComposeEdif:
         #print for debug only
         print("Current LISP level: {}".format(self._lisp_depth_))
         
+    def _lineno_(self):
+        return inspect.currentframe().f_back.f_lineno
+       
     def _output_library_(self, library):
         self._lisp_increment_()
         self._output_.write("Library ")
@@ -111,14 +119,17 @@ class ComposeEdif:
         self._new_line_()
 
     def _output_name_of_object_(self, obj):
-        if 'OldName' in obj.data:
+        if 'OldName' in obj._metadata:
             self._lisp_increment_()
             self._output_.write("rename ")
             self._output_.write(obj.name)
             self._output_.write(" \"" + obj.data['OldName'] + "\"")
             self._lisp_decrement_()
         else:
-            self._output_.write(obj.name)
+            #print(obj)
+            #print(vars(obj))
+            #self._output_.write(obj.name)
+            self._output_.write(obj._metadata["EDIF.identifier"])
 
     def _output_definition_(self, definition):
         self._lisp_increment_()
@@ -164,17 +175,30 @@ class ComposeEdif:
     def _output_port_(self, port):
         self._lisp_increment_()
         self._output_.write("port ")
-        self._output_.write(port.name)
+        #self._output_.write(port.name)
+        self._output_name_of_object_(port)
         self._lisp_increment_()
         self._output_.write("direction ")
-        self._output_.write(port.direction)
+        #self._output_.write(port.direction)
+        self._output_.write(self._direction_to_string_(port.direction))#str(port.direction))
         self._lisp_decrement_()
         self._lisp_decrement_()
         self._new_line_()
+
+    def _direction_to_string_(self, direction):
+        if direction == Port.Direction.INOUT:
+            return "INOUT"
+        elif direction == Port.Direction.IN:
+            return "INPUT"
+        elif direction == Port.Direction.OUT:
+            return "OUTPUT"
+        else:
+            return "UNDEFINED"
         
     def _output_instance_(self, instance):
         self._lisp_increment_()
         self._output_.write("instance ")
+        #print(vars(instance))
         self._output_.write(self._get_edif_name_(instance))
         self._output_.write(" ")
         self._lisp_increment_()
@@ -186,14 +210,16 @@ class ComposeEdif:
         self._output_.write(self._get_edif_name_(definition))
         self._lisp_increment_()
         self._output_.write("libraryref ")
-        self._output_.write(self._get_edif_name_(definition.Library))
+        self._output_.write(self._get_edif_name_(definition.library))
         self._lisp_decrement_()
         self._lisp_decrement_()
         self._lisp_decrement_()
         self._new_line_()
-        properties = instance.data["properties"]
-        for key,value in properties:
-            self._output_property_(key, value)
+        #print(vars(instance))
+        if "properties" in instance._metadata:
+            properties = instance._metadata["properties"]
+            for key,value in properties:
+                self._output_property_(key, value)
         self._lisp_decrement_()
 
     def _output_cable_(self, cable):
@@ -204,8 +230,14 @@ class ComposeEdif:
         self._lisp_increment_()
         self._output_.write("joined")
         self._new_line_()
-        for port in cable.getConnectionList(): #TODO fuction cable.getConnectionList() needs to be created
-            self._output_port_ref_(port)
+        #for port in cable.getConnectionList(): #TODO fuction cable.getConnectionList() needs to be created
+        for wire in cable.wires:
+            for pin in wire.pins:
+                #port = pin.port
+                #print(type(pin))
+                if isinstance(pin, OuterPin):
+                    pin = pin.inner_pin
+                self._output_port_ref_(pin.port)
         self._new_line_()
         self._lisp_decrement_()
         self._new_line_()
@@ -223,11 +255,12 @@ class ComposeEdif:
         self._new_line_()
 
     def _get_edif_name_(self, netlistObj):
-        name = netlistObj.name
-        oldName = netlistObj.data["oldName"]
-        if oldName == None:
+        name = netlistObj._metadata["EDIF.identifier"]
+        #print(vars(netlistObj))
+        if not("oldName" in netlistObj._metadata):
             return name
         else:
+            oldName = netlistObj._metadata["oldName"]
             return "(rename " + name + ' "' + oldName + '")'
 
     def _lisp_increment_(self):
