@@ -13,5 +13,4 @@ print("Composing Edif....")
 ComposeEdif().run(edif_parser.netlist, "run_through.edf")
 #print(f"{Fore.GREEN}Success{Style.RESET_ALL}") could add color in linux
 print("Success")
-print("ensure lisp level 0 for sanity check")
 

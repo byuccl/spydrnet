@@ -88,7 +88,7 @@ class ComposeEdif:
         
         self._lisp_decrement_()
         #print for debug only
-        print("Current LISP level: {}".format(self._lisp_depth_))
+        print("Current LISP level (if not 0 there was a problem): {}".format(self._lisp_depth_))
         
     def _lineno_(self):
         return inspect.currentframe().f_back.f_lineno
