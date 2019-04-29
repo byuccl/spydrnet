@@ -1,5 +1,5 @@
 from spydrnet.parsers.edif.parser import EdifParser
-from spydrnet.composers.edif import ComposeEdif
+from spydrnet.composers.edif.composer import ComposeEdif
 import json
 
 print("Parsing Edif.........")
