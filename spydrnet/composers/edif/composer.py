@@ -68,9 +68,11 @@ class ComposeEdif:
         self._output_.write("keywordlevel 0")
         self._lisp_decrement_()
         self._lisp_decrement_()
-        now = datetime.now()
-        self._output_.write("""\n(status\n (written\n  (timeStamp {})\n  (program "Vivado" (version "2018.2"))\n  (comment "Built on '{}'")\n  (comment "Built by 'BYU's spydrnet tool'")\n )\n)""".format(now.strftime("%Y %m %d %H %M %S"), now.strftime("%a %b %d %H:%M:%S %Z %Y")))
-        print("WARNING: edif.py Line: {} - hard coded vivado version".format(self._lineno_()-1))
+        #now = datetime.now()
+        #self._output_.write("""\n(status\n (written\n  (timeStamp {})\n  (program "Vivado" (version "2018.2"))\n  (comment "Built on '{}'")\n  (comment "Built by 'BYU's spydrnet tool'")\n )\n)""".format(now.strftime("%Y %m %d %H %M %S"), now.strftime("%a %b %d %H:%M:%S %Z %Y")))
+        #print("WARNING: edif.py Line: {} - hard coded vivado version".format(self._lineno_()-1))
+        self._output_status_()
+        #print(self._data_.__dict__)
         self._new_line_()
         for library in self._data_.libraries:
             self._output_library_(library)
@@ -88,8 +90,42 @@ class ComposeEdif:
         
         self._lisp_decrement_()
         #print for debug only
-        print("Current LISP level (if not 0 there was a problem): {}".format(self._lisp_depth_))
-        
+        #print("Current LISP level (if not 0 there was a problem): {}".format(self._lisp_depth_))
+        if self._lisp_depth_ != 0:
+            print("There was an error with parenthesis matching off by ", end = "")
+            print(self._lisp_depth_)
+
+    def _output_status_(self):
+        self._new_line_()
+        self._lisp_increment_()
+        self._output_.write("status")
+        self._new_line_()
+        self._lisp_increment_()
+        self._output_.write("written")
+        self._new_line_()
+        self._lisp_increment_()
+        self._output_.write("timeStamp ")
+        now = datetime.now()
+        self._output_.write("{}".format(now.strftime("%Y %m %d %H %M %S")))
+        self._lisp_decrement_()
+        self._new_line_()
+        self._lisp_increment_()
+        self._output_.write("program ")
+        self._output_.write('"{}" '.format(self._data_._metadata['EDIF.status.written.program']))
+        self._lisp_increment_()
+        self._output_.write("version ")
+        self._output_.write('"{}"'.format(self._data_._metadata['EDIF.status.written.program.version']))
+        self._lisp_decrement_()
+        self._lisp_decrement_()
+        self._new_line_()
+        self._lisp_increment_()
+        self._output_.write('comment "Built by \'BYU spydrnet tool\'"')
+        self._lisp_decrement_()
+        self._new_line_()
+        self._lisp_decrement_()
+        self._new_line_()
+        self._lisp_decrement_()
+    
     def _lineno_(self):
         return inspect.currentframe().f_back.f_lineno
        

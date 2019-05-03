@@ -3,7 +3,7 @@ from spydrnet.composers.edif.composer import ComposeEdif
 import json
 
 print("Parsing Edif.........")
-edif_parser = EdifParser.from_filename(r"data\json_edif\temp.edf")
+edif_parser = EdifParser.from_filename(r"data/json_edif/temp.edf")
 edif_parser.parse()
 #print(edif_parser.netlist)
 print("Success")
