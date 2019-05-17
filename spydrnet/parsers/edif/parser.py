@@ -26,6 +26,7 @@ class EdifParser:
     def parse(self):
         self.initialize_tokenizer()
         self.netlist = self.parse_construct(self.parse_edif)
+        print("WARNING: edif/parser.py assumes downto in function parse_port()")
 
     def initialize_tokenizer(self):
         self.tokenizer = EdifTokenizer.from_filename(self.filename)
@@ -349,8 +350,7 @@ class EdifParser:
                     if match:
                         left_index = int(match.group(1))
                         right_index = int(match.group(2))
-                        assert (left_index >= right_index)
-                        port.lower_index = right_index
+                        port.lower_index = min(right_index, left_index)
 
             else: self.expect('|'.join([RENAME, ARRAY]))
             self.expect_end_construct()
