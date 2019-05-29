@@ -45,11 +45,12 @@ class ComposeEdif:
             self._data_ = json.load(fi)
 
     def _open_output_(self):
-        self._output_ = open(self.output_filename, 'w')
+        self._output_ = open(self.output_filename, 'w', buffering=1)
     
     def _output_environment_(self):
         self._lisp_increment_()
-        self._output_.write("edif top")
+        self._output_.write("edif ")
+        self._output_.write(self._data_._metadata["EDIF.identifier"])
         self._new_line_()
         
         self._lisp_increment_()
@@ -155,11 +156,11 @@ class ComposeEdif:
         self._new_line_()
 
     def _output_name_of_object_(self, obj):
-        if 'OldName' in obj._metadata:
+        if 'EDIF.original_identifier' in obj._metadata:
             self._lisp_increment_()
             self._output_.write("rename ")
-            self._output_.write(obj.name)
-            self._output_.write(" \"" + obj.data['OldName'] + "\"")
+            self._output_.write(obj._metadata["EDIF.identifier"])
+            self._output_.write(" \"" + obj._metadata['EDIF.original_identifier'] + "\"")
             self._lisp_decrement_()
         else:
             #print(obj)
@@ -212,6 +213,29 @@ class ComposeEdif:
     def _output_port_(self, port):
         self._lisp_increment_()
         self._output_.write("port ")
+        if port.inner_pins.__len__() > 1:
+            #TODO Clean up code in this if statement
+            self._lisp_increment_()
+            self._output_.write("array ")
+            #self._lisp_increment_()
+            #self._output_.write("rename ")
+            self._output_name_of_object_(port)
+            #self._output_.write(' "')
+            #self._output_.write(port._metadata["EDIF.original_identifier"])
+            #self._output_.write('"')
+            #self._lisp_decrement_()
+            self._output_.write(" ")
+            self._output_.write(str(port.inner_pins.__len__()))
+            self._lisp_decrement_()
+            self._output_.write(" ")
+            self._lisp_increment_()
+            self._output_.write("direction ")
+            # self._output_.write(port.direction)
+            self._output_.write(self._direction_to_string_(port.direction))  # str(port.direction))
+            self._lisp_decrement_()
+            self._lisp_decrement_()
+            self._new_line_()
+            return
         #self._output_.write(port.name)
         self._output_name_of_object_(port)
         self._lisp_increment_()
@@ -236,7 +260,8 @@ class ComposeEdif:
         self._lisp_increment_()
         self._output_.write("instance ")
         #print(vars(instance))
-        self._output_.write(self._get_edif_name_(instance))
+        #self._output_.write(self._get_edif_name_(instance))
+        self._output_name_of_object_(instance)
         self._output_.write(" ")
         self._lisp_increment_()
         self._output_.write("viewref ")
@@ -253,16 +278,25 @@ class ComposeEdif:
         self._lisp_decrement_()
         self._new_line_()
         #print(vars(instance))
-        if "properties" in instance._metadata:
-            properties = instance._metadata["properties"]
-            for key,value in properties:
-                self._output_property_(key, value)
+        if "EDIF.properties" in instance._metadata:
+            properties = instance._metadata["EDIF.properties"]
+            for prop in properties:
+                self._output_property_(prop)
         self._lisp_decrement_()
 
     def _output_cable_(self, cable):
         self._lisp_increment_()
         self._output_.write("net ")
-        self._output_.write(self._get_edif_name_(cable))
+        if cable._metadata.__len__() > 1:
+            self._lisp_increment_()
+            self._output_.write("rename ")
+            self._output_.write(self._get_edif_name_(cable))
+            self._output_.write(' "')
+            self._output_.write(cable._metadata['EDIF.original_identifier'])
+            self._output_.write('"')
+            self._lisp_decrement_()
+        else:
+            self._output_.write(self._get_edif_name_(cable))
         self._output_.write(" ")
         self._lisp_increment_()
         self._output_.write("joined")
@@ -273,21 +307,49 @@ class ComposeEdif:
                 #port = pin.port
                 #print(type(pin))
                 if isinstance(pin, OuterPin):
+                    self._output_inner_pin_(pin)
                     pin = pin.inner_pin
-                self._output_port_ref_(pin.port)
+                else:
+                    self._output_port_ref_(pin.port, self._get_edif_name_(cable))
         self._new_line_()
         self._lisp_decrement_()
         self._new_line_()
         self._lisp_decrement_()
 
-    def _output_port_ref_(self, port_ref):
+    def _output_inner_pin_(self, pin):
+        inner_pin = pin.inner_pin
         self._lisp_increment_()
         self._output_.write("portref ")
-        self._output_.write(self._get_edif_name_(port_ref))
+        self._output_.write(self._get_edif_name_(inner_pin.port))
         self._output_.write(" ")
         self._lisp_increment_()
         self._output_.write("instanceref ")
+        self._output_.write(pin.instance._metadata["EDIF.identifier"])
         self._lisp_decrement_()
+        self._lisp_decrement_()
+        self._new_line_()
+        pass
+
+    def _output_port_ref_(self, port_ref, cable_name):
+
+        self._lisp_increment_()
+        self._output_.write("portref ")
+        if hasattr(port_ref, "is_array"):
+            for x in range(port_ref.inner_pins.__len__()):
+                if cable_name == port_ref.inner_pins[x].wire.cable._metadata["EDIF.identifier"]:
+                    break
+            self._lisp_increment_()
+            self._output_.write("member ")
+            self._output_.write(self._get_edif_name_(port_ref))
+            self._output_.write(" ")
+            self._output_.write(str(x))
+            self._lisp_decrement_()
+        else:
+            self._output_.write(self._get_edif_name_(port_ref))
+       # self._output_.write(" ")
+       # self._lisp_increment_()
+       # self._output_.write("instanceref ")
+       # self._lisp_decrement_()
         self._lisp_decrement_()
         self._new_line_()
 
@@ -321,6 +383,21 @@ class ComposeEdif:
         self._lisp_increment_()
         self._output_.write('string "')
         self._output_.write(value)
+        self._output_.write('"')
+        self._lisp_decrement_()
+        self._lisp_decrement_()
+        self._new_line_()
+
+    def _output_property_(self, prop):
+        #TODO this only handles string properties for now
+        self._lisp_increment_()
+        key, value = prop.items()
+        self._output_.write("property ")
+        self._output_.write(key[1])
+        self._output_.write(" ")
+        self._lisp_increment_()
+        self._output_.write('string "')
+        self._output_.write(value[1])
         self._output_.write('"')
         self._lisp_decrement_()
         self._lisp_decrement_()

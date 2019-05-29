@@ -3,15 +3,47 @@ import re
 
 class EdifTokenizer:
     @staticmethod
+    def from_string(string):
+        import io
+        string_stream = io.StringIO(string)
+        tokenizer = EdifTokenizer(string_stream)
+        return tokenizer
+
+    @staticmethod
     def from_filename(filename):
         tokenizer = EdifTokenizer(filename)
         return tokenizer
     
-    def __init__(self, filename):
-        self.filename = filename
-        self.generator = self.generate_tokens()
+    def __init__(self, input_source):
         self.token = None
         self.next_token = None
+        self.line_number = 0
+
+        if isinstance(input_source, str):
+            self.input_stream = open(input_source, 'r')
+        else:
+            self.input_stream = input_source
+
+        self.generator = self.generate_tokens()
+
+    def __del__(self):
+        if hasattr(self, "input_stream"):
+            self.close()
+
+    def has_next(self):
+        try:
+            self.peek()
+            return True
+        except StopIteration:
+            return False
+
+    def next(self):
+        if self.next_token:
+            self.token = self.next_token
+            self.next_token = None
+        else:
+            self.token = next(self.generator)
+        return self.token
 
     def peek(self):
         if self.next_token:
@@ -20,19 +52,12 @@ class EdifTokenizer:
             self.next_token = next(self.generator)
             return self.next_token
 
-    def next(self):
-        if self.next_token:
-            self.token = self.next_token
-            self.next_token = None
-        else:
-            self.token = next(self.generator)
-
     def generate_tokens(self):
-        with open(self.filename, 'r') as fi:
+        try:
             self.line_number = 1
             in_quote = False
             token_buffer = list()
-            for buffer in iter(partial(fi.read, 32768), ""):
+            for buffer in iter(partial(self.input_stream.read, 32768), ""):
                 for ch in buffer:
                     if ch == '\n': self.line_number += 1
                     if in_quote:
@@ -65,6 +90,12 @@ class EdifTokenizer:
                     token = ''.join(token_buffer)
                     token_buffer.clear()
                     yield token
+        finally:
+            self.input_stream.close()
+
+    def close(self):
+        if self.input_stream:
+            self.input_stream.close()
 
     def expect(self, other):
         if not self.token_equals(other):
@@ -79,8 +110,14 @@ class EdifTokenizer:
     
     @staticmethod
     def equals(this, that):
-        if this == that or this.lower() == that:
+        if this == that:
             return True
+        else:
+            lowercase_this = this.lower()
+            if lowercase_this == that:
+                return True
+            elif lowercase_this == that.lower():
+                return True
         return False
 
     def expect_valid_identifier(self):
@@ -88,8 +125,8 @@ class EdifTokenizer:
             raise RuntimeError("Parse error: Expecting EDIF identifier on line {}, recieved {}".format(self.line_number, self.token))
 
     def is_valid_identifier(self):
-        if re.match(r"[a-zA-Z]|&\a*", self.token):
-            return True 
+        if re.match(r"[a-zA-Z]|&\a*", self.token) and len(self.token) <= 256:
+            return True
         return False
 
     def expect_valid_integerToken(self):
