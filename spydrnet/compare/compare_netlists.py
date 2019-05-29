@@ -4,9 +4,9 @@ import sys
 import logging
 import time
 
-filename_orig = r"fourBitCounter.edf"
+filename_orig = r"seven_segment_decoder.edf"
 # filename_composer = r"fourBitCounter_inverted.edf"
-filename_composer = r"fourBitCounter.edf"
+filename_composer = r"seven_segment_decoder_composed.edf"
 
 
 # filename_composer = r"fourBitCounter_composed.edf"
@@ -141,11 +141,29 @@ def compare_outer_pins(pin_orig, pin_composer):
     if get_identifier(pin_orig.inner_pin.port) != get_identifier(pin_composer.inner_pin.port):
         logging.error("Net does not connect the same ports")
         sys.exit()
+    for orig in range(pin_orig.inner_pin.port.inner_pins.__len__()):
+        if pin_orig.inner_pin.port.inner_pins[orig] == pin_orig.inner_pin:
+            break
+    for compose in range(pin_composer.inner_pin.port.inner_pins.__len__()):
+        if pin_composer.inner_pin.port.inner_pins[compose] == pin_composer.inner_pin:
+            break
+    if compose != orig:
+        logging.error("Net does not connect to the correct port")
+        sys.exit()
 
 
 def compare_inner_pins(pin_orig, pin_composer):
     if get_identifier(pin_orig.port) != get_identifier(pin_composer.port):
         logging.error("Net does not connect the same ports")
+        sys.exit()
+    for orig in range(pin_orig.port.inner_pins.__len__()):
+        if pin_orig == pin_orig.port.inner_pins[orig]:
+            break
+    for composer in range(pin_composer.port.inner_pins.__len__()):
+        if pin_composer == pin_composer.port.inner_pins[composer]:
+            break
+    if orig != composer:
+        logging.error("Net does not connect to the correct port")
         sys.exit()
 
 
