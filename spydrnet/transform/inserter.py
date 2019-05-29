@@ -53,15 +53,15 @@ class TMRInserter:
 
     # Returns a list of the original cable and the replicated cables
     def _generate_input(self, cable, net):
-        tmr0_cable = cable.parent.lookup_element(Cable, "EDIF.identifier", net + "_TMR_1")
-        tmr1_cable = cable.parent.lookup_element(Cable, "EDIF.identifier", net + "_TMR_2")
+        tmr0_cable = cable.parent.lookup_element(Cable, "EDIF.identifier", net + "_TMR_0")
+        tmr1_cable = cable.parent.lookup_element(Cable, "EDIF.identifier", net + "_TMR_1")
         return [cable, tmr0_cable, tmr1_cable]
 
     # Determine what can of voter needs to be inserted
     # Returns 0 if the replicate had driver
     # Returns 1 if the replicate does not have a driver
     def _determine_voter_type(self, net):
-        tmr_0_cable = net.parent.lookup_element(Cable, "EDIF.identifier", net.__getitem__("EDIF.identifier") + "_TMR_1")
+        tmr_0_cable = net.parent.lookup_element(Cable, "EDIF.identifier", net.__getitem__("EDIF.identifier") + "_TMR_0")
         wire = tmr_0_cable.wires[0]
         for pin in wire.pins:
             if pin.inner_pin.port.direction.name == "IN":
