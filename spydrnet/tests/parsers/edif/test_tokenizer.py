@@ -1,6 +1,7 @@
 import unittest
 import os
 import io
+import zipfile
 
 import spydrnet.tests as st
 from spydrnet.parsers.edif.tokenizer import EdifTokenizer
@@ -10,11 +11,37 @@ class TestEdifTokenizer(unittest.TestCase):
     def test_no_constructor_of_zero_argument(self):
         self.assertRaises(TypeError, EdifTokenizer)
 
-    def test_open_file(self):
-        test_file = os.path.join(st.testdata_dir, "n_bit_counter.edf")
+    def test_stream(self):
+        test_file = os.path.join(st.testdata_dir, "n_bit_counter.edf.zip")
+        zip = zipfile.ZipFile(test_file)
+        file_name = os.path.basename(test_file)
+        file_name = file_name[:file_name.rindex(".")]
+        stream = zip.open(file_name)
+        stream = io.TextIOWrapper(stream)
+        tokenizer = EdifTokenizer.from_stream(stream)
+        next_token = tokenizer.next()
+        self.assertEqual("(", next_token)
+
+    def test_open_zip_file(self):
+        test_file = os.path.join(st.testdata_dir, "n_bit_counter.edf.zip")
         tokenizer = EdifTokenizer.from_filename(test_file)
         next_token = tokenizer.next()
         self.assertEqual("(", next_token)
+
+    def test_open_file(self):
+        test_file = os.path.join(st.testdata_dir, "n_bit_counter.edf.zip")
+        file_name = os.path.basename(test_file)
+        file_name = file_name[:file_name.rindex(".")]
+        extract_path = os.path.join(st.testdata_dir, file_name)
+        if os.path.exists(extract_path):
+            os.remove(extract_path)
+        zip = zipfile.ZipFile(test_file)
+        zip.extract(file_name, st.testdata_dir)
+        tokenizer = EdifTokenizer.from_filename(extract_path)
+        next_token = tokenizer.next()
+        self.assertEqual("(", next_token)
+        tokenizer.close()
+        os.remove(extract_path)
 
     def test_empty_string(self):
         tokenizer = EdifTokenizer.from_string("")

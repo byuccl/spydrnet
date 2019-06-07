@@ -1,10 +1,17 @@
 from functools import partial
 import re
+import zipfile
+import io
+import os
 
 class EdifTokenizer:
     @staticmethod
+    def from_stream(stream):
+        tokenizer = EdifTokenizer(stream)
+        return tokenizer
+    
+    @staticmethod
     def from_string(string):
-        import io
         string_stream = io.StringIO(string)
         tokenizer = EdifTokenizer(string_stream)
         return tokenizer
@@ -20,7 +27,15 @@ class EdifTokenizer:
         self.line_number = 0
 
         if isinstance(input_source, str):
-            self.input_stream = open(input_source, 'r')
+            if zipfile.is_zipfile(input_source):
+                zip = zipfile.ZipFile(input_source)
+                filename = os.path.basename(input_source)
+                filename = filename[:filename.rindex(".")]
+                stream = zip.open(filename)
+                stream = io.TextIOWrapper(stream)
+                self.input_stream = stream
+            else:
+                self.input_stream = open(input_source, 'r')
         else:
             self.input_stream = input_source
 
