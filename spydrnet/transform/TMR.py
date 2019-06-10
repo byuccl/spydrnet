@@ -15,23 +15,32 @@ class TMR:
 
 if __name__ == "__main__":
 <<<<<<< transformation-unit_test
+<<<<<<< transformation-unit_test
     filename = "ports_diff_modules.edf"
     out_filename = "ports_diff_modules_test.edf"
 =======
     filename = "add.edf"
     out_filename = "add_test.edf"
 >>>>>>> Add basic TMR functionality
+=======
+    filename = "ports_diff_modules.edf"
+    out_filename = "ports_diff_modules_test.edf"
+>>>>>>> Implemented TMR across hierarchy
     parser = EdifParser.from_filename(filename)
     parser.parse()
     ir = parser.netlist
 
     triplicater = TMR()
 <<<<<<< transformation-unit_test
+<<<<<<< transformation-unit_test
+=======
+>>>>>>> Implemented TMR across hierarchy
     # cell_test = ['j_INST_0', 'b_INST_0', 'f_INST_0', "d_INST_0", 'h_INST_0', 'boston_INST_0']
     # net_test = ["h", "boston", "j"]
     cell_test = ["d_INST_0", "a"]
     # cell_test = ["a", "b"]
     net_test = ["d"]
+<<<<<<< transformation-unit_test
 =======
     cell_test = ["add0", "co_INST_0", "add7", "a", "seg", "seg2"]
     # net_test = ["segment_OBUF_7_"]
@@ -47,6 +56,8 @@ if __name__ == "__main__":
     # net_test = ["out_OBUF_0_", "out_OBUF_1_"]
     # net_test = ["out_OBUF_0_", "out_OBUF_1_", "out_OBUF_2_", "out_OBUF_3_"]
 >>>>>>> Add basic TMR functionality
+=======
+>>>>>>> Implemented TMR across hierarchy
 
     triplicater.run(cell_test, net_test, ir)
     compose = ComposeEdif()
