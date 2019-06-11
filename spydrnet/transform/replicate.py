@@ -4,7 +4,7 @@ from spydrnet.parsers.edif.parser import EdifParser
 
 
 # TODO rename file and class
-class Triplicater:
+class Replicator:
 
     # num_of_replications: The number of replications desired
     # ex. 2 will end with 3 instnaces of cells, 1 original and 2 replications
@@ -329,7 +329,7 @@ if __name__ == "__main__":
     parser.parse()
     ir = parser.netlist
 
-    triplicater = Triplicater(2)
+    triplicater = Replicator(2)
     # test = ["out_reg_0_", "out_reg_1_", "out_reg_2_", "out_reg_3_"]
     # test = ["out_0__i_1", "out_reg_0_", "out_1__i_1", "out_reg_1_",
     # "out_2__i_1", "out_reg_2_", "out_3__i_1", "out_reg_3_"]
