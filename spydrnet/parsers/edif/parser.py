@@ -6,6 +6,7 @@ from spydrnet.parsers.edif.edif_tokens import *
 from functools import reduce
 import re
 
+
 class EdifParser:
     def parse_construct(self, construct_parser):
         self.expect_begin_construct()
@@ -22,10 +23,11 @@ class EdifParser:
     def __init__(self):
         self.filename = None
         self.elements = list()
-    
+
     def parse(self):
         self.initialize_tokenizer()
         self.netlist = self.parse_construct(self.parse_edif)
+        self.tokenizer.__del__()
         print("WARNING: edif/parser.py assumes downto in function parse_port()")
 
     def initialize_tokenizer(self):
@@ -45,7 +47,7 @@ class EdifParser:
         self.parse_body()
         return self.pop_element()
 
-    def parse_header(self):        
+    def parse_header(self):
         self.parse_construct(self.parse_edifVersion)
         self.parse_construct(self.parse_edifLevel)
         self.parse_construct(self.parse_keywordMap)
@@ -66,7 +68,6 @@ class EdifParser:
         if level != 0:
             self.set_attribute(level)
         self.prefix_pop()
-
 
     def parse_keywordMap(self):
         self.expect(KEYWORD_MAP)
@@ -97,20 +98,28 @@ class EdifParser:
                 environment = self.elements[-1]
                 environment.add_library(library)
 
-            elif self.construct_is(DESIGN): self.parse_design()
-            elif self.construct_is(COMMENT): self.parse_comment()
-            elif self.construct_is(USER_DATA): self.parse_userData()
-            else: self.expect("|".join([STATUS, EXTERNAL, LIBRARY, DESIGN, COMMENT, USER_DATA]))
+            elif self.construct_is(DESIGN):
+                self.parse_design()
+            elif self.construct_is(COMMENT):
+                self.parse_comment()
+            elif self.construct_is(USER_DATA):
+                self.parse_userData()
+            else:
+                self.expect("|".join([STATUS, EXTERNAL, LIBRARY, DESIGN, COMMENT, USER_DATA]))
             self.expect_end_construct()
 
     def parse_status(self):
         self.expect(STATUS)
         self.prefix_append('status')
         while self.begin_construct():
-            if self.construct_is(WRITTEN): self.parse_written()
-            elif self.construct_is(COMMENT): self.parse_comment()
-            elif self.construct_is(USER_DATA): self.parse_userData()
-            else: self.expect("|".join([WRITTEN|COMMENT|USER_DATA]))
+            if self.construct_is(WRITTEN):
+                self.parse_written()
+            elif self.construct_is(COMMENT):
+                self.parse_comment()
+            elif self.construct_is(USER_DATA):
+                self.parse_userData()
+            else:
+                self.expect("|".join([WRITTEN | COMMENT | USER_DATA]))
             self.expect_end_construct()
         self.prefix_pop()
 
@@ -135,10 +144,14 @@ class EdifParser:
                 has_dataOrigin = self.check_for_multiples(DATA_ORIGIN, has_dataOrigin)
                 self.parse_dataOrigin()
 
-            elif self.construct_is(PROPERTY): self.parse_property()
-            elif self.construct_is(COMMENT): self.parse_comment()
-            elif self.construct_is(USER_DATA): self.parse_userData()
-            else: self.expect("|".join([AUTHOR, PROGRAM, DATA_ORIGIN, PROPERTY, COMMENT, USER_DATA]))
+            elif self.construct_is(PROPERTY):
+                self.parse_property()
+            elif self.construct_is(COMMENT):
+                self.parse_comment()
+            elif self.construct_is(USER_DATA):
+                self.parse_userData()
+            else:
+                self.expect("|".join([AUTHOR, PROGRAM, DATA_ORIGIN, PROPERTY, COMMENT, USER_DATA]))
             self.expect_end_construct()
         self.prefix_pop()
 
@@ -166,7 +179,7 @@ class EdifParser:
         self.prefix_append('program')
         program = self.parse_stringToken()
         self.set_attribute(program)
-        
+
         if self.begin_construct():
             self.expect(VERSION)
             self.prefix_append('version')
@@ -180,7 +193,7 @@ class EdifParser:
         library = Library()
         library.add_data_manager(DataManager.from_element_type_and_metadata_key(Definition, 'EDIF.identifier'))
         self.append_new_element(library)
-        
+
         self.expect(LIBRARY)
         self.parse_nameDef()
         self.parse_construct(self.parse_edifLevel)
@@ -196,9 +209,12 @@ class EdifParser:
                 definition = self.parse_cell()
                 library = self.elements[-1]
                 library.add_definition(definition)
-            elif self.construct_is(COMMENT): self.parse_comment()
-            elif self.construct_is(USER_DATA): self.parse_userData()
-            else: self.expect("|".join([STATUS, CELL, COMMENT, USER_DATA]))
+            elif self.construct_is(COMMENT):
+                self.parse_comment()
+            elif self.construct_is(USER_DATA):
+                self.parse_userData()
+            else:
+                self.expect("|".join([STATUS, CELL, COMMENT, USER_DATA]))
             self.expect_end_construct()
 
         return self.pop_element()
@@ -230,16 +246,21 @@ class EdifParser:
             if self.construct_is(STATUS):
                 has_status = self.check_for_multiples(STATUS, has_status)
                 self.parse_status()
-            
-            elif self.construct_is(VIEW): self.parse_view()
+
+            elif self.construct_is(VIEW):
+                self.parse_view()
             elif self.construct_is(VIEW_MAP):
                 has_viewMap = self.check_for_multiples(VIEW_MAP, has_viewMap)
                 self.parse_viewMap()
 
-            elif self.construct_is(PROPERTY): self.parse_property()
-            elif self.construct_is(COMMENT): self.parse_comment()
-            elif self.construct_is(USER_DATA): self.parse_userData()
-            else: self.expect('|'.join([STATUS, VIEW, VIEW_MAP, PROPERTY, COMMENT, USER_DATA]))
+            elif self.construct_is(PROPERTY):
+                self.parse_property()
+            elif self.construct_is(COMMENT):
+                self.parse_comment()
+            elif self.construct_is(USER_DATA):
+                self.parse_userData()
+            else:
+                self.expect('|'.join([STATUS, VIEW, VIEW_MAP, PROPERTY, COMMENT, USER_DATA]))
             self.expect_end_construct()
 
         return self.pop_element()
@@ -248,11 +269,12 @@ class EdifParser:
         self.expect(CELL_TYPE)
         self.prefix_append("cellType")
         if self.construct_is(GENERIC) \
-        or self.construct_is(TIE) \
-        or self.construct_is(RIPPER):
+                or self.construct_is(TIE) \
+                or self.construct_is(RIPPER):
             if not self.tokenizer.token_equals(GENERIC):
                 self.set_attribute(self.tokenizer.token)
-        else: self.expect("|".join([GENERIC, TIE, RIPPER]))
+        else:
+            self.expect("|".join([GENERIC, TIE, RIPPER]))
         self.tokenizer.next()
         self.prefix_pop()
 
@@ -269,15 +291,19 @@ class EdifParser:
             if self.construct_is(STATUS):
                 has_status = self.check_for_multiples(STATUS, has_status)
                 self.parse_status()
-            
+
             elif self.construct_is(CONTENTS):
                 has_contents = self.check_for_multiples(STATUS, has_contents)
                 self.parse_contents()
 
-            elif self.construct_is(COMMENT): self.parse_comment()
-            elif self.construct_is(PROPERTY): self.parse_property()
-            elif self.construct_is(USER_DATA): self.parse_userData()
-            else: self.expect('|'.join([STATUS, CONTENTS, COMMENT, PROPERTY, USER_DATA]))
+            elif self.construct_is(COMMENT):
+                self.parse_comment()
+            elif self.construct_is(PROPERTY):
+                self.parse_property()
+            elif self.construct_is(USER_DATA):
+                self.parse_userData()
+            else:
+                self.expect('|'.join([STATUS, CONTENTS, COMMENT, PROPERTY, USER_DATA]))
             self.expect_end_construct()
         self.prefix_pop()
 
@@ -285,47 +311,67 @@ class EdifParser:
         self.prefix_append('viewType')
         self.expect(VIEW_TYPE)
         if self.construct_is(BEHAVIOR) \
-        or self.construct_is(DOCUMENT) \
-        or self.construct_is(GRAPHIC) \
-        or self.construct_is(LOGICMODEL) \
-        or self.construct_is(MASKLAYOUT) \
-        or self.construct_is(NETLIST) \
-        or self.construct_is(PCBLAYOUT) \
-        or self.construct_is(SCHEMATIC) \
-        or self.construct_is(STRANGER) \
-        or self.construct_is(SYMBOLIC):
+                or self.construct_is(DOCUMENT) \
+                or self.construct_is(GRAPHIC) \
+                or self.construct_is(LOGICMODEL) \
+                or self.construct_is(MASKLAYOUT) \
+                or self.construct_is(NETLIST) \
+                or self.construct_is(PCBLAYOUT) \
+                or self.construct_is(SCHEMATIC) \
+                or self.construct_is(STRANGER) \
+                or self.construct_is(SYMBOLIC):
             if not self.tokenizer.token_equals(NETLIST):
                 self.set_attribute(self.tokenizer.token)
-        else: self.expect("|".join([BEHAVIOR, DOCUMENT, GRAPHIC, LOGICMODEL, MASKLAYOUT, NETLIST, PCBLAYOUT, SCHEMATIC, STRANGER, SYMBOLIC]))
+        else:
+            self.expect("|".join(
+                [BEHAVIOR, DOCUMENT, GRAPHIC, LOGICMODEL, MASKLAYOUT, NETLIST, PCBLAYOUT, SCHEMATIC, STRANGER,
+                 SYMBOLIC]))
         self.tokenizer.next()
         self.prefix_pop()
 
     def parse_interface(self):
         self.expect(INTERFACE)
         while self.begin_construct():
-            if self.construct_is(PORT): 
+            if self.construct_is(PORT):
                 port = self.parse_port()
                 cell = self.elements[-1]
                 cell.add_port(port)
 
-            elif self.construct_is(PORT_BUNDLE): raise NotImplementedError()
-            elif self.construct_is(SYMBOL): raise NotImplementedError()
-            elif self.construct_is(PROTECTION_FRAME): raise NotImplementedError()
-            elif self.construct_is(ARRAY_RELATED_INFO): raise NotImplementedError()
-            elif self.construct_is(PARAMETER): raise NotImplementedError()
-            elif self.construct_is(JOINED): raise NotImplementedError()
-            elif self.construct_is(MUST_JOIN): raise NotImplementedError()
-            elif self.construct_is(WEAK_JOINED): raise NotImplementedError()
-            elif self.construct_is(PERMUTABLE): raise NotImplementedError()
-            elif self.construct_is(TIMING): raise NotImplementedError()
-            elif self.construct_is(SIMULATE): raise NotImplementedError()
-            elif self.construct_is(DESIGNATOR): raise NotImplementedError()
-            elif self.construct_is(WEAK_JOINED): raise NotImplementedError()
+            elif self.construct_is(PORT_BUNDLE):
+                raise NotImplementedError()
+            elif self.construct_is(SYMBOL):
+                raise NotImplementedError()
+            elif self.construct_is(PROTECTION_FRAME):
+                raise NotImplementedError()
+            elif self.construct_is(ARRAY_RELATED_INFO):
+                raise NotImplementedError()
+            elif self.construct_is(PARAMETER):
+                raise NotImplementedError()
+            elif self.construct_is(JOINED):
+                raise NotImplementedError()
+            elif self.construct_is(MUST_JOIN):
+                raise NotImplementedError()
+            elif self.construct_is(WEAK_JOINED):
+                raise NotImplementedError()
+            elif self.construct_is(PERMUTABLE):
+                raise NotImplementedError()
+            elif self.construct_is(TIMING):
+                raise NotImplementedError()
+            elif self.construct_is(SIMULATE):
+                raise NotImplementedError()
+            elif self.construct_is(DESIGNATOR):
+                raise NotImplementedError()
+            elif self.construct_is(WEAK_JOINED):
+                raise NotImplementedError()
 
-            elif self.construct_is(PROPERTY): self.parse_property()
-            elif self.construct_is(COMMENT): self.parse_comment()
-            elif self.construct_is(USER_DATA): self.parse_userData()
-            else: self.expect('|'.join([PORT, PROPERTY, COMMENT, USER_DATA]))
+            elif self.construct_is(PROPERTY):
+                self.parse_property()
+            elif self.construct_is(COMMENT):
+                self.parse_comment()
+            elif self.construct_is(USER_DATA):
+                self.parse_userData()
+            else:
+                self.expect('|'.join([PORT, PROPERTY, COMMENT, USER_DATA]))
             self.expect_end_construct()
 
     def parse_port(self):
@@ -337,14 +383,14 @@ class EdifParser:
                 port = self.elements[-1]
                 port.initialize_pins(1)
 
-            elif self.construct_is(ARRAY): 
+            elif self.construct_is(ARRAY):
                 dimension_sizes = self.parse_array()
                 pin_count = reduce((lambda x, y: x * y), dimension_sizes)
                 port = self.elements[-1]
                 port.initialize_pins(pin_count)
                 port.is_array = True
                 if 'EDIF.original_identifier' in port:
-                    #TODO: what about multi-dimensional ports, non-downto ports, and when non-square brackets are used <0:17><31:0>
+                    # TODO: what about multi-dimensional ports, non-downto ports, and when non-square brackets are used <0:17><31:0>
                     original_identifier = port['EDIF.original_identifier']
                     match = re.match(r".*\[(\d+):(\d+)\]", original_identifier)
                     if match:
@@ -352,13 +398,14 @@ class EdifParser:
                         right_index = int(match.group(2))
                         port.lower_index = min(right_index, left_index)
 
-            else: self.expect('|'.join([RENAME, ARRAY]))
+            else:
+                self.expect('|'.join([RENAME, ARRAY]))
             self.expect_end_construct()
         else:
             self.parse_nameDef()
             port = self.elements[-1]
             port.initialize_pins(1)
-            #TODO: what about single pin array ports with a non_zero starting index.
+            # TODO: what about single pin array ports with a non_zero starting index.
 
         has_direction = False
         while self.begin_construct():
@@ -368,19 +415,31 @@ class EdifParser:
                 port = self.elements[-1]
                 port.direction = direction
 
-            elif self.construct_is(UNUSED): raise NotImplementedError()
-            elif self.construct_is(DESIGNATOR): raise NotImplementedError()
-            elif self.construct_is(DC_FANIN_LOAD): raise NotImplementedError()
-            elif self.construct_is(DC_FANOUT_LOAD): raise NotImplementedError()
-            elif self.construct_is(DC_MAX_FANIN): raise NotImplementedError()
-            elif self.construct_is(DC_MAX_FANOUT): raise NotImplementedError()
-            elif self.construct_is(AC_LOAD): raise NotImplementedError()
-            elif self.construct_is(PORT_DELAY): raise NotImplementedError()
+            elif self.construct_is(UNUSED):
+                raise NotImplementedError()
+            elif self.construct_is(DESIGNATOR):
+                raise NotImplementedError()
+            elif self.construct_is(DC_FANIN_LOAD):
+                raise NotImplementedError()
+            elif self.construct_is(DC_FANOUT_LOAD):
+                raise NotImplementedError()
+            elif self.construct_is(DC_MAX_FANIN):
+                raise NotImplementedError()
+            elif self.construct_is(DC_MAX_FANOUT):
+                raise NotImplementedError()
+            elif self.construct_is(AC_LOAD):
+                raise NotImplementedError()
+            elif self.construct_is(PORT_DELAY):
+                raise NotImplementedError()
 
-            elif self.construct_is(PROPERTY): self.parse_property()
-            elif self.construct_is(COMMENT): self.parse_comment()
-            elif self.construct_is(USER_DATA): self.parse_userData()
-            else: self.expect('|'.join([DIRECTION, PROPERTY, COMMENT, USER_DATA]))
+            elif self.construct_is(PROPERTY):
+                self.parse_property()
+            elif self.construct_is(COMMENT):
+                self.parse_comment()
+            elif self.construct_is(USER_DATA):
+                self.parse_userData()
+            else:
+                self.expect('|'.join([DIRECTION, PROPERTY, COMMENT, USER_DATA]))
             self.expect_end_construct()
         return self.elements.pop()
 
@@ -395,17 +454,21 @@ class EdifParser:
     def parse_direction(self):
         self.expect(DIRECTION)
         direction = Port.Direction.UNDEFINED
-        if self.construct_is(INOUT): direction = Port.Direction.INOUT
-        elif self.construct_is(INPUT): direction = Port.Direction.IN
-        elif self.construct_is(OUTPUT): direction = Port.Direction.OUT
-        else: self.expect('|'.join([INOUT, INPUT, OUTPUT]))
+        if self.construct_is(INOUT):
+            direction = Port.Direction.INOUT
+        elif self.construct_is(INPUT):
+            direction = Port.Direction.IN
+        elif self.construct_is(OUTPUT):
+            direction = Port.Direction.OUT
+        else:
+            self.expect('|'.join([INOUT, INPUT, OUTPUT]))
         self.tokenizer.next()
         return direction
 
     def parse_contents(self):
         self.expect(CONTENTS)
         while self.begin_construct():
-            if self.construct_is(INSTANCE): 
+            if self.construct_is(INSTANCE):
                 instance = self.parse_instance()
                 definition = self.elements[-1]
                 definition.add_instance(instance)
@@ -415,24 +478,41 @@ class EdifParser:
                 definition = self.elements[-1]
                 definition.add_cable(cable)
 
-            elif self.construct_is(OFF_PAGE_CONNECTOR): raise NotImplementedError()
-            elif self.construct_is(FIGURE): raise NotImplementedError()
-            elif self.construct_is(SECTION): raise NotImplementedError()
-            elif self.construct_is(NET_BUNDLE): raise NotImplementedError()
-            elif self.construct_is(PAGE): raise NotImplementedError()
-            elif self.construct_is(COMMENT_GRAPHICS): raise NotImplementedError()
-            elif self.construct_is(PORT_IMPLEMENTATION): raise NotImplementedError()
-            elif self.construct_is(TIMING): raise NotImplementedError()
-            elif self.construct_is(SIMULATE): raise NotImplementedError()
-            elif self.construct_is(WHEN): raise NotImplementedError()
-            elif self.construct_is(FOLLOW): raise NotImplementedError()
-            elif self.construct_is(LOGIC_PORT): raise NotImplementedError()
-            elif self.construct_is(BOUNDING_BOX): raise NotImplementedError()
-            elif self.construct_is(TIMING): raise NotImplementedError()
-            
-            elif self.construct_is(COMMENT): self.parse_comment()
-            elif self.construct_is(USER_DATA): self.parse_userData()
-            else: self.expect('|'.join([INSTANCE, NET, COMMENT, USER_DATA]))
+            elif self.construct_is(OFF_PAGE_CONNECTOR):
+                raise NotImplementedError()
+            elif self.construct_is(FIGURE):
+                raise NotImplementedError()
+            elif self.construct_is(SECTION):
+                raise NotImplementedError()
+            elif self.construct_is(NET_BUNDLE):
+                raise NotImplementedError()
+            elif self.construct_is(PAGE):
+                raise NotImplementedError()
+            elif self.construct_is(COMMENT_GRAPHICS):
+                raise NotImplementedError()
+            elif self.construct_is(PORT_IMPLEMENTATION):
+                raise NotImplementedError()
+            elif self.construct_is(TIMING):
+                raise NotImplementedError()
+            elif self.construct_is(SIMULATE):
+                raise NotImplementedError()
+            elif self.construct_is(WHEN):
+                raise NotImplementedError()
+            elif self.construct_is(FOLLOW):
+                raise NotImplementedError()
+            elif self.construct_is(LOGIC_PORT):
+                raise NotImplementedError()
+            elif self.construct_is(BOUNDING_BOX):
+                raise NotImplementedError()
+            elif self.construct_is(TIMING):
+                raise NotImplementedError()
+
+            elif self.construct_is(COMMENT):
+                self.parse_comment()
+            elif self.construct_is(USER_DATA):
+                self.parse_userData()
+            else:
+                self.expect('|'.join([INSTANCE, NET, COMMENT, USER_DATA]))
             self.expect_end_construct()
 
     def parse_instance(self):
@@ -440,20 +520,26 @@ class EdifParser:
         self.expect(INSTANCE)
         self.parse_nameDef()
         if self.begin_construct():
-            if self.construct_is(VIEW_REF): 
+            if self.construct_is(VIEW_REF):
                 definition = self.parse_viewRef()
                 instance = self.elements[-1]
                 instance.definition = definition
 
-            elif self.construct_is(VIEW_LIST): raise NotImplementedError()
-            else: self.expect(VIEW_REF)
+            elif self.construct_is(VIEW_LIST):
+                raise NotImplementedError()
+            else:
+                self.expect(VIEW_REF)
             self.expect_end_construct()
 
         while self.begin_construct():
-            if self.construct_is(PROPERTY): self.parse_property()
-            elif self.construct_is(COMMENT): self.parse_comment()
-            elif self.construct_is(USER_DATA): self.parse_userData()
-            else: self.expect('|'.join([PROPERTY, COMMENT, USER_DATA]))
+            if self.construct_is(PROPERTY):
+                self.parse_property()
+            elif self.construct_is(COMMENT):
+                self.parse_comment()
+            elif self.construct_is(USER_DATA):
+                self.parse_userData()
+            else:
+                self.expect('|'.join([PROPERTY, COMMENT, USER_DATA]))
             self.expect_end_construct()
         return self.pop_element()
 
@@ -502,17 +588,21 @@ class EdifParser:
         self.append_new_element(Cable())
         self.expect(NET)
         self.parse_nameDef()
-        self.elements[-1].initialize_wires(1) # EDIF nets are single wire cables.
+        self.elements[-1].initialize_wires(1)  # EDIF nets are single wire cables.
         self.parse_construct(self.parse_joined)
 
         while self.begin_construct():
-            if self.construct_is(PROPERTY): self.parse_property()
-            elif self.construct_is(COMMENT): self.parse_comment()
-            elif self.construct_is(USER_DATA): self.parse_userData()
-            else: self.expect('|'.join([PROPERTY, COMMENT, USER_DATA]))
+            if self.construct_is(PROPERTY):
+                self.parse_property()
+            elif self.construct_is(COMMENT):
+                self.parse_comment()
+            elif self.construct_is(USER_DATA):
+                self.parse_userData()
+            else:
+                self.expect('|'.join([PROPERTY, COMMENT, USER_DATA]))
             self.expect_end_construct()
         return self.pop_element()
-    
+
     def parse_joined(self):
         self.expect(JOINED)
         while self.begin_construct():
@@ -520,13 +610,16 @@ class EdifParser:
                 pin = self.parse_portRef()
                 wire = self.elements[-1].get_wire(0)
                 wire.connect_pin(pin)
-            elif self.construct_is(PORT_LIST): raise NotImplementedError()
-            elif self.construct_is(GLOBAL_PORT_REF): raise NotImplementedError()
-            else: self.expect(PORT_REF)
+            elif self.construct_is(PORT_LIST):
+                raise NotImplementedError()
+            elif self.construct_is(GLOBAL_PORT_REF):
+                raise NotImplementedError()
+            else:
+                self.expect(PORT_REF)
             self.expect_end_construct()
 
     def parse_portRef(self):
-        self.prefix_append('portRef') 
+        self.prefix_append('portRef')
         self.expect(PORT_REF)
         index = 0
         instance_or_definition = self.elements[-2]
@@ -537,18 +630,19 @@ class EdifParser:
             self.expect_end_construct()
         else:
             self.parse_nameRef()
-        
+
         while self.begin_construct():
-            if self.construct_is(PORT_REF): raise NotImplementedError()
-            elif self.construct_is(INSTANCE_REF): 
+            if self.construct_is(PORT_REF):
+                raise NotImplementedError()
+            elif self.construct_is(INSTANCE_REF):
                 instance_or_definition = self.parse_instanceRef()
-            elif self.construct_is(VIEW_REF): raise NotImplementedError()
+            elif self.construct_is(VIEW_REF):
+                raise NotImplementedError()
             self.expect_end_construct()
         port_identifier = self.elements[-1].pop('EDIF.portRef.identifier')
         pin = instance_or_definition.get_pin(port_identifier, index)
         self.prefix_pop()
         return pin
-
 
     def parse_instanceRef(self):
         self.prefix_append('instanceRef')
@@ -565,7 +659,6 @@ class EdifParser:
         self.prefix_pop()
         return instance
 
-
     def parse_member(self):
         self.expect(MEMBER)
         self.parse_nameDef()
@@ -574,7 +667,7 @@ class EdifParser:
             indicies.append(self.parse_integerToken())
             self.expect_end_construct()
         return indicies
-    
+
     def parse_viewMap(self):
         self.expect(VIEW_MAP)
         raise NotImplementedError()
@@ -625,40 +718,52 @@ class EdifParser:
         while self.begin_construct():
             if self.construct_is(OWNER):
                 has_owner = self.check_for_multiples(OWNER, has_owner)
-                raise NotImplementedError() # self.parse_owner()
+                raise NotImplementedError()  # self.parse_owner()
 
             elif self.construct_is(UNIT):
                 has_unit = self.check_for_multiples(UNIT, has_unit)
-                raise NotImplementedError() # self.parse_unit()
+                raise NotImplementedError()  # self.parse_unit()
 
-            elif self.construct_is(PROPERTY): raise NotImplementedError() # self.parse_property()
-            elif self.construct_is(COMMENT): raise NotImplementedError() # self.parse_comment()
+            elif self.construct_is(PROPERTY):
+                raise NotImplementedError()  # self.parse_property()
+            elif self.construct_is(COMMENT):
+                raise NotImplementedError()  # self.parse_comment()
             self.expect_end_construct()
         self.prefix_pop()
 
     def parse_typedValue(self):
-        if self.construct_is(BOOLEAN): self.parse_boolean()
-        elif self.construct_is(INTEGER): self.parse_integer()
-        elif self.construct_is(MI_NO_MAX): raise NotImplementedError()
-        elif self.construct_is(NUMBER): self.parse_number()
-        elif self.construct_is(POINT): raise NotImplementedError()
-        elif self.construct_is(STRING): self.parse_string()
-        else: self.expect('|'.join([BOOLEAN, INTEGER, NUMBER, STRING]))
+        if self.construct_is(BOOLEAN):
+            return self.parse_boolean()
+        elif self.construct_is(INTEGER):
+            return self.parse_integer()
+        elif self.construct_is(MI_NO_MAX):
+            raise NotImplementedError()
+        elif self.construct_is(NUMBER):
+            return self.parse_number()
+        elif self.construct_is(POINT):
+            raise NotImplementedError()
+        elif self.construct_is(STRING):
+            return self.parse_string()
+        else:
+            return self.expect('|'.join([BOOLEAN, INTEGER, NUMBER, STRING]))
 
     def parse_boolean(self):
         self.expect(BOOLEAN)
         self.expect_begin_construct()
         self.tokenizer.next()
-        if self.tokenizer.token_equals(TRUE): result = True
-        elif self.tokenizer.token_equals(FALSE): result = False
-        else: self.expect('|'.join([TRUE, FALSE]))
+        if self.tokenizer.token_equals(TRUE):
+            result = True
+        elif self.tokenizer.token_equals(FALSE):
+            result = False
+        else:
+            self.expect('|'.join([TRUE, FALSE]))
         self.expect_end_construct()
         return result
-    
+
     def parse_integer(self):
         self.expect(INTEGER)
         return self.parse_integerToken()
-    
+
     def parse_number(self):
         self.expect(NUMBER)
         if self.begin_construct():
@@ -672,12 +777,12 @@ class EdifParser:
         self.expect(E)
         mantissa = self.parse_integerToken()
         exponent = self.parse_integerToken()
-        result = mantissa*10.0**exponent
+        result = mantissa * 10.0 ** exponent
         return result
 
     def parse_string(self):
         self.expect(STRING)
-        self.parse_stringToken()
+        return self.parse_stringToken()
 
     def parse_owner(self):
         raise NotImplementedError()
@@ -733,14 +838,14 @@ class EdifParser:
         element = self.elements.pop()
         del element['metadata_prefix']
         return element
-    
+
     def prefix_append(self, value):
         element = self.elements[-1]
         element['metadata_prefix'].append(value)
 
     def prefix_pop(self):
         return self.elements[-1]['metadata_prefix'].pop()
-    
+
     def set_attribute(self, value):
         element = self.elements[-1]
         element['.'.join(element['metadata_prefix'])] = value
@@ -763,9 +868,10 @@ class EdifParser:
 
     def check_for_multiples(self, token, already_contains):
         if already_contains:
-            raise RuntimeError("Parse error: Multiple occurances of {}, near line {}".format(token, self.tokenizer.line_number))
+            raise RuntimeError(
+                "Parse error: Multiple occurances of {}, near line {}".format(token, self.tokenizer.line_number))
         return True
-    
+
     def expect_begin_construct(self):
         self.tokenizer.next()
         if LEFT_PAREN != self.tokenizer.token:
@@ -775,7 +881,7 @@ class EdifParser:
         if RIGHT_PAREN != self.tokenizer.peek():
             return True
         return False
-    
+
     def expect_end_construct(self):
         self.tokenizer.next()
         if RIGHT_PAREN != self.tokenizer.token:
@@ -803,4 +909,5 @@ if __name__ == "__main__":
     filename = r"C:\Users\akeller9\workspace\SpyDrNet\data\large_edif\osfbm.edf"
     parser = EdifParser.from_filename(filename)
     import cProfile
+
     cProfile.run('parser.parse()')
