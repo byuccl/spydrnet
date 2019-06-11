@@ -1,15 +1,15 @@
-from spydrnet.transform.triplicate import Triplicater
+from spydrnet.transform.replicate import Replicator
 from spydrnet.transform.inserter import TMRInserter
 from spydrnet.parsers.edif.parser import EdifParser
 from spydrnet.composers.edif.composer import ComposeEdif
 
 class TMR:
     def __init__(self):
-        self.triplicator = Triplicater(3)
+        self.replicator = Replicator(3)
         self.inserter = TMRInserter()
 
     def run(self, cell_target, net_target, ir=None):
-        self.triplicator.run(cell_target, ir)
+        self.replicator.run(cell_target, ir)
         self.inserter.run(net_target, ir)
 
 
