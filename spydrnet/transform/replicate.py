@@ -3,16 +3,16 @@ from spydrnet.ir import *
 from spydrnet.parsers.edif.parser import EdifParser
 
 
-# TODO rename file and class
+
 class Replicator:
 
     # num_of_replications: The number of replications desired
     # ex. 2 will end with 3 instnaces of cells, 1 original and 2 replications
-    def __init__(self, num_of_replications=None):
+    def __init__(self, num_of_replications=None, ir=None):
         self.cells = dict()
         self.unconnectedPins = dict()
-        self.ir = None
-        self.ports = None
+        self.ir = ir
+        self.ports = dict()
         if num_of_replications is None:
             self.num_of_replications = 2
         else:
@@ -22,9 +22,10 @@ class Replicator:
     # ir: intermediate representation
     def run(self, target, ir=None):
         if target is None:
-            return ir
-        self.ir = ir
-        self._process_ir_(ir)
+            return
+        if ir is not None:
+            self.ir = ir
+        self._process_ir_()
         self.replicate_ports(target)
         added_cells = self._replicate_cells_(target)
         self._connect_nets_(target, added_cells)
@@ -51,7 +52,8 @@ class Replicator:
             obj.__setitem__("EDIF.identifier", obj.__getitem__("EDIF.identifier") + suffix)
         if "EDIF.original_identifier" in metadata:
             section = obj.__getitem__("EDIF.original_identifier").split('[', )
-            obj.__setitem__("EDIF.original_identifier", section[0] + suffix + '[' + section[1])
+            # obj.__setitem__("EDIF.original_identifier", section[0] + suffix + '[' + section[1])
+            obj._metadata["EDIF.original_identifier"] = section[0] + suffix + '[' + section[1]
 
     # Makes a copy of instance
     def _copy_instance_(self, instance):
@@ -87,42 +89,6 @@ class Replicator:
         self._add_suffix(new_cable, "_TMR_" + str(num))
         return new_cable
 
-    def connect_cable_to_cells(self, cable, group, new_wire):
-        for pin in cable.wires[0].pins:
-            if isinstance(pin, InnerPin):
-                continue
-            try:
-                new_wire.connect_pin(group[pin.instance].outer_pins[pin.inner_pin])
-            except KeyError:
-                pass
-
-    def is_connected_to_replicate_pin(self, cable):
-        for pin in cable.wires[0].pins:
-            if isinstance(pin, OuterPin):
-                if pin.inner_pin.port in self.ports:
-                    return True
-            else:
-                if pin.port in self.ports:
-                    return True
-        return False
-
-    def connect_cable_to_port(self, cable, num, new_wire):
-        num_ = num - 1
-        for pin in cable.wires[0].pins:
-            if isinstance(pin, OuterPin):
-                if pin.inner_pin.port in self.ports:
-                    test = self.ports[pin.inner_pin.port][num_]
-                    position = self.port_position(pin.inner_pin, pin.inner_pin.port)
-                    outer_pin = OuterPin()
-                    outer_pin.inner_pin = test.inner_pins[position]
-                    outer_pin.instance = pin.instance
-                    new_wire.connect_pin(outer_pin)
-            else:
-                if pin.port in self.ports:
-                    test = self.ports[pin.port][num_]
-                    position = self.port_position(pin, pin.port)
-                    new_wire.connect_pin(test.inner_pins[position])
-
     # Connect added cells together and make sure they have drivers
     def _connect_nets_(self, target, added_cells):
         cables = self._identify_cables_(target)
@@ -150,23 +116,42 @@ class Replicator:
                     cable.parent.add_cable(new_cable)
             replication += 1
 
-    def connect_cable(self, wire):
-        for pin in wire.pins:
+    def connect_cable_to_cells(self, cable, group, new_wire):
+        for pin in cable.wires[0].pins:
             if isinstance(pin, InnerPin):
                 continue
-            if pin.inner_pin.port not in self.ports:
-                continue
-            port = pin.inner_pin.port
-            x = self.port_position(pin.inner_pin, port)
-            ports = self.ports[port]
-            for port in ports:
-                outer_pin = self.find_other_side(port.inner_pins[x])
-                if outer_pin is None:
-                    outer_pin = OuterPin()
-                    outer_pin.inner_pin = port.inner_pins[x]
-                    outer_pin.instance = pin.instance
+            try:
+                new_wire.connect_pin(group[pin.instance].outer_pins[pin.inner_pin])
+            except KeyError:
+                pass
 
-                wire.connect_pin(outer_pin)
+    def connect_cable_to_port(self, cable, num, new_wire):
+        num_ = num - 1
+        for pin in cable.wires[0].pins:
+            if isinstance(pin, OuterPin):
+                if pin.inner_pin.port in self.ports:
+                    test = self.ports[pin.inner_pin.port]
+                    test = test[num_]
+                    position = self.port_position(pin.inner_pin, pin.inner_pin.port)
+                    outer_pin = OuterPin()
+                    outer_pin.inner_pin = test.inner_pins[position]
+                    outer_pin.instance = pin.instance
+                    new_wire.connect_pin(outer_pin)
+            else:
+                if pin.port in self.ports:
+                    test = self.ports[pin.port][num_]
+                    position = self.port_position(pin, pin.port)
+                    new_wire.connect_pin(test.inner_pins[position])
+
+    def is_connected_to_replicate_pin(self, cable):
+        for pin in cable.wires[0].pins:
+            if isinstance(pin, OuterPin):
+                if pin.inner_pin.port in self.ports:
+                    return True
+            else:
+                if pin.port in self.ports:
+                    return True
+        return False
 
     def port_position(self, pin, port):
         for x in range(len(port.inner_pins)):
@@ -219,8 +204,8 @@ class Replicator:
         instance.__setitem__("EDIF.properties", properties)
 
     # Process given ir creating a dictionary from name to the instance with the same name
-    def _process_ir_(self, ir):
-        for library in ir.libraries:
+    def _process_ir_(self):
+        for library in self.ir.libraries:
             for definition in library.definitions:
                 for instance in definition.instances:
                     self.cells[instance._metadata["EDIF.identifier"]] = instance
@@ -307,7 +292,6 @@ class Replicator:
                     test = self.find_other_side(pin)
                     stack.append(test)
         return port
-        pass
 
     def find_other_side(self, pin):
         for library in self.ir.libraries:
@@ -323,22 +307,22 @@ class Replicator:
             pass
 
 
-if __name__ == "__main__":
-    filename = "fourBitCounter.edf"
-    parser = EdifParser.from_filename(filename)
-    parser.parse()
-    ir = parser.netlist
+#if __name__ == "__main__":
+#    filename = "fourBitCounter.edf"
+#    parser = EdifParser.from_filename(filename)
+#    parser.parse()
+#    ir = parser.netlist
 
-    triplicater = Replicator(2)
-    # test = ["out_reg_0_", "out_reg_1_", "out_reg_2_", "out_reg_3_"]
-    # test = ["out_0__i_1", "out_reg_0_", "out_1__i_1", "out_reg_1_",
-    # "out_2__i_1", "out_reg_2_", "out_3__i_1", "out_reg_3_"]
-    # test = ["out_0__i_1", "out_reg_3_"]
-    # test = ["out_0__i_1", "out_reg_0_"]
-    test = ["out_0__i_1", "out_reg_0_", "out_reg_1_"]
-    # test = ["out_reg_0_"]
-    triplicater.run(test, ir)
-    # pr.print_stats(sort="tottime")
-    compose = ComposeEdif()
+#    triplicater = Replicator(2)
+#    # test = ["out_reg_0_", "out_reg_1_", "out_reg_2_", "out_reg_3_"]
+#    # test = ["out_0__i_1", "out_reg_0_", "out_1__i_1", "out_reg_1_",
+#    # "out_2__i_1", "out_reg_2_", "out_3__i_1", "out_reg_3_"]
+#    # test = ["out_0__i_1", "out_reg_3_"]
+#    # test = ["out_0__i_1", "out_reg_0_"]
+#    test = ["out_0__i_1", "out_reg_0_", "out_reg_1_"]
+#    # test = ["out_reg_0_"]
+#    triplicater.run(test, ir)
+#    # pr.print_stats(sort="tottime")
+#    compose = ComposeEdif()
 
-    compose.run(ir, "test.edf")
+#    compose.run(ir, "test.edf")
