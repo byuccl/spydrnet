@@ -1,6 +1,7 @@
 import unittest
+import os
 
-from spydrnet.transform.util import find_object
+from spydrnet.transform.util import find_object, build_name
 from spydrnet.transform.replicate import Replicator
 from spydrnet.parsers.edif.parser import EdifParser
 from spydrnet.ir import *
@@ -88,21 +89,21 @@ class TestReplicater(unittest.TestCase):
         replicate._add_suffix(instance, "_TMR")
         self.assertTrue(instance.__getitem__("EDIF.identifier") == old_identifier + "_TMR")
 
-    # def test_add_suffix_multi_bit_wire(self):
-    #     parser = EdifParser.from_filename("TMR_hierarchy.edf")
-    #     parser.parse()
-    #     ir = parser.netlist
-    #     replicate = Replicator(ir=ir)
-    #     cable = find_object(ir, "delta/alpha[1]", "cable")
-    #     old_identifier = cable.__getitem__("EDIF.identifier")
-    #     old_originial_identifer = cable.__getitem__("EDIF.original_identifier")
-    #     # replicate._add_suffix(cable, "_TMR")
-    #     cable = Cable()
-    #     cable.__setitem__("EDIF.identifier", "alpha_1_")
-    #     cable.__setitem__("EDIF.original_identifier", "alpha[1]")
-    #     replicate._add_suffix(cable, "_TMR")
-    #     self.assertTrue(cable.__getitem__("EDIF.identifier") == old_identifier + "_TMR")
-    #     self.assertTrue(cable.__getitem__("EDIF.original_identifier" == "alpha_TMR[1]"))
+    def test_add_suffix_multi_bit_wire(self):
+        parser = EdifParser.from_filename("TMR_hierarchy.edf")
+        parser.parse()
+        ir = parser.netlist
+        replicate = Replicator(ir=ir)
+        cable = find_object(ir, "delta/alpha[1]", "cable")
+        old_identifier = cable.__getitem__("EDIF.identifier")
+        old_originial_identifer = cable.__getitem__("EDIF.original_identifier")
+        replicate._add_suffix(cable, "_TMR")
+        # cable = Cable()
+        # cable.__setitem__("EDIF.identifier", "alpha_1_")
+        # cable.__setitem__("EDIF.original_identifier", "alpha[1]")
+        # replicate._add_suffix(cable, "_TMR")
+        self.assertTrue(cable.__getitem__("EDIF.identifier") == old_identifier + "_TMR")
+        self.assertTrue(cable.__getitem__("EDIF.original_identifier") == "alpha_TMR[1]")
 
     def test_copy_instance(self):
         parser = EdifParser.from_filename("TMR_hierarchy.edf")
@@ -239,6 +240,15 @@ class TestReplicater(unittest.TestCase):
         replicate.run(targets)
         for x in range(1, 3):
             for target in targets:
+
+                temp = replicate.cells[target]
+                for key, temp in  temp.outer_pins.items():
+                    break
+                temp = temp.wire.cable
+                build_name(ir, temp)
+
+
+
                 cell = find_object(ir, target, "instance")
                 new_cell = find_object(ir, target + "_TMR_" + str(x), "instance")
                 self.assertTrue(cell.parent_definition == new_cell.parent_definition)
@@ -267,6 +277,212 @@ class TestReplicater(unittest.TestCase):
             self.assertTrue(check1 and check2)
             cable = find_object(ir, "delta/beta" + "_TMR_" + str(x), "cable")
             self.assertTrue(len(cable.wires[0].pins) == 1)
+
+
+class TestReplicaterRegression(unittest.TestCase):
+    def setUp(self):
+        replicator = Replicator()
+
+    def test_run(self):
+        parser = EdifParser.from_filename("TMR_hierarchy.edf")
+        parser.parse()
+        ir = parser.netlist
+        target = ["b_INST_0", "beta_INST_0"]
+        replicator = Replicator()
+        replicator.run(target, ir)
+        replicated_instance = self.check_instance_replication(ir, target, replicator.cells)
+        ports = self.check_port_replication(ir, target, replicator.cells)
+        replicated_cables = self.check_cable_replication(ports[0], replicator.cells, ir, target)
+        self.check_cable_connection(replicated_instance, ports[1], replicated_cables)
+
+
+
+
+        # Unzip test file
+        # Read in netlist
+        # Read in targets
+        # Run replicator
+        # Check to see if the instances were replicated corrected
+        # Check to see if the correct ports were replicated
+        # Check to see if the correct cables were replicated
+        # Check to see if the replicated cables are connected to correct instances/ports
+        pass
+
+    def check_instance_replication(self, ir, targets, cells):
+        replicated_instance = list()
+        for replicate in range(1, 3):
+            for target in targets:
+                _ = build_name(ir, cells[target])
+                instance = find_object(ir, _ + "_TMR_" + str(replicate), "instance")
+                self.assertFalse(instance is None)
+                replicated_instance.append(instance)
+        unreplicated_instances = set(cells).difference(set(targets))
+        for replicate in range(1, 3):
+            for instance in unreplicated_instances:
+                _ = build_name(ir, cells[instance])
+                test = find_object(ir, _ + "_TMR_" + str(replicate), "instance")
+                self.assertTrue(test is None)
+        return replicated_instance
+
+    def check_port_replication(self, ir, targets, cells):
+        temp = list()
+        for target in targets:
+            temp.append(cells[target])
+        replicated_ports = self.determine_replicate_ports(temp, ir)
+        temp23 = list()
+        ports = self.get_ports(ir)
+        for replicate in range(1, 3):
+            for port in replicated_ports:
+                _ = build_name(ir, port)
+                test = find_object(ir, _ + "_TMR_" + str(replicate), "port")
+                self.assertFalse(test is None)
+                temp23.append(test)
+                ports.pop(test.__getitem__("EDIF.identifier"))
+        test = set(ports)
+        test = test.difference(set(replicated_ports))
+        for port in replicated_ports:
+            ports.pop(port.__getitem__("EDIF.identifier"))
+        unreplicated_ports = set(ports).difference(replicated_ports)
+        for replicate in range(1, 3):
+            for port in unreplicated_ports:
+                _ = build_name(ir, ports[port])
+                test = find_object(ir, _ + "_TMR_" + str(replicate), "port")
+                self.assertTrue(test is None)
+        return [replicated_ports, temp23]
+
+    def check_cable_replication(self, ports, cells, ir, targets):
+        cables = self.get_cables(ir)
+        pins = list()
+        for target in targets:
+            for inner_pin, outer_pin in cells[target].outer_pins.items():
+                pins.append(outer_pin)
+        for port in ports:
+            for inner_pin in port.inner_pins:
+                pins.append(inner_pin)
+        replicated_cables = set()
+        for pin in pins:
+            for temp in pin.wire.pins:
+                if temp == pin and not (isinstance(temp, OuterPin) and temp.inner_pin.port.direction == Port.Direction.OUT):
+                    continue
+                if temp in pins:
+                    replicated_cables.add(pin.wire.cable)
+                    continue
+                if isinstance(temp, OuterPin) and (temp.inner_pin in pins or temp.inner_pin.port.direction == Port.Direction.OUT):
+                    replicated_cables.add(pin.wire.cable)
+        replicated_cables_ = dict()
+        for replicate in range(1, 3):
+            for cable in replicated_cables:
+                _ = build_name(ir, cable)
+                test = find_object(ir, _ + "_TMR_" + str(replicate), "cable")
+                self.assertFalse(test is None)
+                cables.pop(test.__getitem__("EDIF.identifier"))
+                try:
+                    cables.pop(cable.__getitem__('EDIF.identifier'))
+                except KeyError:
+                    pass
+                replicated_cables_[test.__getitem__("EDIF.identifier")] = test
+        for replicate in range(1, 3):
+            for key, cable in cables.items():
+                _ = build_name(ir, cable)
+                test = find_object(ir, _ + "_TMR_" + str(replicate), "cable")
+                self.assertTrue(test is None)
+        return replicated_cables_
+
+    def check_cable_connection(self, replicated_cells, replicated_ports, replicated_cables):
+        for replicated_cell in replicated_cells:
+            replicate = replicated_cell.__getitem__("EDIF.identifier")[-6:]
+            for key, pin in replicated_cell.outer_pins.items():
+                cable = pin.wire.cable
+                name = cable.__getitem__("EDIF.identifier")
+                length = len(name)
+                if length > 6 and name[-6:-1] == "_TMR_":
+                    self.assertTrue(name[-6:] == replicate)
+                else:
+                    self.assertFalse(name + replicate in replicated_cables)
+        pass
+        for replicated_port in replicated_ports:
+            replicate = replicated_port.__getitem__("EDIF.identifier")[-6:]
+            for pin in replicated_port.inner_pins:
+                cable = pin.wire.cable
+                name = cable.__getitem__("EDIF.identifier")
+                length = len(name)
+                if length > 6 and name[-6:-1] == "_TMR_":
+                    self.assertTrue(name[-6:] == replicate)
+                else:
+                    self.assertFalse(name + replicate in replicated_cables)
+        for key, replicated_cable in replicated_cables.items():
+            replicate = replicated_cable.__getitem__("EDIF.identifier")[-6:]
+            for pin in replicated_cable.wires[0].pins:
+                if isinstance(pin, OuterPin):
+                    temp = pin.instance.__getitem__("EDIF.identifier")[-6:]
+                    test = pin.instance.__getitem__("EDIF.identifier")[-6:] == replicate
+                    port = pin.inner_pin.port
+                    self.assertTrue(pin.instance.__getitem__("EDIF.identifier")[-6:] == replicate
+                                    or port.__getitem__("EDIF.identifier")[-6:] == replicate)
+                else:
+                    self.assertTrue(pin.port.__getitem__("EDIF.identifier")[-6:] == replicate)
+
+    def determine_replicate_ports(self, cells, ir):
+        output_pin = set()
+        input_pin = set()
+        for cell in cells:
+            for inner_pin, outer_pin in cell.outer_pins.items():
+                if inner_pin.port.direction == Port.Direction.IN:
+                    input_pin = input_pin.union(self.trace_pin(outer_pin, ir))
+                else:
+                    output_pin = output_pin.union(self.trace_pin(outer_pin, ir))
+        ports = output_pin.intersection(input_pin)
+        return ports
+
+    def get_ports(self, ir):
+        ports = dict()
+        for library in ir.libraries:
+            for definition in library.definitions:
+                for port in definition.ports:
+                    if port.__getitem__("EDIF.identifier") in ports:
+                        if type(ports[port.__getitem__("EDIF.identifier")]) == Port:
+                            ports[port.__getitem__("EDIF.identifier")] = [ports[port.__getitem__("EDIF.identifier")]]
+                        ports[port.__getitem__("EDIF.identifier")].append(port)
+                    ports[port.__getitem__("EDIF.identifier")] = port
+        return ports
+
+    def get_cables(self, ir):
+        cables = dict()
+        for library in ir.libraries:
+            for definition in library.definitions:
+                for cable in definition.cables:
+                    if cable.__getitem__("EDIF.identifier") in cables:
+                        if type(cables[cable.__getitem__("EDIF.identifier")]) == Port:
+                            cables[cable.__getitem__("EDIF.identifier")] = [cables[cable.__getitem__("EDIF.identifier")]]
+                        cables[cable.__getitem__("EDIF.identifier")].append(cable)
+                    cables[cable.__getitem__("EDIF.identifier")] = cable
+        return cables
+
+    def trace_pin(self, pin, ir):
+        ports = set()
+        trash = set()
+        stack = list()
+        stack.append(pin)
+        trash.add(pin)
+        while len(stack) > 0:
+            pin = stack.pop()
+            for pin_ in pin.wire.pins:
+                if pin_ not in trash:
+                    stack.append(pin_)
+                    if isinstance(pin_, InnerPin):
+                        ports.add(pin_.port)
+                        test = build_name(ir, pin_.port)
+                        test = find_object(ir, "delta/omega", "instance")
+                        for key, value in test.outer_pins.items():
+                            if key == pin_:
+                                if value not in trash:
+                                    trash.add(value)
+                                    stack.append(value)
+                    else:
+                        if pin_.inner_pin.wire is not None:
+                            ports.add(pin_.inner_pin.port)
+                    trash.add(pin_)
+        return ports
 
 
 if __name__ == '__main__':
