@@ -4,6 +4,26 @@ from spydrnet.parsers.edif.parser import EdifParser
 
 def find_object(ir, my_string, type):
     directory = my_string.split('/')
+    if len(directory) == 1:
+        for library in ir.libraries:
+            for definition in library.definitions:
+                if type == 'cable':
+                    for cable in definition.cables:
+                        temp = cable.__getitem__('EDIF.identifier')
+                        if cable.__getitem__('EDIF.identifier') == directory[0] or (
+                                'EDIF.original_identifier' in cable._metadata and
+                                cable.__getitem__('EDIF.original_identifier') == directory[0]):
+                            return cable
+                elif type == 'instance':
+                    for instance in definition.instances:
+                        temp = instance.__getitem__('EDIF.identifier')
+                        if instance.__getitem__('EDIF.identifier') == directory[0]:
+                            return instance
+                elif type == 'port':
+                    for port in definition.ports:
+                        temp = port.__getitem__('EDIF.identifier')
+                        if port.__getitem__('EDIF.identifier') == directory[0]:
+                            return port
     start = None
     for library in ir.libraries:
         for definition in library.definitions:
