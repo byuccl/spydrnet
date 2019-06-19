@@ -247,8 +247,6 @@ class TestReplicater(unittest.TestCase):
                 temp = temp.wire.cable
                 build_name(ir, temp)
 
-
-
                 cell = find_object(ir, target, "instance")
                 new_cell = find_object(ir, target + "_TMR_" + str(x), "instance")
                 self.assertTrue(cell.parent_definition == new_cell.parent_definition)
@@ -278,24 +276,124 @@ class TestReplicater(unittest.TestCase):
             cable = find_object(ir, "delta/beta" + "_TMR_" + str(x), "cable")
             self.assertTrue(len(cable.wires[0].pins) == 1)
 
+    def test_cable_connecting_replicated_ports(self):
+        parser = EdifParser.from_filename("ports_diff_modules.edf")
+        parser.parse()
+        ir = parser.netlist
+        replicate = Replicator(ir=ir)
+        replicate._process_ir_()
+        target = ["b_INST_0", "d_INST_0"]
+        replicate.run(target)
+        ports_set_one = set()
+        ports_set_two = set()
+        port = find_object(ir, "a/b_TMR_1", "port")
+        self.assertFalse(port is None)
+        ports_set_one.add(port)
+        port = find_object(ir, "a/b_TMR_2", "port")
+        self.assertFalse(port is None)
+        ports_set_two.add(port)
+        port = find_object(ir, "b/c_TMR_1", "port")
+        self.assertFalse(port is None)
+        ports_set_one.add(port)
+        port = find_object(ir, "b/c_TMR_2", "port")
+        self.assertFalse(port is None)
+        ports_set_two.add(port)
+        cable = find_object(ir, "temp_TMR_1", "cable")
+        self.assertFalse(cable is None)
+        for pin in cable.wires[0].pins:
+            self.assertTrue(pin.inner_pin.port in ports_set_one)
+        cable = find_object(ir, "temp_TMR_2", "cable")
+        self.assertFalse(cable is None)
+        for pin in cable.wires[0].pins:
+            self.assertTrue(pin.inner_pin.port in ports_set_two)
+        print()
+
+    def test_port_replicate_one_instance(self):
+        parser = EdifParser.from_filename("multi_port.edf")
+        parser.parse()
+        ir = parser.netlist
+        replicate = Replicator(ir=ir)
+        replicate._process_ir_()
+        target = ["m_1__INST_0", "ut_OBUF_inst_i_1"]
+        replicate.run(target)
+        ports = set()
+        ports.add(find_object(ir, "phoenix/m", "port"))
+        ports.add(find_object(ir, "phoenix/m_TMR_1", "port"))
+        ports.add(find_object(ir, "phoenix/m_TMR_2", "port"))
+        cable = find_object(ir, "phoenix/m_1_", "cable")
+        for pin in cable.wires[0].pins:
+            if isinstance(pin, OuterPin):
+                continue
+            self.assertTrue(pin.port in ports)
+        print()
+
+import shutil
+import glob
+import zipfile
+import csv
+
+import spydrnet.tests as st
+import spydrnet.tests as hello
+from spydrnet.composers.edif.composer import ComposeEdif
 
 class TestReplicaterRegression(unittest.TestCase):
     def setUp(self):
         replicator = Replicator()
 
     def test_run(self):
-        parser = EdifParser.from_filename("TMR_hierarchy.edf")
-        parser.parse()
-        ir = parser.netlist
-        target = ["b_INST_0", "beta_INST_0"]
-        replicator = Replicator()
-        replicator.run(target, ir)
-        replicated_instance = self.check_instance_replication(ir, target, replicator.cells)
-        ports = self.check_port_replication(ir, target, replicator.cells)
-        replicated_cables = self.check_cable_replication(ports[0], replicator.cells, ir, target)
-        self.check_cable_connection(replicated_instance, ports[1], replicated_cables)
+        # parser = EdifParser.from_filename("TMR_hierarchy.edf")
+        # parser.parse()
+        # ir = parser.netlist
+        # target = ["b_INST_0", "beta_INST_0"]
+        # replicator = Replicator()
+        # replicator.run(target, ir)
+        # replicated_instance = self.check_instance_replication(ir, target, replicator.cells)
+        # ports = self.check_port_replication(ir, target, replicator.cells)
+        # replicated_cables = self.check_cable_replication(ports[0], replicator.cells, ir, target)
+        # self.check_cable_connection(replicated_instance, ports[1], replicated_cables)
 
+        if os.path.exists("temp"):
+            shutil.rmtree("temp")
+        if os.path.exists("errors.txt"):
+            os.remove("errors.txt")
 
+        test = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+        edif_files = sorted(glob.glob(os.path.join(test, "*.edf.zip")), key=os.path.getsize)
+        passed = True
+
+        for filename in edif_files:
+            print(filename)
+            zip_ref = zipfile.ZipFile(filename, 'r')
+            zip_ref.extractall("temp")
+            zip_ref.close()
+            edif_file = glob.glob("temp/*.edf")
+            target_file = glob.glob("temp/*.csv")
+
+            parser = EdifParser.from_filename(edif_file[0])
+            parser.parse()
+            ir = parser.netlist
+
+            with open(target_file[0]) as csv_file:
+                csv_reader = csv.reader(csv_file, delimiter=',')
+                for row in csv_reader:
+                    target = row
+
+            replicator = Replicator()
+            replicator.run(target, ir)
+
+            composer = ComposeEdif()
+            composer.run(ir, "temp/out.edf")
+
+            replicated_instance = self.check_instance_replication(ir, target, replicator.cells)
+            ports = self.check_port_replication(ir, target, replicator.cells)
+            replicated_cables = self.check_cable_replication(ports[0], replicator.cells, ir, target)
+            self.check_cable_connection(replicated_instance, ports[1], replicated_cables)
+
+            if os.path.exists("temp"):
+                shutil.rmtree("temp", ignore_errors=True)
+            print()
+
+            print()
 
 
         # Unzip test file
@@ -357,18 +455,32 @@ class TestReplicaterRegression(unittest.TestCase):
             for inner_pin, outer_pin in cells[target].outer_pins.items():
                 pins.append(outer_pin)
         for port in ports:
+            test = build_name(ir, port)
+            test = test.split('/')
+            temp = ""
+            for x in range(len(test) - 1):
+                temp = test[x]
+            test = find_object(ir, temp, "instance")
+            outpin = test.outer_pins[port.inner_pins[0]]
             for inner_pin in port.inner_pins:
                 pins.append(inner_pin)
+                pins.append(test.outer_pins[inner_pin])
         replicated_cables = set()
         for pin in pins:
+            if isinstance(pin, OuterPin) and pin.inner_pin.port.direction == Port.Direction.OUT:
+                replicated_cables.add(pin.wire.cable)
+            if isinstance(pin, InnerPin) and pin.port.direction == Port.Direction.IN:
+                replicated_cables.add(pin.wire.cable)
             for temp in pin.wire.pins:
+                if temp not in pins:
+                    continue
                 if temp == pin and not (isinstance(temp, OuterPin) and temp.inner_pin.port.direction == Port.Direction.OUT):
                     continue
-                if temp in pins:
-                    replicated_cables.add(pin.wire.cable)
-                    continue
-                if isinstance(temp, OuterPin) and (temp.inner_pin in pins or temp.inner_pin.port.direction == Port.Direction.OUT):
-                    replicated_cables.add(pin.wire.cable)
+                elif isinstance(temp, OuterPin) and temp.inner_pin.port.direction == Port.Direction.OUT:
+                    replicated_cables.add(temp.wire.cable)
+                elif isinstance(pin, OuterPin):
+                    if isinstance(temp, OuterPin):
+                        pass
         replicated_cables_ = dict()
         for replicate in range(1, 3):
             for cable in replicated_cables:
@@ -472,7 +584,13 @@ class TestReplicaterRegression(unittest.TestCase):
                     if isinstance(pin_, InnerPin):
                         ports.add(pin_.port)
                         test = build_name(ir, pin_.port)
-                        test = find_object(ir, "delta/omega", "instance")
+                        test = test.split('/')
+                        temp =""
+                        for x in range(len(test) - 1):
+                            temp = test[x]
+                        test = find_object(ir, temp, "instance")
+                        if test is None:
+                            continue
                         for key, value in test.outer_pins.items():
                             if key == pin_:
                                 if value not in trash:
@@ -481,6 +599,9 @@ class TestReplicaterRegression(unittest.TestCase):
                     else:
                         if pin_.inner_pin.wire is not None:
                             ports.add(pin_.inner_pin.port)
+                            if pin_.inner_pin not in trash:
+                                stack.append(pin_.inner_pin)
+                                trash.add(pin_.inner_pin)
                     trash.add(pin_)
         return ports
 
