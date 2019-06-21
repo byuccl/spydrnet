@@ -21,6 +21,29 @@ class Utility:
             else:
                 raise TypeError("Expected a Instance, got a", type(instance))
 
+    def get_hierarchical_name(self, obj):
+        name = obj.__getitem__("EDIF.identifier")
+        if type(obj) == Instance:
+            parent_definition = obj.parent_definition
+            ir = obj.parent_definition.library.environment
+        else:
+            parent_definition = obj.definition
+            ir = obj.definition.library.environment
+        while True:
+            end = True
+            for library in ir.libraries:
+                for definition in library.definitions:
+                    if definition == parent_definition:
+                        continue
+                    for instance in definition.instances:
+                        if instance.definition == parent_definition:
+                            end = False
+                            name = instance.__getitem__("EDIF.identifier") + '/' + name
+                            parent_definition = instance.parent_definition
+            if end:
+                break
+        name = parent_definition.__getitem__("EDIF.identifier") + '/' + name
+        return name
 
     def _trace_definition(self, definition, name, leaf_cells):
         if name == "":
@@ -32,7 +55,6 @@ class Utility:
                     leaf_cells.append(name + '/' + instance.__getitem__("EDIF.identifier"))
                 break
             self._trace_definition(instance.definition, name + '/' + instance.__getitem__("EDIF.identifier"), leaf_cells)
-        print()
 
     def _find_top(self, ir):
         top = None
@@ -54,7 +76,7 @@ if __name__ == '__main__':
     parser.parse()
     ir = parser.netlist
     util = Utility()
-    # test = util.get_leaf_cells(ir)
+    test = util.get_leaf_cells(ir)
     instance = ir.libraries[1].definitions[1].instances[0]
-    test = util.get_cell_type(instance)
-    print()
+    test1 = util.get_cell_type(instance)
+    test2 = util.get_hierarchical_name(instance)

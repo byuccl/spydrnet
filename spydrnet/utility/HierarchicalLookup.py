@@ -9,6 +9,8 @@ class HierarchicalLookup:
         self._cable_hashmap = dict()
         self._port_hashmap = dict()
         self._instance_hashmap = dict()
+        self._pin_hashmap = dict()
+        self._wire_hashmap = dict()
         self._build_hashmaps()
 
     def get_instance_from_name(self, hierarchical_name):
@@ -35,6 +37,7 @@ class HierarchicalLookup:
 
     def get_pin_from_name(self, hierarchical_name):
         # return < list of cell inst, append parent port, append pin>
+        return self._pin_hashmap[hierarchical_name]
         pass
 
     def _build_hashmaps(self):
@@ -49,7 +52,6 @@ class HierarchicalLookup:
         #     self._trace_definition(instance.definition, hierarchical_name + '/' + name, trace)
         #     trace.pop()
         self._trace_definition(top, hierarchical_name, list())
-        print()
 
 
     def _trace_definition(self, definition, hierarchical_name, trace):
@@ -57,11 +59,29 @@ class HierarchicalLookup:
             name = cable.__getitem__('EDIF.identifier')
             trace.append(cable)
             self._cable_hashmap[hierarchical_name + '/' + name] = trace.copy()
+            if len(cable.wires) == 1:
+                trace.append(cable.wires[0])
+                self._wire_hashmap[hierarchical_name + '/' + name + '/' + name] = trace.copy()
+                trace.pop()
+            else:
+                for x in range(len(cable.wires)):
+                    trace.append(cable.wires[x])
+                    self._wire_hashmap[hierarchical_name + '/' + name + '/' + name + '_' + str(x) + '_'] = trace.copy()
+                    trace.pop()
             trace.pop()
         for port in definition.ports:
             name = port.__getitem__('EDIF.identifier')
             trace.append(port)
-            self.port_hashmap[hierarchical_name + '/' + name] = trace.copy()
+            self._port_hashmap[hierarchical_name + '/' + name] = trace.copy()
+            if len(port.inner_pins) == 1:
+                trace.append(port.inner_pins[0])
+                self._pin_hashmap[hierarchical_name + '/' + name + '/' + name] = trace.copy()
+                trace.pop()
+            else:
+                for x in range(len(port.inner_pins)):
+                    trace.append(port.inner_pins[x])
+                    self._pin_hashmap[hierarchical_name + '/' + name + '/' + name + '_' + str(x) + '_'] = trace.copy()
+                    trace.pop()
             trace.pop()
         for instance in definition.instances:
             name = instance.__getitem__('EDIF.identifier')
@@ -69,7 +89,6 @@ class HierarchicalLookup:
             self._instance_hashmap[hierarchical_name + '/' + name] = trace.copy()
             self._trace_definition(instance.definition, hierarchical_name + '/' + name, trace)
             trace.pop()
-        print()
 
     def _find_top(self):
         top = None
