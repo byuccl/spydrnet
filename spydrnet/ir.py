@@ -128,8 +128,11 @@ class Library(Element):
         self.add_definition(definition)
         return definition
 
-    def add_definition(self, definition):
-        self.definitions.append(definition)
+    def add_definition(self, definition, position=None):
+        if position is not None:
+            self.definitions.insert(position, definition)
+        else:
+            self.definitions.append(definition)
         definition.library = self
         self.setitem_callback(definition)
 
