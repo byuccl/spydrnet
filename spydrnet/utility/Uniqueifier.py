@@ -14,21 +14,19 @@ class Uniquifier:
         pass
 
     def run(self, ir):
-        reverse_topological_order = self.get_reverse_topological_order(ir)
+        reverse_topological_order = self._get_reverse_topological_order(ir)
         for definition in reverse_topological_order:
             self._make_definition_copies(definition, self.definition_count[definition] - 1)
-        self.clean(ir.libraries[1].definitions[-1])
+        self._clean(ir.libraries[1].definitions[-1])
         
 
     def _get_reverse_topological_order(self, ir):
         top_def = ir.libraries[-1].definitions[-1]
         depth_first_search = collections.deque()
-        stack = collections.deque()
         for instance in top_def.instances:
             if list(instance.outer_pins.keys())[0].wire is not None:
-                stack.append(instance.definition)
-        while len(stack) != 0:
-            depth_first_search.extend(self.trace_definition(stack.pop()))
+                depth_first_search.extend(self._trace_definition(instance.definition))
+
         visited = set()
         reverse_topological_order = list()
         while len(depth_first_search) != 0:
@@ -46,9 +44,9 @@ class Uniquifier:
             inner_pin = list(instance.outer_pins.keys())[0]
             if inner_pin.wire is None:
                 continue
-            top_order.extend(self.trace_definition(instance.definition))
+            top_order.extend(self._trace_definition(instance.definition))
         top_order.append(definition)
-        self.increment_definition_count(definition)
+        self._increment_definition_count(definition)
         return top_order
 
     def _increment_definition_count(self, definition):
@@ -63,22 +61,22 @@ class Uniquifier:
         self.definition_copies[def_to_copy] = list()
         for i in range(num_of_copies):
             def_copy = Definition()
-            self.copy_metadata(def_to_copy, def_copy, i)
-            self.copy_ports(def_to_copy, def_copy)
-            self.copy_instances(def_to_copy, def_copy)
-            self.copy_cable(def_to_copy, def_copy)
+            self._copy_metadata(def_to_copy, def_copy, i)
+            self._copy_ports(def_to_copy, def_copy)
+            self._copy_instances(def_to_copy, def_copy)
+            self._copy_cable(def_to_copy, def_copy)
             self.definition_copies[def_to_copy].append(def_copy)
             for y in range(len(def_to_copy.library.definitions)):
                 if def_to_copy == def_to_copy.library.definitions[y]:
                     break
             def_to_copy.library.add_definition(def_copy, y)
-        self.definition_clean_up(def_to_copy)
+        self._definition_clean_up(def_to_copy)
         return self.definition_copies
 
     def _copy_ports(self, def_to_copy, def_copy):
         for port_to_copy in def_to_copy.ports:
             port_copy = def_copy.create_port()
-            self.copy_metadata(port_to_copy, port_copy)
+            self._copy_metadata(port_to_copy, port_copy)
             port_copy.direction = port_to_copy.direction
             for inner_pin_to_copy in port_to_copy.inner_pins:
                 self.original_inner_pin_to_new_inner_pin[inner_pin_to_copy] = port_copy.create_pin()
@@ -89,7 +87,7 @@ class Uniquifier:
     def _copy_instances(self, def_to_copy, def_copy):
         for instance_to_copy in def_to_copy.instances:
             instance_copy = def_copy.create_instance()
-            self.copy_metadata(instance_to_copy, instance_copy)
+            self._copy_metadata(instance_to_copy, instance_copy)
             for inner_pin, outer_pin_to_copy in instance_to_copy.outer_pins.items():
                 outer_pin_copy = OuterPin()
                 outer_pin_copy.instance = instance_copy
@@ -98,16 +96,16 @@ class Uniquifier:
                 self.outer_pin_map[outer_pin_to_copy] = outer_pin_copy
             instance_copy.definition = instance_to_copy.definition
             if inner_pin.wire is not None:
-                self.make_instances_unique(instance_copy)
+                self._make_instances_unique(instance_copy)
             self.instance_map[instance_to_copy] = instance_copy
 
     def _copy_cable(self, def_to_copy, def_copy):
         for cable_to_copy in def_to_copy.cables:
             cable_copy = def_copy.create_cable()
-            self.copy_metadata(cable_to_copy, cable_copy)
+            self._copy_metadata(cable_to_copy, cable_copy)
             for wire_to_copy in cable_to_copy.wires:
                 wire_copy = cable_copy.create_wire()
-                self.copy_wire(wire_to_copy, wire_copy)
+                self._copy_wire(wire_to_copy, wire_copy)
 
     def _copy_wire(self, wire_to_copy, wire_copy):
         for pin in wire_to_copy.pins:
@@ -120,13 +118,13 @@ class Uniquifier:
         if definition in self.definition_copies:
             for instance in definition.instances:
                 if instance.definition in self.definition_copies:
-                    self.make_instances_unique(instance)
+                    self._make_instances_unique(instance)
                     
 
     def _clean(self, definition):
         for instance in definition.instances:
             if instance.definition in self.definition_copies:
-                self.make_instances_unique(instance)
+                self._make_instances_unique(instance)
 
     def _make_instances_unique(self, instance_copy):
         if len(self.definition_copies[instance_copy.definition]) == 0:
