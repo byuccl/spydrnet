@@ -476,7 +476,10 @@ class EdifParser:
             elif self.construct_is(NET):
                 cable = self.parse_net()
                 definition = self.elements[-1]
-                definition.add_cable(cable)
+                try:
+                    definition.add_cable(cable)
+                except KeyError:
+                    raise KeyError("Error on line",  self.tokenizer.line_number)
 
             elif self.construct_is(OFF_PAGE_CONNECTOR):
                 raise NotImplementedError()
@@ -674,6 +677,31 @@ class EdifParser:
 
     def parse_design(self):
         self.expect(DESIGN)
+        # self.tokenizer.next()
+        instance = Instance()
+        instance['metadata_prefix'] = list()
+        self.elements.append(instance)
+        if self.begin_construct():
+            test = self.parse_rename()
+            self.tokenizer.next()
+        else:
+            instance['EDIF.identifier'] = self.tokenizer.next()
+            print()
+        self.tokenizer.next()
+        self.tokenizer.next()
+        definition_name = self.tokenizer.next()
+        self.tokenizer.next()
+        self.tokenizer.next()
+        library_name = self.tokenizer.next()
+        for library in self.elements[0].libraries:
+            if library['EDIF.identifier'] == library_name:
+                break
+        for definition in library.definitions:
+            if definition['EDIF.identifier'] == definition_name:
+                break
+        instance.definition = definition
+        self.elements.pop()
+        self.elements[0].top_instance = instance
         self.skip_until_next_construct()
 
     def parse_dataOrigin(self):

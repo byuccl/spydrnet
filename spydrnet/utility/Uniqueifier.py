@@ -21,7 +21,7 @@ class Uniquifier:
         
 
     def _get_reverse_topological_order(self, ir):
-        top_def = ir.libraries[-1].definitions[-1]
+        top_def = ir.top_instance.definition
         depth_first_search = collections.deque()
         for instance in top_def.instances:
             if list(instance.outer_pins.keys())[0].wire is not None:
@@ -162,6 +162,7 @@ if __name__ == '__main__':
     ir = parser.netlist
     uniquifer = Uniquifier()
     uniquifer.run(ir)
+    ir = ir
     composer = ComposeEdif()
     composer.run(ir, 'unique_challenge_out.edf')
     pass

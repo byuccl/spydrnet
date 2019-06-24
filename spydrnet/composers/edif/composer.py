@@ -79,7 +79,14 @@ class ComposeEdif:
         self._output_.write("design top")
         self._new_line_()
         self._lisp_increment_()
-        self._output_.write("cellref base_mb_wrapper (libraryref work)")  # TODO: don't Hard code!!
+        # self._output_.write("cellref base_mb_wrapper (libraryref work)")  # TODO: don't Hard code!!
+        self._output_.write("cellref ")
+        test = self._data_.top_instance
+        self._output_.write(self._data_.top_instance['EDIF.identifier'])
+        self._lisp_increment_()
+        self._output_.write("libraryref ")
+        self._output_.write(self._data_.top_instance.definition.library['EDIF.identifier'])
+        self._lisp_decrement_()
         print("WARNING: edif.py Line: {} - hard coded top instance".format(self._lineno_() - 1))
         self._lisp_decrement_()
         self._new_line_()
