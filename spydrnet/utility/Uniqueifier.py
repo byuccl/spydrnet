@@ -157,7 +157,11 @@ class Uniquifier:
 from spydrnet.parsers.edif.parser import EdifParser
 from spydrnet.composers.edif.composer import ComposeEdif
 if __name__ == '__main__':
-    parser = EdifParser.from_filename('unique_challenge.edf')
+    import sys
+    filename = 'unique_challenge.edf'
+    if len(sys.argv) > 1:
+        filename = sys.argv[1]
+    parser = EdifParser.from_filename(filename)
     parser.parse()
     ir = parser.netlist
     uniquifer = Uniquifier()
