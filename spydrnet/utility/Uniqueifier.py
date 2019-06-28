@@ -149,10 +149,10 @@ class Uniquifier:
             copy.__setitem__(key, data)
         if type(original) is Definition:
             if 'EDIF.identifier' in copy._metadata:
-                copy._metadata['EDIF.identifier'] = copy._metadata['EDIF.identifier'] + '_' + str(copy_num)
+                copy._metadata['EDIF.identifier'] = copy._metadata['EDIF.identifier'] + '_UNIQUE_' + str(copy_num)
             if 'EDIF.original_identifier' in copy._metadata:
                 copy._metadata['EDIF.original_identifier'] = copy._metadata['EDIF.original_identifier']\
-                                                                 + '_' + str(copy_num)
+                                                                 + '_UNIQUE_' + str(copy_num)
 
 from spydrnet.parsers.edif.parser import EdifParser
 from spydrnet.composers.edif.composer import ComposeEdif
