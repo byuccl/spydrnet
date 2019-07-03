@@ -1,4 +1,5 @@
 import collections
+import sys
 
 from spydrnet.ir import *
 
@@ -69,7 +70,12 @@ class Uniquifier:
             for y in range(len(def_to_copy.library.definitions)):
                 if def_to_copy == def_to_copy.library.definitions[y]:
                     break
-            def_to_copy.library.add_definition(def_copy, y)
+            try:
+                def_to_copy.library.add_definition(def_copy, y)
+            except KeyError:
+                name = def_to_copy['EDIF.identifier']
+                message = 'Try to add a definition with name of ' + name + 'but the name was already use'
+                raise KeyError(message)
         self._definition_clean_up(def_to_copy)
         return self.definition_copies
 
@@ -149,20 +155,31 @@ class Uniquifier:
             copy.__setitem__(key, data)
         if type(original) is Definition:
             if 'EDIF.identifier' in copy._metadata:
+                while copy._metadata['EDIF.identifier'] + '_UNIQUE_' + str(copy_num) in self.definition_count:
+                    copy_num += 1
+                self.definition_count[copy._metadata['EDIF.identifier'] + '_UNIQUE_' + str(copy_num)] = 1
                 copy._metadata['EDIF.identifier'] = copy._metadata['EDIF.identifier'] + '_UNIQUE_' + str(copy_num)
             if 'EDIF.original_identifier' in copy._metadata:
-                copy._metadata['EDIF.original_identifier'] = copy._metadata['EDIF.original_identifier']\
-                                                                 + '_UNIQUE_' + str(copy_num)
+                copy._metadata['EDIF.original_identifier'] = copy._metadata['EDIF.original_identifier'] + \
+                                                             '_UNIQUE_' + str(copy_num)
 
 from spydrnet.parsers.edif.parser import EdifParser
 from spydrnet.composers.edif.composer import ComposeEdif
 if __name__ == '__main__':
-    parser = EdifParser.from_filename('unique_challenge.edf')
+    if len(sys.argv) > 1:
+        if len(sys.argv) != 3:
+            sys.exit("If using arguments, must only have an input file and output file")
+        input_file = sys.argv[1]
+        output_file = sys.argv[2]
+    else:
+        input_file = 'unique_challenge.edf'
+        output_file = 'unique_challenge_out.edf'
+    parser = EdifParser.from_filename(input_file)
     parser.parse()
     ir = parser.netlist
     uniquifer = Uniquifier()
     uniquifer.run(ir)
     ir = ir
     composer = ComposeEdif()
-    composer.run(ir, 'unique_challenge_out.edf')
+    composer.run(ir, output_file)
     pass

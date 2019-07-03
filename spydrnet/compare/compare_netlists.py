@@ -53,10 +53,11 @@ class Comparer:
         if ir_orig.top_instance is None:
             # logging.warning("Parser gave NoneType for top_instance")
             pass
-        elif ir_orig.top_instance != ir_composer.top_instance:
-            # logging.error("Top instance is not the same")
-            raise Exception("Top instance is not the same")
-
+        self.compare_instances(ir_orig.top_instance, ir_composer.top_instance)
+        # elif ir_orig.top_instance != ir_composer.top_instance:
+        #     # logging.error("Top instance is not the same")
+        #     raise Exception("Top instance is not the same")
+        print()
         if ir_orig.libraries.__len__() != ir_composer.libraries.__len__():
             # logging.error("Environments do not have the same number of libraries")
             raise Exception("Environments do not have the same number of libraries")
@@ -79,12 +80,13 @@ class Comparer:
             self.compare_definition(library_orig.definitions[definition], library_composer.definitions[x])
 
 
-    def compare_definition(self, definition_orig, definition_composer):
-        if self.get_identifier(definition_orig) != self.get_identifier(definition_composer):
-            # logging.error("Definitions do not have the same identifier")
-            # logging.error("%s compared to %s", self.get_identifier(definition_orig),
-            #              self.get_identifier(definition_composer))
-            raise Exception("Definitions do not have the same identifier")
+    def compare_definition(self, definition_orig, definition_composer, check_identifier=True):
+        if check_identifier:
+            if self.get_identifier(definition_orig) != self.get_identifier(definition_composer):
+                # logging.error("Definitions do not have the same identifier")
+                # logging.error("%s compared to %s", self.get_identifier(definition_orig),
+                #              self.get_identifier(definition_composer))
+                raise Exception("Definitions do not have the same identifier")
 
         # Checking the cables
         if definition_orig.cables.__len__() != definition_composer.cables.__len__():
@@ -245,5 +247,5 @@ class Comparer:
 
 
 if __name__ == "__main__":
-    compare = Comparer("leon3mp_hierarchical.edf", "leon3mp_hierarchical_composed.edf")
+    compare = Comparer("unique_challenge.edf", "unique_challenge_composed.edf")
     compare.run()
