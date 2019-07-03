@@ -1,32 +1,41 @@
 from spydrnet.ir import *
 from spydrnet.utility.HierarchicalLookup import HierarchicalLookup
 from spydrnet.utility.utility import Utility
+import spydrnet.utility.utility as util
+
 
 import networkx as nx
 import matplotlib.pyplot as plt
 
-class Graph_Buider:
+
+class GraphBuilder:
     def __init__(self):
         self.ir_graph = nx.DiGraph()
         self.lookup = None
 
     def build_graph(self, ir):
         self.lookup = HierarchicalLookup(ir)
-        util = Utility()
-        leaf_cells = util.get_leaf_cells(ir)
+        utililty = Utility()
+        leaf_cells = utililty.get_leaf_cells(ir)
         visited = set()
+        my_dictionary = dict()
         for leaf_cell in leaf_cells:
             if leaf_cell not in visited:
                 instance = self.lookup.get_instance_from_name(leaf_cell)[-1]
                 downstream_leaf_cells = self.get_downstream_leaf_cells(instance)
                 for downstream_leaf_cell in downstream_leaf_cells:
-                    self.ir_graph.add_edge(instance.__getitem__("EDIF.identifier"), downstream_leaf_cell.__getitem__("EDIF.identifier"))
+                    self.ir_graph.add_edge(instance, downstream_leaf_cell)
+                    # self.ir_graph.add_edge(instance['EDIF.identifier'], downstream_leaf_cell['EDIF.identifier'])
+                other_dictionary = dict()
+                other_dictionary['type'] = instance.definition['EDIF.identifier']
+                my_dictionary[instance] = other_dictionary
                 visited.add(leaf_cell)
-        self.show_graph()
+        nx.set_node_attributes(self.ir_graph, my_dictionary)
+        # self.show_graph()
 
     def get_downstream_leaf_cells(self, leaf_cell):
         pins = list()
-        util = Utility()
+        # util = Utility()
         hierarchical_name = util.get_hierarchical_name(leaf_cell)
         instance_trace = self.lookup.get_instance_from_name(hierarchical_name)
         instance_trace.pop()
@@ -56,9 +65,7 @@ class Graph_Buider:
                             if inner_pin == pin:
                                 pins.append(outer_pin)
                     except:
-                        print()
                         pass
-                    print()
             visited.add(pin)
         return downstream_leaf_cells
 
@@ -71,8 +78,9 @@ class Graph_Buider:
 from spydrnet.parsers.edif.parser import EdifParser
 
 if __name__ == '__main__':
-    parser = EdifParser.from_filename("passthrough_test.edf")
+    parser = EdifParser.from_filename("TMR_hierarchy.edf")
     parser.parse()
     ir = parser.netlist
-    builder = Graph_Buider()
+    builder = GraphBuilder()
     builder.build_graph(ir)
+    builder.show_graph()
