@@ -59,7 +59,10 @@ class Replicator:
         if "EDIF.original_identifier" in metadata:
             section = obj.__getitem__("EDIF.original_identifier").split('[', )
             # obj.__setitem__("EDIF.original_identifier", section[0] + suffix + '[' + section[1])
-            obj._metadata["EDIF.original_identifier"] = section[0] + suffix + '[' + section[1]
+            if len(section) == 2:
+                obj._metadata["EDIF.original_identifier"] = section[0] + suffix + '[' + section[1]
+            else:
+                obj._metadata["EDIF.original_identifier"] = section[0] + suffix
 
     # Makes a copy of instance
     def _copy_instance_(self, instance):

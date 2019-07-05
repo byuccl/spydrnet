@@ -59,6 +59,7 @@ def is_sequential(obj):
         _read_file()
     if isinstance(obj, Instance):
         definition = obj.definition
+        test = definition["EDIF.identifier"] in sequential_elements
         return definition["EDIF.identifier"] in sequential_elements
     elif isinstance(obj, Definition):
         definition = obj
@@ -87,9 +88,9 @@ def _read_file():
     # TODO enable user to supply extra architecture definitions
     f = open('cell_type.json', 'r')
     data = json.loads(f.read())
-    sequential_elements = set(data[sequential_elements])
-    combinational_elements = set(data[combinational_elements])
-    other_elements = set(data[other_elements])
+    sequential_elements = set(data['sequential_elements'])
+    combinational_elements = set(data['combinational_elements'])
+    other_elements = set(data['other_elements'])
     if len(sequential_elements) == 0:
         sequential_elements.add("EMTPY")
     if len(combinational_elements) == 0:

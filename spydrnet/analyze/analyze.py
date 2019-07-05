@@ -48,31 +48,49 @@ def _sanitize_target(top_definition, instances, top_ports, black_list):
     return instances
 
 
-def determine_reduction_location(ir, cell_target):
-    # TODO make this function more general
+# def determine_reduction_location(ir, cell_target):
+#     # TODO make this function more general
+#     top_definition = ir.top_instance.definition
+#     output = list()
+#     reduction_location = list()
+#     for port in top_definition.ports:
+#         if port.direction == Port.Direction.OUT:
+#             output.append(port)
+#     obufs = list()
+#     for port in output:
+#         for inner_pin in port.inner_pins:
+#             for pin in inner_pin.wire.pins:
+#                 if pin is inner_pin:
+#                     continue
+#                 obufs.append(pin.instance)
+#     input = list()
+#     for instance in obufs:
+#         for inner_pin, outer_pin in instance.outer_pins.items():
+#             if inner_pin.port.direction == Port.Direction.IN:
+#                 input.append(outer_pin)
+#     for pin in input:
+#         driver = _find_driver(pin)
+#         if not _is_voter(driver.instance):
+#             reduction_location.append(driver.wire.cable['EDIF.identifier'])
+#     return reduction_location
+
+def determine_other_voters(ir, cell_target, voter_target):
     top_definition = ir.top_instance.definition
-    output = list()
-    reduction_location = list()
-    for port in top_definition.ports:
-        if port.direction == Port.Direction.OUT:
-            output.append(port)
-    obufs = list()
-    for port in output:
-        for inner_pin in port.inner_pins:
-            for pin in inner_pin.wire.pins:
-                if pin is inner_pin:
-                    continue
-                obufs.append(pin.instance)
-    input = list()
-    for instance in obufs:
-        for inner_pin, outer_pin in instance.outer_pins.items():
+    lookup = HierarchicalLookup(ir)
+    temp = list()
+    for cell in cell_target:
+        instance_trace = lookup.get_instance_from_name(utility.get_hierarchical_name(cell))
+        for inner_pin, outer_pin in cell.outer_pins.items():
             if inner_pin.port.direction == Port.Direction.IN:
-                input.append(outer_pin)
-    for pin in input:
-        driver = _find_driver(pin)
-        if not _is_voter(driver.instance):
-            reduction_location.append(driver.wire.cable['EDIF.identifier'])
-    return reduction_location
+                continue
+            if outer_pin.wire.cable['EDIF.identifier'] in voter_target:
+                continue
+            instances = utility.trace_pin(outer_pin, instance_trace)
+            for instance in instances:
+                if instance not in cell_target:
+                    voter_target.append(outer_pin.wire.cable['EDIF.identifier'])
+                    temp.append(outer_pin.wire.cable['EDIF.identifier'])
+
 
 
 def _find_driver(pin):

@@ -479,6 +479,7 @@ class EdifParser:
                 try:
                     definition.add_cable(cable)
                 except KeyError:
+                    print()
                     raise KeyError("Error on line",  self.tokenizer.line_number)
 
             elif self.construct_is(OFF_PAGE_CONNECTOR):
@@ -682,7 +683,9 @@ class EdifParser:
         instance['metadata_prefix'] = list()
         self.elements.append(instance)
         if self.begin_construct():
+            instance['metadata_prefix'] = ['EDIF']
             test = self.parse_rename()
+            instance['metadata_prefix'] = []
             self.tokenizer.next()
         else:
             instance['EDIF.identifier'] = self.tokenizer.next()
