@@ -3,6 +3,7 @@ import json
 from spydrnet.ir import *
 import spydrnet.hello as hello
 from spydrnet.utility.HierarchicalLookup import HierarchicalLookup
+import spydrnet.support_files as sf
 
 class Utility:
 
@@ -86,7 +87,7 @@ def _read_file():
     global other_elements
     # TODO dynamically point to directory were architectures info is store
     # TODO enable user to supply extra architecture definitions
-    f = open('cell_type.json', 'r')
+    f = open(sf.supportfile_dir + '/cell_type.json', 'r')
     data = json.loads(f.read())
     sequential_elements = set(data['sequential_elements'])
     combinational_elements = set(data['combinational_elements'])
