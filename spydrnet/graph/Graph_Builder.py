@@ -1,3 +1,5 @@
+import copy
+
 from spydrnet.ir import *
 from spydrnet.utility.HierarchicalLookup import HierarchicalLookup
 from spydrnet.utility.utility import Utility
@@ -11,6 +13,8 @@ import matplotlib.pyplot as plt
 class GraphBuilder:
     def __init__(self):
         self.ir_graph = nx.DiGraph()
+        self.pin_graph = None
+        self.sequential_graph = None
         self.lookup = None
 
     def build_graph(self, ir):
@@ -31,7 +35,34 @@ class GraphBuilder:
                 my_dictionary[instance] = other_dictionary
                 visited.add(leaf_cell)
         nx.set_node_attributes(self.ir_graph, my_dictionary)
+        self.sequential_graph = copy.deepcopy(self.ir_graph)
+        print(self.sequential_graph is self.ir_graph)
+        print(self.sequential_graph == self.ir_graph)
+        self.build_sequential_graph()
         # self.show_graph()
+
+    def build_sequential_graph(self):
+        new_graph = nx.DiGraph()
+        self.show_graph()
+        for node in self.ir_graph.nodes():
+            if util.is_combinational(node):
+                continue
+            downstream = set()
+            downstream = downstream.union(self._get_successors(node))
+            while len(downstream) != 0:
+                downstream_stream_node = downstream.pop()
+                if util.is_sequential(downstream_stream_node):
+                    new_graph.add_edge(node, downstream_stream_node)
+                    continue
+                downstream = downstream.union(self._get_successors(downstream_stream_node))
+        self.sequential_graph = new_graph
+        self.show_graph()
+
+    def _get_successors(self, node):
+        successors = set()
+        for successor in self.ir_graph.successors(node):
+            successors.add(successor)
+        return successors
 
     def get_downstream_leaf_cells(self, leaf_cell):
         pins = list()
@@ -70,17 +101,21 @@ class GraphBuilder:
         return downstream_leaf_cells
 
     def show_graph(self):
-        print(nx.info(self.ir_graph))
-        nx.draw(self.ir_graph, with_labels=True)
+        new_graph = nx.DiGraph()
+        for node in self.sequential_graph.nodes:
+            for successor in self.sequential_graph.successors(node):
+                new_graph.add_edge(node['EDIF.identifier'], successor['EDIF.identifier'])
+        print(nx.info(new_graph))
+        nx.draw(new_graph, with_labels=True)
         plt.show()
 
 
 from spydrnet.parsers.edif.parser import EdifParser
 
 if __name__ == '__main__':
-    parser = EdifParser.from_filename("TMR_hierarchy.edf")
+    parser = EdifParser.from_filename("fourBitCounter.edf")
     parser.parse()
     ir = parser.netlist
     builder = GraphBuilder()
     builder.build_graph(ir)
-    builder.show_graph()
+    # builder.show_graph()
