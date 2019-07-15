@@ -35,18 +35,16 @@ class GraphBuilder:
                 my_dictionary[instance] = other_dictionary
                 visited.add(leaf_cell)
         nx.set_node_attributes(self.ir_graph, my_dictionary)
-        self.sequential_graph = copy.deepcopy(self.ir_graph)
-        print(self.sequential_graph is self.ir_graph)
-        print(self.sequential_graph == self.ir_graph)
-        self.build_sequential_graph()
+        self._build_sequential_graph()
         # self.show_graph()
 
-    def build_sequential_graph(self):
+    def _build_sequential_graph(self):
         new_graph = nx.DiGraph()
-        self.show_graph()
+        # self.show_graph(self.ir_graph)
         for node in self.ir_graph.nodes():
             if util.is_combinational(node):
                 continue
+            new_graph.add_node(node)
             downstream = set()
             downstream = downstream.union(self._get_successors(node))
             while len(downstream) != 0:
@@ -56,7 +54,7 @@ class GraphBuilder:
                     continue
                 downstream = downstream.union(self._get_successors(downstream_stream_node))
         self.sequential_graph = new_graph
-        self.show_graph()
+        # self.show_graph(self.sequential_graph)
 
     def _get_successors(self, node):
         successors = set()
@@ -100,10 +98,10 @@ class GraphBuilder:
             visited.add(pin)
         return downstream_leaf_cells
 
-    def show_graph(self):
+    def show_graph(self, graph):
         new_graph = nx.DiGraph()
-        for node in self.sequential_graph.nodes:
-            for successor in self.sequential_graph.successors(node):
+        for node in graph.nodes:
+            for successor in graph.successors(node):
                 new_graph.add_edge(node['EDIF.identifier'], successor['EDIF.identifier'])
         print(nx.info(new_graph))
         nx.draw(new_graph, with_labels=True)

@@ -1,7 +1,6 @@
 import json
 
 from spydrnet.ir import *
-import spydrnet.hello as hello
 from spydrnet.utility.HierarchicalLookup import HierarchicalLookup
 import spydrnet.support_files as sf
 
@@ -99,26 +98,32 @@ def _read_file():
     if len(other_elements) == 0:
         other_elements.add("EMPTY")
 
+
 def trace_pin(pin, instance_stack):
-    instances = list()
+    # instances = list()
+    instances = dict()
     for wire_pin in pin.wire.pins:
         if wire_pin is pin:
             continue
         if isinstance(wire_pin, OuterPin):
             if wire_pin.inner_pin.wire is None:
-                instances.append(wire_pin.instance)
+                instances[wire_pin] = wire_pin.instance
                 continue
             instance_stack.append(wire_pin.instance)
-            instances.extend(trace_pin(wire_pin.inner_pin, instance_stack))
+            instances.update(trace_pin(wire_pin.inner_pin, instance_stack))
             instance_stack.pop()
         else:
-            instance = instance_stack.pop()
+            try:
+                instance = instance_stack.pop()
+            except IndexError:
+                raise IndexError
             for inner_pin, outer_pin in instance.outer_pins.items():
                 if inner_pin is wire_pin:
-                    instances.extend(trace_pin(outer_pin, instance_stack))
+                    instances.update(trace_pin(outer_pin, instance_stack))
                     break
             instance_stack.append(instance)
     return instances
+
 
 def get_hierarchical_name(obj):
     name = obj.__getitem__("EDIF.identifier")
@@ -144,10 +149,32 @@ def get_hierarchical_name(obj):
     name = parent_definition.__getitem__("EDIF.identifier") + '/' + name
     return name
 
+
+def move_definition(definition, target_library=None):
+    if target_library is None:
+        definition_library = definition.library
+        for i in range(len(definition_library.environment.libraries)):
+            if definition_library == definition_library.environment.libraries[i]:
+                break
+        if i == len(definition_library.environment.libraries) - 1:
+            print("ERROR")
+        else:
+            # definition.library = definition_library.environment.libraries[i + 1]
+            definition.library = None
+            definition['EDIF.identifier'] = definition['EDIF.identifier'] + '_BLACK_BOX'
+            definition_library.definitions.remove(definition)
+            definition_library.environment.libraries[i + 1].add_definition(definition, 0)
+
+    else:
+        print("This feature is not coded yet")
+
+
+
 import os
 import glob
 
 from spydrnet.parsers.edif.parser import EdifParser
+from spydrnet.composers.edif.composer import ComposeEdif
 if __name__ == '__main__':
     parser = EdifParser.from_filename("TMR_hierarchy.edf")
     parser.parse()
@@ -156,8 +183,8 @@ if __name__ == '__main__':
     test = util.get_leaf_cells(ir)
     instance = ir.libraries[1].definitions[1].instances[0]
     test1 = util.get_cell_type(instance)
-    test2 = util.get_hierarchical_name(instance)
-
-
-    test = glob.glob(os.path.join(hello.hello_dir, '*.txt'))
+    test2 = get_hierarchical_name(instance)
+    move_definition(ir.libraries[0].definitions[0])
+    composer = ComposeEdif()
+    composer.run(ir)
     print()
