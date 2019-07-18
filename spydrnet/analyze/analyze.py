@@ -19,7 +19,7 @@ def determine_cells_to_replicate(ir, config):
 def _get_leaf_instances(top_definition):
     stack = list()
     visited = set()
-    instances = set()
+    instances = list()
 
     stack.append(top_definition)
     visited.add(top_definition)
@@ -28,7 +28,8 @@ def _get_leaf_instances(top_definition):
         definition = stack.pop()
         for instance in definition.instances:
             if list(instance.outer_pins.keys())[0].wire is None:
-                instances.add(instance)
+                # instances.add(instance)
+                instances.append(instance)
                 continue
             if instance.definition not in visited:
                 visited.add(instance.definition)
@@ -53,32 +54,6 @@ def _sanitize_target(top_definition, instances, top_ports, black_list):
     return instances
 
 
-# def determine_reduction_location(ir, cell_target):
-#     # TODO make this function more general
-#     top_definition = ir.top_instance.definition
-#     output = list()
-#     reduction_location = list()
-#     for port in top_definition.ports:
-#         if port.direction == Port.Direction.OUT:
-#             output.append(port)
-#     obufs = list()
-#     for port in output:
-#         for inner_pin in port.inner_pins:
-#             for pin in inner_pin.wire.pins:
-#                 if pin is inner_pin:
-#                     continue
-#                 obufs.append(pin.instance)
-#     input = list()
-#     for instance in obufs:
-#         for inner_pin, outer_pin in instance.outer_pins.items():
-#             if inner_pin.port.direction == Port.Direction.IN:
-#                 input.append(outer_pin)
-#     for pin in input:
-#         driver = _find_driver(pin)
-#         if not _is_voter(driver.instance):
-#             reduction_location.append(driver.wire.cable['EDIF.identifier'])
-#     return reduction_location
-
 def determine_other_voters(ir, cell_target, voter_target):
     top_definition = ir.top_instance.definition
     lookup = HierarchicalLookup(ir)
@@ -93,11 +68,15 @@ def determine_other_voters(ir, cell_target, voter_target):
             instances = utility.trace_pin(outer_pin, instance_trace)
             for instance in instances.values():
                 if instance not in cell_target:
+                    # TODO do not change voter_target
                     voter_target.append(outer_pin.wire.cable['EDIF.identifier'])
                     temp.append(outer_pin.wire.cable['EDIF.identifier'])
+    return temp
 
 
 def _find_driver(pin):
+    if pin.port.direction == Port.Direction.OUT:
+        return pin
     for wire_pin in pin.wire.pins:
         if wire_pin is pin:
             continue
@@ -105,7 +84,6 @@ def _find_driver(pin):
             continue
         if wire_pin.inner_pin.port.direction == Port.Direction.OUT:
             return wire_pin
-    print()
 
 
 def _is_voter(instance):
@@ -126,10 +104,13 @@ def determine_clock_domains(ir=None, graph=None):
     assert (ir is not None and graph is None) or (ir is None and graph is not None)
     f = open(files.supportfile_dir + '/clk_ports.json', 'r')
     data = json.loads(f.read())
+    f.close()
     if ir is not None:
-        _find_clock_domains_with_ir(ir, data)
+        print("IR is currently not supported")
+        return
+        return _find_clock_domains_with_ir(ir, data)
     else:
-        _find_clock_domains_with_graph(graph, data)
+        return _find_clock_domains_with_graph(graph, data)
 
 
 def _find_clock_domains_with_ir(ir, data):
@@ -144,31 +125,25 @@ def _find_clock_domains_with_ir(ir, data):
                 for inner_pin, outer_pin in instance.outer_pins.items():
                     if inner_pin.port['EDIF.identifier'] in data[instance.definition['EDIF.identifier']]:
                         domain = utility.trace_pin(outer_pin, instance_trace)
-                        print("The domain is")
+                        # print("The domain is")
                         for domain_elements in domain.values():
-                            print('\t' + domain_elements['EDIF.identifier'])
-                        print('\t' + instance['EDIF.identifier'])
+                            pass
+                            # print('\t' + domain_elements['EDIF.identifier'])
+                        # print('\t' + instance['EDIF.identifier'])
                         domain = set(domain.values())
                         domain.add(instance)
                         if domain not in domains:
                             domains.append(domain)
             else:
                 print(instance.definition['EDIF.identifier'], "is sequential but has no known clock ports")
-    print()
+    # print()
     pass
 
 
 def _find_clock_domains_with_graph(graph, data):
     lookup = None
     domains = list()
-    temp = list()
     for node in graph.nodes:
-        temp.append(node)
-    i = 0
-    for node in graph.nodes:
-        print(i)
-        i += 1
-        temp = set(temp)
         if lookup is None:
             lookup = HierarchicalLookup(node.definition.library.environment)
         if utility.is_combinational(node):
@@ -181,18 +156,17 @@ def _find_clock_domains_with_graph(graph, data):
                     domain = utility.trace_pin(outer_pin, instance_trace)
                     domain[outer_pin] = node
                     _mark_domain(domain, data)
-                    print("The domain is")
+                    # print("The domain is")
                     for domain_elements in domain.values():
-                        print('\t' + domain_elements['EDIF.identifier'])
-                    print('\t' + node['EDIF.identifier'])
+                        pass
+                        # print('\t' + domain_elements['EDIF.identifier'])
+                    # print('\t' + node['EDIF.identifier'])
                     domain = set(domain.values())
                     if domain not in domains:
                         domains.append(domain)
         else:
             print(node.definition['EDIF.identifier'], "is sequential but has no known clock ports")
-    print()
-    pass
-
+    return domains
 
 
 def _mark_domain(domain, data):
@@ -206,7 +180,7 @@ def _mark_domain(domain, data):
         if instance.definition['EDIF.identifier'] in data:
             instance.is_sequential = True
             instance.driver = driver
-    print()
+    # print()
 
 
 import networkx as nx
@@ -224,6 +198,7 @@ def find_clock_crossing(graph):
 def find_synchronizers(crossings, ir_graph):
     f = open(files.supportfile_dir + '/clk_ports.json', 'r')
     data = json.loads(f.read())
+    f.close()
     start = set()
     # TODO combine crossings with same destination
     for crossing in crossings:
@@ -257,9 +232,9 @@ def find_synchronizers(crossings, ir_graph):
                 can_be_sync = False
         if can_be_sync:
             sync_group.append(next(ir_graph.successors(sync_group[1])))
-        print()
+        # print()
         synchronizers.append(sync_group)
-    print()
+    # print()
     return synchronizers
 
 
