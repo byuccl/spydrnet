@@ -11,11 +11,14 @@ import matplotlib.pyplot as plt
 
 
 class GraphBuilder:
-    def __init__(self):
+    def __init__(self, ir=None):
         self.ir_graph = nx.DiGraph()
         self.pin_graph = None
         self.sequential_graph = None
-        self.lookup = None
+        if ir is None:
+            self.lookup = None
+        else:
+            self.lookup = HierarchicalLookup(ir)
 
     def build_graph(self, ir):
         self.lookup = HierarchicalLookup(ir)
