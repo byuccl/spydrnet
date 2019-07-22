@@ -53,6 +53,7 @@ sequential_elements = set()
 combinational_elements = set()
 other_elements = set()
 
+
 def is_sequential(obj):
     global sequential_elements
     if len(sequential_elements) == 0:
@@ -67,18 +68,34 @@ def is_sequential(obj):
     else:
         raise TypeError("Needs to be an instance or definition got ", type(obj))
 
+
 def is_combinational(obj):
     global combinational_elements
     if len(combinational_elements) == 0:
         _read_file()
     if isinstance(obj, Instance):
         definition = obj.definition
+        test = definition["EDIF.identifier"] in combinational_elements
         return definition["EDIF.identifier"] in combinational_elements
     elif isinstance(obj, Definition):
         definition = obj
         return definition["EDIF.identifier"] in combinational_elements
     else:
         raise TypeError("Needs to be an instance or definition got ", type(obj))
+
+def is_leaf(obj):
+    global combinational_elements
+    global sequential_elements
+    if len(combinational_elements) == 0:
+        _read_file()
+    if isinstance(obj, Instance):
+        defintion = obj.definition
+        return defintion['EDIF.identifier'] in combinational_elements or defintion['EDIF.identifier'] in sequential_elements
+    elif isinstance(obj, Definition):
+        return obj['EDIF.identifier'] in combinational_elements or obj['EDIF.identifier'] in sequential_elements
+    else:
+        raise TypeError("Needs to be an instance or definition go ", type(obj))
+
 
 def _read_file():
     global sequential_elements
@@ -88,6 +105,7 @@ def _read_file():
     # TODO enable user to supply extra architecture definitions
     f = open(sf.supportfile_dir + '/cell_type.json', 'r')
     data = json.loads(f.read())
+    f.close()
     sequential_elements = set(data['sequential_elements'])
     combinational_elements = set(data['combinational_elements'])
     other_elements = set(data['other_elements'])
