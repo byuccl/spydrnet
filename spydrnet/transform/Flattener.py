@@ -11,6 +11,7 @@
     # add driven_cells to leaf cells
 
 from collections import deque
+import random
 
 from spydrnet.ir import *
 import spydrnet.utility.utility as util
@@ -26,9 +27,12 @@ pin_map = dict()
 lookup = None
 used_name = set()
 
+DEBUG = False
+
 def flatten_design(ir):
     global connector_def
     global lookup
+    global DEBUG
     uniquifier = Uniquifier()
     uniquifier.run(ir)
     lookup = HierarchicalLookup(ir)
@@ -37,10 +41,12 @@ def flatten_design(ir):
     for port in ir.top_instance.definition.ports:
         if port.direction == Port.Direction.OUT:
             for pin in port.inner_pins:
-                _trace_back(pin, flat_definition)
-    print()
+                # _trace_back(pin, flat_definition)
+                _trace_from_port(pin, flat_definition)
     pass
     ir.top_instance['EDIF.identifier'] = flat_definition['EDIF.identifier']
+    if DEBUG:
+        ir.top_instance.old_definition = ir.top_instance.definition
     ir.top_instance.definition = flat_definition
 
 
@@ -57,67 +63,116 @@ def _create_flat_definition(top_definition):
         new_port.direction = port.direction
         if hasattr(port, 'is_array'):
             new_port.is_array = True
-        print()
     return definition
 
 
-import random
+def _trace_from_port(pin, flat_definition):
+    global visited_pins
+    global visited_instances
+    global used_name
+    global pin_map
+    connected_pins = pin.wire.pins
+    cable = None
+    wire = None
+    for wire_pin in connected_pins:
+        if wire_pin not in visited_pins and wire is None:
+            cable = Cable()
+            wire = cable.create_wire()
+            name = util.get_hierarchical_name(pin.wire.cable)
+            temp = name.replace('/', '_')
+            temp = temp.replace('&', '')
+            cable['EDIF.identifier'] = temp
+            while cable['EDIF.identifier'] in used_name:
+                cable['EDIF.identifier'] = temp + '_' + str(random.randint(0, 1000))
+            if temp != name:
+                cable['EDIF.original_identifier'] = name
+        if wire_pin not in pin_map:
+            if util.is_leaf(wire_pin.instance):
+                copied_instance = _copy_instance(wire_pin.instance)
+                flat_definition.add_instance(copied_instance)
+                other_pins = _get_other_pins(wire_pin.instance, wire_pin)
+                for pin_prime in other_pins:
+                    _trace_back(pin_prime, flat_definition)
+            pass
+        if wire is not None:
+            wire.connect_pin(pin_map[wire_pin])
+    if cable is not None:
+        flat_definition.add_cable(cable)
+
+
+def _get_other_pins(instance, outer_pin):
+    pins = list()
+    for pin in instance.outer_pins.values():
+        if pin.inner_pin is not outer_pin.inner_pin:
+            pins.append(pin)
+    return pins
 
 
 def _trace_back(pin, flat_definition):
-    global lookup
-    global visited_instances
-    global pin_map
     global visited_pins
+    global visited_instances
     global used_name
-    cable = Cable()
-    wire = cable.create_wire()
-    name = pin.wire.cable['EDIF.identifier'] + '_' + str(random.randint(1, 10000))
-    while name in used_name:
-        name = pin.wire.cable['EDIF.identifier'] + '_' + str(random.randint(1, 10000))
-    cable['EDIF.identifier'] = name
-    flat_definition.add_cable(cable)
-    wire_pins = set(pin.wire.pins)
-    wire_pins -= visited_pins
-    visited_pins.add(pin)
-    for wire_pin in wire_pins:
-        if isinstance(wire_pin, InnerPin):
-            _connect_inner_pin(wire_pin, wire)
-            outer_pin = _get_outer_pin(wire_pin)
-            if outer_pin is not None and outer_pin not in visited_pins:
-                _trace_back(outer_pin, flat_definition)
+    global pin_map
+    pin_queue = deque()
+    pin_queue.append(pin)
+    k = 0
+    while len(pin_queue) > 0:
+        start_pin = pin_queue.popleft()
+        if start_pin is None:
+            continue
+        if start_pin in visited_pins:
+            continue
+        if start_pin.wire is None:
+            continue
+        connected_pins = start_pin.wire.pins
+        cable = Cable()
+        wire = cable.create_wire()
+        name = util.get_hierarchical_name(start_pin.wire.cable)
+        temp = name.replace('/', '_')
+        if name == 'multi_core/core0/datapath/clk_IBUF_BUFG':
             pass
-        else:
-            if util.is_leaf(wire_pin.instance):
-                if wire_pin.instance not in visited_instances:
-                    visited_instances.add(wire_pin.instance)
-                    visited_pins.add(wire_pin)
-                    new_instance = _copy_instance(wire_pin.instance)
-                    flat_definition.add_instance(new_instance)
-                    wire.connect_pin(pin_map[wire_pin])
-                    outer_pins = set(wire_pin.instance.outer_pins.values()) - visited_pins
-                    for test in outer_pins:
-                        _trace_back(test, flat_definition)
-            else:
-                if wire_pin in pin_map:
-                    wire.connect_pin(pin_map[wire_pin])
+        temp = temp.replace('&', '')
+        cable['EDIF.identifier'] = temp
+        while cable['EDIF.identifier'] in used_name:
+            cable['EDIF.identifier'] = temp + '_' + str(random.randint(0, 1000))
+        if temp != name:
+            cable['EDIF.original_identifier'] = name
+        for wire_pin in connected_pins:
+            if wire_pin not in pin_map.keys():
+                if isinstance(wire_pin, InnerPin):
+                    connector = _create_connector()
+                    flat_definition.add_instance(connector)
+                    if wire_pin.port.direction == Port.Direction.IN:
+                        pin_map[wire_pin] = connector.get_pin('O')
+                        pin_map[_get_outer_pin(wire_pin)] = connector.get_pin('I')
+                        pin_queue.append(_get_outer_pin(wire_pin))
+                    elif wire_pin.port.direction == Port.Direction.OUT:
+                        pin_map[wire_pin] = connector.get_pin('I')
+                        pin_map[_get_outer_pin(wire_pin)] = connector.get_pin('O')
+                    else:
+                        print('hello')
+                elif util.is_leaf(wire_pin.instance):
+                    copied_instance = _copy_instance(wire_pin.instance)
+                    flat_definition.add_instance(copied_instance)
+                    pin_queue.extend(_get_other_pins(wire_pin.instance, wire_pin))
                 else:
                     connector = _create_connector()
+                    flat_definition.add_instance(connector)
                     if wire_pin.inner_pin.port.direction == Port.Direction.OUT:
-                        wire.connect_pin(connector.get_pin('O'))
                         pin_map[wire_pin] = connector.get_pin('O')
                         pin_map[wire_pin.inner_pin] = connector.get_pin('I')
-                    else:
-                        wire.connect_pin(connector.get_pin('I'))
+                        _trace_back(wire_pin.inner_pin, flat_definition)
+                    if wire_pin.inner_pin.port.direction == Port.Direction.IN:
                         pin_map[wire_pin] = connector.get_pin('I')
                         pin_map[wire_pin.inner_pin] = connector.get_pin('O')
-                    flat_definition.add_instance(connector)
-                    wire.connect_pin(pin_map[wire_pin])
-                    visited_pins.add(wire_pin)
-                    _trace_back(wire_pin.inner_pin, flat_definition)
-    wire.connect_pin(pin_map[pin])
+            wire.connect_pin(pin_map[wire_pin])
+            visited_pins.add(wire_pin)
+        flat_definition.add_cable(cable)
 
-
+        if k == 100:
+            # break
+            pass
+        k += 1
 
 
 def _get_outer_pin(pin):
@@ -125,41 +180,24 @@ def _get_outer_pin(pin):
     name = util.get_hierarchical_name(pin.port)
     stack = lookup.get_port_from_name(name)
     stack.pop()
-    if stack == []:
+    if stack == [] or pin not in stack[-1].outer_pins:
         return None
     return stack[-1].outer_pins[pin]
-
-
-
-def _connect_inner_pin(pin, wire):
-    global pin_map
-    if pin in pin_map:
-        wire.connect_pin(pin_map[pin])
-        pass
-    else:
-        outer_pin = _get_outer_pin(pin)
-        connector = _create_connector()
-        if pin.port.direction == Port.Direction.OUT:
-            wire.connect_pin(connector.get_pin('I'))
-            pin_map[pin] = connector.get_pin('I')
-            if outer_pin is not None:
-                pin_map[outer_pin] = connector.get_pin('O')
-        else:
-            wire.connect_pin(connector.get_pin('O'))
-            pin_map[pin] = connector.get_pin('O')
-            if outer_pin is not None:
-                pin_map[outer_pin] = connector.get_pin('I')
-        wire.cable.definition.add_instance(connector)
 
 
 def _copy_instance(instance_to_copy):
     global pin_map
     global used_name
+    global DEBUG
     new_instance = Instance()
-    name = instance_to_copy['EDIF.identifier'] + '_' + str(random.randint(1, 10000))
+    name = util.get_hierarchical_name(instance_to_copy)
     while name in used_name:
-        name = instance_to_copy['EDIF.identifier'] + '_' + str(random.randint(1, 10000))
-    new_instance['EDIF.identifier'] = name
+        name = name + '_' + str(random.randint(1, 10000))
+    used_name.add(name)
+    temp = name.replace('/', '_')
+    new_instance['EDIF.identifier'] = temp.replace('&', '')
+    if new_instance['EDIF.identifier'] != name:
+        new_instance['EDIF.original_identifier'] = name
     new_instance.definition = instance_to_copy.definition
     temp = dict()
     for pin in instance_to_copy.outer_pins.values():
@@ -169,11 +207,12 @@ def _copy_instance(instance_to_copy):
         temp[pin.inner_pin] = outer_pin
         pin_map[pin] = outer_pin
     new_instance.outer_pins = temp
+    if 'EDIF.properties' in instance_to_copy:
+        new_instance['EDIF.properties'] = instance_to_copy['EDIF.properties']
+    if DEBUG:
+        new_instance.old_instance = instance_to_copy
+        instance_to_copy.new_instance = new_instance
     return new_instance
-    pass
-
-
-def _copy_port(port_to_copy):
     pass
 
 
@@ -226,11 +265,11 @@ import spydrnet.support_files as files
 
 
 if __name__ == '__main__':
-    parser = EdifParser.from_filename(files.edif_files["unique_challenge.edf"])
+    parser = EdifParser.from_filename(files.edif_files["riscv_multi_core.edf"])
     parser.parse()
     ir = parser.netlist
     uniquifier = Uniquifier()
-    uniquifier.run(ir)
+    # uniquifier.run(ir)
     # flatten(ir)
     flatten_design(ir)
     compose = ComposeEdif()
