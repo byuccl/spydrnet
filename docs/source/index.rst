@@ -1,4 +1,4 @@
-Welcome to Hello World's documentation!
+Welcome SpyDrNet's documentation!
 =======================================
 
 .. only:: html
@@ -11,6 +11,7 @@ Welcome to Hello World's documentation!
 
    introduction
    intermediate_representation
+   hierarchical_references
 
 
 Indices and tables
