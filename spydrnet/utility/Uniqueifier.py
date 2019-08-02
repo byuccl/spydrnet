@@ -2,6 +2,7 @@ import collections
 import sys
 
 from spydrnet.ir import *
+import spydrnet.utility.utility as util
 
 class Uniquifier:
 
@@ -25,7 +26,9 @@ class Uniquifier:
         top_def = ir.top_instance.definition
         depth_first_search = collections.deque()
         for instance in top_def.instances:
-            if list(instance.outer_pins.keys())[0].wire is not None:
+            # test = list(instance.outer_pins.keys())[0].wire
+            # if list(instance.outer_pins.keys())[0].wire is not None:
+            if not util.is_leaf(instance):
                 depth_first_search.extend(self._trace_definition(instance.definition))
 
         visited = set()
@@ -36,12 +39,15 @@ class Uniquifier:
                 visited.add(definition)
                 reverse_topological_order.append(definition)
         for definition, value in self.definition_count.items():
-            print('Definition ' + definition.__getitem__('EDIF.identifier') + ' was used ' + str(value) + ' times')
+            # print('Definition ' + definition.__getitem__('EDIF.identifier') + ' was used ' + str(value) + ' times')
+            pass
         return reverse_topological_order
 
     def _trace_definition(self, definition):
         top_order = collections.deque()
         for instance in definition.instances:
+            if len(instance.outer_pins) == 0:
+                return top_order
             inner_pin = list(instance.outer_pins.keys())[0]
             if inner_pin.wire is None:
                 continue
@@ -165,6 +171,7 @@ class Uniquifier:
 
 from spydrnet.parsers.edif.parser import EdifParser
 from spydrnet.composers.edif.composer import ComposeEdif
+import spydrnet.support_files as files
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         if len(sys.argv) != 3:
@@ -172,8 +179,8 @@ if __name__ == '__main__':
         input_file = sys.argv[1]
         output_file = sys.argv[2]
     else:
-        input_file = 'unique_challenge.edf'
-        output_file = 'unique_challenge_out.edf'
+        input_file = files.edif_files['riscv_multi_core.edf']
+        output_file = 'riscv_multi_core_out.edf'
     parser = EdifParser.from_filename(input_file)
     parser.parse()
     ir = parser.netlist

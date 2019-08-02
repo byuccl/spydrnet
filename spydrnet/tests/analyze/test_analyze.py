@@ -1,12 +1,14 @@
 import json
 import unittest
 
+import networkx as nx
+import matplotlib.pyplot as plt
+
 import spydrnet.support_files as files
 from spydrnet.parsers.edif.parser import EdifParser
 import spydrnet.analyze.analyze as analyze
 from spydrnet.graph.Graph_Builder import GraphBuilder
 import spydrnet.analyze.fannout_voter_selection as voter_selection
-
 from spydrnet.utility.Uniqueifier import Uniquifier
 
 class test_analyze(unittest.TestCase):
@@ -150,6 +152,78 @@ class test_analyze(unittest.TestCase):
         self.assertTrue(synchronizers[0][0]['EDIF.identifier'] == "sync_reg_0_")
         self.assertTrue(synchronizers[0][1]['EDIF.identifier'] == "sync_reg_1_")
         self.assertTrue(synchronizers[0][2]['EDIF.identifier'] == "sync_reg_2_")
+
+    def test_find_minimum_return_distance_self_loop(self):
+        graph = nx.DiGraph()
+        graph.add_edge('a', 'a')
+        distance = analyze.find_minimum_return_distance(graph, 'a')
+        self.assertTrue(distance == 1)
+
+    def test_find_minimum_return_distance_two_away(self):
+        graph = nx.DiGraph()
+        graph.add_edge('a', 'b')
+        graph.add_edge('b', 'a')
+        distance = analyze.find_minimum_return_distance(graph, 'a')
+        self.assertTrue(distance == 2)
+
+    def test_find_minimum_return_distance_three_away(self):
+        graph = nx.DiGraph()
+        graph.add_edge('a', 'b')
+        graph.add_edge('b', 'c')
+        graph.add_edge('c', 'a')
+        distance = analyze.find_minimum_return_distance(graph, 'a')
+        self.assertTrue(distance == 3)
+
+    def test_find_minimum_return_distance_two_branch_away(self):
+        graph = nx.DiGraph()
+        graph.add_edge('a', 'b')
+        graph.add_edge('b', 'a')
+        graph.add_edge('a', 'c')
+        distance = analyze.find_minimum_return_distance(graph, 'a')
+        self.assertTrue(distance == 2)
+
+    def test_find_minimum_return_distance_two_branch_away(self):
+        graph = nx.DiGraph()
+        graph.add_edge('a', 'b')
+        graph.add_edge('b', 'c')
+        graph.add_edge('b', 'p')
+        graph.add_edge('c', 'a')
+        graph.add_edge('a', 'q')
+        graph.add_edge('a', 'w')
+        graph.add_edge('a', 'e')
+        graph.add_edge('q', 'z')
+        graph.add_edge('w', 'x')
+        graph.add_edge('e', 'v')
+        distance = analyze.find_minimum_return_distance(graph, 'a')
+        self.assertTrue(distance == 2)
+
+    def test_find_minimum_return_distance_two_branch_away(self):
+        graph = nx.DiGraph()
+        graph.add_edge('a', 'b')
+        graph.add_edge('b', 'c')
+        graph.add_edge('c', 'd')
+        graph.add_edge('d', 'e')
+        graph.add_edge('e', 'f')
+        graph.add_edge('f', 'g')
+        graph.add_edge('g', 'a')
+        graph.add_edge('c', 'b')
+        distance = analyze.find_minimum_return_distance(graph, 'a')
+        self.assertTrue(distance == 7)
+
+    def test_find_minimum_return_distance_two_branch_away(self):
+        graph = nx.DiGraph()
+        graph.add_edge('a', 'b')
+        graph.add_edge('b', 'c')
+        graph.add_edge('c', 'd')
+        graph.add_edge('c', 'a')
+        graph.add_edge('d', 'e')
+        graph.add_edge('e', 'f')
+        graph.add_edge('f', 'g')
+        graph.add_edge('g', 'a')
+        graph.add_edge('c', 'b')
+        distance = analyze.find_minimum_return_distance(graph, 'a')
+        self.assertTrue(distance == 3)
+
 
 if __name__ == '__main__':
     unittest.main()

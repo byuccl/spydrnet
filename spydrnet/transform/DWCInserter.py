@@ -13,8 +13,79 @@ class DWCInserter:
 
     def run(self, target, ir):
         self._preprocess(ir)
+        test = list()
         for net in target:
             self._place_comparator(net)
+            if self.net[net].definition is ir.top_instance.definition:
+                test.append(self.net[net])
+        self._place_black_box(ir)
+
+    def _place_black_box(self, ir):
+        black_box = Definition()
+        black_box['EDIF.identifier'] = ' dwc_jtag_interface'
+        black_box['EDIF.cellType'] = 'celltype'
+        black_box['EDIF.view.identifier'] = 'netlist'
+        black_box['EDIF.view.viewType'] = 'viewtype'
+        I0 = black_box.create_port()
+        I0.direction = Port.Direction.IN
+        I0['metadata_prefix'] = ['EDIF']
+        I0['EDIF.identifier'] = 'I0'
+        I1 = black_box.create_port()
+        I1.direction = Port.Direction.IN
+        I1['metadata_prefix'] = ['EDIF']
+        I1['EDIF.identifier'] = 'I1'
+        ir.top_instance.definition.library.add_definition(black_box, 0)
+        black_box_instance = Instance()
+        black_box_instance.definition = black_box
+        black_box_instance['EDIF.identifier'] = 'dwc_jtag_interface'
+        ir.top_instance.definition.add_instance(black_box_instance)
+        dwc_pair = self._get_dwc_object(ir)
+        for x in range(len(dwc_pair[0][0])):
+            self._connect_black_box('DWC_0', I0, dwc_pair[0][0][x], x, black_box_instance, ir)
+            self._connect_black_box('DWC_1', I1, dwc_pair[0][1][x], x, black_box_instance, ir)
+
+        wire_pair = self._get_top_dwc_cable(ir)
+        for pair in wire_pair:
+            temp = list(pair)
+            temp[0].connect_pin(self._create_outer_pin(I0.create_pin(), black_box_instance))
+            temp[1].connect_pin(self._create_outer_pin(I1.create_pin(), black_box_instance))
+
+        if len(I0.inner_pins) > 1:
+            I0.is_array = True
+            I1.is_array = True
+
+    def _connect_black_box(self, dwc, port, pin, num, black_box, ir):
+        dwc_cable = Cable()
+        dwc_wire = dwc_cable.create_wire()
+        dwc_cable['EDIF.identifier'] = dwc + '_' + str(num) + '_'
+        dwc_cable['EDIF.origiinal_identifier'] = dwc + '[' + str(num) + ']'
+        dwc_wire.connect_pin(pin)
+        black_box_pin = port.create_pin()
+        dwc_wire.connect_pin(self._create_outer_pin(black_box_pin, black_box))
+        dwc_cable.comparator = pin.inner_pin.wire.cable.comparator
+        ir.top_instance.definition.add_cable(dwc_cable)
+
+    def _get_top_dwc_cable(self, ir):
+        cable_pair = list()
+        temp = list()
+        for instance in ir.top_instance.definition.instances:
+            if instance['EDIF.identifier'][0:10] == 'comparator':
+                if {instance, instance.partner_comparator} not in temp:
+                    temp.append({instance, instance.partner_comparator})
+        for pair in temp:
+            for instance in pair:
+                port1 = instance.definition.lookup_element(Port, 'EDIF.identifier', 'O')
+                port2 = instance.partner_comparator.definition.lookup_element(Port, 'EDIF.identifier', 'O')
+                cable_pair.append([instance.outer_pins[port1.inner_pins[0]].wire, instance.partner_comparator.outer_pins[port2.inner_pins[0]].wire])
+                break
+        return cable_pair
+
+    def _create_outer_pin(self, pin, instance):
+        new_pin = OuterPin()
+        new_pin.inner_pin = pin
+        new_pin.instance = instance
+        instance.outer_pins[pin] = new_pin
+        return new_pin
 
     def _define_lut2(self, ir):
         my_lut_2 = Definition()
@@ -134,7 +205,6 @@ class DWCInserter:
 
         while len(trace) > 0:
             instance = trace.pop()
-            # dwc_0_cable = instance.definition.create_cable()
             dwc_0_cable = Cable()
             dwc_0_cable['EDIF.identifier'] = instance['EDIF.identifier'] + "_DWC_0_" + str(len(dwc_0_port.inner_pins) - 1) + "_"
             temp = instance['EDIF.identifier'] + "_DWC_0[" + str(len(dwc_0_port.inner_pins) - 1) + "]"
@@ -174,5 +244,34 @@ class DWCInserter:
             dwc_1_out_pin.inner_pin = dwc_1_pin
             dwc_1_out_pin.instance = instance
 
-
         pass
+
+    def _get_dwc_object(self, ir):
+        top_instance = ir.top_instance
+        dwc_pairs = list()
+        for instance in top_instance.definition.instances:
+            try:
+                dwc_0_port = instance.definition.lookup_element(Port, "EDIF.identifier", "DWC_0")
+                dwc_0_pins = list()
+                dwc_1_port = instance.definition.lookup_element(Port, "EDIF.identifier", "DWC_1")
+                dwc_1_pins = list()
+                for pin in dwc_0_port.inner_pins:
+                    if pin not in instance.outer_pins.keys():
+                        new_pin = OuterPin()
+                        new_pin.inner_pin = pin
+                        new_pin.instance = instance
+                        dwc_0_pins.append(new_pin)
+                    else:
+                        dwc_0_pins.append(instance.outer_pins[pin])
+                for pin in dwc_1_port.inner_pins:
+                    if pin not in instance.outer_pins.keys():
+                        new_pin = OuterPin()
+                        new_pin.inner_pin = pin
+                        new_pin.instance = instance
+                        dwc_1_pins.append(new_pin)
+                    else:
+                        dwc_1_pins.append(instance.outer_pins[pin])
+                dwc_pairs.append([dwc_0_pins, dwc_1_pins])
+            except:
+                pass
+        return dwc_pairs
