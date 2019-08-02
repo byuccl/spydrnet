@@ -5,11 +5,12 @@ from spydrnet.transform.util import find_object, build_name
 from spydrnet.transform.replicate import Replicator
 from spydrnet.parsers.edif.parser import EdifParser
 from spydrnet.ir import *
+import spydrnet.support_files as files
 
 class TestReplicater(unittest.TestCase):
 
     def test_trace_pin(self):
-        parser = EdifParser.from_filename("TMR_hierarchy.edf")
+        parser = EdifParser.from_filename(files.edif_files["TMR_hierarchy.edf"])
         parser.parse()
         ir = parser.netlist
         test = find_object(ir, 'y_OBUF_inst_i_1/O', 'port')
@@ -21,7 +22,7 @@ class TestReplicater(unittest.TestCase):
             self.assertTrue(port.__getitem__('EDIF.identifier') == 'b')
 
     def test_replicate_port(self):
-        parser = EdifParser.from_filename("TMR_hierarchy.edf")
+        parser = EdifParser.from_filename(files.edif_files["TMR_hierarchy.edf"])
         parser.parse()
         ir = parser.netlist
         port = find_object(ir, "delta/omega/b", 'port')
@@ -36,7 +37,7 @@ class TestReplicater(unittest.TestCase):
         self.assertTrue(len(port.definition.ports) == num_of_ports + 1)
 
     def test_replicate_ports(self):
-        parser = EdifParser.from_filename("TMR_hierarchy.edf")
+        parser = EdifParser.from_filename(files.edif_files["TMR_hierarchy.edf"])
         parser.parse()
         ir = parser.netlist
         replicate = Replicator(ir=ir)
@@ -49,7 +50,7 @@ class TestReplicater(unittest.TestCase):
             self.assertTrue(len(value) == 2)
 
     def test_trace_cable(self):
-        parser = EdifParser.from_filename("TMR_hierarchy.edf")
+        parser = EdifParser.from_filename(files.edif_files["TMR_hierarchy.edf"])
         parser.parse()
         ir = parser.netlist
         replicate = Replicator(ir=ir)
@@ -59,7 +60,7 @@ class TestReplicater(unittest.TestCase):
         self.assertTrue(len(cables) == 2)
 
     def test_identify_cables(self):
-        parser = EdifParser.from_filename("TMR_hierarchy.edf")
+        parser = EdifParser.from_filename(files.edif_files["TMR_hierarchy.edf"])
         parser.parse()
         ir = parser.netlist
         replicate = Replicator(ir=ir)
@@ -69,7 +70,7 @@ class TestReplicater(unittest.TestCase):
         self.assertTrue(len(cables) == 12)
 
     def test_copy_properties(self):
-        parser = EdifParser.from_filename("TMR_hierarchy.edf")
+        parser = EdifParser.from_filename(files.edif_files["TMR_hierarchy.edf"])
         parser.parse()
         ir = parser.netlist
         replicate = Replicator(ir=ir)
@@ -80,7 +81,7 @@ class TestReplicater(unittest.TestCase):
             self.assertTrue(property in instance._metadata["EDIF.properties"])
 
     def test_add_suffix_instance(self):
-        parser = EdifParser.from_filename("TMR_hierarchy.edf")
+        parser = EdifParser.from_filename(files.edif_files["TMR_hierarchy.edf"])
         parser.parse()
         ir = parser.netlist
         replicate = Replicator(ir=ir)
@@ -90,7 +91,7 @@ class TestReplicater(unittest.TestCase):
         self.assertTrue(instance.__getitem__("EDIF.identifier") == old_identifier + "_TMR")
 
     def test_add_suffix_multi_bit_wire(self):
-        parser = EdifParser.from_filename("TMR_hierarchy.edf")
+        parser = EdifParser.from_filename(files.edif_files["TMR_hierarchy.edf"])
         parser.parse()
         ir = parser.netlist
         replicate = Replicator(ir=ir)
@@ -106,7 +107,7 @@ class TestReplicater(unittest.TestCase):
         self.assertTrue(cable.__getitem__("EDIF.original_identifier") == "alpha_TMR[1]")
 
     def test_copy_instance(self):
-        parser = EdifParser.from_filename("TMR_hierarchy.edf")
+        parser = EdifParser.from_filename(files.edif_files["TMR_hierarchy.edf"])
         parser.parse()
         ir = parser.netlist
         replicate = Replicator(ir=ir)
@@ -119,7 +120,7 @@ class TestReplicater(unittest.TestCase):
             self.assertFalse(outter_pin == new_instance.outer_pins[inner_pin])
 
     def test_port_position(self):
-        parser = EdifParser.from_filename("TMR_hierarchy.edf")
+        parser = EdifParser.from_filename(files.edif_files["TMR_hierarchy.edf"])
         parser.parse()
         ir = parser.netlist
         replicate = Replicator(ir=ir)
@@ -129,7 +130,7 @@ class TestReplicater(unittest.TestCase):
             self.assertTrue(guessed_position == true_position)
 
     def test_is_connected_to_replicate_pin(self):
-        parser = EdifParser.from_filename("TMR_hierarchy.edf")
+        parser = EdifParser.from_filename(files.edif_files["TMR_hierarchy.edf"])
         parser.parse()
         ir = parser.netlist
         replicate = Replicator(ir=ir)
@@ -144,7 +145,7 @@ class TestReplicater(unittest.TestCase):
         self.assertFalse(replicate.is_connected_to_replicate_pin(cable2))
 
     def test_create_cable(self):
-        parser = EdifParser.from_filename("TMR_hierarchy.edf")
+        parser = EdifParser.from_filename(files.edif_files["TMR_hierarchy.edf"])
         parser.parse()
         ir = parser.netlist
         replicate = Replicator(ir=ir)
@@ -155,7 +156,7 @@ class TestReplicater(unittest.TestCase):
         self.assertTrue(new_cable.__getitem__("EDIF.original_identifier") == "alpha_TMR_1[0]")
 
     def test_connect_cable_to_port(self):
-        parser = EdifParser.from_filename("TMR_hierarchy.edf")
+        parser = EdifParser.from_filename(files.edif_files["TMR_hierarchy.edf"])
         parser.parse()
         ir = parser.netlist
         replicate = Replicator(ir=ir)
@@ -176,7 +177,7 @@ class TestReplicater(unittest.TestCase):
         self.assertTrue(wire.pins[0].port.__getitem__("EDIF.identifier") == "alpha_TMR_1")
 
     def test_connect_cable_to_cells(self):
-        parser = EdifParser.from_filename("TMR_hierarchy.edf")
+        parser = EdifParser.from_filename(files.edif_files["TMR_hierarchy.edf"])
         parser.parse()
         ir = parser.netlist
         replicate = Replicator(ir=ir)
@@ -190,7 +191,7 @@ class TestReplicater(unittest.TestCase):
         self.assertTrue(wire.pins[0] == new_cell.outer_pins[wire.pins[0].inner_pin])
 
     def test_connect_nets(self):
-        parser = EdifParser.from_filename("TMR_hierarchy.edf")
+        parser = EdifParser.from_filename(files.edif_files["TMR_hierarchy.edf"])
         parser.parse()
         ir = parser.netlist
         replicate = Replicator(ir=ir)
@@ -212,7 +213,7 @@ class TestReplicater(unittest.TestCase):
                                 or outer_pin.wire.cable.__getitem__("EDIF.identifier") == "a_1_")
 
     def test_replicate_cell(self):
-        parser = EdifParser.from_filename("TMR_hierarchy.edf")
+        parser = EdifParser.from_filename(files.edif_files["TMR_hierarchy.edf"])
         parser.parse()
         ir = parser.netlist
         replicate = Replicator(ir=ir)
@@ -232,7 +233,7 @@ class TestReplicater(unittest.TestCase):
             x += 1
 
     def test_all(self):
-        parser = EdifParser.from_filename("TMR_hierarchy.edf")
+        parser = EdifParser.from_filename(files.edif_files["TMR_hierarchy.edf"])
         parser.parse()
         ir = parser.netlist
         replicate = Replicator(ir=ir)
@@ -277,7 +278,7 @@ class TestReplicater(unittest.TestCase):
             self.assertTrue(len(cable.wires[0].pins) == 1)
 
     def test_cable_connecting_replicated_ports(self):
-        parser = EdifParser.from_filename("ports_diff_modules.edf")
+        parser = EdifParser.from_filename(files.edif_files["ports_diff_modules.edf"])
         parser.parse()
         ir = parser.netlist
         replicate = Replicator(ir=ir)
@@ -309,7 +310,7 @@ class TestReplicater(unittest.TestCase):
         print()
 
     def test_port_replicate_one_instance(self):
-        parser = EdifParser.from_filename("multi_port.edf")
+        parser = EdifParser.from_filename(files.edif_files["multi_port.edf"])
         parser.parse()
         ir = parser.netlist
         replicate = Replicator(ir=ir)
@@ -341,7 +342,7 @@ class TestReplicaterRegression(unittest.TestCase):
         replicator = Replicator()
 
     def test_run(self):
-        # parser = EdifParser.from_filename("TMR_hierarchy.edf")
+        # parser = EdifParser.from_filename(files.edif_files["TMR_hierarchy.edf"])
         # parser.parse()
         # ir = parser.netlist
         # target = ["b_INST_0", "beta_INST_0"]

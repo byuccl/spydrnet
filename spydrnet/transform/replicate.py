@@ -38,10 +38,16 @@ class Replicator:
         for loop in range(self.num_of_replications):
             foo = dict()
             for cell in target:
-                instance = self._copy_instance_(self.cells[cell])
-                self._add_suffix(instance, "_TMR_" + str(loop + 1))
-                self.cells[cell].parent_definition.add_instance(instance)
-                foo[self.cells[cell]] = instance
+                if isinstance(cell, Instance):
+                    instance = self._copy_instance_(cell)
+                    self._add_suffix(instance, "_TMR_" + str(loop + 1))
+                    cell.parent_definition.add_instance(instance)
+                    foo[cell] = instance
+                else:
+                    instance = self._copy_instance_(self.cells[cell])
+                    self._add_suffix(instance, "_TMR_" + str(loop + 1))
+                    self.cells[cell].parent_definition.add_instance(instance)
+                    foo[self.cells[cell]] = instance
             added_cells.append(foo)
         return added_cells
 
@@ -53,7 +59,10 @@ class Replicator:
         if "EDIF.original_identifier" in metadata:
             section = obj.__getitem__("EDIF.original_identifier").split('[', )
             # obj.__setitem__("EDIF.original_identifier", section[0] + suffix + '[' + section[1])
-            obj._metadata["EDIF.original_identifier"] = section[0] + suffix + '[' + section[1]
+            if len(section) == 2:
+                obj._metadata["EDIF.original_identifier"] = section[0] + suffix + '[' + section[1]
+            else:
+                obj._metadata["EDIF.original_identifier"] = section[0] + suffix
 
     # Makes a copy of instance
     def _copy_instance_(self, instance):
@@ -162,7 +171,10 @@ class Replicator:
     def _identify_cables_(self, target):
         cables = set()
         for cell in target:
-            instance = self.cells[cell]
+            if isinstance(cell, Instance):
+                instance = cell
+            else:
+                instance = self.cells[cell]
             for inner_pin, outer_pin in instance.outer_pins.items():
                 cable = self._get_cable_(outer_pin)
                 cables = cables.union(self.trace_cable(cable))
@@ -235,7 +247,10 @@ class Replicator:
         out_port = set()
         ports = dict()
         for temp in target:
-            cell = self.cells[temp]
+            if isinstance(temp, Instance):
+                cell = temp
+            else:
+                cell = self.cells[temp]
             for blank, pin in cell.outer_pins.items():
                 if pin.inner_pin.port.direction == Port.Direction.OUT:
                     out_port = out_port.union(self.trace_pin(pin))

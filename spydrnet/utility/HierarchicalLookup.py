@@ -1,3 +1,5 @@
+import copy
+
 from spydrnet.ir import *
 
 class HierarchicalLookup:
@@ -13,15 +15,18 @@ class HierarchicalLookup:
         self._wire_hashmap = dict()
         self._build_hashmaps()
 
+    def rebuild(self):
+        self._build_hashmaps()
+
     def get_instance_from_name(self, hierarchical_name):
-        return self._instance_hashmap[hierarchical_name]
+        return copy.copy(self._instance_hashmap[hierarchical_name])
         # Example "processor/core(0)/alu/adder/adder_reg[5]"
         # return <a list of cell instances that uniquely identify that specific instance>
         # Example [<top_cell_instance>, <processor_instance>, <instance_0_of_core>, <instance of alu>, <adder_instance>, <instance 5 of adder_reg>]
         pass
 
     def get_cable_from_name(self, hierarchical_name):
-        return self._cable_hashmap[hierarchical_name]
+        return copy.copy(self._cable_hashmap[hierarchical_name])
         # example "processor/core(0)/alu/adder/adder_bus"
         # return <list of cell instances to parent cell with cable appended>
         pass
@@ -31,13 +36,13 @@ class HierarchicalLookup:
         pass
 
     def get_port_from_name(self, hierarchical_name):
-        return self._port_hashmap[hierarchical_name]
+        return copy.copy(self._port_hashmap[hierarchical_name])
         # return <list of cell inst, append port>
         pass
 
     def get_pin_from_name(self, hierarchical_name):
         # return < list of cell inst, append parent port, append pin>
-        return self._pin_hashmap[hierarchical_name]
+        return copy.copy(self._pin_hashmap[hierarchical_name])
         pass
 
     def _build_hashmaps(self):

@@ -19,14 +19,43 @@ class TMRInserter:
             else:
                 self._insert_triplicate(net)
 
+    def define_lut3(self, ir):
+        my_lut_3 = Definition()
+        my_lut_3['EDIF.identifier'] = 'LUT3'
+        my_lut_3['EDIF.cellType'] = 'celltype'
+        my_lut_3['EDIF.view.identifier'] = 'netlist'
+        my_lut_3['EDIF.view.viewType'] = 'viewtype'
+        my_port = my_lut_3.create_port()
+        my_port.direction = Port.Direction.OUT
+        my_port['metadata_prefix'] = ['EDIF']
+        my_port['EDIF.identifier'] = 'O'
+        my_port = my_lut_3.create_port()
+        my_port.direction = Port.Direction.IN
+        my_port['metadata_prefix'] = ['EDIF']
+        my_port['EDIF.identifier'] = 'I0'
+        my_port = my_lut_3.create_port()
+        my_port.direction = Port.Direction.IN
+        my_port['metadata_prefix'] = ['EDIF']
+        my_port['EDIF.identifier'] = 'I1'
+        my_port = my_lut_3.create_port()
+        my_port.direction = Port.Direction.IN
+        my_port['metadata_prefix'] = ['EDIF']
+        my_port['EDIF.identifier'] = 'I2'
+        ir.libraries[0].add_definition(my_lut_3)
+        return my_lut_3
+
     # Process ir extracting identifier and map it to the cable
     def _preprocess(self, ir):
+        has_lut3 = False
         for library in ir.libraries:
             for definition in library.definitions:
                 if definition.__getitem__("EDIF.identifier") == "LUT3":
                     self.lut3 = definition
+                    has_lut3 = True
                 for cable in definition.cables:
                     self.net[cable.__getitem__("EDIF.identifier")] = cable
+        if not has_lut3:
+            self.lut3 = self.define_lut3(ir)
 
     # Insert three voter
     def _insert_triplicate(self, net):
