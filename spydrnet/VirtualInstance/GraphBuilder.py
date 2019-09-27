@@ -2,7 +2,6 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 from spydrnet.ir import *
-from spydrnet.utility.HierarchicalLookup import HierarchicalLookup
 from spydrnet.VirtualInstance.VirtualTree import VirtualTree
 from spydrnet.utility.utility import Utility
 import spydrnet.utility.utility as util
@@ -14,13 +13,8 @@ class GraphBuilder:
         self.ir_graph = nx.DiGraph()
         self.pin_graph = None
         self.sequential_graph = None
-        if ir is None:
-            self.lookup = None
-        else:
-            self.lookup = HierarchicalLookup(ir)
 
     def build_graph(self, ir):
-        self.lookup = HierarchicalLookup(ir)
         if not hasattr(ir, "tree"):
             ir.tree = VirtualTree()
             ir.tree.build_tree(ir)
