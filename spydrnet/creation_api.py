@@ -49,10 +49,10 @@ def create_definition():
     return definition
 
 def create_port():
-    pass
+    return Port()
 
 def create_cable():
-    pass
+    return Cable()
 
 def create_library():
     library = Library()
@@ -63,5 +63,9 @@ def create_library():
         )
     return library
 
-def create_property():
-    pass
+def create_property(identifier, original_identifier, value):
+    prop = dict()
+    prop['identifier'] = identifier
+    prop['original identifier'] = original_identifier
+    prop['value'] = value
+    return prop
