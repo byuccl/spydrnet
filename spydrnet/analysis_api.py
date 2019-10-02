@@ -17,7 +17,7 @@ These calls are collected/imported/defined here
 
 def get_designs(of=None):
     '''
-    returns all designs that are created
+    return all designs that are created
     parameters:
     - of - default is None if it is set to a sub-element of the design it will get the designs that contain the sub-element
     '''
@@ -25,7 +25,7 @@ def get_designs(of=None):
 
 def get_cells(of=None):
     '''
-    returns all cells that are created
+    return all cells that are created
     parameters:
     --of
         default is None
@@ -36,7 +36,7 @@ def get_cells(of=None):
 
 def get_ports(of=None):
     '''
-    returns all cells that are created
+    return all cells that are created
     parameters:
     --of
         default is None
@@ -48,7 +48,7 @@ def get_ports(of=None):
 
 def get_cables(of=None):
     '''
-    returns all cells that are created
+    return all cells that are created
     parameters:
     --of
         default is None
@@ -60,7 +60,7 @@ def get_cables(of=None):
 
 def get_libraries(of=None):
     '''
-    returns all cells that are created
+    return all cells that are created
     parameters:
     --of
         default is None
@@ -71,7 +71,7 @@ def get_libraries(of=None):
 
 def get_properties(of):
     '''
-    Returns the properties of the object passed in
+    Return the properties of the object passed in
     parameters:
     --of
         no default
