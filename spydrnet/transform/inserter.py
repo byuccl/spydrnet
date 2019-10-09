@@ -29,18 +29,22 @@ class TMRInserter:
         my_port.direction = Port.Direction.OUT
         my_port['metadata_prefix'] = ['EDIF']
         my_port['EDIF.identifier'] = 'O'
+        my_port.create_pin()
         my_port = my_lut_3.create_port()
         my_port.direction = Port.Direction.IN
         my_port['metadata_prefix'] = ['EDIF']
         my_port['EDIF.identifier'] = 'I0'
+        my_port.create_pin()
         my_port = my_lut_3.create_port()
         my_port.direction = Port.Direction.IN
         my_port['metadata_prefix'] = ['EDIF']
         my_port['EDIF.identifier'] = 'I1'
+        my_port.create_pin()
         my_port = my_lut_3.create_port()
         my_port.direction = Port.Direction.IN
         my_port['metadata_prefix'] = ['EDIF']
         my_port['EDIF.identifier'] = 'I2'
+        my_port.create_pin()
         ir.libraries[0].add_definition(my_lut_3)
         return my_lut_3
 
