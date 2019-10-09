@@ -14,6 +14,8 @@ These calls are collected/imported/defined here
 from spydrnet.ir import *
 from spydrnet.data_manager import DataManager
 
+environment_manager = DataManager.from_element_type_and_metadata_key(Environment, 'EDIF.identifier')
+
 def create_design():
     environment = Environment()
     environment.add_data_manager(
