@@ -224,6 +224,21 @@ class test_analyze(unittest.TestCase):
         distance = analyze.find_minimum_return_distance(graph, 'a')
         self.assertTrue(distance == 3)
 
+    def test_find_comb_driven_by_unreplicated_cell_type(self):
+        f = open('config.json', 'r')
+        contents = f.read()
+        config = json.loads(contents)
+        f.close()
+        parser = EdifParser.from_filename(files.edif_files['adder.edf'])
+        parser.parse()
+        netlist = parser.netlist
+        graph = GraphBuilder()
+        graph.build_graph(netlist)
+
+        output = analyze.find_comb_driven_by_unreplicated_cell_type(graph.ir_graph, config['replicate_black_list'])
+        self.assertTrue(len(output) == 18)
+
+
 
 if __name__ == '__main__':
     unittest.main()
