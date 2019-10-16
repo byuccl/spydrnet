@@ -26,6 +26,8 @@ visited_pins = set()
 pin_map = dict()
 lookup = None
 used_name = set()
+connectors = list()
+
 
 DEBUG = False
 EMPTY = 0
@@ -34,20 +36,44 @@ def flatten_design(ir):
     global connector_def
     global lookup
     global DEBUG
+    if DEBUG:
+        f = open('mapping.txt', 'w')
+        f.close()
     uniquifier = Uniquifier()
     uniquifier.run(ir)
     lookup = HierarchicalLookup(ir)
     flat_definition = _create_flat_definition(ir.top_instance.definition)
     ir.top_instance.definition.library.add_definition(_define_connector(), 0)
+    print("Number of ports", len(ir.top_instance.definition.ports))
+    port_num = 1
     for port in ir.top_instance.definition.ports:
+        print("Working on port number", port_num)
+        port_num += 1
         if port.direction == Port.Direction.OUT:
+            print("Port as", len(port.inner_pins), "pins")
+            pin_num = 1
             for pin in port.inner_pins:
+                print("Working on pin number", pin_num)
+                pin_num += 1
                 _trace_back(pin, flat_definition)
                 # _trace_from_port(pin, flat_definition)
+        else:
+            print("Port is input")
     pass
     ir.top_instance['EDIF.identifier'] = flat_definition['EDIF.identifier']
     if DEBUG:
         ir.top_instance.old_definition = ir.top_instance.definition
+        f = open('mapping.txt', 'w')
+
+        for port in flat_definition.ports:
+            for inner_pin in port.inner_pins:
+                f.write(inner_pin.wire.cable['EDIF.original_identifier'] + '\n')
+                if 'EDIF.original_identifier' in inner_pin.wire.cable.debug:
+                    f.write(inner_pin.wire.cable.debug['EDIF.original_identifier'])
+                else:
+                    f.write(inner_pin.wire.cable.debug['EDIF.identifier'])
+                f.write('\n')
+        f.close()
     ir.top_instance.definition = flat_definition
 
 
@@ -62,6 +88,8 @@ def _create_flat_definition(top_definition):
             pin_map[port.inner_pins[i]] = new_port.inner_pins[i]
         new_port['EDIF.identifier'] = port['EDIF.identifier']
         new_port.direction = port.direction
+        if 'EDIF.original_identifier' in port:
+            new_port['EDIF.original_identifier'] = port['EDIF.original_identifier']
         if hasattr(port, 'is_array'):
             new_port.is_array = True
     return definition
@@ -102,6 +130,8 @@ def _create_flat_definition(top_definition):
 
 
 def _get_other_pins(instance, outer_pin):
+    if isinstance(outer_pin, InnerPin):
+        print("Fail")
     pins = list()
     for pin in instance.outer_pins.values():
         if pin.inner_pin is not outer_pin.inner_pin:
@@ -169,8 +199,8 @@ def _add_connector(definition, pin, pin_queue):
             pin_map[pin] = connector.get_pin('I')
             pin_map[_get_outer_pin(pin)] = connector.get_pin('O')
     else:
-        connector = _create_connector()
-        definition.add_instance(connector)
+        # connector = _create_connector()
+        # definition.add_instance(connector)
         if pin.inner_pin.port.direction == Port.Direction.OUT:
             pin_map[pin] = connector.get_pin('O')
             pin_map[pin.inner_pin] = connector.get_pin('I')
@@ -178,7 +208,14 @@ def _add_connector(definition, pin, pin_queue):
         elif pin.inner_pin.port.direction == Port.Direction.IN:
             pin_map[pin] = connector.get_pin('I')
             pin_map[pin.inner_pin] = connector.get_pin('O')
-        
+
+    if isinstance(pin, InnerPin):
+        connector.port = pin.port
+    else:
+        connector.port = pin.inner_pin.port
+    connectors.append(connector)
+
+
 
 def _map_connector(connector, pin, side_one, side_two):
     pin_map[pin] = connector.get_pin(side_one)
@@ -209,8 +246,24 @@ def _name_object(object_to_name, name_source):
     while object_to_name['EDIF.identifier'] in used_name:
         object_to_name['EDIF.identifier'] = temp + '_' + str(random.randint(0, 1000))
     if temp != name:
+        if name[-1] == '_':
+            for x in range(2, len(name)):
+                if name[-x].isalpha():
+                    break
+                if name[-x] == '_':
+                    name = name[:-x] + '[' + name[-x + 1: -1] + ']'
         object_to_name['EDIF.original_identifier'] = name
     used_name.add(temp)
+    if DEBUG:
+        if isinstance(name_source, Cable):
+            object_to_name.debug = name_source
+            # f = open('mapping.txt', 'a')
+            # if 'EDIF.original_identifier' in name_source:
+            #     f.write(name_source['EDIF.original_identifier'] + '\t' + name)
+            # else:
+            #     f.write(name_source['EDIF.identifier'] + '\t' + name)
+            # f.write('\n')
+            # f.close()
 
 
 
@@ -304,15 +357,29 @@ def _define_connector():
 from spydrnet.parsers.edif.parser import EdifParser
 from spydrnet.composers.edif.composer import ComposeEdif
 import spydrnet.support_files as files
+import time
 
 
 if __name__ == '__main__':
-    parser = EdifParser.from_filename(files.edif_files["riscv_multi_core.edf"])
+    DEBUG = True
+    print("Parsing")
+    parser = EdifParser.from_filename(files.edif_files["aes_128_noBRAM.edf"])
     parser.parse()
     ir = parser.netlist
+    print("Flattening design")
     uniquifier = Uniquifier()
     # uniquifier.run(ir)
     # flatten(ir)
+    start_time = time.time()
     flatten_design(ir)
+    print("--- %s seconds ---" % (time.time() - start_time))
+    print("composing netlist")
     compose = ComposeEdif()
     compose.run(ir, "flatten.edf")
+    temp = list()
+    for connector in connectors:
+        for pin in connector.outer_pins.values():
+            if pin.wire is None:
+                temp.append(connector)
+                break
+    print()

@@ -68,8 +68,10 @@ def _sanitize_target(top_definition, instances, top_ports, black_list):
 def determine_other_voters(ir, cell_target, voter_target):
     lookup = HierarchicalLookup(ir)
     reduction_voter_location = list()
+    boundry_of_replication = dict()
     for cell in cell_target:
         instance_trace = lookup.get_instance_from_name(utility.get_hierarchical_name(cell))
+        temp = list()
         for inner_pin, outer_pin in cell.outer_pins.items():
             if inner_pin.port.direction == Port.Direction.IN \
                     or outer_pin.wire.cable['EDIF.identifier'] in voter_target:
@@ -79,7 +81,28 @@ def determine_other_voters(ir, cell_target, voter_target):
                 if instance not in cell_target:
                     voter_target.append(outer_pin.wire.cable['EDIF.identifier'])
                     reduction_voter_location.append(outer_pin.wire.cable['EDIF.identifier'])
+                    temp.append(instance)
+        if temp:
+            boundry_of_replication[cell] = temp
     return reduction_voter_location
+
+
+def determine_boundary_of_replication(ir, cell_target):
+    boundary = dict()
+    lookup = HierarchicalLookup(ir)
+    for cell in cell_target:
+        instance_trace = lookup.get_instance_from_name(utility.get_hierarchical_name(cell))
+        unreplicated_cells = set()
+        for inner_pin, outer_pin in cell.outer_pins.items():
+            if inner_pin.port.direction == Port.Direction.IN:
+                continue
+            connected_instances = utility.trace_pin(outer_pin, instance_trace)
+            for instance in connected_instances.values():
+                if instance not in cell_target:
+                    unreplicated_cells.add(instance)
+        if unreplicated_cells:
+            boundary[cell] = unreplicated_cells
+    return boundary
 
 
 def _find_driver(pin):
@@ -263,6 +286,28 @@ def find_minimum_return_distance(sync_graph, node):
     return None
 
 
+def driven_by_black_box(sequential_graph):
+    black_box_drivin = set()
+    for instance in sequential_graph.nodes():
+        for outer_pin in instance.outer_pins.values():
+            if outer_pin.inner_pin.port.direction != Port.Direction.IN:
+                continue
+            driving_pin = _find_driver(outer_pin)
+            if _is_blackbox(driving_pin.instance):
+                black_box_drivin.add(instance)
+    return black_box_drivin
+
+
+def find_comb_driven_by_unreplicated_cell_type(ir_graph, black_list):
+    solution = set()
+    for instance in ir_graph.nodes():
+        if utility.is_sequential(instance):
+            continue
+        for pred in ir_graph.predecessors(instance):
+            if pred.definition['EDIF.identifier'] in black_list:
+                solution.add(instance)
+                break
+    return solution
 
 from spydrnet.parsers.edif.parser import EdifParser
 from spydrnet.graph.Graph_Builder import GraphBuilder
