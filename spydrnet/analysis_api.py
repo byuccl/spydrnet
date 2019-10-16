@@ -17,6 +17,7 @@ These calls are collected/imported/defined here
 
 from spydrnet.ir import *
 from itertools import chain
+from spydrnet.global_manager import global_manager
 
 def get_designs(of=None):
     '''

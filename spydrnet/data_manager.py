@@ -36,6 +36,9 @@ class DataManager:
             return self._lookup.get(self.condition_key(identifier))
         return None
 
+    def get_all_children(self):
+        return self._lookup.values()
+
     @staticmethod
     def condition_key(metadata_value):
         return metadata_value.lower()
