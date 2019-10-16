@@ -3,7 +3,8 @@ from spydrnet.ir import Environment
 
 class GlobalEnvironmentManager:
     """
-    manages the global namespace for the tools
+    manage the global namespace for the tools
+    use a singleton object that will manager the environments individually.
     tasks include:
     tracking the namespace for the environments that are created
     """
@@ -39,14 +40,25 @@ class GlobalEnvironmentManager:
 
     @staticmethod
     def register_environment(environment):
-        if not GlobalEnvrionmentManager.instance:
+        '''
+        register an environment with the environment manager.
+        The environment must have a unique value on the metadata_key used while initializing with respect to all other environments.
+        '''
+        if not GlobalEnvironmentManager.instance:
             GlobalEnvironmentManager._uninitialized_error()
         GlobalEnvironmentManager.instance.register_environment(environment)
 
     @staticmethod
     def get_all_environments():
+        '''
+        Return all currently created environments
+        '''
         return GlobalEnvironmentManager.instance.get_all_environments()
 
     @staticmethod
     def _uninitialized_error():
+        '''
+        handle alerting the user when an uninitialized singleton is used
+        TODO change this to raise an exception
+        '''
         print("An instance of the GlobalEnvironmentManager needs to be created before the static functions can be called")
