@@ -308,6 +308,10 @@ class Wire(Element):
     def connect_pin(self, pin):
         self.pins.append(pin)
         pin.wire = self
+        
+    def disconnect_pin(self, pin):
+        self.pins.remove(pin)
+        pin.wire = None
 
 class Instance(Element):
     def __init__(self):
@@ -319,6 +323,9 @@ class Instance(Element):
     def get_pin(self, port_identifier, index = 0):
         port = self.definition.get_port(port_identifier)
         inner_pin = port.get_pin(index)
+        return self.get_outer_pin(inner_pin)
+            
+    def get_outer_pin(self, inner_pin):
         if inner_pin not in self.outer_pins:
             outer_pin = OuterPin()
             self.outer_pins[inner_pin] = outer_pin

@@ -57,8 +57,9 @@ class GraphBuilder:
                         pass
                         # self.ir_graph.add_edge(pin, downstream_leaf_cell)
                 for test in self.ir_graph.successors(pin):
-                    print()
-        print()
+                    pass
+                    #print()
+        #print()
 
     def _build_sequential_graph(self):
         new_graph = nx.DiGraph()
