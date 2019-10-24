@@ -12,7 +12,7 @@ Welcome SpyDrNet's documentation!
    introduction
    intermediate_representation
    hierarchical_references
-
+   api_specification
 
 Indices and tables
 ==================

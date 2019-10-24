@@ -66,7 +66,7 @@ class Element:
 class Design(Element):
     def __init__(self):
         super().__init__()
-        self.environment = None
+        self.netlist = None
 
     @property
     def parent(self):
@@ -74,7 +74,7 @@ class Design(Element):
 
     @property
     def children(self):
-        return iter((self.environment,))
+        return iter((self.netlist,))
 
 class Environment(Element):
     def __init__(self):
