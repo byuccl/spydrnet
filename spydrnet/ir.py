@@ -81,7 +81,32 @@ class Environment(Element):
         super().__init__()
         self.design = None
         self.libraries = list()
-        self.top_instance = None
+        self._top_instance = None
+        self._top_virtual_instance = None
+
+    @property
+    def top_instance(self):
+        return self._top_instance
+
+    @top_instance.setter
+    def top_instance(self, instance):
+        from spydrnet.virtual_ir import generate_virtual_instances_from_top_level_instance
+        if isinstance(instance, Instance):
+            self._top_instance = instance
+            if self._top_virtual_instance:
+                search_stack = [self._top_virtual_instance]
+                while search_stack:
+                    current_virtual_instance = search_stack.pop()
+                    search_stack += current_virtual_instance.virtualChildren.values()
+                    definition = current_virtual_instance.instance.definition
+                    definition.virtual_instances.discard(current_virtual_instance)
+            self._top_virtual_instance = generate_virtual_instances_from_top_level_instance(instance)
+    
+    @property
+    def top_virtual_instance(self):
+        return self._top_virtual_instance
+            
+            
 
     @property
     def parent(self):
@@ -153,6 +178,11 @@ class Definition(Element):
         self.cables = list()
         self.instances = list()
 
+    def is_leaf(self):
+        if len(self.instances) > 0 or len(self.cables) > 0:
+            return False
+        return True
+
     @property
     def parent(self):
         return self.library
@@ -174,11 +204,6 @@ class Definition(Element):
     def get_port(self, identifier):
         port = self.lookup_element(Port, 'EDIF.identifier', identifier)
         return port
-        # for port in self.ports:
-        #     if 'EDIF.identifier' in port:
-        #         if port['EDIF.identifier'].lower() == identifier.lower():
-        #             return port
-        # raise KeyError()
  
     def create_instance(self):
         instance = Instance()
@@ -193,11 +218,6 @@ class Definition(Element):
     def get_instance(self, identifier):
         instance = self.lookup_element(Instance, 'EDIF.identifier', identifier)
         return instance
-        # for instance in self.instances:
-        #     if 'EDIF.identifier' in instance:
-        #         if instance['EDIF.identifier'].lower() == identifier.lower():
-        #             return instance
-        # raise KeyError()
 
     def create_cable(self):
         cable = Cable()
@@ -212,13 +232,11 @@ class Definition(Element):
     def get_cable(self, identifier):
         cable = self.lookup_element(Cable, 'EDIF.identifier', identifier)
         return cable
-        # for cable in self.cables:
-        #     if 'EDIF.identifier' in cable:
-        #         if cable['EDIF.identifier'].lower() == identifier.lower():
-        #             return cable
-        # raise KeyError()
 
     def get_pin(self, port_identifier, index = 0):
+        """
+        Deprecated: 0.1.0
+        """
         port = self.get_port(port_identifier)
         return port.get_pin(index)
 
@@ -319,6 +337,9 @@ class Instance(Element):
         self.parent_definition = None
         self.definition = None
         self.outer_pins = dict()
+
+    def is_leaf(self):
+        return self.definition.is_leaf()
 
     def get_pin(self, port_identifier, index = 0):
         port = self.definition.get_port(port_identifier)

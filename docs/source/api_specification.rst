@@ -7,8 +7,15 @@ API Specification 1.0
 
 Analysis API
 ------------
+.. automodule:: spydrnet.api.get_virtual_instances
+    :members:
+    
+.. automodule:: spydrnet.api.get_virtual_wires
+    :members:
+    
 .. automodule:: spydrnet.api.analysis_api
-   :members:
+    :members:
+
    
 Creation API
 ------------   

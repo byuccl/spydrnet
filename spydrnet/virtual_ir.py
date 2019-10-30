@@ -31,6 +31,11 @@ class VirtualInstance:
     def from_top_instance(instance):
         virtualInstance = VirtualInstance()
         virtualInstance.instance = instance
+        definition = instance.definition
+        if definition:
+            if not hasattr(definition, 'virtual_instances') or definition.virtual_instances is None:
+                definition.virtual_instances = set()
+            definition.virtual_instances.add(virtualInstance)
         return virtualInstance
     
     def __init__(self):
@@ -39,12 +44,26 @@ class VirtualInstance:
         self.virtualChildren = dict()
         self.virtualPorts = dict()
         self.virtualCables = dict()
+
+    def __str__(self):
+        return self.get_hierarchical_name()
+
+    def __repr__(self):
+        return '<{} {}>'.format(self.__class__.__name__, self.get_hierarchical_name())
+
+    def is_leaf(self):
+        return self.instance.is_leaf()
         
     def create_virtual_child(self, instance):
         virtualChild = VirtualInstance()
         virtualChild.instance = instance
         virtualChild.virtualParent = self
         self.virtualChildren[instance] = virtualChild
+        definition = instance.definition
+        if definition:
+            if not hasattr(definition, 'virtual_instances') or definition.virtual_instances is None:
+                definition.virtual_instances = set()
+            definition.virtual_instances.add(virtualChild)
         return virtualChild
         
     def create_virtual_port(self, port):
@@ -167,10 +186,10 @@ class VirtualCable:
         return prefix + self.get_name()
     
     def get_name(self):
-        if 'EDIF.original_identifier' in self.instance:
-            name = self.instance['EDIF.original_identifier']
+        if 'EDIF.original_identifier' in self.cable:
+            name = self.cable['EDIF.original_identifier']
         else:
-            name = self.instance['EDIF.identifier']
+            name = self.cable['EDIF.identifier']
         return name
     
 class VirtualWire:

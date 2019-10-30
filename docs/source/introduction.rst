@@ -3,19 +3,22 @@
 Introduction
 ============
 
-SpyDrNet is a powerful, flexibile framework for analyzing and transforming FPGA netlists. It is developed and maintained by the `Configurable Computing Lab`_ of `Brigham Young University`_. This tool is related to 
-the `BYU EDIF Tools`_.
+Welcome tp SpyDrNet, a tool that will help you analyze and transform netlists. Please note that SpyDrNet is currently in a pre-alpha testing and some features, detailed in this guide, may not be fully implemented. Those features that are implimented, may not be bug free. Use at your own risk. 
+
+SpyDrNet is developed and maintained by the `Configurable Computing Lab`_ of `Brigham Young University`_. This tool is related to the `BYU EDIF Tools`_ and is considered to be the next generation tool for FPGA netlist analysis and tranformation.
 
 .. _Configurable Computing Lab: https://ccl.ee.byu.edu/
 .. _Brigham Young University: https://www.byu.edu/
 .. _BYU EDIF Tools: http://reliability.ee.byu.edu/edif/
 
-SpyDrNet is currently in active development. Functionality is limited, but some of the goals the authors would like to accomplish are:
+What makes SpyDrNet different is its intermediate representation of netlists (IR) and its ability to interact with other powerful EDA tools. how netlists are represented In the representation, everything is stored in a Design object. The Design object holds basic information about a netlist, the top-level module, the target FPGA chip, and the Environment object that holds the information on how primitives connect to each other and the hierarchy within the netlist. 
 
-* Provide a runtime API in three different languages: C++, Python, and Java.
-* Provide parsers and composers for at least five different netlist formats: EDIF, structural Verilog, structural VHDL, Intel's Verilog Quartus Mapping (VQM), and generic JSON. Other parsers can be added. Currently, only EDIF is supported.
-* Provide an intermediate representation that can capture common elements found most netlist formats and preserve language specific elements as needed.
-* Complete valuable research in the field of FPGA reliability.
+.. SpyDrNet is currently in active development. Functionality is limited, but some of the goals the authors would like to accomplish are:
+
+.. * Provide a runtime API in three different languages: C++, Python, and Java.
+.. * Provide parsers and composers for at least five different netlist formats: EDIF, structural Verilog, structural VHDL, Intel's Verilog Quartus Mapping (VQM), and generic JSON. Other parsers can be added. Currently, only EDIF .. is supported.
+.. * Provide an intermediate representation that can capture common elements found most netlist formats and preserve language specific elements as needed.
+.. * Complete valuable research in the field of FPGA reliability.
 
 .. Digital designs for FPGAs are represented as netlists, a list of components and connections. Netlists come from various vendors in many different formats. SpyDrNet allows you to look at and alter a netlist in a language inspecific way. SpyDrNet parses a netlist into an intermediate represention (IR) that is designed to be easily traversed and effortlessly manipulated. SpyDrNet provides the tools you need to accomplish the netlist analysis and transformation tasks you have in mind.
 
@@ -63,3 +66,10 @@ SpyDrNet's name comes from the language it is written in, the things it can do w
 .. What specifically can I do with SpyDrNet that I can't do with any other tool?
 
 .. Applications (reliability)
+
+
+SpyDrNet is part of a rising ecosystem of free and open source software (FOSS) for FPGA developement. Think MyHDL, pyEDA, Yosys, L-graph, ABC, BLIF, RapidWright, RapidSmith, RapidSmith2, JHDL, BYU EDIF Tools, VQM, Project X-ray
+
+Netlist formats: EDIF, Structural Verilog, Structural VHDL, FPGA_assembly, NGC (Previous Xilinx Proprietary), VQM, DOT, generic serilization (JSON, XML, YAML, GRAPHML, etc.)
+
+Explaination of Vendor primitives and simulation libraries that can be parsed to extract "Atoms"/"Primitives", etc.

@@ -1,5 +1,5 @@
-Welcome SpyDrNet's documentation!
-=======================================
+Welcome to SpyDrNet!
+====================
 
 .. only:: html
 

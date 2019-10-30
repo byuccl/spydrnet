@@ -15,4 +15,45 @@ Classes
 -------
 
 .. automodule:: spydrnet.ir
-   :members:
+
+.. autoclass:: Environment
+    :members: top_instance, top_virtual_instance, create_library, add_library, get_library
+    :undoc-members:
+    
+.. autoclass:: Library
+    :members: create_definition, add_definition, get_definition
+    :undoc-members:
+    
+.. autoclass:: Definition
+    :members: create_cable, add_cable, get_cable, create_instance, add_instance, get_instance, create_port, add_port, get_port, is_leaf
+    :undoc-members:
+    
+.. autoclass:: Instance
+    :members:
+    :undoc-members:
+    
+.. autoclass:: Port
+    :members:
+    :undoc-members:
+    
+.. automodule:: spydrnet.virtual_ir
+
+.. autoclass:: VirtualInstance
+    :members:
+    :undoc-members:
+
+.. autoclass:: VirtualPort
+    :members:
+    :undoc-members:
+    
+.. autoclass:: VirtualPin
+    :members:
+    :undoc-members:
+    
+.. autoclass:: VirtualCable
+    :members:
+    :undoc-members:
+    
+.. autoclass:: VirtualWire
+    :members:
+    :undoc-members:
