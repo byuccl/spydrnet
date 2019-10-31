@@ -106,7 +106,85 @@ def get_virtual_wires(*args, **kwargs):
 
 
 def _get_virtual_wires_of(of, selection=OUTSIDE, filter_func=lambda x: True):
-    pass
+    try:
+        items = iter(of)
+    except:
+        items = iter((of,))
+
+    found_virtual_wires = set()
+
+    search_stack = list(items)
+    while search_stack:
+        item = search_stack.pop()
+        if isinstance(item, Environment):
+            selection = INSIDE
+            search_stack += item.libraries
+        elif isinstance(item, Library):
+            selection = INSIDE
+            search_stack += item.definitions
+        elif isinstance(item, Definition):
+            selection = INSIDE
+            search_stack += item.virtual_instances
+        elif isinstance(item, Port):
+            search_stack += item.inner_pins
+        elif isinstance(item, InnerPin):
+            search_stack += item.get_virtualPins()
+        elif isinstance(item, OuterPin):
+            search_stack += item.get_virtualWires()
+        elif isinstance(item, Cable):
+            search_stack += item.wires
+        elif isinstance(item, Wire):
+            search_stack += item.get_virtualWires()
+        elif isinstance(item, VirtualInstance):
+            if selection in {INSIDE, BOTH, ALL}:
+                search_stack += item.virtualWires.values()
+            if selection in {OUTSIDE, BOTH, ALL}:
+                search_stack += item.virtualPorts.values()
+        elif isinstance(item, VirtualPort):
+            search_stack += item.virtualPins
+        elif isinstance(item, VirtualPin):
+            if selection in {INSIDE, BOTH, ALL}:
+                inner_virtual_wire = item.get_inner_virtual_wire()
+                if inner_virtual_wire and inner_virtual_wire not in found_virtual_wires:
+                    found_virtual_wires.add(inner_virtual_wire)
+                    if filter_func(inner_virtual_wire):
+                        yield inner_virtual_wire
+                    if selection == ALL:
+                        search_stack += inner_virtual_wire.get_virtualPins()
+            if selection in {OUTSIDE, BOTH, ALL}:
+                outer_virtual_wire = item.get_inner_virtual_wire()
+                if outer_virtual_wire and outer_virtual_wire not in found_virtual_wires:
+                    found_virtual_wires.add(outer_virtual_wire)
+                    if filter_func(outer_virtual_wire):
+                        yield outer_virtual_wire
+                    if selection == ALL:
+                        search_stack += outer_virtual_wire.get_virtualPins()
+        elif isinstance(item, VirtualCable):
+            search_stack += item.virtualWires.values()
+        elif isinstance(item, VirtualWire):
+            if item not in found_virtual_wires:
+                found_virtual_wires.add(item)
+                if selection in {INSIDE, BOTH, ALL}:
+                    if filter_func(item):
+                        yield item
+                if selection in {OUTSIDE, BOTH, ALL}:
+                    for vp in item.get_virtualPins():
+                        inner_vw = vp.get_inner_virtual_wire()
+                        if inner_vw is not item:
+                            if inner_vw not in found_virtual_wires:
+                                found_virtual_wires.add(inner_vw)
+                                if filter_func(inner_vw):
+                                    yield inner_vw
+                                if selection == ALL:
+                                    search_stack += inner_vw.get_virtualPins()
+                        else:
+                            outer_vw = vp.get_outer_virtual_wire()
+                            if outer_vw not in found_virtual_wires:
+                                found_virtual_wires.add(outer_vw)
+                                if filter_func(outer_vw):
+                                    yield outer_vw
+                                if selection == ALL:
+                                    search_stack += outer_vw.get_virtualPins()
 
 def _get_virtual_wires_patterns(patterns, hierarchical=False, is_case=True, is_re=False, filter_func=lambda x: True):
     pass

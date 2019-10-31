@@ -11,7 +11,7 @@ SpyDrNet is developed and maintained by the `Configurable Computing Lab`_ of `Br
 .. _Brigham Young University: https://www.byu.edu/
 .. _BYU EDIF Tools: http://reliability.ee.byu.edu/edif/
 
-What makes SpyDrNet different is its intermediate representation of netlists (IR) and its ability to interact with other powerful EDA tools. how netlists are represented In the representation, everything is stored in a Design object. The Design object holds basic information about a netlist, the top-level module, the target FPGA chip, and the Environment object that holds the information on how primitives connect to each other and the hierarchy within the netlist. 
+What makes SpyDrNet different is its intermediate representation of netlists (IR) and its ability to interact with other powerful tools. Netlists are represented as a relational data stucture. In the representation, every netlist element (library, definition, port, pin, instance, cable, and wire) is stored in a Netlist object. Relationships between elements are preserved with pointers, and some additional pointers and helper objects are maintained to improve performance and usablility. A Design object within a Netlist holds basic information about about the netlist including the top-level module, the target FPGA chip, and any other information associated with a design that utilized the netlist.  The Netlist object hold information on how elements connect to each other and the hierarchy within the netlist. More detail on the IR is provided in sec:ir_.
 
 .. SpyDrNet is currently in active development. Functionality is limited, but some of the goals the authors would like to accomplish are:
 
@@ -21,6 +21,23 @@ What makes SpyDrNet different is its intermediate representation of netlists (IR
 .. * Complete valuable research in the field of FPGA reliability.
 
 .. Digital designs for FPGAs are represented as netlists, a list of components and connections. Netlists come from various vendors in many different formats. SpyDrNet allows you to look at and alter a netlist in a language inspecific way. SpyDrNet parses a netlist into an intermediate represention (IR) that is designed to be easily traversed and effortlessly manipulated. SpyDrNet provides the tools you need to accomplish the netlist analysis and transformation tasks you have in mind.
+
+Using the API Example: Four-Bit Counter
+---------------------------------------
+
+>>> import spydrnet as sdn
+>>> netlist = sdn.parse('four_bit_counter.edf')
+>>>
+
+Before we can start using the more powerful features of Spydrnet, a basic understanding of the Spydrnet API should be gained. We will explore the API by making a simple four-bit counter that can be incremented or decremented based on a outside signal. To begin we need to install Spydrnet, which can be done by using the command “pip install Spydrnet” in the terminal. Once Spydrnet has been install we can use “import Spydrnet” at the top of our python file.  
+
+After we get Spydrnet set up, we start building our four-bit counter by creating a design to hold our work in. By using “design = Spydrnet.createDesgin()”, Spydrnet will generate a Design object for us. After creating the Design object, we need to create Library objects to hold our four-bit counter. 
+
+At this time, Spydrnet is unable to read in a library that holds defines the primitives on FPGA chip, so we need to do this manually. Since we are working on getting primitives into our design, we must use the same names that the FPGA vendor tool expects. Because of this, we will be using Xilinx’s Artix 7 family primitives for this section of the guide. Start by using “prim_lib = design.createLibrary()”. We will be using this library to hold the primitives that we need to create the counter. After making a Library object, we need to create Definitions objects that will populate the Library. To do so, we will use “FDCE = prim_lib.createDefinition(‘FDCE’)”. This will create a Definition object with the identifier ‘FDCE’. 
+
+Once we have created the Definition, we need to add ports. By looking at Xilinx’s documentation for primitives found on the Artix 7, we know we need add ports with the name ‘D’, ‘Q’, ‘C’, ‘CE’, and ‘CLR’. To create ports on a design, we will use definition.createPort(portName, direction). To continue with our example of the FDCE primitive, we will use “FDCE.createPort(‘D’, INPUT)”. For sake of brevity, we will leave the rest of setting up the primitive as an exercise for the reader. In a future update, the ability to import a file that contains the primitives will be supported. 
+
+Once we have the primitive library completed, we can start the process of bringing the primitives together to create a functional four-bit counter. To begin, we will create another library to hold the design elements of four-bit counter.
 
 Tool Flow
 ---------
@@ -36,6 +53,16 @@ Netlists flow through SpyDrNet in a three step process (see :numref:`fig:flow`).
    :alt: SpyDrNet Flow
 
    Flow
+   
+**Parsing a netlist**
+
+Normally, one will not create a digital design from scratch, and this is not the main propose of this tool. The normal way of getting a netlist into the tool is to use a parser. Spydrnet already comes will multiple parsers (currently Spydrnet only comes with a EDIF parser in the pre-alpha build). To parse a file, use Spydrnet.parse(pathToNetlist, netlistFormat). The path to the netlist can be either an absolute path or a relative path. For example, if the file fourBitCounter.edf is in the same directory as the python file, one can use design = Spydrnet.parse(fourBitCounter.edf, EDIF). One is not limited to the parsers provided, it is possible to use the Spydrnet API to write a parser for unsupported formats, but that is not covered in this guide. 
+
+**Composing a netlist**
+
+Once all the work on netlist is finished, it become necessary to export the design into a format that vender tools can work with. This can be done by 
+Spydrnet.compose(Design, outputName, netlistFormat)/design.compose(outputName, netlistFormat)
+. Like with parsing a netlist, it is possible to use the API to write a custom composer but this also not covered in this guide. 
 
 Intermediate Representation:
 ----------------------------

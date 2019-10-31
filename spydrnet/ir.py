@@ -290,11 +290,28 @@ class InnerPin(Pin):
         super().__init__()
         self.port = None
 
+    def get_virtualPins(self):
+        port = self.port
+        definition = port.definition
+        for vi in definition.virtual_instances:
+            virtual_port = vi.virtualPorts[port]
+            virtual_pin = virtual_port.virtualPins[self]
+            yield virtual_pin
+
 class OuterPin(Pin):
     def __init__(self):
         super().__init__()
         self.instance = None
         self.inner_pin = None
+
+    def get_virtualWires(self):
+        parent_definition = self.instance.parent_definition
+        for vi in parent_definition.virtual_instances:
+            wire = self.wire
+            cable = wire.cable
+            virtual_cable = vi.virtualCables[cable]
+            virtual_wire = virtual_cable.virtualWires[wire]
+            yield virtual_wire
 
 class Cable(Bundle):
     def __init__(self):
@@ -330,6 +347,14 @@ class Wire(Element):
     def disconnect_pin(self, pin):
         self.pins.remove(pin)
         pin.wire = None
+
+    def get_virtualWires(self):
+        cable = self.cable
+        definition = cable.definition
+        for vi in definition.virtual_instances:
+            virtual_cable = vi.virtualCables[cable]
+            virtual_wire = virtual_cable.virtualWires[self]
+            yield virtual_wire
 
 class Instance(Element):
     def __init__(self):

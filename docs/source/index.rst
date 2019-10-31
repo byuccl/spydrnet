@@ -13,6 +13,7 @@ Welcome to SpyDrNet!
    intermediate_representation
    hierarchical_references
    api_specification
+   SpyDrNet
 
 Indices and tables
 ==================
