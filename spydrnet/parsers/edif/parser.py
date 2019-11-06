@@ -592,6 +592,7 @@ class EdifParser:
         self.append_new_element(Cable())
         self.expect(NET)
         self.parse_nameDef()
+        self.elements[-1].is_scalar = True
         self.elements[-1].initialize_wires(1)  # EDIF nets are single wire cables.
         self.parse_construct(self.parse_joined)
 

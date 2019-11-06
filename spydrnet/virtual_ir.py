@@ -1,7 +1,7 @@
 from spydrnet.ir import *
 
 hierarchical_seperator = "/"
-bus_format = "\"{}\""
+bus_format = "[{}]"
 
 def generate_virtual_instances_from_top_level_instance(top_instance):
     virtual_top_instance = VirtualInstance.from_top_instance(top_instance)
@@ -26,7 +26,27 @@ def generate_virtual_instances_from_top_level_instance(top_instance):
                 virtualCable.create_virtual_wire(wire)
     return virtual_top_instance
 
-class VirtualInstance:
+class VirtualElement:
+    _virtual_parent = None
+
+    @property
+    def virtual_parent(self):
+        return self._virtual_parent
+
+    @virtual_parent.setter
+    def virtual_parent(self, value):
+        self._virtual_parent = value
+
+    @property
+    def virtual_parents(self):
+        parents = list()
+        parent = self.virtual_parent
+        while parent:
+            parents.append(parent)
+            parent = parent.virtual_parent
+        return parents
+
+class VirtualInstance(VirtualElement):
     @staticmethod
     def from_top_instance(instance):
         virtualInstance = VirtualInstance()
@@ -107,6 +127,10 @@ class VirtualPort:
         virtualPin.virtualParent = self
         self.virtualPins[pin] = virtualPin
         return virtualPin
+
+    @property
+    def direction(self):
+        return self.port.direction
         
     def get_hierarchical_name(self):
         prefix = self.virtualParent.get_hierarchical_name()
@@ -123,7 +147,11 @@ class VirtualPin:
     def __init__(self):
         self.virtualParent = None
         self.pin = None
-        
+    
+    @property
+    def direction(self):
+        return self.virtualParent.direction
+
     def get_outer_pin(self):
         virtualPort = self.virtualParent
         virtualInstance = virtualPort.virtualParent
@@ -183,7 +211,10 @@ class VirtualCable:
     
     def get_hierarchical_name(self):
         prefix = self.virtualParent.get_hierarchical_name()
-        return prefix + self.get_name()
+        if prefix:
+            return prefix + hierarchical_seperator + self.get_name()
+        else:
+            return self.get_name()
     
     def get_name(self):
         if 'EDIF.original_identifier' in self.cable:
@@ -251,7 +282,7 @@ class VirtualWire:
 
     def get_hierarchical_name(self):
         prefix = self.virtualParent.get_hierarchical_name()
-        if self.virtualParent.wire.is_scalar:
+        if self.virtualParent.cable.is_scalar:
             return prefix
         else:
             return prefix + bus_format.format("#")

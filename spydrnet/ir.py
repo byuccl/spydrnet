@@ -177,6 +177,7 @@ class Definition(Element):
         self.ports = list()
         self.cables = list()
         self.instances = list()
+        self.virtual_instances = set()
 
     def is_leaf(self):
         if len(self.instances) > 0 or len(self.cables) > 0:

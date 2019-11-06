@@ -9,7 +9,7 @@ from spydrnet.global_environment_manager import current_virtual_instance
 def get_virtual_instances(*args, **kwargs):
     """
     get_virtual_instances(...)
-    
+
     Get virtual instances in the current netlist. By default, this function returns the virtual instances within the 
     `current_virtual_instance` (non-recursive), but it can be used to return any subset of virtual instances.
 
@@ -127,7 +127,7 @@ def _get_virtual_instances_of(of, filter_func=lambda x: True):
                     yield vi
             elif isinstance(item, VirtualPort): # All virtual instances that instance this VirtualPort
                 if filter_func_plus_found(item.virtualParent):
-                    found_virtual_instances.add(vi)
+                    found_virtual_instances.add(item.virtualParent)
                     yield item.virtualParent
             elif isinstance(item, VirtualPin): # All virtual instances that instance this VirtualPin
                 next_items.append(item.virtualParent)
@@ -178,10 +178,10 @@ def _get_virtual_instances_patterns(patterns, hierarchical=False, is_case=True, 
                 else:
                     pattern_comparison_tmp = lambda name: fnmatch.fnmatch(name, pattern)
                 if hierarchical:
+                    pattern_comparison = pattern_comparison_tmp
+                else:
                     hs_count = pattern.count(hierarchical_seperator)
                     pattern_comparison = lambda name: name.count(hierarchical_seperator) == hs_count and pattern_comparison_tmp(name)
-                else:
-                    pattern_comparison = pattern_comparison_tmp
 
             for name, vi in namemap.items():
                 if pattern_comparison(name) and filter_func_plus_found(vi):
