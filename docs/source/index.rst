@@ -14,6 +14,8 @@ Welcome to SpyDrNet!
    hierarchical_references
    api_specification
    SpyDrNet
+   license
+   credits
 
 Indices and tables
 ==================

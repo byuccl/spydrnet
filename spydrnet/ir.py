@@ -3,9 +3,11 @@ import itertools
 import weakref
 from enum import Enum
 
+
 class Element:
     """Base class of all intermediate representation objects"""
     _nextUID_ = 0
+
     def __init__(self):
         """set up the members and generate a unique identifier (uid) that is one greater than the last uid"""
         #self.data = dict()
@@ -48,6 +50,9 @@ class Element:
     def __contains__(self, item):
         return self._metadata.__contains__(item)
 
+    def __iter__(self):
+        return self._metadata.__iter__()
+
     def pop(self, item):
         return self._metadata.pop(item)
 
@@ -63,6 +68,7 @@ class Element:
                         return child
         raise KeyError()
 
+
 class Design(Element):
     def __init__(self):
         super().__init__()
@@ -75,6 +81,7 @@ class Design(Element):
     @property
     def children(self):
         return iter((self.netlist,))
+
 
 class Environment(Element):
     def __init__(self):
@@ -129,10 +136,7 @@ class Environment(Element):
     def get_library(self, identifier):
         library = self.lookup_element(Library, 'EDIF.identifier', identifier)
         return library
-        #for library in self.libraries:
-        #    if 'EDIF.identifier' in library:
-        #        if library['EDIF.identifier'].lower() == identifier.lower():
-        #            return library
+
 
 class Library(Element):
     def __init__(self):
@@ -164,11 +168,7 @@ class Library(Element):
     def get_definition(self, identifier):
         definition = self.lookup_element(Definition, 'EDIF.identifier', identifier)
         return definition
-        #for definition in self.definitions:
-        #    if 'EDIF.identifier' in definition:
-        #        if definition['EDIF.identifier'].lower() == identifier.lower():
-        #            return definition
-        #raise KeyError()
+
 
 class Definition(Element):
     def __init__(self):
@@ -254,6 +254,7 @@ class Bundle(Element):
     def parent(self):
         return self.definition
 
+
 class Port(Bundle):
     class Direction(Enum):
         UNDEFINED = 0
@@ -282,9 +283,11 @@ class Port(Bundle):
     def get_pin(self, index = 0):
         return self.inner_pins[index]
 
+
 class Pin:
     def __init__(self):
         self.wire = None
+
 
 class InnerPin(Pin):
     def __init__(self):
@@ -298,6 +301,7 @@ class InnerPin(Pin):
             virtual_port = vi.virtualPorts[port]
             virtual_pin = virtual_port.virtualPins[self]
             yield virtual_pin
+
 
 class OuterPin(Pin):
     def __init__(self):
@@ -313,6 +317,7 @@ class OuterPin(Pin):
             virtual_cable = vi.virtualCables[cable]
             virtual_wire = virtual_cable.virtualWires[wire]
             yield virtual_wire
+
 
 class Cable(Bundle):
     def __init__(self):
@@ -356,6 +361,7 @@ class Wire(Element):
             virtual_cable = vi.virtualCables[cable]
             virtual_wire = virtual_cable.virtualWires[self]
             yield virtual_wire
+
 
 class Instance(Element):
     def __init__(self):

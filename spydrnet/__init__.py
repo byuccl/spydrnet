@@ -3,7 +3,7 @@ from spydrnet.global_environment_manager import current_netlist, current_virtual
 from spydrnet.api.get_virtual_instances import get_virtual_instances
 from spydrnet.api.get_virtual_wires import Selection, get_virtual_wires
 
-from spydrnet.ir import Environment, Library, Definition, Port, InnerPin, OuterPin, Cable, Wire
+from spydrnet.ir import Environment, Library, Definition, Instance, Port, InnerPin, OuterPin, Cable, Wire
 from spydrnet.virtual_ir import VirtualInstance, VirtualPort, VirtualPin, VirtualCable, VirtualWire, hierarchical_seperator
 
 import networkx as nx
@@ -12,16 +12,17 @@ import os
 import fnmatch
 import re
 
-OUT       = Port.Direction.OUT
-IN        = Port.Direction.IN
-INOUT     = Port.Direction.INOUT
+OUT = Port.Direction.OUT
+IN = Port.Direction.IN
+INOUT = Port.Direction.INOUT
 UNDEFINED = Port.Direction.UNDEFINED
 
-INSIDE  = Selection.INSIDE
+INSIDE = Selection.INSIDE
 OUTSIDE = Selection.OUTSIDE
-BOTH    = Selection.BOTH
-ALL     = Selection.ALL
-    
+BOTH = Selection.BOTH
+ALL = Selection.ALL
+
+
 def parse(filename):
     extension = os.path.splitext(filename)[1]
     extension_lower = extension.lower()
@@ -33,44 +34,55 @@ def parse(filename):
     else:
         raise RuntimeError("Extension {} not recognized.".format(extension))
 
+
 def get_virtual_ports(*args, **kwargs):
     pass
+
 
 def get_virtual_pins(*args, **kwargs):
     pass
 
+
 def get_virtual_cables(*args, **kwargs):
     pass
+
 
 def get_libraries(*args, **kwargs):
     pass
 
+
 def get_definitions(*args, **kwargs):
     pass
+
 
 def get_instances(*args, **kwargs):
     pass
 
+
 def get_ports(*args, **kwargs):
     pass
+
 
 def get_pins(*args, **kwargs):
     pass
 
+
 def get_cables(*args, **kwargs):
     pass
+
 
 def get_wires(*args, **kwargs):
     pass
 
+
 def create_connectivity_graph(with_top_level_virtual_ports=True):
-    C = nx.DiGraph()
+    c = nx.DiGraph()
 
     if with_top_level_virtual_ports:
         # find all top level ports and add them to the graph
         top_level_virtual_ports = set(current_virtual_instance().virtualPorts.values())
         # top_level_virtual_ports = set(get_virtual_ports(of=current_virtual_instance()))
-        C.add_nodes_from(top_level_virtual_ports)
+        c.add_nodes_from(top_level_virtual_ports)
 
         # add all source to sink edges
         for tlvpo in filter(lambda tlvpo: tlvpo.direction in {IN, INOUT}, top_level_virtual_ports):
@@ -93,10 +105,10 @@ def create_connectivity_graph(with_top_level_virtual_ports=True):
                 sink_vis = get_virtual_instances(of=sink_vpis_vis, filter=lambda vi: vi.is_leaf())
 
                 for sink_tlvpo in sink_tlvpos:
-                    C.add_edge(tlvpo, sink_tlvpo)
+                    c.add_edge(tlvpo, sink_tlvpo)
 
                 for sink_vi in sink_vis:
-                    C.add_edge(tlvpo, sink_vi)
+                    c.add_edge(tlvpo, sink_vi)
         
         # add all sink from source
         for tlvpo in filter(lambda tlvpo: tlvpo.direction in {OUT, INOUT}, top_level_virtual_ports):
@@ -119,14 +131,14 @@ def create_connectivity_graph(with_top_level_virtual_ports=True):
                 source_vis = get_virtual_instances(of=source_vpis_vis, filter=lambda vi: vi.is_leaf())
 
                 for source_tlvpo in source_tlvpos:
-                    C.add_edge(source_tlvpo, tlvpo)
+                    c.add_edge(source_tlvpo, tlvpo)
 
                 for source_vi in source_vis:
-                    C.add_edge(source_vi, tlvpo)
+                    c.add_edge(source_vi, tlvpo)
 
     # Find all leafcells and add them to the graph
     leafcells = set(get_virtual_instances(hierarchical = True, filter = lambda x: x.is_leaf()))
-    C.add_nodes_from(leafcells)
+    c.add_nodes_from(leafcells)
 
     # add all source to sink edges
     for source_vi in leafcells:
@@ -151,9 +163,9 @@ def create_connectivity_graph(with_top_level_virtual_ports=True):
                 sink_vis = get_virtual_instances(of=sink_vpis_vis, filter=lambda vi: vi.is_leaf())
 
                 for sink_tlvpo in sink_tlvpos:
-                    C.add_edge(source_vi, sink_tlvpo)
+                    c.add_edge(source_vi, sink_tlvpo)
 
                 for sink_vi in sink_vis:
-                    C.add_edge(source_vi, sink_vi)
+                    c.add_edge(source_vi, sink_vi)
 
-    return C
+    return c

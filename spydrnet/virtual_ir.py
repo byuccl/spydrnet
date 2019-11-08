@@ -3,28 +3,11 @@ from spydrnet.ir import *
 hierarchical_seperator = "/"
 bus_format = "[{}]"
 
+
 def generate_virtual_instances_from_top_level_instance(top_instance):
-    virtual_top_instance = VirtualInstance.from_top_instance(top_instance)
-    search_stack = [virtual_top_instance]
-    while search_stack:
-        virtualInstance = search_stack.pop()
-        instance = virtualInstance.instance
-        definition = instance.definition
-        sub_instances = definition.instances
-        for sub_instance in sub_instances:
-            child_virtual_instance = virtualInstance.create_virtual_child(sub_instance)
-            search_stack.append(child_virtual_instance)
-        ports = definition.ports
-        for port in ports:
-            virtualPort = virtualInstance.create_virtual_port(port)
-            for pin in port.inner_pins:
-                virtualPort.create_virtual_pin(pin)
-        cables = definition.cables
-        for cable in cables:
-            virtualCable = virtualInstance.create_virtual_cable(cable)
-            for wire in cable.wires:
-                virtualCable.create_virtual_wire(wire)
+    virtual_top_instance = VirtualInstance.from_instance(top_instance)
     return virtual_top_instance
+
 
 class VirtualElement:
     _virtual_parent = None
@@ -46,18 +29,40 @@ class VirtualElement:
             parent = parent.virtual_parent
         return parents
 
+
 class VirtualInstance(VirtualElement):
+
     @staticmethod
-    def from_top_instance(instance):
-        virtualInstance = VirtualInstance()
-        virtualInstance.instance = instance
+    def from_instance(instance):
+        top_level = VirtualInstance()
+        top_level.instance = instance
         definition = instance.definition
-        if definition:
-            if not hasattr(definition, 'virtual_instances') or definition.virtual_instances is None:
-                definition.virtual_instances = set()
-            definition.virtual_instances.add(virtualInstance)
-        return virtualInstance
-    
+        search_stack = [(top_level, False)]
+        while search_stack:
+            virtualInstance, visited = search_stack.pop()
+            instance = virtualInstance.instance
+            definition = instance.definition
+            if definition:
+                if visited:
+                    definition.virtual_instances.add(virtualInstance)
+                else:
+                    search_stack.append((virtualInstance, True))
+                    sub_instances = definition.instances
+                    for sub_instance in sub_instances:
+                        child_virtual_instance = virtualInstance.create_virtual_child(sub_instance)
+                        search_stack.append((child_virtual_instance, False))
+                    ports = definition.ports
+                    for port in ports:
+                        virtualPort = virtualInstance.create_virtual_port(port)
+                        for pin in port.inner_pins:
+                            virtualPort.create_virtual_pin(pin)
+                    cables = definition.cables
+                    for cable in cables:
+                        virtualCable = virtualInstance.create_virtual_cable(cable)
+                        for wire in cable.wires:
+                            virtualCable.create_virtual_wire(wire)
+        return top_level
+
     def __init__(self):
         self.virtualParent = None
         self.instance = None
@@ -73,19 +78,14 @@ class VirtualInstance(VirtualElement):
 
     def is_leaf(self):
         return self.instance.is_leaf()
-        
+
     def create_virtual_child(self, instance):
-        virtualChild = VirtualInstance()
-        virtualChild.instance = instance
-        virtualChild.virtualParent = self
-        self.virtualChildren[instance] = virtualChild
-        definition = instance.definition
-        if definition:
-            if not hasattr(definition, 'virtual_instances') or definition.virtual_instances is None:
-                definition.virtual_instances = set()
-            definition.virtual_instances.add(virtualChild)
-        return virtualChild
-        
+        virtual_child = VirtualInstance()
+        self.virtualChildren[instance] = virtual_child
+        virtual_child.virtualParent = self
+        virtual_child.instance = instance
+        return virtual_child
+
     def create_virtual_port(self, port):
         virtualPort = VirtualPort()
         virtualPort.port = port
@@ -114,7 +114,8 @@ class VirtualInstance(VirtualElement):
         else:
             name = self.instance['EDIF.identifier']
         return name
-        
+
+
 class VirtualPort:
     def __init__(self):
         self.virtualParent = None
@@ -142,7 +143,8 @@ class VirtualPort:
         else:
             name = self.port['EDIF.identifier']
         return name        
-        
+
+
 class VirtualPin:
     def __init__(self):
         self.virtualParent = None
@@ -195,7 +197,8 @@ class VirtualPin:
             return prefix
         else:
             return prefix + bus_format.format("#")
-        
+
+
 class VirtualCable:
     def __init__(self):
         self.virtualParent = None
@@ -222,7 +225,8 @@ class VirtualCable:
         else:
             name = self.cable['EDIF.identifier']
         return name
-    
+
+
 class VirtualWire:
     def __init__(self):
         self.virtualParent = None
@@ -261,8 +265,7 @@ class VirtualWire:
                 virtualPin = virtualPort.virtualPins[pin.inner_pin]
                 virtualPins.append(virtualPin)
         return virtualPins
-        
-    
+
     def get_virtualPins(self):
         virtualPins = list()
         virtualCable = self.virtualParent
