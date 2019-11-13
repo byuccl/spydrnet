@@ -341,7 +341,7 @@ class Cable(Bundle):
         return self.wires[index]
 
 
-class Wire(Element):
+class Wire:
     def __init__(self):
         self.cable = None
         self.pins = list()
@@ -366,9 +366,32 @@ class Wire(Element):
 class Instance(Element):
     def __init__(self):
         super().__init__()
-        self.parent_definition = None
-        self.definition = None
+        self._parent_definition = None
+        self._definition = None
         self.outer_pins = dict()
+
+    @property
+    def parent_definition(self):
+        return self._parent_definition
+
+    @parent_definition.setter
+    def parent_definition(self, value):
+        self._parent_definition = value
+        #definition = self.definition
+        #for virtual_parent in value.virtual_instances:
+        #    virtual_parent.create_virtual_child(self)
+
+    @property
+    def definition(self):
+        return self._definition
+
+    @definition.setter
+    def definition(self, value):
+        self._definition = value
+        #parent_definition = self.parent_definition
+        #if parent_definition:
+        #    for virtual_parent in parent_definition.virtual_instances:
+        #        virtual_parent.create_virtual_child
 
     def is_leaf(self):
         return self.definition.is_leaf()
