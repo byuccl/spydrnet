@@ -105,7 +105,6 @@ class PrimativeParser:
                 port_container[line[i]] = ''
     
     def _vivado_create_definition(self, name, parameters, inputs, outputs, inouts):
-        #TODO implement some of this api
         definition = SpyDrNet.create_definition()
         for i, val in inputs.items():
             definition.add_port(self._create_port(i,val,SpyDrNet.Port.Direction.IN))
@@ -116,11 +115,10 @@ class PrimativeParser:
         return definition
         
     def _create_port(self, name, indicies, direction):
-        #TODO this is the api I would like to implement
         port = SpyDrNet.create_port(name = name)
         port.set_direction(direction)
         if indicies != '':
-            port.set_indicies(indicies)
+            port.initialize_pins_in_range(indicies[0],indicies[1])
         return port
 
 if __name__ == "__main__":

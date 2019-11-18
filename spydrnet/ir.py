@@ -312,31 +312,116 @@ class Bundle(Element):
 
 class Port(Bundle):
     class Direction(Enum):
+        '''Define the possible directions for a given port'''
         UNDEFINED = 0
         INOUT = 1
         IN = 2
         OUT = 3
     
     def __init__(self):
+        '''setup an empty port''' 
         super().__init__()
         self.direction = self.Direction.UNDEFINED
         self.inner_pins = list()
+        self.left_index = 0
+        self.right_index = 0
+        self.low_index = 0
+
 
     def initialize_pins(self, pin_count):
+        '''
+        create pin_count pins in the given port a downto style syntax is assumed
+        Parameters:
+        pin_count : this is the number of pins to add to the port
+        '''
+        self.left_index = pin_count -1
+        self.right_index = 0
+        self.low_index = 0
         for _ in range(pin_count):
-            self.create_pin()
+            self._create_pin()
+
+    def initialize_pins_in_range(self, left_index, right_index):
+        '''
+        create pins in the given port. no style is assumed and right and left indicies can each be larger than the other
+        This can mimic the vhdl to and downto syntax. just put the indicies in order into the call.
+        paramters:
+        left_index - the index on the left of the expression in the input format
+        right_index - the index on the right of the expression in the input format
+        '''
+        self.left_index = left_index
+        self.right_index = right_index
+        if left_index > right_index:
+            pin_count = left_index - right_index + 1
+            self.low_index = right_index
+        elif left_index < right_index:
+            pin_count = right_index - left_index + 1
+            self.low_index = left_index
+        else:
+            pin_count = 1
+            self.low_index = right_index
+        for _ in range(pin_count):
+            self._create_pin()
+
+    def set_direction(self, direction):
+        '''
+        sets the direction for the port
+        parameters:
+        direction - the direction of the port this can be a string or a Port.Direction object
+        '''
+        if isinstance(direction, str):
+            if direction.lower() == 'in':
+                direction = self.Direction.IN
+            elif direction.lower() == 'out':
+                direction = self.Direction.OUT
+            elif direction.lower() == 'inout':
+                direction = self.Direction.INOUT
+            else:
+                direction = self.Direction.UNDEFINED
+        self.direction = direction
     
+    def _create_pin(self):
+        '''
+        create and add a pin in an unsafe fashion without updating the indicies, the calling function must worry about indicies on the port
+        '''
+        inner_pin = InnerPin()
+        self._add_pin(inner_pin)
+        return inner_pin
+
+    def _add_pin(self, inner_pin):
+        '''
+        add a pin to the port in an unsafe fashion. The calling class must take care of the indicies.
+        '''
+        self.inner_pins.append(inner_pin)
+        inner_pin.port = self
+
     def create_pin(self):
+        '''
+        create a pin and add it to the port. Also update the indices as needed
+        return:
+        the inner_pin created
+        '''
         inner_pin = InnerPin()
         self.add_pin(inner_pin)
         return inner_pin
 
     def add_pin(self, inner_pin):
+        '''
+        add a pin to the port and update the indices to reflect the added pin
+        '''
+        if self.right_index == self.low_index:
+            self.left_index += 1
+        else:
+            self.right_index += 1
         self.inner_pins.append(inner_pin)
         inner_pin.port = self
 
     def get_pin(self, index = 0):
-        return self.inner_pins[index]
+        '''
+        get the pin at the given index in the original indexing system
+        returns:
+        the pin at the given index
+        '''
+        return self.inner_pins[index-self.low_index]
 
 
 class Pin:
