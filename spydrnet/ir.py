@@ -3,9 +3,11 @@ import itertools
 import weakref
 from enum import Enum
 
+
 class Element:
     """Base class of all intermediate representation objects"""
     _nextUID_ = 0
+
     def __init__(self):
         """
         Set up the members with a unique id and data namespace managers
@@ -70,6 +72,9 @@ class Element:
     def __contains__(self, item):
         return self._metadata.__contains__(item)
 
+    def __iter__(self):
+        return self._metadata.__iter__()
+
     def pop(self, item):
         return self._metadata.pop(item)
 
@@ -100,6 +105,7 @@ class Element:
                         return child
         raise KeyError()
 
+
 class Design(Element):
     '''
     TODO we might want to rename this to netlist or is that the environment
@@ -116,6 +122,7 @@ class Design(Element):
     @property
     def children(self):
         return iter((self.netlist,))
+
 
 class Environment(Element):
     '''
@@ -184,10 +191,7 @@ class Environment(Element):
     def get_library(self, identifier):
         library = self.lookup_element(Library, 'EDIF.identifier', identifier)
         return library
-        #for library in self.libraries:
-        #    if 'EDIF.identifier' in library:
-        #        if library['EDIF.identifier'].lower() == identifier.lower():
-        #            return library
+
 
 class Library(Element):
     def __init__(self):
@@ -219,11 +223,7 @@ class Library(Element):
     def get_definition(self, identifier):
         definition = self.lookup_element(Definition, 'EDIF.identifier', identifier)
         return definition
-        #for definition in self.definitions:
-        #    if 'EDIF.identifier' in definition:
-        #        if definition['EDIF.identifier'].lower() == identifier.lower():
-        #            return definition
-        #raise KeyError()
+
 
 class Definition(Element):
     def __init__(self):
@@ -309,6 +309,7 @@ class Bundle(Element):
     def parent(self):
         return self.definition
 
+
 class Port(Bundle):
     class Direction(Enum):
         UNDEFINED = 0
@@ -337,9 +338,11 @@ class Port(Bundle):
     def get_pin(self, index = 0):
         return self.inner_pins[index]
 
+
 class Pin:
     def __init__(self):
         self.wire = None
+
 
 class InnerPin(Pin):
     def __init__(self):
@@ -353,6 +356,7 @@ class InnerPin(Pin):
             virtual_port = vi.virtualPorts[port]
             virtual_pin = virtual_port.virtualPins[self]
             yield virtual_pin
+
 
 class OuterPin(Pin):
     def __init__(self):
@@ -368,6 +372,7 @@ class OuterPin(Pin):
             virtual_cable = vi.virtualCables[cable]
             virtual_wire = virtual_cable.virtualWires[wire]
             yield virtual_wire
+
 
 class Cable(Bundle):
     def __init__(self):
@@ -391,7 +396,7 @@ class Cable(Bundle):
         return self.wires[index]
 
 
-class Wire(Element):
+class Wire:
     def __init__(self):
         self.cable = None
         self.pins = list()
@@ -412,6 +417,7 @@ class Wire(Element):
             virtual_wire = virtual_cable.virtualWires[self]
             yield virtual_wire
 
+
 class Instance(Element):
     '''
     TODO are we going to rename this?
@@ -422,9 +428,32 @@ class Instance(Element):
         creates an empty object of type instance
         '''
         super().__init__()
-        self.parent_definition = None
-        self.definition = None
+        self._parent_definition = None
+        self._definition = None
         self.outer_pins = dict()
+
+    @property
+    def parent_definition(self):
+        return self._parent_definition
+
+    @parent_definition.setter
+    def parent_definition(self, value):
+        self._parent_definition = value
+        #definition = self.definition
+        #for virtual_parent in value.virtual_instances:
+        #    virtual_parent.create_virtual_child(self)
+
+    @property
+    def definition(self):
+        return self._definition
+
+    @definition.setter
+    def definition(self, value):
+        self._definition = value
+        #parent_definition = self.parent_definition
+        #if parent_definition:
+        #    for virtual_parent in parent_definition.virtual_instances:
+        #        virtual_parent.create_virtual_child
 
     def is_leaf(self):
         '''
