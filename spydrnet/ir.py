@@ -7,7 +7,10 @@ class Element:
     """Base class of all intermediate representation objects"""
     _nextUID_ = 0
     def __init__(self):
-        """set up the members and generate a unique identifier (uid) that is one greater than the last uid"""
+        """
+        Set up the members with a unique id and data namespace managers
+        The object has self.uid that is accessable although it should not be changed.
+        All other members are private."""
         #self.data = dict()
         #self.name = None
         self.uid  = Element._nextUID_
@@ -18,22 +21,41 @@ class Element:
     
     @property
     def parent(self):
+        '''
+        Return the parent of the element
+        ?should this be overridden by the implementing objects?
+        '''
         return None
     
     @property
     def children(self):
+        '''
+        Return a children iterator of the children of the element
+        ?should this be overridden by the implementing objects?
+        '''
         return iter(())
 
     def add_data_manager(self, manager):
+        '''
+        Add a datamanager to the element.
+        @param manager is a datamanager that has already been created and is ready for use
+        '''
         manager.set_owner_and_populate_lookup(self)
         self._managers.append(manager)
 
     def __setitem__(self, key, value):
+        '''
+        create an entry in the dictionary of the element it will be stored in the metadata.
+        '''
         key = sys.intern(key)
         self._metadata.__setitem__(sys.intern(key), value)
         self.setitem_callback(self)
 
     def setitem_callback(self, element):
+        '''
+        Add an element to the data managers so that the element can be later found very quickly
+        @param element is the element to be added to the data managers
+        '''
         for manager in self._managers:
             manager.add_to_lookup(element)
         if self.parent:
@@ -52,6 +74,21 @@ class Element:
         return self._metadata.pop(item)
 
     def lookup_element(self, cls, key, identifier):
+        '''
+        find a sub element by identifier, key and class
+        Parameters
+        ----------
+        cls : the class of the element to be looked up
+        key : the key of the element to be looked up
+        identifier : the identifier of the element to be looked up
+        Returns
+        -------
+        element
+            the element that matches the description passed in includng class
+        Exceptions
+        ----------
+        KeyError if the element is not found in the lookup
+        '''
         for manager in self._managers:
             element = manager.lookup(cls, key, identifier)
             if element:
@@ -64,6 +101,10 @@ class Element:
         raise KeyError()
 
 class Design(Element):
+    '''
+    TODO we might want to rename this to netlist or is that the environment
+    Holds a netlist object
+    '''
     def __init__(self):
         super().__init__()
         self.netlist = None
@@ -77,6 +118,10 @@ class Design(Element):
         return iter((self.netlist,))
 
 class Environment(Element):
+    '''
+    represents a netlist object
+    contains a top level instance and libraries
+    '''
     def __init__(self):
         super().__init__()
         self.design = None
@@ -86,10 +131,20 @@ class Environment(Element):
 
     @property
     def top_instance(self):
+        '''
+        get the top instance in the environment
+        Returns
+        -------
+        Instance
+            The top level instance in the environment
+        '''
         return self._top_instance
 
     @top_instance.setter
     def top_instance(self, instance):
+        '''
+
+        '''
         from spydrnet.virtual_ir import generate_virtual_instances_from_top_level_instance
         if isinstance(instance, Instance):
             self._top_instance = instance
@@ -358,16 +413,40 @@ class Wire(Element):
             yield virtual_wire
 
 class Instance(Element):
+    '''
+    TODO are we going to rename this?
+    netlist instance of a netlist definition
+    '''
     def __init__(self):
+        '''
+        creates an empty object of type instance
+        '''
         super().__init__()
         self.parent_definition = None
         self.definition = None
         self.outer_pins = dict()
 
     def is_leaf(self):
+        '''
+        check to see if the netlist instance is an instance of a leaf definition
+        Returns
+        -------
+        boolean
+            True if the definition is leaf
+            False if the definition is not leaf
+        '''
         return self.definition.is_leaf()
 
     def get_pin(self, port_identifier, index = 0):
+        '''
+        get a pin by port and index
+        Parameters
+        ----------
+        port_identifier
+
+        index
+            
+        '''
         port = self.definition.get_port(port_identifier)
         inner_pin = port.get_pin(index)
         return self.get_outer_pin(inner_pin)
