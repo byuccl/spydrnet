@@ -3,6 +3,34 @@ This file will be a unique instance of a few objects that will be of use for Spy
 It will hold a list of netlists, the current netlist, and the property manager callback structures.
 '''
 
+# class GlobalNetlistManager:
+#     '''
+#     to use this class create an instance and use the methods on the instance
+#     '''
+#     class _GlobalNetlistManager:
+#         '''
+#         only one instance of this class should exist
+#         '''
+#         def __init__(self):
+#             self.netlists = []
+#             self.propertyManagers = []
+#             self.current_netlist = None
+
+#     _instance = None
+
+#     def __init__(self):
+#         if GlobalNetlistManager._instance == None:
+#             GlobalNetlistManager._instance = GlobalNetlistManager._GlobalNetlistManager()
+#         else:
+#             pass
+    
+    
+
+
+#############################################################################################################
+##below is what used to be here
+#############################################################################################################
+
 
 from spydrnet.data_manager import DataManager
 from spydrnet.ir import Environment
@@ -45,7 +73,7 @@ def get_netlists(*args, **kwargs):
     return (x for x in _netlists)
 
 
-class GlobalEnvironmentManager:
+class GlobalNetlistManager:
     """
     manage the global namespace for the tools
     use a singleton object that will manager the environments individually.
