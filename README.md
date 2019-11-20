@@ -16,9 +16,10 @@ From Source
 TODO fill in instructions on how to install
 
 Without Installing
-Just put this file
+Just extract/pull this folder in the same directory as the code that you wish to write. The structure should allow for import SpyDrNet from code written in that folder.
 
 # How to contribute
+If this tool has helped you out or you have new feature ideas that you would like to implement feel free to make a pull requrest, or take a look at the issues to see how to contribute. New ideas, bug fixes and suggestions are also welcome.
 
 # Future Work
 
