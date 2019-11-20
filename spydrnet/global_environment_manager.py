@@ -1,3 +1,9 @@
+'''
+This file will be a unique instance of a few objects that will be of use for SpyDrNet
+It will hold a list of netlists, the current netlist, and the property manager callback structures.
+'''
+
+
 from spydrnet.data_manager import DataManager
 from spydrnet.ir import Environment
 
