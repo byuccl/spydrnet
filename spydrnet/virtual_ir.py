@@ -79,6 +79,69 @@ class VirtualInstance(VirtualElement):
     def is_leaf(self):
         return self.instance.is_leaf()
 
+    def update(self):
+        search_stack = [self]
+        while search_stack:
+            item = search_stack.pop()
+            instance = item.instance
+            if instance:
+                definition = instance.definition
+                if definition:
+                    instances = set(definition.instances)
+                    included_instances = set(self.virtualChildren)
+                    new_instances = instances - included_instances
+                    old_instances = included_instances - instances
+                    for old_instance in old_instances:
+                        del self.virtualChildren[old_instance]
+                    search_stack += self.virtualChildren.values()
+                    for new_instance in new_instances:
+                        new_virtual_instance = self.from_instance(new_instance)
+                        self.virtualChildren[new_instance] = new_virtual_instance
+
+                    ports = set(definition.ports)
+                    included_ports = set(self.virtualPorts)
+                    new_ports = ports - included_ports
+                    old_ports = included_ports - ports
+                    for old_port in old_ports:
+                        del self.virtualPorts[old_port]
+                    for new_port in new_ports:
+                        new_virtual_port = self.create_virtual_port(new_port)
+                        for pin in new_port.inner_pins:
+                            new_virtual_port.create_virtual_pin(pin)
+                    common_ports = included_ports & ports
+                    for common_port in common_ports:
+                        virtual_port = self.virtualPorts[common_port]
+                        pins = set(common_port.inner_pins)
+                        included_pins = set(virtual_port.virtualPins.values())
+                        new_pins = pins - included_pins
+                        old_pins = included_pins - pins
+                        for old_pin in old_pins:
+                            del virtual_port.virtualPins[old_pin]
+                        for new_pin in new_pins:
+                            virtual_port.create_virtual_pin(new_pin)
+
+                    cables = set(definition.cables)
+                    included_cables = set(self.virtualCables)
+                    new_cables = cables - included_cables
+                    old_cables = included_cables - cables
+                    for old_cable in old_cables:
+                        del self.virtualCables[old_cable]
+                    for new_cable in new_cables:
+                        new_virtual_cable = self.create_virtual_cable(new_cable)
+                        for wire in new_cable.wires:
+                            new_virtual_cable.create_virtual_wire(wire)
+                    common_cables = included_cables & cables
+                    for common_cable in common_cables:
+                        virtual_cable = self.virtualCables[common_cable]
+                        wires = set(common_cable.wires)
+                        included_wires = set(virtual_cable.virtualWires.values())
+                        new_wires = wires - included_wires
+                        old_wires = included_wires - wires
+                        for old_wire in old_wires:
+                            del virtual_cable.virtualWires[old_wire]
+                        for new_wire in new_wires:
+                            virtual_cable.create_virtual_wire(new_wire)
+
     def create_virtual_child(self, instance):
         virtual_child = VirtualInstance()
         self.virtualChildren[instance] = virtual_child
