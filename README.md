@@ -24,6 +24,23 @@ If this tool has helped you out or you have new feature ideas that you would lik
 
 # Future Work
 
+For the release:
+We need good API examples
+Complete API, object removal
+We need good documentation
+
+Prerelease for before the holidays
+
+- check the projects tab on github for some information on this.
+- we need to define the documentation pre-release as well.
+
+We need a release check
+
+1.1.0
+new formats
+merge netlists
+constraint handling
+
 Serializer of the itermediate representation look into pickle (for now) and json
 Properties and names need work
 callbacks

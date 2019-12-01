@@ -108,10 +108,10 @@ class Element:
 
 class Design(Element):
     '''
-    TODO we might want to rename this to netlist or is that the environment
-    Holds a netlist object
     '''
-    def __init__(self):
+    def __init__(self, netlist = None):
+        '''
+        '''
         super().__init__()
         self.netlist = None
 
@@ -125,6 +125,9 @@ class Design(Element):
 
 
 class Environment(Element):
+    '''
+    TODO rename as netlist
+    '''
     '''
     represents a netlist object
     contains a top level instance and libraries
