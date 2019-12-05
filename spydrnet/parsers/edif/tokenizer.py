@@ -37,7 +37,10 @@ class EdifTokenizer:
             else:
                 self.input_stream = open(input_source, 'r')
         else:
-            self.input_stream = input_source
+            if isinstance(input_source, io.TextIOBase) is False:
+                self.input_stream = io.TextIOWrapper(input_source)
+            else:
+                self.input_stream = input_source
 
         self.generator = self.generate_tokens()
 

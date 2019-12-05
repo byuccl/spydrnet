@@ -27,26 +27,5 @@ INOUT = Port.Direction.INOUT
 UNDEFINED = Port.Direction.UNDEFINED
 
 from spydrnet.testing.test import run as test
-
-
-def parse(filename):
-    extension = os.path.splitext(filename)[1]
-    extension_lower = extension.lower()
-    if extension_lower in [".edf", ".edif"]:
-        from spydrnet.parsers.edif.parser import EdifParser
-        parser = EdifParser.from_filename(filename)
-        parser.parse()
-        return parser.netlist
-    else:
-        raise RuntimeError("Extension {} not recognized.".format(extension))
-
-
-def compose(filename, netlist):
-    extension = os.path.splitext(filename)[1]
-    extension_lower = extension.lower()
-    if extension_lower in {".edf", ".edif"}:
-        from spydrnet.composers.edif.composer import ComposeEdif
-        composer = ComposeEdif()
-        composer.run(netlist, filename)
-    else:
-        raise RuntimeError("Extension {} not recognized.".format(extension))
+from spydrnet.parsers import parse
+from spydrnet.composers import compose

@@ -20,9 +20,17 @@ class EdifParser:
         parser.filename = filename
         return parser
 
+    @staticmethod
+    def from_file_handle(file_handle):
+        parser = EdifParser()
+        parser.file_handle = file_handle
+        return parser
+
     def __init__(self):
         self.filename = None
+        self.file_handle = None
         self.elements = list()
+        self.tokenizer = None
 
     def parse(self):
         self.initialize_tokenizer()
@@ -31,7 +39,10 @@ class EdifParser:
         print("WARNING: edif/parser.py assumes downto in function parse_port()")
 
     def initialize_tokenizer(self):
-        self.tokenizer = EdifTokenizer.from_filename(self.filename)
+        if self.filename:
+            self.tokenizer = EdifTokenizer.from_filename(self.filename)
+        elif self.file_handle:
+            self.tokenizer = EdifTokenizer.from_stream(self.file_handle)
 
     def initialize_design(self):
         self.design = Design()
