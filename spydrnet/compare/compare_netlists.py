@@ -202,14 +202,21 @@ class Comparer:
                 # logging.error("Ports do not have the same number of pins")
                 raise Exception("Ports do not have the same number of pins")
 
-
     def compare_instances(self, instances_orig, instances_composer):
-        if self.get_identifier(instances_orig) != self.get_identifier(instances_composer):
+        instances_orig_identifier = self.get_identifier(instances_orig)
+        instances_composer_identifier = self.get_identifier(instances_composer)
+        if instances_orig_identifier != instances_composer_identifier:
             # logging.error("Instances do not have the same identifier")
-            raise Exception("Instances do not have the same identifier")
-        if self.get_original_identifier(instances_orig) != self.get_original_identifier(instances_composer):
+            raise Exception(f"Instances do not have the same identifier, orig \"{instances_orig_identifier}\" "
+                            f"composer \"{instances_composer_identifier}\"")
+
+        instances_orig_original_identifier = self.get_original_identifier(instances_orig)
+        instances_composer_original_identifier = self.get_original_identifier(instances_composer)
+        if instances_orig_original_identifier != instances_composer_original_identifier:
             # logging.error("Instances do not have the same original identifier")
-            raise Exception("Instances do not have the same original identifier")
+            raise Exception(f"Instances do not have the same original identifier, orig "
+                            f"\"{instances_orig_original_identifier}\" composer "
+                            f"\"{instances_composer_original_identifier}\"")
         # logging.info("Checking properties of %s", self.get_identifier(instances_orig))
         if "EDIF.properties" in instances_orig._metadata:
             if "EDIF.properties" not in instances_composer._metadata:

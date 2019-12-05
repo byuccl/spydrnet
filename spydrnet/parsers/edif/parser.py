@@ -1,7 +1,6 @@
 from spydrnet.parsers.edif.tokenizer import EdifTokenizer
-from spydrnet.ir import *
-from spydrnet.data_manager import DataManager
 from spydrnet.parsers.edif.edif_tokens import *
+from spydrnet.ir import *
 
 from functools import reduce
 import re
@@ -50,7 +49,6 @@ class EdifParser:
 
     def parse_edif(self):
         environment = Environment()
-        environment.add_data_manager(DataManager.from_element_type_and_metadata_key(Library, 'EDIF.identifier'))
         self.append_new_element(environment)
         self.expect(EDIF)
         self.parse_nameDef()
@@ -104,11 +102,14 @@ class EdifParser:
                 has_status = self.check_for_multiples(STATUS, has_status)
                 self.parse_status()
 
-            elif self.construct_is(EXTERNAL) or self.construct_is(LIBRARY):
+            elif self.construct_is(LIBRARY):
                 library = self.parse_library()
                 environment = self.elements[-1]
                 environment.add_library(library)
-
+            elif self.construct_is(EXTERNAL):
+                library = self.parse_external()
+                environment = self.elements[-1]
+                environment.add_library(library)
             elif self.construct_is(DESIGN):
                 self.parse_design()
             elif self.construct_is(COMMENT):
@@ -154,15 +155,16 @@ class EdifParser:
             elif self.construct_is(DATA_ORIGIN):
                 has_dataOrigin = self.check_for_multiples(DATA_ORIGIN, has_dataOrigin)
                 self.parse_dataOrigin()
-
             elif self.construct_is(PROPERTY):
                 self.parse_property()
+            elif self.construct_is(METAX):
+                self.parse_metax()
             elif self.construct_is(COMMENT):
                 self.parse_comment()
             elif self.construct_is(USER_DATA):
                 self.parse_userData()
             else:
-                self.expect("|".join([AUTHOR, PROGRAM, DATA_ORIGIN, PROPERTY, COMMENT, USER_DATA]))
+                self.expect("|".join([AUTHOR, PROGRAM, DATA_ORIGIN, PROPERTY, METAX, COMMENT, USER_DATA]))
             self.expect_end_construct()
         self.prefix_pop()
 
@@ -201,11 +203,19 @@ class EdifParser:
         self.prefix_pop()
 
     def parse_library(self):
+        self.expect(LIBRARY)
+        return self.parse_library_like_element()
+
+    def parse_external(self):
+        self.expect(EXTERNAL)
+        return self.parse_library_like_element(is_external=True)
+
+    def parse_library_like_element(self, is_external=False):
         library = Library()
-        library.add_data_manager(DataManager.from_element_type_and_metadata_key(Definition, 'EDIF.identifier'))
+        if is_external:
+            library['EDIF.external'] = True
         self.append_new_element(library)
 
-        self.expect(LIBRARY)
         self.parse_nameDef()
         self.parse_construct(self.parse_edifLevel)
         self.parse_construct(self.parse_technology)
@@ -236,15 +246,13 @@ class EdifParser:
 
     def parse_numberDefinition(self):
         self.expect(NUMBER_DEFINITION)
-        while self.begin_construct():
-            raise NotImplementedError()
-            self.expect_end_construct()
+        self.skip_until_next_construct()
+        #while self.begin_construct():
+        #    raise NotImplementedError()
+        #    self.expect_end_construct()
 
     def parse_cell(self):
         definition = Definition()
-        definition.add_data_manager(DataManager.from_element_type_and_metadata_key(Port, 'EDIF.identifier'))
-        definition.add_data_manager(DataManager.from_element_type_and_metadata_key(Cable, 'EDIF.identifier'))
-        definition.add_data_manager(DataManager.from_element_type_and_metadata_key(Instance, 'EDIF.identifier'))
         self.append_new_element(definition)
 
         self.expect(CELL)
@@ -342,6 +350,7 @@ class EdifParser:
 
     def parse_interface(self):
         self.expect(INTERFACE)
+        has_designator = False
         while self.begin_construct():
             if self.construct_is(PORT):
                 port = self.parse_port()
@@ -371,7 +380,8 @@ class EdifParser:
             elif self.construct_is(SIMULATE):
                 raise NotImplementedError()
             elif self.construct_is(DESIGNATOR):
-                raise NotImplementedError()
+                has_designator = self.check_for_multiples(DESIGNATOR, has_designator)
+                self.parse_designator()
             elif self.construct_is(WEAK_JOINED):
                 raise NotImplementedError()
 
@@ -384,6 +394,10 @@ class EdifParser:
             else:
                 self.expect('|'.join([PORT, PROPERTY, COMMENT, USER_DATA]))
             self.expect_end_construct()
+
+    def parse_designator(self):
+        self.expect(DESIGNATOR)
+        self.skip_until_next_construct()
 
     def parse_port(self):
         self.append_new_element(Port())
@@ -695,13 +709,13 @@ class EdifParser:
         instance['metadata_prefix'] = list()
         self.elements.append(instance)
         if self.begin_construct():
+            print("design top instance renamed")
             instance['metadata_prefix'] = ['EDIF']
-            test = self.parse_rename()
+            self.parse_rename()
             instance['metadata_prefix'] = []
             self.tokenizer.next()
         else:
             instance['EDIF.identifier'] = self.tokenizer.next()
-            print()
         self.tokenizer.next()
         self.tokenizer.next()
         definition_name = self.tokenizer.next()
@@ -740,6 +754,14 @@ class EdifParser:
     def parse_property(self):
         self.prefix_append('properties')
         self.expect(PROPERTY)
+        self.parse_property_like_element()
+
+    def parse_metax(self):
+        self.prefix_append('metaxes')
+        self.expect(METAX)
+        self.parse_property_like_element()
+
+    def parse_property_like_element(self):
         self.parse_nameDef()
 
         property_ = dict()
@@ -761,7 +783,7 @@ class EdifParser:
         while self.begin_construct():
             if self.construct_is(OWNER):
                 has_owner = self.check_for_multiples(OWNER, has_owner)
-                raise NotImplementedError()  # self.parse_owner()
+                self.parse_owner()
 
             elif self.construct_is(UNIT):
                 has_unit = self.check_for_multiples(UNIT, has_unit)
@@ -828,7 +850,8 @@ class EdifParser:
         return self.parse_stringToken()
 
     def parse_owner(self):
-        raise NotImplementedError()
+        self.expect(OWNER)
+        self.parse_stringToken()
 
     def parse_unit(self):
         raise NotImplementedError()

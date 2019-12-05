@@ -3,8 +3,8 @@ import os
 import io
 import zipfile
 
-import spydrnet.tests as st
 from spydrnet.parsers.edif.tokenizer import EdifTokenizer
+from spydrnet import base_dir
 
 class TestEdifTokenizer(unittest.TestCase):
 
@@ -12,7 +12,8 @@ class TestEdifTokenizer(unittest.TestCase):
         self.assertRaises(TypeError, EdifTokenizer)
 
     def test_stream(self):
-        test_file = os.path.join(st.data_dir, "n_bit_counter.edf.zip")
+        dir_of_edif_netlists = os.path.join(base_dir, "support_files", "EDIF_netlists")
+        test_file = os.path.join(dir_of_edif_netlists, "n_bit_counter.edf.zip")
         zip = zipfile.ZipFile(test_file)
         file_name = os.path.basename(test_file)
         file_name = file_name[:file_name.rindex(".")]
@@ -23,20 +24,22 @@ class TestEdifTokenizer(unittest.TestCase):
         self.assertEqual("(", next_token)
 
     def test_open_zip_file(self):
-        test_file = os.path.join(st.data_dir, "n_bit_counter.edf.zip")
+        dir_of_edif_netlists = os.path.join(base_dir, "support_files", "EDIF_netlists")
+        test_file = os.path.join(dir_of_edif_netlists, "n_bit_counter.edf.zip")
         tokenizer = EdifTokenizer.from_filename(test_file)
         next_token = tokenizer.next()
         self.assertEqual("(", next_token)
 
     def test_open_file(self):
-        test_file = os.path.join(st.data_dir, "n_bit_counter.edf.zip")
+        dir_of_edif_netlists = os.path.join(base_dir, "support_files", "EDIF_netlists")
+        test_file = os.path.join(dir_of_edif_netlists, "n_bit_counter.edf.zip")
         file_name = os.path.basename(test_file)
         file_name = file_name[:file_name.rindex(".")]
-        extract_path = os.path.join(st.data_dir, file_name)
+        extract_path = os.path.join(dir_of_edif_netlists, file_name)
         if os.path.exists(extract_path):
             os.remove(extract_path)
         zip = zipfile.ZipFile(test_file)
-        zip.extract(file_name, st.data_dir)
+        zip.extract(file_name, dir_of_edif_netlists)
         tokenizer = EdifTokenizer.from_filename(extract_path)
         next_token = tokenizer.next()
         self.assertEqual("(", next_token)

@@ -19,7 +19,6 @@ __date__ = release.date
 __version__ = release.version
 
 from spydrnet.ir import Environment, Library, Definition, Instance, Port, InnerPin, OuterPin, Cable, Wire
-import os
 
 OUT = Port.Direction.OUT
 IN = Port.Direction.IN
@@ -29,3 +28,6 @@ UNDEFINED = Port.Direction.UNDEFINED
 from spydrnet.testing.test import run as test
 from spydrnet.parsers import parse
 from spydrnet.composers import compose
+
+import os
+base_dir = os.path.dirname(os.path.abspath(__file__))

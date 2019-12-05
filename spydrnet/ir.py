@@ -155,17 +155,8 @@ class Environment(Element):
         '''
 
         '''
-        from spydrnet.virtual_ir import generate_virtual_instances_from_top_level_instance
         if isinstance(instance, Instance):
             self._top_instance = instance
-            if self._top_virtual_instance:
-                search_stack = [self._top_virtual_instance]
-                while search_stack:
-                    current_virtual_instance = search_stack.pop()
-                    search_stack += current_virtual_instance.virtualChildren.values()
-                    definition = current_virtual_instance.instance.definition
-                    definition.virtual_instances.discard(current_virtual_instance)
-            self._top_virtual_instance = generate_virtual_instances_from_top_level_instance(instance)
     
     @property
     def top_virtual_instance(self):
