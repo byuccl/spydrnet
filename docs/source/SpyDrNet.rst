@@ -22,12 +22,19 @@ The remaining features that need more work are outlined in the following section
 Documentation
 -------------
 The tools contain the following bits of documentation:
+
 * A getting started users guide
+
 * Function level documentation of end user facing APIs
+
 * A deep look at the intermediate representation
+
 * Intro to the intermediate representation
+
 * Readme
+
 * This Specification
+
 
 a breif summary of each piece of documentation is provided below
 
@@ -50,6 +57,9 @@ Recomended packages as well as a breif summary of why
 How to install the tool on Windows, Linux (Mac?)
 A very quick example of how to import the tool
 How to find the other documentation
+
+**tutorials are also needed for the design**
+Several tutorials are also included in the documentation. These include creating a 4 bit counter with the code. Also exporting an edif file. 
 
 
 Intermediate Representation
@@ -93,20 +103,79 @@ API
 
 This section defines the API for the tools that can be used to extend the tools and do cool things to netlists. The API can be roughly split into 3 categories. The creation, The analysis, and The modification. Each element in the design has functions that allow creation and deletion. The API can also be split into the virtual and the netlist components. The API functions that are included in this release are the following:
 
-Creation API on non-virtual netlist objects
+**Creation API on non-virtual netlist objects**
+
+These api calls are made directly the belong to no object. ie 
+import spydrnet
+
+netlist = create_netlist("my netlist name")
 
 * create_netlist()
+
 * create_definition()
+
 * create_instance()
+
 * create_port()
+
 * create_cable()
+
+* create_pin()
+
+* create_wire()
+
 * create_library()
+
 * create_property()
 
-The api of each of these calls is simple. Each of the calls creates an orphaned object of the type with the name passed in as a parameter
-The parameters are a name
+For all of the calls except create_instance, the api is largely the same. Each of the calls creates an orphaned object of the type with the name passed in as a parameter
+The parameter is a name for the object to create.
 ???if an object of the creation type is passed in the return is an exact deep copy of that object.
 
+For the call to create_instance a definition must also be passed in and an orphaned instance of that definition returned.
+
+**Analysis API on non-virtual netlist objects**
+
+This api has 2 sets of functions the first does not belong to any object and can be called directly the same way as the creation api ie. 
+
+netlist_list = get_netlists()
+
+When called from the top level these functions can be passed a kwargs parameter of with a default value None. When passed this parameter it will just call the coresponding function on the object passed in.
+
+These can also be called on any of the virtual and non-virtual netlist objects. The return value will be virtual netlist objects. (if a non-virtual object is needed one can be obtained through api calls discussed later).
+
+library_list = netlist_list[0].get_libraries()
+
+The following are the calls
+
+* get_netlists()
+
+* get_libraries()
+
+* get_definitions()
+
+* get_ports()
+
+* get_cables()
+
+* get_pins()
+
+* get_properties()
+
+* get_wires()
+
+* get_pins()
+
+
+the objects from which each of these can be called is outlined below.
+
+**get_netlists()**
+This can be called from the top level or from any netlist object to return the netlist that contains that object.
+
+**get_libraries()**
+This will return all the libraries of an assciated design or the libraries that contain the object that it is called on.
+
+**get_definitions()**
 
 Outline for the rest of the specification
 -----------------------------------------

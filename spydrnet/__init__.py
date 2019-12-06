@@ -1,3 +1,15 @@
+# Release data
+from spydrnet import release
+
+__author__ = '%s <%s>\n%s <%s>\n%s <%s>' % \
+    (release.authors['Keller'] + release.authors['Skouson'] +
+        release.authors['Wirthlin'])
+__license__ = release.license
+
+__date__ = release.date
+__version__ = release.version
+
+
 from spydrnet.global_environment_manager import current_netlist, current_virtual_instance, get_netlists, create_netlist
 
 from spydrnet.api.get_virtual_instances import get_virtual_instances
