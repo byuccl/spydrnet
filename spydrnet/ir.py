@@ -4,202 +4,159 @@ import weakref
 from enum import Enum
 
 
-class Element:
-    """Base class of all intermediate representation objects"""
-    _nextUID_ = 0
+class Element(object):
+    """
+    Base class of all intermediate representation objects.
+
+    An intermediate representation object represents an item in a netlist. Items range in specificity from pins on a
+    port or wires in a cable up to an item that represents the netlist as a whole.
+
+    Each element implements a dictionary for storing key-value pairs. The key should be a case sensitive string and the
+    value should be a primitive type (string, integer, float, boolean) or potentially nested collections of primitive
+    types. The purpose of this dictionary is to provide a space for properties and metadata associated with the element.
+
+    Key namespaces are separated with a *period* character. If the key is void of a *period* than the key resides in the
+    root namespace. Keys in the root namespace are considered properties. Other keys are considered metadata. For
+    example '<LANG_OF_ORIGIN>.<METADATA_TAG>':<metadata_value> is considered metadata associated with the netlist's
+    language of origin.
+
+    Only data pertinent to the netlist should be stored in this dictionary. Cached data (namespace management, anything
+    that can be recreated from the netlist) should be excluded from this dictionary. The intent of the IR is to house
+    the basis of data for the netlist.
+
+    The only key that is reserved is 'NAME'. It is the primary name of the element. NAME may be undefined or inferred,
+    for example, a pin on a port may be nameless, but infer its name for its parent port and position.
+    """
+    __slots__ = ['_data']
 
     def __init__(self):
         """
-        Set up the members with a unique id and data namespace managers
-        The object has self.uid that is accessable although it should not be changed.
-        All other members are private."""
-        #self.data = dict()
-        #self.name = None
-        self.uid  = Element._nextUID_
-        Element._nextUID_ = Element._nextUID_ + 1
-
-        self._metadata = dict()
-        self._managers = list()
-    
-    @property
-    def parent(self):
-        '''
-        Return the parent of the element
-        ?should this be overridden by the implementing objects?
-        '''
-        return None
-    
-    @property
-    def children(self):
-        '''
-        Return a children iterator of the children of the element
-        ?should this be overridden by the implementing objects?
-        '''
-        return iter(())
-
-    def add_data_manager(self, manager):
-        '''
-        Add a datamanager to the element.
-        @param manager is a datamanager that has already been created and is ready for use
-        '''
-        manager.set_owner_and_populate_lookup(self)
-        self._managers.append(manager)
+        Initialize an element with an empty data dictionary.
+        """
+        self._data = dict()
 
     def __setitem__(self, key, value):
         '''
         create an entry in the dictionary of the element it will be stored in the metadata.
         '''
         key = sys.intern(key)
-        self._metadata.__setitem__(sys.intern(key), value)
-        self.setitem_callback(self)
-
-    def setitem_callback(self, element):
-        '''
-        Add an element to the data managers so that the element can be later found very quickly
-        @param element is the element to be added to the data managers
-        '''
-        for manager in self._managers:
-            manager.add_to_lookup(element)
-        if self.parent:
-            self.parent.setitem_callback(element)
+        self._data.__setitem__(sys.intern(key), value)
 
     def __delitem__(self, key):
-        self._metadata.__delitem__(key)
+        self._data.__delitem__(key)
 
     def __getitem__(self, key):
-        return self._metadata.__getitem__(key)
+        return self._data.__getitem__(key)
 
     def __contains__(self, item):
-        return self._metadata.__contains__(item)
+        return self._data.__contains__(item)
 
     def __iter__(self):
-        return self._metadata.__iter__()
+        return self._data.__iter__()
 
     def pop(self, item):
-        return self._metadata.pop(item)
-
-    def lookup_element(self, cls, key, identifier):
-        '''
-        find a sub element by identifier, key and class
-        Parameters
-        ----------
-        cls : the class of the element to be looked up
-        key : the key of the element to be looked up
-        identifier : the identifier of the element to be looked up
-        Returns
-        -------
-        element
-            the element that matches the description passed in includng class
-        Exceptions
-        ----------
-        KeyError if the element is not found in the lookup
-        '''
-        for manager in self._managers:
-            element = manager.lookup(cls, key, identifier)
-            if element:
-                return element
-        for child in self.children:
-            if cls == type(child):
-                if key in child:
-                    if identifier == child[key]:
-                        return child
-        raise KeyError()
+        return self._data.pop(item)
 
 
-class Design(Element):
-    '''
-    '''
-    def __init__(self, netlist = None):
-        '''
-        '''
-        super().__init__()
-        self.netlist = None
+class Netlist(Element):
+    """
+    Represents a netlist object.
 
-    @property
-    def parent(self):
-        return None
+    Contains a top level instance and libraries
+    """
+    __slots__ = ['_libraries', '_top_instance']
 
-    @property
-    def children(self):
-        return iter((self.netlist,))
-
-
-class Environment(Element):
-    '''
-    TODO rename as netlist
-    '''
-    '''
-    represents a netlist object
-    contains a top level instance and libraries
-    '''
     def __init__(self):
         super().__init__()
-        self.design = None
-        self.libraries = list()
+        self._libraries = list()
         self._top_instance = None
-        self._top_virtual_instance = None
+
+    @property
+    def libraries(self):
+        for library in self._libraries:
+            yield library
+
+    @libraries.setter
+    def libraries(self, value):
+        assert set(self._libraries) == set(value), "Set of values do not match, this function can only reorder values"
+        self._libraries = list(value)
 
     @property
     def top_instance(self):
-        '''
-        get the top instance in the environment
+        """
+        Get the top instance in the environment.
+
         Returns
         -------
         Instance
             The top level instance in the environment
-        '''
+        """
         return self._top_instance
 
     @top_instance.setter
     def top_instance(self, instance):
-        '''
-
-        '''
-        if isinstance(instance, Instance):
-            self._top_instance = instance
-    
-    @property
-    def top_virtual_instance(self):
-        return self._top_virtual_instance
-            
-            
-
-    @property
-    def parent(self):
-        return self.design
-
-    @property
-    def children(self):
-        return iter(self.libraries)
+        assert instance is None or isinstance(instance, Instance), "Must specify an instance"
+        self._top_instance = instance
 
     def create_library(self):
         library = Library()
         self.add_library(library)
         return library
     
-    def add_library(self, library):
-        self.libraries.append(library)
-        library.environment = self
-        self.setitem_callback(library)
+    def add_library(self, library, position=None):
+        assert library not in self._libraries, "Library already included in netlist"
+        assert library.netlist is None, "Library already belongs to a different netlist"
+        if position is not None:
+            self._libraries.insert(position, library)
+        else:
+            self._libraries.append(library)
+        library._netlist = self
 
-    def get_library(self, identifier):
-        library = self.lookup_element(Library, 'EDIF.identifier', identifier)
-        return library
+    def remove_library(self, library):
+        self._remove_library(library)
+        self._libraries.remove(library)
+
+    def remove_libraries_from(self, libraries):
+        libraries = set(libraries)
+        assert all(x in libraries for x in self._libraries), "Some libraries to remove are not included in netlist"
+        included_libraries = list()
+        for library in self._libraries:
+            if library in libraries:
+                included_libraries.append(library)
+            else:
+                self._remove_library(library)
+
+    def _remove_library(self, library):
+        assert library.netlist == self, "Library is not included in netlist"
+        library._netlist = None
 
 
 class Library(Element):
+    """
+    Represents a library object.
+
+    Contains a pointer to parent netlist and definitions.
+    """
+    __slots__ = ['_netlist', '_definitions']
+
     def __init__(self):
         super().__init__()
-        self.environment = None
-        self.definitions = list()
+        self._netlist = None
+        self._definitions = list()
 
     @property
-    def parent(self):
-        return self.environment
+    def netlist(self):
+        return self._netlist
 
     @property
-    def children(self):
-        return iter(self.definitions)
+    def definitions(self):
+        for definition in self._definitions:
+            yield definition
+
+    @definitions.setter
+    def definitions(self, value):
+        assert set(self._definitions) == set(value), "Set of values do not match, this function can only reorder values"
+        self._definitions = list(value)
 
     def create_definition(self):
         definition = Definition()
@@ -207,106 +164,155 @@ class Library(Element):
         return definition
 
     def add_definition(self, definition, position=None):
+        assert definition.library is not self, "Definition already included in library"
+        assert definition.library is None, "Definition already belongs to a different library"
         if position is not None:
-            self.definitions.insert(position, definition)
+            self._definitions.insert(position, definition)
         else:
-            self.definitions.append(definition)
-        definition.library = self
-        self.setitem_callback(definition)
+            self._definitions.append(definition)
+        definition._library = self
 
-    def get_definition(self, identifier):
-        definition = self.lookup_element(Definition, 'EDIF.identifier', identifier)
-        return definition
+    def remove_definition(self, definition):
+        assert definition.library == self, "Library is not included in netlist"
+        self._definitions.remove(definition)
+        definition._library = None
 
 
 class Definition(Element):
+    """
+    Represents a definition of a cell, module, entity/architecture, or paralleled structure object.
+
+    Contains a pointer to parent library, ports, cables, and instances.
+    """
+    __slots__ = ['_library', '_ports', '_cables', '_instances']
+
     def __init__(self):
         super().__init__()
-        self.library = None
-        self.ports = list()
-        self.cables = list()
-        self.instances = list()
-        self.virtual_instances = set()
+        self._library = None
+        self._ports = list()
+        self._cables = list()
+        self._instances = list()
+
+    @property
+    def library(self):
+        return self._library
+
+    @property
+    def ports(self):
+        for port in self._ports:
+            yield port
+
+    @ports.setter
+    def ports(self, value):
+        target = list(value)
+        assert set(self._ports) == set(target), "Set of values do not match, this function can only reorder values"
+        self._ports = target
+
+    @property
+    def cables(self):
+        for cable in self._cables:
+            yield cable
+
+    @cables.setter
+    def cables(self, value):
+        target = list(value)
+        assert set(self._cables) == set(target), "Set of values do not match, this function can only reorder values"
+        self._cables = target
+
+    @property
+    def instances(self):
+        for instance in self._instances:
+            yield instance
+
+    @instances.setter
+    def instances(self, value):
+        target = list(value)
+        assert set(self._instances) == set(target), "Set of values do not match, this function can only reorder values"
+        self._instances = target
 
     def is_leaf(self):
-        if len(self.instances) > 0 or len(self.cables) > 0:
+        if len(self._instances) > 0 or len(self._cables) > 0:
             return False
         return True
-
-    @property
-    def parent(self):
-        return self.library
-
-    @property
-    def children(self):
-        return itertools.chain(self.ports, self.cables, self.instances)
 
     def create_port(self):
         port = Port()
         self.add_port(port)
         return port
 
-    def add_port(self, port):
-        self.ports.append(port)
-        port.definition = self
-        self.setitem_callback(port)
+    def add_port(self, port, position=None):
+        assert port.definition is not self, "Port already included in definition"
+        assert port.definition is None, "Port already belongs to a different definition"
+        if position is not None:
+            self._ports.insert(position, port)
+        else:
+            self._ports.append(port)
+        port._definition = self
 
-    def get_port(self, identifier):
-        port = self.lookup_element(Port, 'EDIF.identifier', identifier)
-        return port
+    def remove_port(self, port):
+        assert port.definition == self, "Port is not included in definition"
+        self._ports.remove(port)
+        port._definition = None
  
     def create_instance(self):
         instance = Instance()
         self.add_instance(instance)
         return instance
     
-    def add_instance(self, instance):
-        self.instances.append(instance)
-        instance.parent_definition = self
-        self.setitem_callback(instance)
+    def add_instance(self, instance, position=None):
+        assert instance.parent is not self, "Instance already included in definition"
+        assert instance.parent is None, "Instance already belongs to a different definition"
+        if position is not None:
+            self._instances.insert(position, instance)
+        else:
+            self._instances.append(instance)
+        instance._parent = self
 
-    def get_instance(self, identifier):
-        instance = self.lookup_element(Instance, 'EDIF.identifier', identifier)
-        return instance
+    def remove_instance(self, instance):
+        assert instance.parent == self, "Instance is not included in definition"
+        self._instances.remove(instance)
+        instance._parent = None
 
     def create_cable(self):
         cable = Cable()
         self.add_cable(cable)
         return cable
 
-    def add_cable(self, cable):
-        self.cables.append(cable)
-        cable.definition = self
-        self.setitem_callback(cable)
+    def add_cable(self, cable, position=None):
+        assert cable.definition is not self, "Cable already included in definition"
+        assert cable.definition is None, "Cable already belongs to a different definition"
+        if position is not None:
+            self._cables.insert(position, cable)
+        else:
+            self._cables.append(cable)
+        cable._definition = self
 
-    def get_cable(self, identifier):
-        cable = self.lookup_element(Cable, 'EDIF.identifier', identifier)
-        return cable
-
-    def get_pin(self, port_identifier, index = 0):
-        """
-        Deprecated: 0.1.0
-        """
-        port = self.get_port(port_identifier)
-        return port.get_pin(index)
+    def remove_cable(self, cable):
+        assert cable.definition == self, "Cable is not included in definition"
+        self._cables.remove(cable)
+        cable._definition = None
 
 
 class Bundle(Element):
+    __slots__ = ['_definition', 'is_downto', 'is_scalar', 'lower_index']
+
     def __init__(self):
         super().__init__()
-        self.definition = None
+        self._definition = None
         self.is_downto = True
         self.is_scalar = False
         self.lower_index = 0
 
     @property
-    def parent(self):
-        return self.definition
+    def definition(self):
+        return self._definition
 
 
 class Port(Bundle):
     class Direction(Enum):
-        '''Define the possible directions for a given port'''
+        """
+        Define the possible directions for a given port
+        """
         UNDEFINED = 0
         INOUT = 1
         IN = 2
@@ -499,7 +505,6 @@ class Wire:
 
 class Instance(Element):
     '''
-    TODO are we going to rename this?
     netlist instance of a netlist definition
     '''
     def __init__(self):
@@ -507,54 +512,39 @@ class Instance(Element):
         creates an empty object of type instance
         '''
         super().__init__()
-        self._parent_definition = None
-        self._definition = None
+        self._parent = None
+        self._reference = None
         self.outer_pins = dict()
 
     @property
-    def parent_definition(self):
-        return self._parent_definition
+    def reference(self):
+        return self._parent
 
-    @parent_definition.setter
-    def parent_definition(self, value):
-        self._parent_definition = value
-        #definition = self.definition
-        #for virtual_parent in value.virtual_instances:
-        #    virtual_parent.create_virtual_child(self)
-
-    @property
-    def definition(self):
-        return self._definition
-
-    @definition.setter
-    def definition(self, value):
-        self._definition = value
-        #parent_definition = self.parent_definition
-        #if parent_definition:
-        #    for virtual_parent in parent_definition.virtual_instances:
-        #        virtual_parent.create_virtual_child
+    @reference.setter
+    def reference(self, value):
+        self._reference = value
 
     def is_leaf(self):
-        '''
+        """
         check to see if the netlist instance is an instance of a leaf definition
         Returns
         -------
         boolean
             True if the definition is leaf
             False if the definition is not leaf
-        '''
-        return self.definition.is_leaf()
+        """
+        return self._reference.is_leaf()
 
     def get_pin(self, port_identifier, index = 0):
-        '''
+        """
         get a pin by port and index
         Parameters
         ----------
         port_identifier
 
         index
-            
-        '''
+
+        """
         port = self.definition.get_port(port_identifier)
         inner_pin = port.get_pin(index)
         return self.get_outer_pin(inner_pin)

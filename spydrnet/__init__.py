@@ -18,7 +18,7 @@ __license__ = release.license
 __date__ = release.date
 __version__ = release.version
 
-from spydrnet.ir import Environment, Library, Definition, Instance, Port, InnerPin, OuterPin, Cable, Wire
+from spydrnet.ir import Netlist, Library, Definition, Instance, Port, InnerPin, OuterPin, Cable, Wire
 
 OUT = Port.Direction.OUT
 IN = Port.Direction.IN

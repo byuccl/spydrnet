@@ -45,10 +45,10 @@ class EdifParser:
 
     def initialize_design(self):
         self.design = Design()
-        self.design.netlist = Environment()
+        self.design.netlist = Netlist()
 
     def parse_edif(self):
-        environment = Environment()
+        environment = Netlist()
         self.append_new_element(environment)
         self.expect(EDIF)
         self.parse_nameDef()
