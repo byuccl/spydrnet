@@ -73,18 +73,17 @@ class Netlist(Element):
 
     @property
     def libraries(self):
-        for library in self._libraries:
-            yield library
+        return ListView(self._libraries)
 
     @libraries.setter
     def libraries(self, value):
-        assert set(self._libraries) == set(value), "Set of values do not match, this function can only reorder values"
+        assert set(self._libraries) == set(value), "Set of values do not match, this assignment can only reorder values"
         self._libraries = list(value)
 
     @property
     def top_instance(self):
         """
-        Get the top instance in the environment.
+        Get the top instance in the netlist.
 
         Returns
         -------
@@ -96,6 +95,7 @@ class Netlist(Element):
     @top_instance.setter
     def top_instance(self, instance):
         assert instance is None or isinstance(instance, Instance), "Must specify an instance"
+        # TODO: Should we have a DRC that makes sure the instance is of a definition contained in netlist?
         self._top_instance = instance
 
     def create_library(self):
@@ -117,14 +117,19 @@ class Netlist(Element):
         self._libraries.remove(library)
 
     def remove_libraries_from(self, libraries):
-        libraries = set(libraries)
-        assert all(x in libraries for x in self._libraries), "Some libraries to remove are not included in netlist"
+        if isinstance(libraries, set):
+            excluded_libraries = libraries
+        else:
+            excluded_libraries = set(libraries)
+        assert all(x.netlist == self for x in excluded_libraries), "Some libraries to remove are not included in " \
+                                                                   "netlist "
         included_libraries = list()
         for library in self._libraries:
-            if library in libraries:
+            if library not in excluded_libraries:
                 included_libraries.append(library)
             else:
                 self._remove_library(library)
+        self._libraries = included_libraries
 
     def _remove_library(self, library):
         assert library.netlist == self, "Library is not included in netlist"
@@ -150,8 +155,7 @@ class Library(Element):
 
     @property
     def definitions(self):
-        for definition in self._definitions:
-            yield definition
+        return ListView(self._definitions)
 
     @definitions.setter
     def definitions(self, value):
@@ -173,8 +177,26 @@ class Library(Element):
         definition._library = self
 
     def remove_definition(self, definition):
-        assert definition.library == self, "Library is not included in netlist"
+        self._remove_definition(definition)
         self._definitions.remove(definition)
+
+    def remove_definitions_from(self, definitions):
+        if isinstance(definitions, set):
+            excluded_definitions = definitions
+        else:
+            excluded_definitions = set(definitions)
+        assert all(x.library == self for x in excluded_definitions), "Some definitions to remove are not included in " \
+                                                                     "the library "
+        included_definitions = list()
+        for definition in self._definitions:
+            if definition not in excluded_definitions:
+                included_definitions.append(definition)
+            else:
+                self._remove_definition(definition)
+        self._definitions = included_definitions
+
+    def _remove_definition(self, definition):
+        assert definition.library == self, "Library is not included in netlist"
         definition._library = None
 
 
@@ -199,8 +221,7 @@ class Definition(Element):
 
     @property
     def ports(self):
-        for port in self._ports:
-            yield port
+        return ListView(self._ports)
 
     @ports.setter
     def ports(self, value):
@@ -210,8 +231,7 @@ class Definition(Element):
 
     @property
     def cables(self):
-        for cable in self._cables:
-            yield cable
+        return ListView(self._cables)
 
     @cables.setter
     def cables(self, value):
@@ -221,8 +241,7 @@ class Definition(Element):
 
     @property
     def instances(self):
-        for instance in self._instances:
-            yield instance
+        return ListView(self._instances)
 
     @instances.setter
     def instances(self, value):
@@ -250,10 +269,28 @@ class Definition(Element):
         port._definition = self
 
     def remove_port(self, port):
-        assert port.definition == self, "Port is not included in definition"
+        self._remove_port(port)
         self._ports.remove(port)
+
+    def remove_ports_from(self, ports):
+        if isinstance(ports, set):
+            excluded_ports = ports
+        else:
+            excluded_ports = set(ports)
+        assert all(x.definition == self for x in excluded_ports), "Some ports to remove are not included in the " \
+                                                                  "definition."
+        included_ports = list()
+        for port in self._ports:
+            if port not in excluded_ports:
+                included_ports.append(port)
+            else:
+                self._remove_port(port)
+        self._ports = included_ports
+
+    def _remove_port(self, port):
+        assert port.definition == self, "Port is not included in definition"
         port._definition = None
- 
+
     def create_instance(self):
         instance = Instance()
         self.add_instance(instance)
@@ -558,3 +595,26 @@ class Instance(Element):
             return outer_pin
         else:
             return self.outer_pins[inner_pin]
+
+
+class ListView:
+    __slots__ = ['_list', '__getitem__', '__contains__', '__eq__', '__ge__', '__gt__', '__iter__', '__le__', '__len__',
+                 '__lt__', '__ne__', '__reversed__', 'copy', 'count', 'index']
+
+    def __init__(self, list_object):
+        assert(isinstance(list_object, list))
+        self._list = list_object
+        self.__getitem__ = self._list.__getitem__
+        self.__contains__ = self._list.__contains__
+        self.__eq__ = self._list.__eq__
+        self.__ge__ = self._list.__ge__
+        self.__gt__ = self._list.__gt__
+        self.__iter__ = self._list.__iter__
+        self.__le__ = self._list.__le__
+        self.__len__ = self._list.__len__
+        self.__lt__ = self._list.__lt__
+        self.__ne__ = self._list.__ne__
+        self.__reversed__ = self._list.__reversed__
+        self.copy = self._list.copy
+        self.count = self._list.count
+        self.index = self._list.index
