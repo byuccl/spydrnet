@@ -172,7 +172,7 @@ def replicate_instance(virtual_instance):
     parent_definition = parent_instance.definition
     new_instances = list()
     for ii in range(1, 3):
-        new_instance = parent_definition.create_instance()
+        new_instance = parent_definition.create_child()
         new_instance.definition = instance.definition
         if 'EDIF.identifier' in instance:
             new_instance['EDIF.identifier'] = instance['EDIF.identifier'] + "_TMR_" + str(ii)
@@ -319,7 +319,7 @@ def insert_voters():
                         if 'EDIF.properties' in outer_virtual_cable.cable:
                             new_cable['EDIF.properties'] = copy.deepcopy(outer_virtual_cable.cable['EDIF.properties'])
                         for virtual_pin in non_replicated_pins:
-                            if len(virtual_pin.virtualParent.virtualParent.instance.definition.instances) == 0 and \
+                            if len(virtual_pin.virtualParent.virtualParent.instance.definition.children) == 0 and \
                                 len(virtual_pin.virtualParent.virtualParent.instance.definition.cables) == 0:
                                 pin = virtual_pin.get_outer_pin()
                             else:
@@ -328,7 +328,7 @@ def insert_voters():
                             new_cable.wires[0].connect_pin(pin)
                             
                         voter = create_voter(outer_virtual_cable.cable['EDIF.identifier'] + "_VOTER")
-                        outer_virtual_cable.virtualParent.instance.definition.add_instance(voter)
+                        outer_virtual_cable.virtualParent.instance.definition.add_child(voter)
                         new_cable.wires[0].connect_pin(voter.get_pin('O'))
                         
                         outer_virtual_wire.wire.connect_pin(voter.get_pin('I0'))

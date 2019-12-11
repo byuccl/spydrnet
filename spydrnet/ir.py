@@ -206,14 +206,15 @@ class Definition(Element):
 
     Contains a pointer to parent library, ports, cables, and instances.
     """
-    __slots__ = ['_library', '_ports', '_cables', '_instances']
+    __slots__ = ['_library', '_ports', '_cables', '_children', '_references']
 
     def __init__(self):
         super().__init__()
         self._library = None
         self._ports = list()
         self._cables = list()
-        self._instances = list()
+        self._children = list()
+        self._references = set()
 
     @property
     def library(self):
@@ -240,17 +241,21 @@ class Definition(Element):
         self._cables = target
 
     @property
-    def instances(self):
-        return ListView(self._instances)
+    def children(self):
+        return ListView(self._children)
 
-    @instances.setter
-    def instances(self, value):
+    @children.setter
+    def children(self, value):
         target = list(value)
-        assert set(self._instances) == set(target), "Set of values do not match, this function can only reorder values"
-        self._instances = target
+        assert set(self._children) == set(target), "Set of values do not match, this function can only reorder values"
+        self._children = target
+
+    @property
+    def references(self):
+        return SetView(self._references)
 
     def is_leaf(self):
-        if len(self._instances) > 0 or len(self._cables) > 0:
+        if len(self._children) > 0 or len(self._cables) > 0:
             return False
         return True
 
@@ -291,24 +296,41 @@ class Definition(Element):
         assert port.definition == self, "Port is not included in definition"
         port._definition = None
 
-    def create_instance(self):
+    def create_child(self):
         instance = Instance()
-        self.add_instance(instance)
+        self.add_child(instance)
         return instance
     
-    def add_instance(self, instance, position=None):
+    def add_child(self, instance, position=None):
         assert instance.parent is not self, "Instance already included in definition"
         assert instance.parent is None, "Instance already belongs to a different definition"
         if position is not None:
-            self._instances.insert(position, instance)
+            self._children.insert(position, instance)
         else:
-            self._instances.append(instance)
+            self._children.append(instance)
         instance._parent = self
 
-    def remove_instance(self, instance):
-        assert instance.parent == self, "Instance is not included in definition"
-        self._instances.remove(instance)
-        instance._parent = None
+    def remove_child(self, instance):
+        self._remove_child(instance)
+        self._children.remove(instance)
+
+    def remove_children_from(self, children):
+        if isinstance(children, set):
+            excluded_children = children
+        else:
+            excluded_children = set(children)
+        assert all(x.parent == self for x in excluded_children), "Some children are not parented by the definition"
+        included_children = list()
+        for child in self._children:
+            if child not in excluded_children:
+                included_children.append(child)
+            else:
+                self._remove_child(child)
+        self._children = included_children
+
+    def _remove_child(self, child):
+        assert child.parent == self, "Instance is not included in definition"
+        child._parent = None
 
     def create_cable(self):
         cable = Cable()
@@ -325,27 +347,92 @@ class Definition(Element):
         cable._definition = self
 
     def remove_cable(self, cable):
-        assert cable.definition == self, "Cable is not included in definition"
+        self._remove_cable(cable)
         self._cables.remove(cable)
+
+    def remove_cables_from(self, cables):
+        if isinstance(cables, set):
+            excluded_cables = cables
+        else:
+            excluded_cables = set(cables)
+        assert all(x.definition == self for x in excluded_cables), "Some cables are not included in the definition"
+        included_cables = list()
+        for cable in self._cables:
+            if cable not in excluded_cables:
+                included_cables.append(cable)
+            else:
+                self._remove_cable(cable)
+        self._cables = included_cables
+
+    def _remove_cable(self, cable):
+        assert cable.definition == self, "Cable is not included in definition"
         cable._definition = None
 
 
 class Bundle(Element):
-    __slots__ = ['_definition', 'is_downto', 'is_scalar', 'lower_index']
+    __slots__ = ['_definition', '_is_downto', '_is_scalar', '_lower_index']
 
     def __init__(self):
         super().__init__()
         self._definition = None
-        self.is_downto = True
-        self.is_scalar = False
-        self.lower_index = 0
+        self._is_downto = True
+        self._is_scalar = True
+        self._lower_index = 0
 
     @property
     def definition(self):
         return self._definition
 
+    @property
+    def is_downto(self):
+        return self._is_downto
+
+    @is_downto.setter
+    def is_downto(self, value):
+        self._is_downto = value
+
+    def _items(self):
+        return None
+
+    @property
+    def is_scalar(self):
+        _items = self._items()
+        if _items and len(_items) > 1:
+            return False
+        return self._is_scalar
+
+    @is_scalar.setter
+    def is_scalar(self, value):
+        _items = self._items()
+        if _items and len(_items) > 0 and value is True:
+            raise RuntimeError("Cannot set is_scalar to True on a multi-item bundle")
+        else:
+            self._is_scalar = value
+
+    @property
+    def is_array(self):
+        return not self.is_scalar
+
+    @is_array.setter
+    def is_array(self, value):
+        _items = self._items()
+        if _items and len(_items) > 0 and value is False:
+            raise RuntimeError("Cannot set is_array to False on a multi-item bundle")
+        else:
+            self._is_scalar = not value
+
+    @property
+    def lower_index(self):
+        return self._lower_index
+
+    @lower_index.setter
+    def lower_index(self, value):
+        self._lower_index = value
+
 
 class Port(Bundle):
+    __slots__ = ['_direction', '_pins']
+
     class Direction(Enum):
         """
         Define the possible directions for a given port
@@ -356,128 +443,117 @@ class Port(Bundle):
         OUT = 3
     
     def __init__(self):
-        '''setup an empty port''' 
+        """
+        setup an empty port
+        """
         super().__init__()
-        self.direction = self.Direction.UNDEFINED
-        self.inner_pins = list()
-        self.left_index = 0
-        self.right_index = 0
-        self.low_index = 0
+        self._direction = self.Direction.UNDEFINED
+        self._pins = list()
 
+    def _items(self):
+        return self._pins
+
+    @property
+    def direction(self):
+        return self._direction
+
+    @direction.setter
+    def direction(self, value):
+        if isinstance(value, self.Direction):
+            self._direction = value
+        elif isinstance(value, int):
+            for direction in self.Direction:
+                if direction.value == value:
+                    self._direction = direction
+                    break
+        elif isinstance(value, str):
+            value = value.lower()
+            for direction in self.Direction:
+                if direction.name.lower() == value:
+                    self._direction = direction
+                    break
+        else:
+            raise TypeError(f"Type {type(value)} cannot be assigned to direction")
+
+    @property
+    def pins(self):
+        return ListView(self._pins)
 
     def initialize_pins(self, pin_count):
-        '''
+        """
         create pin_count pins in the given port a downto style syntax is assumed
         Parameters:
         pin_count : this is the number of pins to add to the port
-        '''
-        self.left_index = pin_count -1
-        self.right_index = 0
-        self.low_index = 0
+        """
         for _ in range(pin_count):
-            self._create_pin()
-
-    def initialize_pins_in_range(self, left_index, right_index):
-        '''
-        create pins in the given port. no style is assumed and right and left indicies can each be larger than the other
-        This can mimic the vhdl to and downto syntax. just put the indicies in order into the call.
-        paramters:
-        left_index - the index on the left of the expression in the input format
-        right_index - the index on the right of the expression in the input format
-        '''
-        self.left_index = left_index
-        self.right_index = right_index
-        if left_index > right_index:
-            pin_count = left_index - right_index + 1
-            self.low_index = right_index
-        elif left_index < right_index:
-            pin_count = right_index - left_index + 1
-            self.low_index = left_index
-        else:
-            pin_count = 1
-            self.low_index = right_index
-        for _ in range(pin_count):
-            self._create_pin()
-
-    def set_direction(self, direction):
-        '''
-        sets the direction for the port
-        parameters:
-        direction - the direction of the port this can be a string or a Port.Direction object
-        '''
-        if isinstance(direction, str):
-            if direction.lower() == 'in':
-                direction = self.Direction.IN
-            elif direction.lower() == 'out':
-                direction = self.Direction.OUT
-            elif direction.lower() == 'inout':
-                direction = self.Direction.INOUT
-            else:
-                direction = self.Direction.UNDEFINED
-        self.direction = direction
-    
-    def _create_pin(self):
-        '''
-        create and add a pin in an unsafe fashion without updating the indicies, the calling function must worry about indicies on the port
-        '''
-        inner_pin = InnerPin()
-        self._add_pin(inner_pin)
-        return inner_pin
-
-    def _add_pin(self, inner_pin):
-        '''
-        add a pin to the port in an unsafe fashion. The calling class must take care of the indicies.
-        '''
-        self.inner_pins.append(inner_pin)
-        inner_pin.port = self
+            self.create_pin()
 
     def create_pin(self):
-        '''
-        create a pin and add it to the port. Also update the indices as needed
+        """
+        create a pin and add it to the port.
         return:
         the inner_pin created
-        '''
-        inner_pin = InnerPin()
-        self.add_pin(inner_pin)
-        return inner_pin
+        """
+        pin = InnerPin()
+        self.add_pin(pin)
+        return pin
 
-    def add_pin(self, inner_pin):
-        '''
-        add a pin to the port and update the indices to reflect the added pin
-        '''
-        if self.right_index == self.low_index:
-            self.left_index += 1
+    def add_pin(self, pin, position=None):
+        """
+        add a pin to the port in an unsafe fashion. The calling class must take care of the indicies.
+        """
+        assert isinstance(pin, InnerPin)
+        assert pin.port is not self, "Pin already belongs to this port"
+        assert pin.port is None, "Pin already belongs to another port"
+        if position is None:
+            self._pins.append(pin)
         else:
-            self.right_index += 1
-        self.inner_pins.append(inner_pin)
-        inner_pin.port = self
+            self._pins.insert(position, pin)
+        pin._port = self
 
-    def get_pin(self, index = 0):
-        '''
-        get the pin at the given index in the original indexing system
-        returns:
-        the pin at the given index
-        '''
-        return self.inner_pins[index-self.low_index]
+    def remove_pin(self, pin):
+        self._remove_pin(pin)
+        self._pins.remove(pin)
+
+    def remove_pins_from(self, pins):
+        if isinstance(pins, set):
+            exclude_pins = pins
+        else:
+            exclude_pins = set(pins)
+        assert all(isinstance(x, InnerPin) and x.port == self for x in exclude_pins), "All pins to remove must be " \
+                                                                                      "InnerPins and belong to the port"
+        include_pins = list()
+        for pin in self._pins:
+            if pin not in exclude_pins:
+                include_pins.append(pin)
+            else:
+                self._remove_pin(pin)
+        self._pins = include_pins
+
+    def _remove_pin(self, pin):
+        assert pin.port == self, "Pin does not belong to this port."
+        pin._port = None
 
 
 class Pin:
+    __slots__ = ['_wire']
+
     def __init__(self):
-        self.wire = None
+        self._wire = None
+
+    @property
+    def wire(self):
+        return self._wire
 
 
 class InnerPin(Pin):
     def __init__(self):
         super().__init__()
-        self.port = None
+        self._port = None
 
-    def get_virtualPins(self):
-        port = self.port
-        definition = port.definition
-        for vi in definition.virtual_instances:
-            virtual_port = vi.virtualPorts[port]
-            virtual_pin = virtual_port.virtualPins[self]
-            yield virtual_pin
+    @property
+    def port(self):
+        return self._port
 
 
 class OuterPin(Pin):
@@ -486,20 +562,14 @@ class OuterPin(Pin):
         self.instance = None
         self.inner_pin = None
 
-    def get_virtualWires(self):
-        parent_definition = self.instance.parent_definition
-        for vi in parent_definition.virtual_instances:
-            wire = self.wire
-            cable = wire.cable
-            virtual_cable = vi.virtualCables[cable]
-            virtual_wire = virtual_cable.virtualWires[wire]
-            yield virtual_wire
-
 
 class Cable(Bundle):
     def __init__(self):
         super().__init__()
         self.wires = list()
+
+    def _items(self):
+        return self.wires
 
     def initialize_wires(self, wire_count):
         for _ in range(wire_count):
@@ -513,9 +583,6 @@ class Cable(Bundle):
     def add_wire(self, wire):
         self.wires.append(wire)
         wire.cable = self
-
-    def get_wire(self, index):
-        return self.wires[index]
 
 
 class Wire:
@@ -531,31 +598,29 @@ class Wire:
         self.pins.remove(pin)
         pin.wire = None
 
-    def get_virtualWires(self):
-        cable = self.cable
-        definition = cable.definition
-        for vi in definition.virtual_instances:
-            virtual_cable = vi.virtualCables[cable]
-            virtual_wire = virtual_cable.virtualWires[self]
-            yield virtual_wire
-
 
 class Instance(Element):
-    '''
+    """
     netlist instance of a netlist definition
-    '''
+    """
+    __slots__ = ['_parent', '_reference', '_pins']
+
     def __init__(self):
-        '''
+        """
         creates an empty object of type instance
-        '''
+        """
         super().__init__()
         self._parent = None
         self._reference = None
-        self.outer_pins = dict()
+        self._pins = dict()
+
+    @property
+    def parent(self):
+        return self._parent
 
     @property
     def reference(self):
-        return self._parent
+        return self._reference
 
     @reference.setter
     def reference(self, value):
@@ -572,49 +637,39 @@ class Instance(Element):
         """
         return self._reference.is_leaf()
 
-    def get_pin(self, port_identifier, index = 0):
-        """
-        get a pin by port and index
-        Parameters
-        ----------
-        port_identifier
-
-        index
-
-        """
-        port = self.definition.get_port(port_identifier)
-        inner_pin = port.get_pin(index)
-        return self.get_outer_pin(inner_pin)
-            
-    def get_outer_pin(self, inner_pin):
-        if inner_pin not in self.outer_pins:
-            outer_pin = OuterPin()
-            self.outer_pins[inner_pin] = outer_pin
-            outer_pin.instance = self
-            outer_pin.inner_pin = inner_pin
-            return outer_pin
-        else:
-            return self.outer_pins[inner_pin]
-
 
 class ListView:
-    __slots__ = ['_list', '__getitem__', '__contains__', '__eq__', '__ge__', '__gt__', '__iter__', '__le__', '__len__',
-                 '__lt__', '__ne__', '__reversed__', 'copy', 'count', 'index']
+    __slots__ = ['_list', '__add__', '__getitem__', '__contains__', '__eq__', '__hash__', '__ge__', '__gt__',
+                 '__iter__', '__le__', '__len__', '__lt__', '__ne__', '__mul__', '__rmul__', '__reversed__', '__repr__',
+                 '__str__', 'copy', 'count', 'index', '__iadd__', '__imul__']
 
     def __init__(self, list_object):
-        assert(isinstance(list_object, list))
+        assert isinstance(list_object, list)
         self._list = list_object
-        self.__getitem__ = self._list.__getitem__
-        self.__contains__ = self._list.__contains__
-        self.__eq__ = self._list.__eq__
-        self.__ge__ = self._list.__ge__
-        self.__gt__ = self._list.__gt__
-        self.__iter__ = self._list.__iter__
-        self.__le__ = self._list.__le__
-        self.__len__ = self._list.__len__
-        self.__lt__ = self._list.__lt__
-        self.__ne__ = self._list.__ne__
-        self.__reversed__ = self._list.__reversed__
-        self.copy = self._list.copy
-        self.count = self._list.count
-        self.index = self._list.index
+        for attr in self.__slots__[1:-2]:
+            exec(f"self.{attr} = list_object.{attr}")
+        for attr in self.__slots__[-2:]:
+            exec(f"self.{attr} = self.unsupported_operator")
+
+    def __radd__(self, other):
+        return other + self._list
+
+    def unsupported_operator(self, other):
+        raise TypeError("unsupported operator for type SetView")
+
+
+class SetView:
+    __slots__ = ['__and__', '__rand__', '__eq__', '__ge__', '__gt__', '__hash__', '__iter__', '__le__', '__len__',
+                 '__lt__', '__ne__', '__or__', '__ror__', '__sub__', '__rsub__', '__xor__', '__rxor__', '__repr__',
+                 '__str__', 'copy', 'difference', 'intersection', 'isdisjoint', 'issubset', 'issuperset',
+                 'symmetric_difference', 'union', '__iand__', '__ior__', '__ixor__', '__isub__']
+
+    def __init__(self, set_object):
+        assert isinstance(set_object, set)
+        for attr in self.__slots__[:-4]:
+            exec(f"self.{attr} = set_object.{attr}")
+        for attr in self.__slots__[-4:]:
+            exec(f"self.{attr} = self.unsupported_operator")
+
+    def unsupported_operator(self, other):
+        raise TypeError("unsupported operator for type SetView")

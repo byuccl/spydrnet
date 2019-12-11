@@ -199,12 +199,12 @@ class ComposeEdif:
         self._lisp_decrement_()
         self._new_line_()
 
-        if len(definition.instances) + len(definition.cables) > 0:
+        if len(definition.children) + len(definition.cables) > 0:
             self._lisp_increment_()
             self._output_.write("contents")
             self._new_line_()
 
-            for instance in definition.instances:
+            for instance in definition.children:
                 self._output_instance_(instance)
             for cable in definition.cables:
                 self._output_cable_(cable)

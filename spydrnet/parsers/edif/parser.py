@@ -496,7 +496,7 @@ class EdifParser:
             if self.construct_is(INSTANCE):
                 instance = self.parse_instance()
                 definition = self.elements[-1]
-                definition.add_instance(instance)
+                definition.add_child(instance)
 
             elif self.construct_is(NET):
                 cable = self.parse_net()

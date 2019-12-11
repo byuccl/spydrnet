@@ -102,17 +102,17 @@ class Comparer:
             self.compare_cables(definition_orig.cables[cable], definition_composer.cables[x])
 
         # Checking the instances
-        if definition_orig.instances.__len__() != definition_composer.instances.__len__():
+        if definition_orig.children.__len__() != definition_composer.children.__len__():
             # logging.error("Definitions do not have the same number of instances")
             raise Exception("Definitions do not have the same number of instances")
-        for instance in range(definition_orig.instances.__len__()):
+        for instance in range(definition_orig.children.__len__()):
             # logging.info("Checking %d out of %d instances in %s", instance + 1, definition_orig.instances.__len__(),
             #             self.get_identifier(definition_orig))
-            x = self.search_list(definition_composer.instances, definition_orig.instances[instance])
+            x = self.search_list(definition_composer.children, definition_orig.children[instance])
             if x == -1:
                 # logging.error("Instances do not have the same identifier")
                 raise Exception("Instances do not have the same identifier")
-            self.compare_instances(definition_orig.instances[instance], definition_composer.instances[x])
+            self.compare_instances(definition_orig.children[instance], definition_composer.children[x])
 
         # Checking the ports
         if definition_orig.ports.__len__() != definition_composer.ports.__len__():
