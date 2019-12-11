@@ -73,10 +73,12 @@ class Netlist(Element):
 
     @property
     def libraries(self):
+        """get a list of all libraries included in the netlist"""
         return ListView(self._libraries)
 
     @libraries.setter
     def libraries(self, value):
+        """set the libraries. This function can only be used to reorder the libraries. Use the remove_library and add_library functions to add and remove libraries."""
         assert set(self._libraries) == set(value), "Set of values do not match, this assignment can only reorder values"
         self._libraries = list(value)
 
@@ -94,16 +96,19 @@ class Netlist(Element):
 
     @top_instance.setter
     def top_instance(self, instance):
+        '''sets the top instance of the design. The instance must not be null and should probably come from this netlist'''
         assert instance is None or isinstance(instance, Instance), "Must specify an instance"
-        # TODO: Should we have a DRC that makes sure the instance is of a definition contained in netlist?
+        # TODO: should We have a DRC that makes sure the instance is of a definition contained in netlist? I think no but I am open to hear other points of veiw.
         self._top_instance = instance
 
     def create_library(self):
+        '''create a library and add it to the netlist and return that library'''
         library = Library()
         self.add_library(library)
         return library
     
     def add_library(self, library, position=None):
+        '''add an already existing library to the netlist. This library should not belong to another netlist. Use remove_library from other netlists before adding'''
         assert library not in self._libraries, "Library already included in netlist"
         assert library.netlist is None, "Library already belongs to a different netlist"
         if position is not None:
@@ -113,10 +118,12 @@ class Netlist(Element):
         library._netlist = self
 
     def remove_library(self, library):
+        '''removes the given library if it is in the netlist'''
         self._remove_library(library)
         self._libraries.remove(library)
 
     def remove_libraries_from(self, libraries):
+        '''removes all the given libraries from the netlist. All libraries must be in the netlist'''
         if isinstance(libraries, set):
             excluded_libraries = libraries
         else:
@@ -132,6 +139,7 @@ class Netlist(Element):
         self._libraries = included_libraries
 
     def _remove_library(self, library):
+        '''internal function which will separate a particular libraries binding from the netlist'''
         assert library.netlist == self, "Library is not included in netlist"
         library._netlist = None
 
@@ -151,23 +159,28 @@ class Library(Element):
 
     @property
     def netlist(self):
+        '''get the netlist that contins this libarary'''
         return self._netlist
 
     @property
     def definitions(self):
+        '''return a list of all the definitions that are included in this library'''
         return ListView(self._definitions)
 
     @definitions.setter
     def definitions(self, value):
+        '''set the definitions to a new reordered set of definitions. This function cannot be used to add or remove defintions'''
         assert set(self._definitions) == set(value), "Set of values do not match, this function can only reorder values"
         self._definitions = list(value)
 
     def create_definition(self):
+        '''create a definition, add it to the library, and return the definition'''
         definition = Definition()
         self.add_definition(definition)
         return definition
 
     def add_definition(self, definition, position=None):
+        '''add an existing definition to the library. The definition must not belong to a library including this one. '''
         assert definition.library is not self, "Definition already included in library"
         assert definition.library is None, "Definition already belongs to a different library"
         if position is not None:
@@ -177,10 +190,12 @@ class Library(Element):
         definition._library = self
 
     def remove_definition(self, definition):
+        '''remove the given defintion from the library'''
         self._remove_definition(definition)
         self._definitions.remove(definition)
 
     def remove_definitions_from(self, definitions):
+        '''remove a set of definitions from the library. all definitions provdied must be in the library'''
         if isinstance(definitions, set):
             excluded_definitions = definitions
         else:
@@ -218,53 +233,64 @@ class Definition(Element):
 
     @property
     def library(self):
+        '''Get the library that contains this definition'''
         return self._library
 
     @property
     def ports(self):
+        '''get the ports that are instanced in this definition'''
         return ListView(self._ports)
 
     @ports.setter
     def ports(self, value):
+        '''Reorder ports that are instanced in this definition. Use remove_port and add_port to remove and add ports respectively'''
         target = list(value)
         assert set(self._ports) == set(target), "Set of values do not match, this function can only reorder values"
         self._ports = target
 
     @property
     def cables(self):
+        '''get the cables that are instanced in this definition'''
         return ListView(self._cables)
 
     @cables.setter
     def cables(self, value):
+        '''Reorder the cables in this definition. Use add_cable and remove_cable to add or remove cables.'''
         target = list(value)
         assert set(self._cables) == set(target), "Set of values do not match, this function can only reorder values"
         self._cables = target
 
     @property
     def children(self):
+        '''return a list of all instances instantiated in this definition'''
         return ListView(self._children)
 
     @children.setter
     def children(self, value):
+        '''reorder the list of instances instantiated in this definition use add_child and remove_child to add or remove instances to or from the definition'''
         target = list(value)
         assert set(self._children) == set(target), "Set of values do not match, this function can only reorder values"
         self._children = target
 
     @property
     def references(self):
+        '''get a list of all the instances of this definition'''
         return SetView(self._references)
 
     def is_leaf(self):
+        '''check to see if this definition represents a leaf cell. Leaf cells are cells with no children instances or no children cables. Blackbox cells are considered leaf cells as well as direct pass through cells with cables only'''
         if len(self._children) > 0 or len(self._cables) > 0:
             return False
         return True
 
     def create_port(self):
+        '''create a port, add it to the definition, and return that port'''
         port = Port()
         self.add_port(port)
         return port
 
     def add_port(self, port, position=None):
+        '''add a preexisting port to the definition. this port must not be a member of any definition for this function to work'''
         assert port.definition is not self, "Port already included in definition"
         assert port.definition is None, "Port already belongs to a different definition"
         if position is not None:
@@ -274,10 +300,12 @@ class Definition(Element):
         port._definition = self
 
     def remove_port(self, port):
+        '''remove a port from the definition. This port must be a member of the definition in order to be removed'''
         self._remove_port(port)
         self._ports.remove(port)
 
     def remove_ports_from(self, ports):
+        '''remove a set of ports from the definition. All these ports must be included in the definition'''
         if isinstance(ports, set):
             excluded_ports = ports
         else:
@@ -293,15 +321,18 @@ class Definition(Element):
         self._ports = included_ports
 
     def _remove_port(self, port):
+        '''internal function to dissociate the port from the definition'''
         assert port.definition == self, "Port is not included in definition"
         port._definition = None
 
     def create_child(self):
+        '''create an instance to add to the definition, add it, and return the instance.'''
         instance = Instance()
         self.add_child(instance)
         return instance
     
     def add_child(self, instance, position=None):
+        '''Add an existing instance to the definition. This instance must not already be included in a definition'''
         assert instance.parent is not self, "Instance already included in definition"
         assert instance.parent is None, "Instance already belongs to a different definition"
         if position is not None:
@@ -311,10 +342,12 @@ class Definition(Element):
         instance._parent = self
 
     def remove_child(self, instance):
+        '''remove an instance from the definition. The instance must be a member of the definition already'''
         self._remove_child(instance)
         self._children.remove(instance)
 
     def remove_children_from(self, children):
+        '''remove a set of instances from the definition. All instances must be members of the definition'''
         if isinstance(children, set):
             excluded_children = children
         else:
@@ -329,15 +362,18 @@ class Definition(Element):
         self._children = included_children
 
     def _remove_child(self, child):
+        '''internal function for dissociating a child instance from the definition.'''
         assert child.parent == self, "Instance is not included in definition"
         child._parent = None
 
     def create_cable(self):
+        '''create a cable, add it to the definition, and return the cable.'''
         cable = Cable()
         self.add_cable(cable)
         return cable
 
     def add_cable(self, cable, position=None):
+        '''add a cable to the definition. The cable must not already be a member of another definition.'''
         assert cable.definition is not self, "Cable already included in definition"
         assert cable.definition is None, "Cable already belongs to a different definition"
         if position is not None:
@@ -347,10 +383,12 @@ class Definition(Element):
         cable._definition = self
 
     def remove_cable(self, cable):
+        '''remove a cable from the definition. The cable must be a member of the definition.'''
         self._remove_cable(cable)
         self._cables.remove(cable)
 
     def remove_cables_from(self, cables):
+        '''remove a set of cables from the definition. The cables must be members of the definition'''
         if isinstance(cables, set):
             excluded_cables = cables
         else:
@@ -365,6 +403,7 @@ class Definition(Element):
         self._cables = included_cables
 
     def _remove_cable(self, cable):
+        '''dissociate the cable from this definition. This function is internal and should not be called.'''
         assert cable.definition == self, "Cable is not included in definition"
         cable._definition = None
 
