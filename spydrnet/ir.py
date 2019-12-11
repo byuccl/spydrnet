@@ -432,7 +432,14 @@ class Definition(Element):
         return instance
     
     def add_child(self, instance, position=None):
-        '''Add an existing instance to the definition. This instance must not already be included in a definition'''
+        '''Add an existing instance to the definition. This instance must not already be included in a definition
+        
+        parameters
+        ----------
+        
+        instance - (Instance) the instance to add as a child of the definition
+        
+        position - (int, default None) the index in the children list at which to add the instance.'''
         assert instance.parent is not self, "Instance already included in definition"
         assert instance.parent is None, "Instance already belongs to a different definition"
         if position is not None:
@@ -442,12 +449,22 @@ class Definition(Element):
         instance._parent = self
 
     def remove_child(self, instance):
-        '''remove an instance from the definition. The instance must be a member of the definition already'''
+        '''remove an instance from the definition. The instance must be a member of the definition already
+        
+        parameters
+        ----------
+        
+        instance - (Instance) the instance to be removed from the definition'''
         self._remove_child(instance)
         self._children.remove(instance)
 
     def remove_children_from(self, children):
-        '''remove a set of instances from the definition. All instances must be members of the definition'''
+        '''remove a set of instances from the definition. All instances must be members of the definition
+
+        parameters
+        ----------
+        
+        children - (Set of Instance type objects) the children to be removed from the definition'''
         if isinstance(children, set):
             excluded_children = children
         else:
@@ -473,7 +490,14 @@ class Definition(Element):
         return cable
 
     def add_cable(self, cable, position=None):
-        '''add a cable to the definition. The cable must not already be a member of another definition.'''
+        '''add a cable to the definition. The cable must not already be a member of another definition.
+        
+        parameters
+        ----------
+        
+        cable - (Cable) the cable to be added
+        
+        position - (int, default None) the position in the cable list at which to add the cable'''
         assert cable.definition is not self, "Cable already included in definition"
         assert cable.definition is None, "Cable already belongs to a different definition"
         if position is not None:
@@ -483,12 +507,22 @@ class Definition(Element):
         cable._definition = self
 
     def remove_cable(self, cable):
-        '''remove a cable from the definition. The cable must be a member of the definition.'''
+        '''remove a cable from the definition. The cable must be a member of the definition.
+        
+        parameters
+        ----------
+        
+        cable - (Cable) the cable to be removed from the definition'''
         self._remove_cable(cable)
         self._cables.remove(cable)
 
     def remove_cables_from(self, cables):
-        '''remove a set of cables from the definition. The cables must be members of the definition'''
+        '''remove a set of cables from the definition. The cables must be members of the definition
+        
+        parameters
+        ----------
+        
+        cables - (Set of Cable type objects) the cables to be remove from the definition'''
         if isinstance(cables, set):
             excluded_cables = cables
         else:
@@ -686,16 +720,19 @@ class Pin:
 
 
 class InnerPin(Pin):
+    '''Pins that correspond to definitions. These pins can be thought of as on the inside of a definition. There can be many outer pins for each inner pin'''
     def __init__(self):
         super().__init__()
         self._port = None
 
     @property
     def port(self):
+        '''return the port that the inner pin is a part of'''
         return self._port
 
 
 class OuterPin(Pin):
+    '''Pins that correspond to instances. These pins can be thought of as on the outside of an instance. There can be many inner pins for each outer pin'''
     def __init__(self):
         super().__init__()
         self.instance = None
