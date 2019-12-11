@@ -78,7 +78,13 @@ class Netlist(Element):
 
     @libraries.setter
     def libraries(self, value):
-        """set the libraries. This function can only be used to reorder the libraries. Use the remove_library and add_library functions to add and remove libraries."""
+        """set the libraries. This function can only be used to reorder the libraries. Use the remove_library and add_library functions to add and remove libraries.
+        
+        parameters
+        ----------
+        
+        value - the reordered list of libraries
+        """
         assert set(self._libraries) == set(value), "Set of values do not match, this assignment can only reorder values"
         self._libraries = list(value)
 
@@ -96,7 +102,13 @@ class Netlist(Element):
 
     @top_instance.setter
     def top_instance(self, instance):
-        '''sets the top instance of the design. The instance must not be null and should probably come from this netlist'''
+        '''sets the top instance of the design. The instance must not be null and should probably come from this netlist
+        
+        parameters
+        ----------
+
+        instance - (Instance) the instance to set as the top instance.
+        '''
         assert instance is None or isinstance(instance, Instance), "Must specify an instance"
         # TODO: should We have a DRC that makes sure the instance is of a definition contained in netlist? I think no but I am open to hear other points of veiw.
         self._top_instance = instance
@@ -108,7 +120,16 @@ class Netlist(Element):
         return library
     
     def add_library(self, library, position=None):
-        '''add an already existing library to the netlist. This library should not belong to another netlist. Use remove_library from other netlists before adding'''
+        '''add an already existing library to the netlist. This library should not belong to another netlist. Use remove_library from other netlists before adding
+        
+        parameters
+        ----------
+
+        library - (Library) the library to be added to the netlist
+
+        position - (int, default None) when set it is the index at which to add the library in the libraries list
+        
+        '''
         assert library not in self._libraries, "Library already included in netlist"
         assert library.netlist is None, "Library already belongs to a different netlist"
         if position is not None:
@@ -118,12 +139,24 @@ class Netlist(Element):
         library._netlist = self
 
     def remove_library(self, library):
-        '''removes the given library if it is in the netlist'''
+        '''removes the given library if it is in the netlist
+        
+        parameters
+        ----------
+        
+        library - (Library) the library to be removed
+        '''
         self._remove_library(library)
         self._libraries.remove(library)
 
     def remove_libraries_from(self, libraries):
-        '''removes all the given libraries from the netlist. All libraries must be in the netlist'''
+        '''removes all the given libraries from the netlist. All libraries must be in the netlist
+        
+        parameters
+        ----------
+        
+        libraries - (Set) libraries to be removed
+        '''
         if isinstance(libraries, set):
             excluded_libraries = libraries
         else:
@@ -169,7 +202,13 @@ class Library(Element):
 
     @definitions.setter
     def definitions(self, value):
-        '''set the definitions to a new reordered set of definitions. This function cannot be used to add or remove defintions'''
+        '''set the definitions to a new reordered set of definitions. This function cannot be used to add or remove defintions
+        
+        paramerters
+        -----------
+        
+        value - (List containing Definition type objects) The reordered list
+        '''
         assert set(self._definitions) == set(value), "Set of values do not match, this function can only reorder values"
         self._definitions = list(value)
 
@@ -180,7 +219,17 @@ class Library(Element):
         return definition
 
     def add_definition(self, definition, position=None):
-        '''add an existing definition to the library. The definition must not belong to a library including this one. '''
+        '''
+        add an existing definition to the library. The definition must not belong to a library including this one. 
+        
+        parameters
+        ----------
+
+        definiiton - (Definition) the defintion to add to the library
+
+        position - (int, default None) the index in the library list at which to add the definition
+
+        '''
         assert definition.library is not self, "Definition already included in library"
         assert definition.library is None, "Definition already belongs to a different library"
         if position is not None:
@@ -190,12 +239,22 @@ class Library(Element):
         definition._library = self
 
     def remove_definition(self, definition):
-        '''remove the given defintion from the library'''
+        '''remove the given defintion from the library
+        
+        parameters
+        ----------
+        
+        definition - (Definition) the definition to be removed'''
         self._remove_definition(definition)
         self._definitions.remove(definition)
 
     def remove_definitions_from(self, definitions):
-        '''remove a set of definitions from the library. all definitions provdied must be in the library'''
+        '''remove a set of definitions from the library. all definitions provdied must be in the library
+        
+        parameters
+        ----------
+        
+        definitions - (Set of Definition type objects) the definitions to be removed'''
         if isinstance(definitions, set):
             excluded_definitions = definitions
         else:
@@ -211,6 +270,7 @@ class Library(Element):
         self._definitions = included_definitions
 
     def _remove_definition(self, definition):
+        '''internal function to dissociate a definition from the library'''
         assert definition.library == self, "Library is not included in netlist"
         definition._library = None
 
@@ -243,7 +303,12 @@ class Definition(Element):
 
     @ports.setter
     def ports(self, value):
-        '''Reorder ports that are instanced in this definition. Use remove_port and add_port to remove and add ports respectively'''
+        '''Reorder ports that are instanced in this definition. Use remove_port and add_port to remove and add ports respectively
+        
+        parameters
+        ----------
+        
+        value - (List of type Port objects) the reordered list of ports'''
         target = list(value)
         assert set(self._ports) == set(target), "Set of values do not match, this function can only reorder values"
         self._ports = target
@@ -255,7 +320,13 @@ class Definition(Element):
 
     @cables.setter
     def cables(self, value):
-        '''Reorder the cables in this definition. Use add_cable and remove_cable to add or remove cables.'''
+        '''Reorder the cables in this definition. Use add_cable and remove_cable to add or remove cables.
+        
+        
+        parameters
+        ----------
+        
+        value - (List of type Cable objects) the reordered list of cables'''
         target = list(value)
         assert set(self._cables) == set(target), "Set of values do not match, this function can only reorder values"
         self._cables = target
@@ -267,7 +338,12 @@ class Definition(Element):
 
     @children.setter
     def children(self, value):
-        '''reorder the list of instances instantiated in this definition use add_child and remove_child to add or remove instances to or from the definition'''
+        '''reorder the list of instances instantiated in this definition use add_child and remove_child to add or remove instances to or from the definition
+        
+        parameters
+        ----------
+        
+        value - (List of type Instance objects) the reordered list of instances'''
         target = list(value)
         assert set(self._children) == set(target), "Set of values do not match, this function can only reorder values"
         self._children = target
@@ -290,7 +366,14 @@ class Definition(Element):
         return port
 
     def add_port(self, port, position=None):
-        '''add a preexisting port to the definition. this port must not be a member of any definition for this function to work'''
+        '''add a preexisting port to the definition. this port must not be a member of any definition
+        
+        parameters
+        ----------
+
+        port - (Port) the port to add to the definition
+
+        position - (int, default None) the index in the port list at which to add the port'''
         assert port.definition is not self, "Port already included in definition"
         assert port.definition is None, "Port already belongs to a different definition"
         if position is not None:
@@ -300,12 +383,24 @@ class Definition(Element):
         port._definition = self
 
     def remove_port(self, port):
-        '''remove a port from the definition. This port must be a member of the definition in order to be removed'''
+        '''remove a port from the definition. This port must be a member of the definition in order to be removed
+        
+        
+        
+        parameters
+        ----------
+
+        port - (Port) the port to be removed'''
         self._remove_port(port)
         self._ports.remove(port)
 
     def remove_ports_from(self, ports):
-        '''remove a set of ports from the definition. All these ports must be included in the definition'''
+        '''remove a set of ports from the definition. All these ports must be included in the definition
+        
+        parameters
+        ----------
+        
+        ports - (Set containing Port type objects) the ports to remove from the definition'''
         if isinstance(ports, set):
             excluded_ports = ports
         else:
@@ -321,7 +416,12 @@ class Definition(Element):
         self._ports = included_ports
 
     def _remove_port(self, port):
-        '''internal function to dissociate the port from the definition'''
+        '''internal function to dissociate the port from the definition
+        
+        paramters
+        ---------
+        
+        port - (Port) the port to remove from the definition'''
         assert port.definition == self, "Port is not included in definition"
         port._definition = None
 
