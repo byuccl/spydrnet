@@ -73,10 +73,20 @@ class Netlist(Element):
 
     @property
     def libraries(self):
+        """get a list of all libraries included in the netlist"""
         return ListView(self._libraries)
 
     @libraries.setter
     def libraries(self, value):
+        """
+        set the libraries. This function can only be used to reorder the libraries. Use the remove_library and
+        add_library functions to add and remove libraries.
+
+        parameters
+        ----------
+
+        value - the reordered list of libraries
+        """
         value_list = list(value)
         value_set = set(value_list)
         assert len(value_list) == len(value_set) and set(self._libraries) == value_set, \
@@ -97,16 +107,38 @@ class Netlist(Element):
 
     @top_instance.setter
     def top_instance(self, instance):
+        """
+        sets the top instance of the design. The instance must not be null and should probably come from this netlist
+
+        parameters
+        ----------
+
+        instance - (Instance) the instance to set as the top instance.
+        """
         assert instance is None or isinstance(instance, Instance), "Must specify an instance"
-        # TODO: Should we have a DRC that makes sure the instance is of a definition contained in netlist?
+        # TODO: should We have a DRC that makes sure the instance is of a definition contained in netlist? I think no
+        #  but I am open to hear other points of veiw.
         self._top_instance = instance
 
     def create_library(self):
+        '''create a library and add it to the netlist and return that library'''
         library = Library()
         self.add_library(library)
         return library
 
     def add_library(self, library, position=None):
+        """
+        add an already existing library to the netlist. This library should not belong to another netlist. Use
+        remove_library from other netlists before adding
+
+        parameters
+        ----------
+
+        library - (Library) the library to be added to the netlist
+
+        position - (int, default None) when set it is the index at which to add the library in the libraries list
+
+        """
         assert library not in self._libraries, "Library already included in netlist"
         assert library.netlist is None, "Library already belongs to a different netlist"
         if position is not None:
@@ -116,11 +148,26 @@ class Netlist(Element):
         library._netlist = self
 
     def remove_library(self, library):
+        """
+        removes the given library if it is in the netlist
+
+        parameters
+        ----------
+
+        library - (Library) the library to be removed
+        """
         assert library.netlist == self, "Library is not included in netlist"
         self._remove_library(library)
         self._libraries.remove(library)
 
     def remove_libraries_from(self, libraries):
+        '''removes all the given libraries from the netlist. All libraries must be in the netlist
+        
+        parameters
+        ----------
+        
+        libraries - (Set) libraries to be removed
+        '''
         if isinstance(libraries, set):
             excluded_libraries = libraries
         else:
@@ -135,8 +182,12 @@ class Netlist(Element):
                 self._remove_library(library)
         self._libraries = included_libraries
 
+
     @staticmethod
     def _remove_library(library):
+        """
+        internal function which will separate a particular libraries binding from the netlist
+        """
         library._netlist = None
 
 
@@ -155,14 +206,29 @@ class Library(Element):
 
     @property
     def netlist(self):
+        """
+        get the netlist that contains this library
+        """
         return self._netlist
 
     @property
     def definitions(self):
+        """
+        return a list of all the definitions that are included in this library
+        """
         return ListView(self._definitions)
 
     @definitions.setter
     def definitions(self, value):
+        """
+        set the definitions to a new reordered set of definitions. This function cannot be used to add or remove
+        definitions
+
+        Parameters
+        ----------
+
+        value - (List containing Definition type objects) The reordered list
+        """
         value_list = list(value)
         value_set = set(value_list)
         assert len(value_list) == len(value_set) and set(self._definitions) == value_set, \
@@ -170,11 +236,25 @@ class Library(Element):
         self._definitions = value_list
 
     def create_definition(self):
+        """
+        create a definition, add it to the library, and return the definition
+        """
         definition = Definition()
         self.add_definition(definition)
         return definition
 
     def add_definition(self, definition, position=None):
+        """
+        add an existing definition to the library. The definition must not belong to a library including this one.
+
+        parameters
+        ----------
+
+        definition - (Definition) the defintion to add to the library
+
+        position - (int, default None) the index in the library list at which to add the definition
+
+        """
         assert definition.library is not self, "Definition already included in library"
         assert definition.library is None, "Definition already belongs to a different library"
         if position is not None:
@@ -184,11 +264,27 @@ class Library(Element):
         definition._library = self
 
     def remove_definition(self, definition):
+        """
+        remove the given definition from the library
+
+        parameters
+        ----------
+
+        definition - (Definition) the definition to be removed
+        """
         assert definition.library == self, "Library is not included in netlist"
         self._remove_definition(definition)
         self._definitions.remove(definition)
 
     def remove_definitions_from(self, definitions):
+        """
+        remove a set of definitions from the library. all definitions provided must be in the library
+
+        parameters
+        ----------
+
+        definitions - (Set of Definition type objects) the definitions to be removed
+        """
         if isinstance(definitions, set):
             excluded_definitions = definitions
         else:
@@ -205,6 +301,9 @@ class Library(Element):
 
     @staticmethod
     def _remove_definition(definition):
+        """
+        internal function to dissociate a definition from the library
+        """
         definition._library = None
 
 
@@ -226,14 +325,29 @@ class Definition(Element):
 
     @property
     def library(self):
+        """
+        Get the library that contains this definition
+        """
         return self._library
 
     @property
     def ports(self):
+        """
+        get the ports that are instanced in this definition
+        """
         return ListView(self._ports)
 
     @ports.setter
     def ports(self, value):
+        """
+        Reorder ports that are instanced in this definition. Use remove_port and add_port to remove and add ports
+        respectively
+
+        parameters
+        ----------
+
+        value - (List of type Port objects) the reordered list of ports
+        """
         target = list(value)
         target_set = set(target)
         assert len(target) == len(target_set) and set(self._ports) == target_set, \
@@ -242,10 +356,22 @@ class Definition(Element):
 
     @property
     def cables(self):
+        """
+        get the cables that are instanced in this definition
+        """
         return ListView(self._cables)
 
     @cables.setter
     def cables(self, value):
+        """
+        Reorder the cables in this definition. Use add_cable and remove_cable to add or remove cables.
+
+
+        parameters
+        ----------
+
+        value - (List of type Cable objects) the reordered list of cables
+        """
         target = list(value)
         target_set = set(target)
         assert len(target) == len(target_set) and set(self._cables) == set(target), \
@@ -254,10 +380,22 @@ class Definition(Element):
 
     @property
     def children(self):
+        """
+        return a list of all instances instantiated in this definition
+        """
         return ListView(self._children)
 
     @children.setter
     def children(self, value):
+        """
+        reorder the list of instances instantiated in this definition use add_child and remove_child to add or remove
+        instances to or from the definition
+
+        parameters
+        ----------
+
+        value - (List of type Instance objects) the reordered list of instances
+        """
         target = list(value)
         target_set = set(target)
         assert len(target) == len(target_set) and set(self._children) == target_set, \
@@ -266,19 +404,39 @@ class Definition(Element):
 
     @property
     def references(self):
+        """
+        get a list of all the instances of this definition
+        """
         return SetView(self._references)
 
     def is_leaf(self):
+        """
+        check to see if this definition represents a leaf cell. Leaf cells are cells with no children instances or no
+        children cables. Blackbox cells are considered leaf cells as well as direct pass through cells with cables only
+        """
         if len(self._children) > 0 or len(self._cables) > 0:
             return False
         return True
 
     def create_port(self):
+        """
+        create a port, add it to the definition, and return that port
+        """
         port = Port()
         self.add_port(port)
         return port
 
     def add_port(self, port, position=None):
+        """
+        add a preexisting port to the definition. this port must not be a member of any definition
+
+        parameters
+        ----------
+
+        port - (Port) the port to add to the definition
+
+        position - (int, default None) the index in the port list at which to add the port
+        """
         assert port.definition is not self, "Port already included in definition"
         assert port.definition is None, "Port already belongs to a different definition"
         if position is not None:
@@ -288,11 +446,27 @@ class Definition(Element):
         port._definition = self
 
     def remove_port(self, port):
+        """
+        remove a port from the definition. This port must be a member of the definition in order to be removed
+
+        parameters
+        ----------
+
+        port - (Port) the port to be removed
+        """
         assert port.definition == self, "Port is not included in definition"
         self._remove_port(port)
         self._ports.remove(port)
 
     def remove_ports_from(self, ports):
+        """
+        remove a set of ports from the definition. All these ports must be included in the definition
+
+        parameters
+        ----------
+
+        ports - (Set containing Port type objects) the ports to remove from the definition
+        """
         if isinstance(ports, set):
             excluded_ports = ports
         else:
@@ -309,14 +483,35 @@ class Definition(Element):
 
     @staticmethod
     def _remove_port(port):
+        """
+        internal function to dissociate the port from the definition
+
+        Parameters
+        ----------
+
+        port - (Port) the port to remove from the definition
+        """
         port._definition = None
 
     def create_child(self):
+        """
+        create an instance to add to the definition, add it, and return the instance.
+        """
         instance = Instance()
         self.add_child(instance)
         return instance
 
     def add_child(self, instance, position=None):
+        """
+        Add an existing instance to the definition. This instance must not already be included in a definition
+
+        parameters
+        ----------
+
+        instance - (Instance) the instance to add as a child of the definition
+
+        position - (int, default None) the index in the children list at which to add the instance.
+        """
         assert instance.parent is not self, "Instance already included in definition"
         assert instance.parent is None, "Instance already belongs to a different definition"
         if position is not None:
@@ -325,12 +520,29 @@ class Definition(Element):
             self._children.append(instance)
         instance._parent = self
 
+
     def remove_child(self, child):
+        """
+        remove an instance from the definition. The instance must be a member of the definition already
+
+        parameters
+        ----------
+
+        instance - (Instance) the instance to be removed from the definition
+        """
         assert child.parent == self, "Instance is not included in definition"
         self._remove_child(child)
         self._children.remove(child)
 
     def remove_children_from(self, children):
+        """
+        remove a set of instances from the definition. All instances must be members of the definition
+
+        parameters
+        ----------
+
+        children - (Set of Instance type objects) the children to be removed from the definition
+        """
         if isinstance(children, set):
             excluded_children = children
         else:
@@ -346,14 +558,30 @@ class Definition(Element):
 
     @staticmethod
     def _remove_child(child):
+        """
+        internal function for dissociating a child instance from the definition.
+        """
         child._parent = None
 
     def create_cable(self):
+        """
+        create a cable, add it to the definition, and return the cable.
+        """
         cable = Cable()
         self.add_cable(cable)
         return cable
 
     def add_cable(self, cable, position=None):
+        """
+        add a cable to the definition. The cable must not already be a member of another definition.
+
+        parameters
+        ----------
+
+        cable - (Cable) the cable to be added
+
+        position - (int, default None) the position in the cable list at which to add the cable
+        """
         assert cable.definition is not self, "Cable already included in definition"
         assert cable.definition is None, "Cable already belongs to a different definition"
         if position is not None:
@@ -363,11 +591,27 @@ class Definition(Element):
         cable._definition = self
 
     def remove_cable(self, cable):
+        """
+        remove a cable from the definition. The cable must be a member of the definition.
+
+        parameters
+        ----------
+
+        cable - (Cable) the cable to be removed from the definition
+        """
         assert cable.definition == self, "Cable is not included in definition"
         self._remove_cable(cable)
         self._cables.remove(cable)
 
     def remove_cables_from(self, cables):
+        """
+        remove a set of cables from the definition. The cables must be members of the definition
+
+        parameters
+        ----------
+
+        cables - (Set of Cable type objects) the cables to be remove from the definition
+        """
         if isinstance(cables, set):
             excluded_cables = cables
         else:
@@ -383,10 +627,17 @@ class Definition(Element):
 
     @staticmethod
     def _remove_cable(cable):
+        """
+        dissociate the cable from this definition. This function is internal and should not be called.
+        """
         cable._definition = None
 
 
 class Bundle(Element):
+    """
+    parent class of ports and cables. Since both of these objects represent arrays of objects they both inherit from
+    this parent class.
+    """
     __slots__ = ['_definition', '_is_downto', '_is_scalar', '_lower_index']
 
     def __init__(self):
@@ -398,21 +649,44 @@ class Bundle(Element):
 
     @property
     def definition(self):
+        """
+        Get the definition that this bundle belongs to. The definition is responsible for changing this value.
+        """
         return self._definition
 
     @property
     def is_downto(self):
+        """
+        get the downto status of the bundle. Downto is False if the right index is higher than the left one. True
+        otherwise
+        """
         return self._is_downto
 
     @is_downto.setter
     def is_downto(self, value):
+        """
+        change the downto value Downto is False if the right index is higher than the left index. True otherwise.
+
+        parameters
+        ----------
+
+        value - (boolean) True if the value is downto False if the value is to.
+        """
         self._is_downto = value
 
     def _items(self):
+        """
+        this function must be overridden in classes which extend this to return either a list of pins or wires
+        """
         return None
 
     @property
     def is_scalar(self):
+        """
+        Return True if the item is a scalar False otherwise. the item is not a scalar if it has more than one pin or
+        wire in it. if it has one pin or wire in it it may be a scalar. This mimics vhdl's downto usage which can
+        represent single pin arrays ie. std_logic_vector(0 downto 0) which would have a single pin but not be a scalar.
+        """
         _items = self._items()
         if _items and len(_items) > 1:
             return False
@@ -420,6 +694,18 @@ class Bundle(Element):
 
     @is_scalar.setter
     def is_scalar(self, value):
+        """
+        set the scalar status of single item bundles.
+        The item is not a scalar if it has more than one pin or wire in it. if it has one or zero pins this function
+        can be used to set the value or wire in it it may be a scalar. This mimics vhdl's downto usage which can
+        represent single pin arrays ie. std_logic_vector(0 downto 0) which would have a single pin but not be a scalar.
+
+        parameters
+        ----------
+
+        value - (boolean) True if the item is to be a scalar False if it is not. Multi element bundles cannot set
+        is_scalar to True
+        """
         _items = self._items()
         if _items and len(_items) > 0 and value is True:
             raise RuntimeError("Cannot set is_scalar to True on a multi-item bundle")
@@ -428,10 +714,24 @@ class Bundle(Element):
 
     @property
     def is_array(self):
+        """
+        this is the logical inverse of is_scalar. see the is_scalar documentation for more insight into the properties
+        of this value
+        """
         return not self.is_scalar
 
     @is_array.setter
     def is_array(self, value):
+        """
+        this is the logical inverse of is_scalar. see the is_scalar documentation for more insight into the properties
+        of this value
+
+        parameters
+        ----------
+
+        value - (boolean) True if the object is an array. False otherwise. Multi element bundles cannot set is_array to
+        false.
+        """
         _items = self._items()
         if _items and len(_items) > 0 and value is False:
             raise RuntimeError("Cannot set is_array to False on a multi-item bundle")
@@ -440,10 +740,22 @@ class Bundle(Element):
 
     @property
     def lower_index(self):
+        """
+        get the value of the lower index of the array. this would be the right index in the case of downto and the left
+        in the case of to
+        """
         return self._lower_index
 
     @lower_index.setter
     def lower_index(self, value):
+        """
+        set the lower index of the array. in the case of to this is the left index and the right in the case of downto
+
+        parameters
+        ----------
+
+        value - (int) the lower index value for the bundle.
+        """
         self._lower_index = value
 
 
@@ -570,6 +882,10 @@ class Pin:
 
 
 class InnerPin(Pin):
+    """
+    Pins that correspond to definitions. These pins can be thought of as on the inside of a definition. There can be
+    many outer pins for each inner pin
+    """
     __slots__ = ['_port']
 
     def __init__(self):
@@ -578,10 +894,15 @@ class InnerPin(Pin):
 
     @property
     def port(self):
+        '''return the port that the inner pin is a part of this object cannot be modified.'''
         return self._port
 
 
 class OuterPin(Pin):
+    """
+    Pins that correspond to instances. These pins can be thought of as on the outside of an instance. There can be many
+    outer pins for each inner pin
+    """
     __slots__ = ['_instance', '_inner_pin']
 
     @staticmethod
