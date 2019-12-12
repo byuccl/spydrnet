@@ -444,6 +444,9 @@ class Definition(Element):
         else:
             self._ports.append(port)
         port._definition = self
+        for reference in self.references:
+            for pin in port.pins:
+                reference._pins[pin] = OuterPin(reference, pin)
 
     def remove_port(self, port):
         """
@@ -473,16 +476,11 @@ class Definition(Element):
             excluded_ports = set(ports)
         assert all(x.definition == self for x in excluded_ports), "Some ports to remove are not included in the " \
                                                                   "definition."
-        included_ports = list()
-        for port in self._ports:
-            if port not in excluded_ports:
-                included_ports.append(port)
-            else:
-                self._remove_port(port)
-        self._ports = included_ports
+        for port in excluded_ports:
+            self._remove_port(port)
+        self._ports = list(x for x in self._ports if x not in excluded_ports)
 
-    @staticmethod
-    def _remove_port(port):
+    def _remove_port(self, port):
         """
         internal function to dissociate the port from the definition
 
@@ -491,6 +489,15 @@ class Definition(Element):
 
         port - (Port) the port to remove from the definition
         """
+        for reference in self.references:
+            for pin in port.pins:
+                outer_pin = reference.pins[pin]
+                wire = outer_pin.wire
+                if wire:
+                    wire.disconnect_pin(outer_pin)
+                del reference._pins[pin]
+                outer_pin._instance = None
+                outer_pin._inner_pin = None
         port._definition = None
 
     def create_child(self):
@@ -519,7 +526,6 @@ class Definition(Element):
         else:
             self._children.append(instance)
         instance._parent = self
-
 
     def remove_child(self, child):
         """
@@ -834,6 +840,9 @@ class Port(Bundle):
         """
         pin = InnerPin()
         self.add_pin(pin)
+        if self.definition:
+            for reference in self.definition.references:
+                reference._pins[pin] = OuterPin(reference, pin)
         return pin
 
     def add_pin(self, pin, position=None):
@@ -865,8 +874,16 @@ class Port(Bundle):
             self._remove_pin(pin)
         self._pins = list(x for x in self._pins if x not in exclude_pins)
 
-    @staticmethod
-    def _remove_pin(pin):
+    def _remove_pin(self, pin):
+        if self.definition:
+            for reference in self.definition.references:
+                outer_pin = reference.pins[pin]
+                wire = outer_pin.wire
+                if wire:
+                    wire.disconnect_pin(outer_pin)
+                del reference._pins[pin]
+                outer_pin._instance = None
+                outer_pin._inner_pin = None
         pin._port = None
 
 
@@ -1112,7 +1129,9 @@ class Instance(Element):
                 wire = pin.wire
                 if wire:
                     wire.disconnect_pin(pin)
-                pin._instance = None
+                if isinstance(pin, OuterPin):
+                    pin._instance = None
+                    pin._inner_pin = None
             self._pins.clear()
         else:
             assert isinstance(value, Definition)
@@ -1188,6 +1207,7 @@ class OuterPinsView:
         if item not in self._dict:
             if isinstance(item, OuterPin):
                 return item.inner_pin in self._dict
+            return False
         return True
 
     def __getitem__(self, item):
