@@ -18,16 +18,16 @@ Classes
 
 .. automodule:: spydrnet.ir
 
-.. autoclass:: Environment
-    :members: top_instance, top_virtual_instance, create_library, add_library, get_library
+.. autoclass:: Netlist
+    :members:
     :undoc-members:
     
 .. autoclass:: Library
-    :members: create_definition, add_definition, get_definition
+    :members:
     :undoc-members:
     
 .. autoclass:: Definition
-    :members: create_cable, add_cable, get_cable, create_instance, add_instance, get_instance, create_port, add_port, get_port, is_leaf
+    :members:
     :undoc-members:
     
 .. autoclass:: Instance
