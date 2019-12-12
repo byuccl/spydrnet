@@ -36,9 +36,9 @@ class Element(object):
         self._data = dict()
 
     def __setitem__(self, key, value):
-        '''
+        """
         create an entry in the dictionary of the element it will be stored in the metadata.
-        '''
+        """
         key = sys.intern(key)
         self._data.__setitem__(sys.intern(key), value)
 
@@ -77,8 +77,11 @@ class Netlist(Element):
 
     @libraries.setter
     def libraries(self, value):
-        assert set(self._libraries) == set(value), "Set of values do not match, this assignment can only reorder values"
-        self._libraries = list(value)
+        value_list = list(value)
+        value_set = set(value_list)
+        assert len(value_list) == len(value_set) and set(self._libraries) == value_set, \
+            "Set of values do not match, this assignment can only reorder values, values must be unique"
+        self._libraries = value_list
 
     @property
     def top_instance(self):
@@ -102,7 +105,7 @@ class Netlist(Element):
         library = Library()
         self.add_library(library)
         return library
-    
+
     def add_library(self, library, position=None):
         assert library not in self._libraries, "Library already included in netlist"
         assert library.netlist is None, "Library already belongs to a different netlist"
@@ -113,6 +116,7 @@ class Netlist(Element):
         library._netlist = self
 
     def remove_library(self, library):
+        assert library.netlist == self, "Library is not included in netlist"
         self._remove_library(library)
         self._libraries.remove(library)
 
@@ -131,8 +135,8 @@ class Netlist(Element):
                 self._remove_library(library)
         self._libraries = included_libraries
 
-    def _remove_library(self, library):
-        assert library.netlist == self, "Library is not included in netlist"
+    @staticmethod
+    def _remove_library(library):
         library._netlist = None
 
 
@@ -159,8 +163,11 @@ class Library(Element):
 
     @definitions.setter
     def definitions(self, value):
-        assert set(self._definitions) == set(value), "Set of values do not match, this function can only reorder values"
-        self._definitions = list(value)
+        value_list = list(value)
+        value_set = set(value_list)
+        assert len(value_list) == len(value_set) and set(self._definitions) == value_set, \
+            "Set of values do not match, this function can only reorder values, values must be unique"
+        self._definitions = value_list
 
     def create_definition(self):
         definition = Definition()
@@ -177,6 +184,7 @@ class Library(Element):
         definition._library = self
 
     def remove_definition(self, definition):
+        assert definition.library == self, "Library is not included in netlist"
         self._remove_definition(definition)
         self._definitions.remove(definition)
 
@@ -195,8 +203,8 @@ class Library(Element):
                 self._remove_definition(definition)
         self._definitions = included_definitions
 
-    def _remove_definition(self, definition):
-        assert definition.library == self, "Library is not included in netlist"
+    @staticmethod
+    def _remove_definition(definition):
         definition._library = None
 
 
@@ -227,7 +235,9 @@ class Definition(Element):
     @ports.setter
     def ports(self, value):
         target = list(value)
-        assert set(self._ports) == set(target), "Set of values do not match, this function can only reorder values"
+        target_set = set(target)
+        assert len(target) == len(target_set) and set(self._ports) == target_set, \
+            "Set of values do not match, this function can only reorder values, values must be unique"
         self._ports = target
 
     @property
@@ -237,7 +247,9 @@ class Definition(Element):
     @cables.setter
     def cables(self, value):
         target = list(value)
-        assert set(self._cables) == set(target), "Set of values do not match, this function can only reorder values"
+        target_set = set(target)
+        assert len(target) == len(target_set) and set(self._cables) == set(target), \
+            "Set of values do not match, this function can only reorder values, values must be unique"
         self._cables = target
 
     @property
@@ -247,7 +259,9 @@ class Definition(Element):
     @children.setter
     def children(self, value):
         target = list(value)
-        assert set(self._children) == set(target), "Set of values do not match, this function can only reorder values"
+        target_set = set(target)
+        assert len(target) == len(target_set) and set(self._children) == target_set, \
+            "Set of values do not match, this function can only reorder values, values must be unique"
         self._children = target
 
     @property
@@ -274,6 +288,7 @@ class Definition(Element):
         port._definition = self
 
     def remove_port(self, port):
+        assert port.definition == self, "Port is not included in definition"
         self._remove_port(port)
         self._ports.remove(port)
 
@@ -292,15 +307,15 @@ class Definition(Element):
                 self._remove_port(port)
         self._ports = included_ports
 
-    def _remove_port(self, port):
-        assert port.definition == self, "Port is not included in definition"
+    @staticmethod
+    def _remove_port(port):
         port._definition = None
 
     def create_child(self):
         instance = Instance()
         self.add_child(instance)
         return instance
-    
+
     def add_child(self, instance, position=None):
         assert instance.parent is not self, "Instance already included in definition"
         assert instance.parent is None, "Instance already belongs to a different definition"
@@ -310,9 +325,10 @@ class Definition(Element):
             self._children.append(instance)
         instance._parent = self
 
-    def remove_child(self, instance):
-        self._remove_child(instance)
-        self._children.remove(instance)
+    def remove_child(self, child):
+        assert child.parent == self, "Instance is not included in definition"
+        self._remove_child(child)
+        self._children.remove(child)
 
     def remove_children_from(self, children):
         if isinstance(children, set):
@@ -328,8 +344,8 @@ class Definition(Element):
                 self._remove_child(child)
         self._children = included_children
 
-    def _remove_child(self, child):
-        assert child.parent == self, "Instance is not included in definition"
+    @staticmethod
+    def _remove_child(child):
         child._parent = None
 
     def create_cable(self):
@@ -347,6 +363,7 @@ class Definition(Element):
         cable._definition = self
 
     def remove_cable(self, cable):
+        assert cable.definition == self, "Cable is not included in definition"
         self._remove_cable(cable)
         self._cables.remove(cable)
 
@@ -364,8 +381,8 @@ class Definition(Element):
                 self._remove_cable(cable)
         self._cables = included_cables
 
-    def _remove_cable(self, cable):
-        assert cable.definition == self, "Cable is not included in definition"
+    @staticmethod
+    def _remove_cable(cable):
         cable._definition = None
 
 
@@ -441,7 +458,7 @@ class Port(Bundle):
         INOUT = 1
         IN = 2
         OUT = 3
-    
+
     def __init__(self):
         """
         setup an empty port
@@ -479,6 +496,14 @@ class Port(Bundle):
     def pins(self):
         return ListView(self._pins)
 
+    @pins.setter
+    def pins(self, value):
+        value_list = list(value)
+        value_set = set(value_list)
+        assert len(value_set) == len(value_list) and set(self._pins) == value_set, \
+            "Set of values do not match, assignment can only be used to reorder values, values must be unique"
+        self._pins = value_list
+
     def initialize_pins(self, pin_count):
         """
         create pin_count pins in the given port a downto style syntax is assumed
@@ -487,6 +512,7 @@ class Port(Bundle):
         """
         for _ in range(pin_count):
             self.create_pin()
+        return self.pins
 
     def create_pin(self):
         """
@@ -512,6 +538,7 @@ class Port(Bundle):
         pin._port = self
 
     def remove_pin(self, pin):
+        assert pin.port == self, "Pin does not belong to this port."
         self._remove_pin(pin)
         self._pins.remove(pin)
 
@@ -522,16 +549,12 @@ class Port(Bundle):
             exclude_pins = set(pins)
         assert all(isinstance(x, InnerPin) and x.port == self for x in exclude_pins), "All pins to remove must be " \
                                                                                       "InnerPins and belong to the port"
-        include_pins = list()
-        for pin in self._pins:
-            if pin not in exclude_pins:
-                include_pins.append(pin)
-            else:
-                self._remove_pin(pin)
-        self._pins = include_pins
+        for pin in exclude_pins:
+            self._remove_pin(pin)
+        self._pins = list(x for x in self._pins if x not in exclude_pins)
 
-    def _remove_pin(self, pin):
-        assert pin.port == self, "Pin does not belong to this port."
+    @staticmethod
+    def _remove_pin(pin):
         pin._port = None
 
 
@@ -547,6 +570,8 @@ class Pin:
 
 
 class InnerPin(Pin):
+    __slots__ = ['_port']
+
     def __init__(self):
         super().__init__()
         self._port = None
@@ -557,19 +582,55 @@ class InnerPin(Pin):
 
 
 class OuterPin(Pin):
-    def __init__(self):
+    __slots__ = ['_instance', '_inner_pin']
+
+    @staticmethod
+    def from_instance_and_inner_pin(instance, inner_pin):
+        return OuterPin(instance, inner_pin)
+
+    def __init__(self, instance=None, inner_pin=None):
         super().__init__()
-        self.instance = None
-        self.inner_pin = None
+        self._instance = instance
+        self._inner_pin = inner_pin
+
+    @property
+    def instance(self):
+        return self._instance
+
+    @property
+    def inner_pin(self):
+        return self._inner_pin
+
+    def __eq__(self, other):
+        if isinstance(other, OuterPin):
+            return self._instance == other._instance and self._inner_pin == other._inner_pin
+        return False
+
+    def __hash__(self):
+        return hash((self._instance, self._inner_pin))
 
 
 class Cable(Bundle):
+    __slots__ = ['_wires']
+
     def __init__(self):
         super().__init__()
-        self.wires = list()
+        self._wires = list()
 
     def _items(self):
-        return self.wires
+        return self._wires
+
+    @property
+    def wires(self):
+        return ListView(self._wires)
+
+    @wires.setter
+    def wires(self, value):
+        value_list = list(value)
+        value_set = set(value_list)
+        assert len(value_list) == len(value_set) and set(self._wires) == value_set, \
+            "Set of values does not match, assigment can only be used for reordering, values must be unique"
+        self._wires = value_list
 
     def initialize_wires(self, wire_count):
         for _ in range(wire_count):
@@ -580,23 +641,124 @@ class Cable(Bundle):
         self.add_wire(wire)
         return wire
 
-    def add_wire(self, wire):
-        self.wires.append(wire)
-        wire.cable = self
+    def add_wire(self, wire, position=None):
+        assert wire.cable is not self, "Wire already belongs to this cable"
+        assert wire.cable is None, "Wire already belongs to a different cable"
+        if position is not None:
+            self._wires.insert(position, wire)
+        else:
+            self._wires.append(wire)
+        wire._cable = self
+
+    def remove_wire(self, wire):
+        assert wire.cable == self, "Wire does not belong to this cable"
+        self._remove_wire(wire)
+        self._wires.remove(wire)
+
+    def remove_wires_from(self, wires):
+        if isinstance(wires, set):
+            excluded_wires = wires
+        else:
+            excluded_wires = set(wires)
+        assert all(x.cable == self for x in excluded_wires), "Some wires do not belong to this cable"
+        for wire in excluded_wires:
+            self._remove_wire(wire)
+        self._wires = list(x for x in self._wires if x not in excluded_wires)
+
+    @staticmethod
+    def _remove_wire(wire):
+        wire._cable = None
 
 
 class Wire:
-    def __init__(self):
-        self.cable = None
-        self.pins = list()
+    __slots__ = ['_cable', '_pins']
 
-    def connect_pin(self, pin):
-        self.pins.append(pin)
-        pin.wire = self
-        
+    def __init__(self):
+        self._cable = None
+        self._pins = list()
+
+    @property
+    def cable(self):
+        return self._cable
+
+    @property
+    def pins(self):
+        return ListView(self._pins)
+
+    @pins.setter
+    def pins(self, value):
+        value_list = list(value)
+        value_set = set(value_list)
+        assert len(value_list) == len(value_set) and set(self._pins) == value_set, \
+            "Set of values do not match, assignment can only be used to reorder, values must be unique"
+        self._pins = value_list
+
+    def connect_pin(self, pin, position=None):
+        if isinstance(pin, OuterPin):
+            instance = pin.instance
+            inner_pin = pin.inner_pin
+            assert instance is not None and inner_pin is not None, \
+                "Outer pin must represent an instance and an inner_pin"
+            assert inner_pin in instance.pins, "Pin not associated with instance"
+            outer_pin = instance.pins[inner_pin]
+            assert outer_pin.wire is not self, "Pin already connected to this wire"
+            assert outer_pin.wire is None, "Pin already connected to a different wire"
+            pin._wire = self
+            pin = outer_pin
+        else:
+            assert pin.wire is None, "Pin already connected to a different wire"
+        if position is not None:
+            self._pins.insert(position, pin)
+        else:
+            self._pins.append(pin)
+        pin._wire = self
+
     def disconnect_pin(self, pin):
-        self.pins.remove(pin)
-        pin.wire = None
+        if isinstance(pin, OuterPin):
+            instance = pin.instance
+            inner_pin = pin.inner_pin
+            assert instance is not None and inner_pin is not None, \
+                "Outer pin must represent an instance and an inner_pin"
+            assert inner_pin in instance.pins, "Pin not associated with instance"
+            outer_pin = instance.pins[inner_pin]
+            assert outer_pin.wire is self, "Pin is disconnected or connected to a different wire."
+            self._disconnect_pin(pin)
+            pin = outer_pin
+        else:
+            assert pin.wire == self, "Pin does not belong to this wire"
+        self._pins.remove(pin)
+        self._disconnect_pin(pin)
+
+    def disconnect_pins_from(self, pins):
+        if isinstance(pins, set):
+            excluded_pins = pins
+        else:
+            excluded_pins = set(pins)
+        all_pins_can_be_disconnected = True
+        for pin in excluded_pins:
+            if isinstance(pin, OuterPin):
+                instance = pin.instance
+                inner_pin = pin.inner_pin
+                if instance is None or inner_pin is None or inner_pin not in instance.pins or \
+                        instance.pins[inner_pin].wire is not self:
+                    all_pins_can_be_disconnected = False
+                    break
+            else:
+                if pin.wire != self:
+                    all_pins_can_be_disconnected = False
+                    break
+        assert all_pins_can_be_disconnected, "Some of the pins to disconnect are not associated with an instance, " \
+                                             "already disconnected, or connected to a different wire"
+        for pin in excluded_pins:
+            if isinstance(pin, OuterPin):
+                self._disconnect_pin(pin)
+                pin = pin.instance.pins[pin]
+            self._disconnect_pin(pin)
+        self._pins = list(x for x in self._pins if x not in excluded_pins)
+
+    @staticmethod
+    def _disconnect_pin(pin):
+        pin._wire = None
 
 
 class Instance(Element):
@@ -624,18 +786,34 @@ class Instance(Element):
 
     @reference.setter
     def reference(self, value):
+        if value is None:
+            for pin in self.pins:
+                wire = pin.wire
+                if wire:
+                    wire.disconnect_pin(pin)
+                pin._instance = None
+            self._pins.clear()
+        else:
+            assert isinstance(value, Definition)
+            if self._reference is not None:
+                assert len(self.reference.ports) == len(value.ports) and all(len(x.pins) == len(y.pins) for x, y in
+                                                                             zip(self.reference.ports, value.ports)), \
+                    "Reference reassignment only supported for definitions with matching port positions"
+                for cur_port, new_port in zip(self.reference.ports, value.ports):
+                    for cur_pin, new_pin in zip(cur_port.pins, new_port.pins):
+                        outer_pin = self._pins.pop(cur_pin)
+                        outer_pin._inner_pin = new_pin
+                        self._pins[new_pin] = outer_pin
+            else:
+                for port in value.ports:
+                    for pin in port.pins:
+                        self._pins[pin] = OuterPin.from_instance_and_inner_pin(self, pin)
+            value._references.add(self)
         self._reference = value
 
-    def is_leaf(self):
-        """
-        check to see if the netlist instance is an instance of a leaf definition
-        Returns
-        -------
-        boolean
-            True if the definition is leaf
-            False if the definition is not leaf
-        """
-        return self._reference.is_leaf()
+    @property
+    def pins(self):
+        return OuterPinsView(self._pins)
 
 
 class ListView:
@@ -673,3 +851,33 @@ class SetView:
 
     def unsupported_operator(self, other):
         raise TypeError("unsupported operator for type SetView")
+
+
+class OuterPinsView:
+    __slots__ = ['_dict', '__eq__', '__ge__', '__gt__', '__hash__', '__le__', '__len__', '__lt__', '__ne__',
+                 '__repr__', '__str__', 'copy', 'fromkeys', 'items', 'keys', 'values']
+
+    def __init__(self, dict_object):
+        assert isinstance(dict_object, dict)
+        self._dict = dict_object
+        for attr in self.__slots__[1:]:
+            exec(f"self.{attr} = dict_object.{attr}")
+
+    def __contains__(self, item):
+        if item not in self._dict:
+            if isinstance(item, OuterPin):
+                return item.inner_pin in self._dict
+        return True
+
+    def __getitem__(self, item):
+        if isinstance(item, OuterPin):
+            return self._dict[item.inner_pin]
+        return self._dict[item]
+
+    def __iter__(self):
+        return iter(self._dict.values())
+
+    def get(self, key, default=None):
+        if isinstance(key, OuterPin):
+            return self._dict.get(key.inner_pin, default)
+        return self._dict.get(key, default)
