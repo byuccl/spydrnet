@@ -972,8 +972,7 @@ class EdifParser:
         if LEFT_PAREN == self.tokenizer.peek():
             self.tokenizer.next()
             return True
-        else:
-            return False
+        return False
 
     def construct_is(self, token):
         if self.tokenizer.peek_equals(token):

@@ -14,6 +14,7 @@ import pytest
 
 
 class TestCompareNetlists(unittest.TestCase):
+    @unittest.skip("Takes a long time")
     def test_edif(self):
         # glob all tests
         if os.path.exists("temp"):

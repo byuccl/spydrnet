@@ -1157,51 +1157,216 @@ class Instance(Element):
 
 
 class ListView:
-    __slots__ = ['_list', '__add__', '__getitem__', '__contains__', '__eq__', '__hash__', '__ge__', '__gt__',
-                 '__iter__', '__le__', '__len__', '__lt__', '__ne__', '__mul__', '__rmul__', '__reversed__', '__repr__',
-                 '__str__', 'copy', 'count', 'index', '__iadd__', '__imul__']
+    __slots__ = ['_list']
 
     def __init__(self, list_object):
-        assert isinstance(list_object, list)
         self._list = list_object
-        for attr in self.__slots__[1:-2]:
-            exec(f"self.{attr} = list_object.{attr}")
-        for attr in self.__slots__[-2:]:
-            exec(f"self.{attr} = self.unsupported_operator")
+
+    def __add__(self, other):
+        return self._list.__add__(other)
+
+    def __getitem__(self, other):
+        return self._list.__getitem__(other)
+
+    def __contains__(self, item):
+        return self._list.__contains__(item)
+
+    def __eq__(self, other):
+        return self._list.__eq__(other)
+
+    def __hash__(self):
+        return self._list.__hash__()
+
+    def __ge__(self, other):
+        return self._list.__ge__(other)
+
+    def __gt__(self, other):
+        return self._list.__gt__(other)
+
+    def __iter__(self):
+        return self._list.__iter__()
+
+    def __le__(self, other):
+        return self._list.__le__()
+
+    def __len__(self):
+        return self._list.__len__()
+
+    def __lt__(self, other):
+        return self._list.__lt__(other)
+
+    def __ne__(self, other):
+        return self._list.__ne__(other)
+
+    def __mul__(self, other):
+        return self._list.__mul__(other)
+
+    def __rmul__(self, n):
+        return self._list.__rmul__(n)
+
+    def __reversed__(self):
+        return self._list.__reversed__()
+
+    def __repr__(self):
+        return self._list.__repr__()
+
+    def __str__(self):
+        return self._list.__str__()
 
     def __radd__(self, other):
         return other + self._list
 
-    def unsupported_operator(self, other):
+    def __iadd__(self, other):
         raise TypeError("unsupported operator for type SetView")
+
+    def __imul__(self, other):
+        raise TypeError("unsupported operator for type SetView")
+
+    def copy(self):
+        return self._list.copy()
+
+    def count(self, object):
+        return self._list.count(object)
+
+    def index(self, *args, **kwargs):
+        return self._list.index(*args, **kwargs)
 
 
 class SetView:
-    __slots__ = ['__and__', '__rand__', '__eq__', '__ge__', '__gt__', '__hash__', '__iter__', '__le__', '__len__',
-                 '__lt__', '__ne__', '__or__', '__ror__', '__sub__', '__rsub__', '__xor__', '__rxor__', '__repr__',
-                 '__str__', 'copy', 'difference', 'intersection', 'isdisjoint', 'issubset', 'issuperset',
-                 'symmetric_difference', 'union', '__iand__', '__ior__', '__ixor__', '__isub__']
+    __slots__ = ['_set']
 
     def __init__(self, set_object):
-        assert isinstance(set_object, set)
-        for attr in self.__slots__[:-4]:
-            exec(f"self.{attr} = set_object.{attr}")
-        for attr in self.__slots__[-4:]:
-            exec(f"self.{attr} = self.unsupported_operator")
+        self._set = set_object
 
-    def unsupported_operator(self, other):
+    def __and__(self, *args, **kwargs):
+        return self._set.__and__(*args, *kwargs)
+
+    def __rand__(self, *args, **kwargs):
+        return self._set.__rand__(*args, **kwargs)
+
+    def __eq__(self, *args, **kwargs):
+        return self._set.__eq__(*args, **kwargs)
+
+    def __ge__(self, *args, **kwargs):
+        return self._set.__ge__(*args, **kwargs)
+
+    def __gt__(self, *args, **kwargs):
+        return self._set.__gt__(*args, **kwargs)
+
+    def __hash__(self, *args, **kwargs):
+        return self._set.__hash__(*args, **kwargs)
+
+    def __iter__(self, *args, **kwargs):
+        return self._set.__iter__(*args, **kwargs)
+
+    def __le__(self, *args, **kwargs):
+        return self._set.__le__(*args, **kwargs)
+
+    def __len__(self, *args, **kwargs):
+        return self._set.__len__(*args, **kwargs)
+
+    def __lt__(self, *args, **kwargs):
+        return self._set.__lt__(*args, **kwargs)
+
+    def __ne__(self, *args, **kwargs):
+        return self._set.__ne__(*args, **kwargs)
+
+    def __or__(self, *args, **kwargs):
+        return self._set.__or__(*args, **kwargs)
+
+    def __ror__(self, *args, **kwargs):
+        return self._set.__ror__(*args, **kwargs)
+
+    def __sub__(self, *args, **kwargs):
+        return self._set.__sub__(*args, **kwargs)
+
+    def __rsub__(self, *args, **kwargs):
+        return self._set.__rsub__(*args, **kwargs)
+
+    def __xor__(self, *args, **kwargs):
+        return self._set.__xor__(*args, **kwargs)
+
+    def __rxor__(self, *args, **kwargs):
+        return self._set.__rxor__(*args, **kwargs)
+
+    def __repr__(self, *args, **kwargs):
+        return self._set.__repr__(*args, **kwargs)
+
+    def __str__(self, *args, **kwargs):
+        return self._set.__str__(*args, **kwargs)
+
+    def copy(self, *args, **kwargs):
+        return self._set.copy(*args, **kwargs)
+
+    def difference(self, *args, **kwargs):
+        return self._set.difference(*args, **kwargs)
+
+    def intersection(self, *args, **kwargs):
+        return self._set.intersection(*args, **kwargs)
+
+    def isdisjoint(self, *args, **kwargs):
+        return self._set.isdisjoint(*args, **kwargs)
+
+    def issubset(self, *args, **kwargs):
+        return self._set.issubset(*args, **kwargs)
+
+    def issuperset(self, *args, **kwargs):
+        return self._set.issuperset(*args, **kwargs)
+
+    def symmetric_difference(self, *args, **kwargs):
+        return self._set.symmetric_difference(*args, **kwargs)
+
+    def union(self, *args, **kwargs):
+        return self._set.union(*args, **kwargs)
+
+    def __iand__(self, *args, **kwargs):
+        raise TypeError("unsupported operator for type SetView")
+
+    def __ior__(self, *args, **kwargs):
+        raise TypeError("unsupported operator for type SetView")
+
+    def __ixor__(self, *args, **kwargs):
+        raise TypeError("unsupported operator for type SetView")
+
+    def __isub__(self, *args, **kwargs):
         raise TypeError("unsupported operator for type SetView")
 
 
 class OuterPinsView:
-    __slots__ = ['_dict', '__eq__', '__ge__', '__gt__', '__hash__', '__le__', '__len__', '__lt__', '__ne__',
-                 '__repr__', '__str__', 'copy', 'fromkeys', 'items', 'keys', 'values']
+    __slots__ = ['_dict']
 
     def __init__(self, dict_object):
-        assert isinstance(dict_object, dict)
         self._dict = dict_object
-        for attr in self.__slots__[1:]:
-            exec(f"self.{attr} = dict_object.{attr}")
+
+    def __eq__(self, other):
+        return self._dict.__eq__(other)
+
+    def __ge__(self, other):
+        return self._dict.__ge__(other)
+
+    def __gt__(self, other):
+        return self._dict.__gt__(other)
+
+    def __hash__(self):
+        return self._dict.__hash__()
+
+    def __le__(self, other):
+        return self._dict.__le__(other)
+
+    def __len__(self):
+        return self._dict.__len__()
+
+    def __lt__(self, other):
+        return self._dict.__lt__(other)
+
+    def __ne__(self, other):
+        return self._dict.__ne__(other)
+
+    def __repr__(self):
+        return self._dict.__repr__()
+
+    def __str__(self):
+        return self._dict.__str__()
 
     def __contains__(self, item):
         if item not in self._dict:
@@ -1222,3 +1387,19 @@ class OuterPinsView:
         if isinstance(key, OuterPin):
             return self._dict.get(key.inner_pin, default)
         return self._dict.get(key, default)
+
+    def copy(self):
+        return self._dict.copy()
+
+    def fromkeys(self, seq):
+        return self._dict.fromkeys(seq)
+
+    def items(self):
+        return self._dict.items()
+
+    def keys(self):
+        return self._dict.keys()
+
+    def values(self):
+        return self._dict.values()
+
