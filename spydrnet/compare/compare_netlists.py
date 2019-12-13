@@ -159,11 +159,11 @@ class Comparer:
         if self.get_identifier(pin_orig.inner_pin.port) != self.get_identifier(pin_composer.inner_pin.port):
             # logging.error("Net does not connect the same ports")
             raise Exception("Net does not connect the same ports")
-        for orig in range(pin_orig.inner_pin.port.inner_pins.__len__()):
-            if pin_orig.inner_pin.port.inner_pins[orig] == pin_orig.inner_pin:
+        for orig in range(len(pin_orig.inner_pin.port.pins)):
+            if pin_orig.inner_pin.port.pins[orig] == pin_orig.inner_pin:
                 break
-        for compose in range(pin_composer.inner_pin.port.inner_pins.__len__()):
-            if pin_composer.inner_pin.port.inner_pins[compose] == pin_composer.inner_pin:
+        for compose in range(len(pin_composer.inner_pin.port.pins)):
+            if pin_composer.inner_pin.port.pins[compose] == pin_composer.inner_pin:
                 break
         if compose != orig:
             # logging.error("Net does not connect to the correct port")
@@ -174,11 +174,11 @@ class Comparer:
         if self.get_identifier(pin_orig.port) != self.get_identifier(pin_composer.port):
             # logging.error("Net does not connect the same ports")
             raise Exception("Net does not connect the same ports")
-        for orig in range(pin_orig.port.inner_pins.__len__()):
-            if pin_orig == pin_orig.port.inner_pins[orig]:
+        for orig in range(len(pin_orig.port.pins)):
+            if pin_orig == pin_orig.port.pins[orig]:
                 break
-        for composer in range(pin_composer.port.inner_pins.__len__()):
-            if pin_composer == pin_composer.port.inner_pins[composer]:
+        for composer in range(len(pin_composer.port.pins)):
+            if pin_composer == pin_composer.port.pins[composer]:
                 break
         if orig != composer:
             # logging.error("Net does not connect to the correct port")
@@ -198,7 +198,7 @@ class Comparer:
             if not hasattr(port_orig, "is_array"):
                 # logging.error("Ports Array mismatch")
                 raise Exception("Ports Array mismatch")
-            if port_orig.inner_pins.__len__() != port_composer.inner_pins.__len__():
+            if len(port_orig.pins) != len(port_composer.pins):
                 # logging.error("Ports do not have the same number of pins")
                 raise Exception("Ports do not have the same number of pins")
 
@@ -218,12 +218,12 @@ class Comparer:
                             f"\"{instances_orig_original_identifier}\" composer "
                             f"\"{instances_composer_original_identifier}\"")
         # logging.info("Checking properties of %s", self.get_identifier(instances_orig))
-        if "EDIF.properties" in instances_orig._metadata:
-            if "EDIF.properties" not in instances_composer._metadata:
+        if "EDIF.properties" in instances_orig:
+            if "EDIF.properties" not in instances_composer:
                 # logging.error("Composer is missing properties")
                 raise Exception("Composer is missing properties")
-            properties_orig = instances_orig._metadata["EDIF.properties"]
-            properties_composer = instances_composer._metadata["EDIF.properties"]
+            properties_orig = instances_orig["EDIF.properties"]
+            properties_composer = instances_composer["EDIF.properties"]
             for x in range(properties_orig.__len__()):
                 for key, value in properties_orig[x].items():
                     if value is None:
@@ -244,13 +244,13 @@ class Comparer:
 
 
     def get_identifier(self, obj):
-        if "EDIF.identifier" in obj._metadata:
-            return obj._metadata["EDIF.identifier"]
+        if "EDIF.identifier" in obj:
+            return obj["EDIF.identifier"]
 
 
     def get_original_identifier(self, obj):
-        if "EDIF.original_identifier" in obj._metadata:
-            return obj._metadata["EDIF.original_identifier"]
+        if "EDIF.original_identifier" in obj:
+            return obj["EDIF.original_identifier"]
 
 
 if __name__ == "__main__":

@@ -26,6 +26,7 @@ class EdifParser:
         return parser
 
     def __init__(self):
+        self.edif_identifier_namespace = dict() # class -> object -> subclass -> identifier -> object
         self.filename = None
         self.file_handle = None
         self.elements = list()
@@ -106,10 +107,12 @@ class EdifParser:
                 library = self.parse_library()
                 environment = self.elements[-1]
                 environment.add_library(library)
+                self.add_element_to_namespace(library)
             elif self.construct_is(EXTERNAL):
                 library = self.parse_external()
                 environment = self.elements[-1]
                 environment.add_library(library)
+                self.add_element_to_namespace(library)
             elif self.construct_is(DESIGN):
                 self.parse_design()
             elif self.construct_is(COMMENT):
@@ -230,6 +233,7 @@ class EdifParser:
                 definition = self.parse_cell()
                 library = self.elements[-1]
                 library.add_definition(definition)
+                self.add_element_to_namespace(definition)
             elif self.construct_is(COMMENT):
                 self.parse_comment()
             elif self.construct_is(USER_DATA):
@@ -356,7 +360,7 @@ class EdifParser:
                 port = self.parse_port()
                 cell = self.elements[-1]
                 cell.add_port(port)
-
+                self.add_element_to_namespace(port)
             elif self.construct_is(PORT_BUNDLE):
                 raise NotImplementedError()
             elif self.construct_is(SYMBOL):
@@ -497,7 +501,7 @@ class EdifParser:
                 instance = self.parse_instance()
                 definition = self.elements[-1]
                 definition.add_child(instance)
-
+                self.add_element_to_namespace(instance)
             elif self.construct_is(NET):
                 cable = self.parse_net()
                 definition = self.elements[-1]
@@ -552,7 +556,7 @@ class EdifParser:
             if self.construct_is(VIEW_REF):
                 definition = self.parse_viewRef()
                 instance = self.elements[-1]
-                instance.definition = definition
+                instance.reference = definition
 
             elif self.construct_is(VIEW_LIST):
                 raise NotImplementedError()
@@ -597,7 +601,7 @@ class EdifParser:
         if self.begin_construct():
             library = self.parse_libraryRef()
             self.expect_end_construct()
-        definition = library.get_definition(definition_identifer)
+        definition = self.get_element_by_identifier(library, Definition, definition_identifer)
         self.prefix_pop()
         return definition
 
@@ -609,7 +613,7 @@ class EdifParser:
         environment = self.elements[-4]
         library = self.elements[-3]
         if library['EDIF.identifier'].lower() != library_identifier.lower():
-            library = environment.get_library(library_identifier)
+            library = self.get_element_by_identifier(environment, Library, library_identifier)
         self.prefix_pop()
         return library
 
@@ -638,7 +642,7 @@ class EdifParser:
         while self.begin_construct():
             if self.construct_is(PORT_REF):
                 pin = self.parse_portRef()
-                wire = self.elements[-1].get_wire(0)
+                wire = self.elements[-1].wires[0]
                 wire.connect_pin(pin)
             elif self.construct_is(PORT_LIST):
                 raise NotImplementedError()
@@ -670,7 +674,14 @@ class EdifParser:
                 raise NotImplementedError()
             self.expect_end_construct()
         port_identifier = self.elements[-1].pop('EDIF.portRef.identifier')
-        pin = instance_or_definition.get_pin(port_identifier, index)
+        if isinstance(instance_or_definition, Instance):
+            definition = instance_or_definition.reference
+            port = self.get_element_by_identifier(definition, Port, port_identifier)
+            inner_pin = port.pins[index]
+            pin = instance_or_definition.pins[inner_pin]
+        else:
+            port = self.get_element_by_identifier(instance_or_definition, Port, port_identifier)
+            pin = port.pins[index]
         self.prefix_pop()
         return pin
 
@@ -685,7 +696,7 @@ class EdifParser:
         else:
             self.parse_nameRef()
         instance_identifier = self.elements[-1].pop('EDIF.portRef.instanceRef.identifier')
-        instance = definition.get_instance(instance_identifier)
+        instance = self.get_element_by_identifier(definition, Instance, instance_identifier)
         self.prefix_pop()
         return instance
 
@@ -728,7 +739,7 @@ class EdifParser:
         for definition in library.definitions:
             if definition['EDIF.identifier'] == definition_name:
                 break
-        instance.definition = definition
+        instance.reference = definition
         self.elements.pop()
         self.elements[0].top_instance = instance
         self.skip_until_next_construct()
@@ -968,6 +979,40 @@ class EdifParser:
         if self.tokenizer.peek_equals(token):
             return True
         return False
+
+    get_parent = {Library: lambda x: x.netlist,
+                  Definition: lambda x: x.library,
+                  Port: lambda x: x.definition,
+                  Cable: lambda x: x.definition,
+                  Instance: lambda x: x.parent}
+
+    def add_element_to_namespace(self, element):
+        parent = self.get_parent[type(element)](element)
+        if parent in self.edif_identifier_namespace:
+            parent_namespace = self.edif_identifier_namespace[parent]
+        else:
+            parent_namespace = dict()
+            self.edif_identifier_namespace[parent] = parent_namespace
+        element_type = type(element)
+        if element_type in parent_namespace:
+            element_namespace = parent_namespace[element_type]
+        else:
+            element_namespace = dict()
+            parent_namespace[element_type] = element_namespace
+        identifier = element['EDIF.identifier']
+        identifier_lower = identifier.lower()
+        assert identifier_lower not in element_namespace, "Identifier collision"
+        element_namespace[identifier_lower] = element
+
+    def get_element_by_identifier(self, parent, element_type, identifier):
+        assert parent in self.edif_identifier_namespace, "No name space associated with parent element"
+        parent_namespace = self.edif_identifier_namespace[parent]
+        assert element_type in parent_namespace, "No elements in parent namespace of element type"
+        element_namespace = parent_namespace[element_type]
+        identifier_lower = identifier.lower()
+        assert identifier_lower in element_namespace, "No element by name of identifier"
+        return element_namespace[identifier_lower]
+
 
 
 if __name__ == "__main__":
