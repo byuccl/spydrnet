@@ -766,11 +766,18 @@ class Bundle(Element):
 
 
 class Port(Bundle):
+    '''
+    Located on the inside of a definition. Ports contain information about the quantity and directon of pins that go into and out of the defined struture when instanced.
+    '''
     __slots__ = ['_direction', '_pins']
 
     class Direction(Enum):
         """
         Define the possible directions for a given port
+
+        Possible Directions are:
+
+        UNDEFINED, INOUT, IN, OUT
         """
         UNDEFINED = 0
         INOUT = 1
@@ -786,14 +793,23 @@ class Port(Bundle):
         self._pins = list()
 
     def _items(self):
+        '''overrides the _items function in the bundles class. For ports, pins are returned'''
         return self._pins
 
     @property
     def direction(self):
+        '''get the direction of the port. This will be a variable of type Port.Direction'''
         return self._direction
 
     @direction.setter
     def direction(self, value):
+        '''set the direction of the port.
+
+        parameters
+        ----------
+
+        value - (Port.Direction or int or str) when a Port.Direction is passed in it will set the port accordingly. when an int is passed in it will be 0: UNDEFINED, 1: INOUT, 2: IN, 3: OUT. if a string is passed in it is case insensitively compared with the names and assigned accordingly
+        '''
         if isinstance(value, self.Direction):
             self._direction = value
         elif isinstance(value, int):
@@ -812,10 +828,18 @@ class Port(Bundle):
 
     @property
     def pins(self):
+        '''get a list of the pins that are in the port'''
         return ListView(self._pins)
 
     @pins.setter
     def pins(self, value):
+        '''this function can set the pins for the port, but it can only be used to reorder the pins in the port.
+        It cannot be used to add or remove pins from the port. to do this use the add_pin or remove_pin functions instead
+        
+        parameters
+        ----------
+        
+        value - (List of InnerPin objects) the reordered pins'''
         value_list = list(value)
         value_set = set(value_list)
         assert len(value_set) == len(value_list) and set(self._pins) == value_set, \
@@ -825,8 +849,11 @@ class Port(Bundle):
     def initialize_pins(self, pin_count):
         """
         create pin_count pins in the given port a downto style syntax is assumed
-        Parameters:
-        pin_count : this is the number of pins to add to the port
+        
+        Parameters
+        ----------
+
+        pin_count - (int) this is the number of pins to add to the port
         """
         for _ in range(pin_count):
             self.create_pin()
@@ -847,7 +874,14 @@ class Port(Bundle):
 
     def add_pin(self, pin, position=None):
         """
-        add a pin to the port in an unsafe fashion. The calling class must take care of the indicies.
+        add a pin to the port at the given position.
+
+        parameters
+        ----------
+
+        pin - (Pin) the pin to be added to the port.
+
+        position - (int, default None) the index at which to add the pin
         """
         assert isinstance(pin, InnerPin)
         assert pin.port is not self, "Pin already belongs to this port"
@@ -859,11 +893,28 @@ class Port(Bundle):
         pin._port = self
 
     def remove_pin(self, pin):
+        '''
+        remove the given pin from the port. The pin must belong to the port in order to be removed. Wires are disconnected from the pin that is removed.
+
+        parameters
+        ----------
+
+        pin - (Pin) a pin to be removed from the port.
+        '''
         assert pin.port == self, "Pin does not belong to this port."
         self._remove_pin(pin)
         self._pins.remove(pin)
 
     def remove_pins_from(self, pins):
+        '''
+        remove several pins from the port at once. The wires are disconnected from the pins that are removed.
+
+        parameters
+        ----------
+
+        pins - (List of Pin objects) a list of all pins to be removed from the port.
+
+        '''
         if isinstance(pins, set):
             exclude_pins = pins
         else:
@@ -875,6 +926,7 @@ class Port(Bundle):
         self._pins = list(x for x in self._pins if x not in exclude_pins)
 
     def _remove_pin(self, pin):
+        '''internal pin removal function. disconnects the wires from the pin and remvoes all the pins reference to other pins.'''
         if self.definition:
             for reference in self.definition.references:
                 outer_pin = reference.pins[pin]
@@ -888,6 +940,7 @@ class Port(Bundle):
 
 
 class Pin:
+    '''pin connects to a single wire. This class is extended by InnerPin and OuterPin'''
     __slots__ = ['_wire']
 
     def __init__(self):
@@ -895,6 +948,7 @@ class Pin:
 
     @property
     def wire(self):
+        '''get the wire the pin is connected to. This value cannot be modified directly by the end user.'''
         return self._wire
 
 
@@ -911,7 +965,7 @@ class InnerPin(Pin):
 
     @property
     def port(self):
-        '''return the port that the inner pin is a part of this object cannot be modified.'''
+        '''return the port that the inner pin is a part of. This object cannot be modified directly by the end user.'''
         return self._port
 
 
@@ -924,19 +978,37 @@ class OuterPin(Pin):
 
     @staticmethod
     def from_instance_and_inner_pin(instance, inner_pin):
+        '''create an outer pin associated with a given inner_pin and instance object.
+        
+        parameters
+        ----------
+        
+        instance - (Instance) the instance to associate with this pin
+        
+        inner_pin - (InnerPin) the inner pin with which to associate this outer pin'''
         return OuterPin(instance, inner_pin)
 
     def __init__(self, instance=None, inner_pin=None):
+        '''create an OuterPin.
+        
+        parameters
+        ----------
+        
+        instance - (Instance) the instance with which to associate this outper pin.
+
+        inner_pin - (InnerPin) a definition's inner pin to be associated with this instance outer pin.'''
         super().__init__()
         self._instance = instance
         self._inner_pin = inner_pin
 
     @property
     def instance(self):
+        '''Return the instance with which this pin is associated'''
         return self._instance
 
     @property
     def inner_pin(self):
+        '''get the inner pin associated with this outer pin'''
         return self._inner_pin
 
     def __eq__(self, other):
@@ -949,21 +1021,27 @@ class OuterPin(Pin):
 
 
 class Cable(Bundle):
+    '''Much like Ports cable extend the bundle class, giving them indexing ability they represent several wires in a collection or bus that are generally related.
+    This could be thought of much like vector types in VHDL ie std_logic_vector (7 downto 0)'''
     __slots__ = ['_wires']
 
     def __init__(self):
+        '''create a cable with no wires and default values for a bundle.'''
         super().__init__()
         self._wires = list()
 
     def _items(self):
+        '''overrides the bundle _items function to return wires'''
         return self._wires
 
     @property
     def wires(self):
+        '''get a list of wires that are in this cable'''
         return ListView(self._wires)
 
     @wires.setter
     def wires(self, value):
+        '''set the wires to a reordered list of wires. This function is to be used for reordering of wires'''
         value_list = list(value)
         value_set = set(value_list)
         assert len(value_list) == len(value_set) and set(self._wires) == value_set, \
@@ -971,15 +1049,30 @@ class Cable(Bundle):
         self._wires = value_list
 
     def initialize_wires(self, wire_count):
+        '''creates wire_count wires for this cable and adds them to it.
+        
+        parameters
+        ----------
+        
+        wire_count - (int) the number of wires to be added to the cable.'''
         for _ in range(wire_count):
             self.create_wire()
 
     def create_wire(self):
+        '''creates a wire and adds it to the cable. returns the wire that was created'''
         wire = Wire()
         self.add_wire(wire)
         return wire
 
     def add_wire(self, wire, position=None):
+        '''adds a wire to the cable at the given position. This wire must not belong to a cable already
+        
+        parameters
+        ----------
+        
+        wire - (Wire) the wire to be added to the cable. This wire must not belong to any other cable.
+        
+        position - (int, default None) the index in the wires list at which to add the wire.'''
         assert wire.cable is not self, "Wire already belongs to this cable"
         assert wire.cable is None, "Wire already belongs to a different cable"
         if position is not None:
@@ -989,11 +1082,23 @@ class Cable(Bundle):
         wire._cable = self
 
     def remove_wire(self, wire):
+        '''remove the given wire from the cable and return it. The wire must belong to this cable
+        
+        parameters
+        ----------
+        
+        wire - (Wire) the wire to be removed from the cable.'''
         assert wire.cable == self, "Wire does not belong to this cable"
         self._remove_wire(wire)
         self._wires.remove(wire)
 
     def remove_wires_from(self, wires):
+        '''remove all wires given from the cable. Each must be a member of this cable.
+
+        parameters
+        ----------
+
+        wires - (List of Wire objects) wires to be removed from the cable.'''
         if isinstance(wires, set):
             excluded_wires = wires
         else:
@@ -1005,6 +1110,7 @@ class Cable(Bundle):
 
     @staticmethod
     def _remove_wire(wire):
+        '''internal wire removal call. dissociates the wire from the cable'''
         wire._cable = None
 
 
