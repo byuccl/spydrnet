@@ -36,7 +36,6 @@ class EdifParser:
         self.initialize_tokenizer()
         self.netlist = self.parse_construct(self.parse_edif)
         self.tokenizer.__del__()
-        print("WARNING: edif/parser.py assumes downto in function parse_port()")
 
     def initialize_tokenizer(self):
         if self.filename:
@@ -720,7 +719,6 @@ class EdifParser:
         instance['metadata_prefix'] = list()
         self.elements.append(instance)
         if self.begin_construct():
-            print("design top instance renamed")
             instance['metadata_prefix'] = ['EDIF']
             self.parse_rename()
             instance['metadata_prefix'] = []

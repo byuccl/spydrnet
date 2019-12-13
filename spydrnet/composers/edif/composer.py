@@ -47,7 +47,7 @@ class ComposeEdif:
     def _output_environment_(self):
         self._lisp_increment_()
         self._output_.write("edif ")
-        self._output_.write(self._data_["EDIF.identifier"])
+        self._output_name_of_object_(self._data_)
         self._new_line_()
 
         self._lisp_increment_()

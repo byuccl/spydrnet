@@ -1,5 +1,7 @@
 import sys
 import setuptools
+import glob
+import os
 
 if sys.argv[-1] == "setup.py":
     print("To install, run 'python setup.py install'")
@@ -22,6 +24,12 @@ sys.path.pop(0)
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+example_edif_files = list()
+folder_path = os.path.normpath(os.path.join(os.path.dirname(__file__), "spydrnet", "support_files"))
+for filename in glob.glob(os.path.join(folder_path, "**", "*"), recursive=True):
+    if os.path.isfile(filename) and os.path.getsize(filename) < 1024 * 10:
+        example_edif_files.append("support_files/" + str(filename)[len(folder_path) + 1:].replace('\\', '/'))
+
 if __name__ == "__main__":
 
     setuptools.setup(
@@ -40,7 +48,7 @@ if __name__ == "__main__":
         url=release.url,
         project_urls=release.project_urls,
         classifiers=release.classifiers,
-        package_data={ 'spydrnet': ['VERSION']},
+        package_data={ 'spydrnet': ['VERSION'] + example_edif_files},
         packages=setuptools.find_packages(),
         python_requires='>=3.6',
         zip_safe=False
