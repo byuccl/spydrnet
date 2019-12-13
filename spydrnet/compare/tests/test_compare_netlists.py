@@ -8,6 +8,7 @@ import spydrnet as sdn
 
 
 class TestCompareNetlists(unittest.TestCase):
+    @unittest.skip("Test takes a long time right now.")
     def test_edif(self):
         dir_of_edif_netlists = os.path.join(sdn.base_dir, "support_files", "EDIF_netlists")
         edif_files = sorted(glob.glob(os.path.join(dir_of_edif_netlists, "*.edf.zip")), key=os.path.getsize)
