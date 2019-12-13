@@ -1,4 +1,4 @@
-from spydrnet.ir import OuterPin
+from spydrnet.ir.outerpin import OuterPin
 
 
 class Comparer:
