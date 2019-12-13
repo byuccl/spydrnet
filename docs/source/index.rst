@@ -1,6 +1,8 @@
 Welcome to SpyDrNet!
 ====================
 
+.. figure:: figures/Spider.*
+
 .. only:: html
 
     :Release: |version|

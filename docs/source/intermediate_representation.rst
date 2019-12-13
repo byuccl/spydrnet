@@ -13,49 +13,7 @@ A bundle of pins or a bundle of wires can either be a scalar bundle or an array 
 
 .. A netlist contains information about an electronic circuit. Almost all the information needed to implement an electric circuit is avaiable in a netlist. Additional constraints, such as timing, placement, and routing constraints, are contained in seperate location, but they make reference to nets or components in a netlist. Nets are connections between components. Components are functional blocks. The blocks interface with other blocks through ports and ports have individual connections points called pins. A net can be thought of as a physical wire that connects a set of pins together. A block can be either a primitive component, (e.g., look-up table, flip-flop, DSP unit), a blackbox with undefined content, or a hierarchical component with nets and instances of other components contained inside. 
 
-Classes
--------
+Implementation Details
+----------------------
 
-.. automodule:: spydrnet.ir
-
-.. autoclass:: Netlist
-    :members:
-    :undoc-members:
-    
-.. autoclass:: Library
-    :members:
-    :undoc-members:
-    
-.. autoclass:: Definition
-    :members:
-    :undoc-members:
-    
-.. autoclass:: Instance
-    :members:
-    :undoc-members:
-    
-.. autoclass:: Port
-    :members:
-    :undoc-members:
-    
-.. automodule:: spydrnet.virtual_ir
-
-.. autoclass:: VirtualInstance
-    :members:
-    :undoc-members:
-
-.. autoclass:: VirtualPort
-    :members:
-    :undoc-members:
-    
-.. autoclass:: VirtualPin
-    :members:
-    :undoc-members:
-    
-.. autoclass:: VirtualCable
-    :members:
-    :undoc-members:
-    
-.. autoclass:: VirtualWire
-    :members:
-    :undoc-members:
+See the API Specification 1.0.0
