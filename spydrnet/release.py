@@ -81,8 +81,8 @@ def update_versionfile():
                 git_exists = True
             
     if git_exists:
-        git_subprocess = subprocess.Popen(["git", "describe"], shell=True, cwd=directory, text=True, stdout=subprocess.PIPE)
-        git_describe_output = git_subprocess.stdout.read()
+        git_subprocess = subprocess.Popen(["git", "describe"], shell=True, cwd=directory, stdout=subprocess.PIPE)
+        git_describe_output = git_subprocess.stdout.read().decode()
 
         git_version = git_describe_output.strip()
         if git_version.startswith('v'):

@@ -3,21 +3,49 @@
 API Specification 1.0
 =====================
 
-.. automodule:: spydrnet.api
+.. automodule:: spydrnet.ir
 
-Analysis API
-------------
-.. automodule:: spydrnet.api.get_virtual_instances
+.. autoclass:: Netlist
     :members:
+    :undoc-members:
     
-.. automodule:: spydrnet.api.get_virtual_wires
+.. autoclass:: Library
     :members:
+    :undoc-members:
     
-.. automodule:: spydrnet.api.analysis_api
+.. autoclass:: Definition
     :members:
+    :undoc-members:
 
-   
-Creation API
-------------   
-.. automodule:: spydrnet.api.creation_api
-   :members:
+.. autoclass:: Bundle
+    :members:
+    :undoc-members:
+    
+.. autoclass:: Instance
+    :members:
+    :undoc-members:
+    
+.. autoclass:: Port
+    :members:
+    :undoc-members:
+
+.. autoclass:: Pin
+    :members:
+    :undoc-members:
+
+.. autoclass:: InnerPin
+    :members:
+    :undoc-members:
+
+.. autoclass:: OuterPin
+    :members:
+    :undoc-members:
+
+.. autoclass:: Cable
+    :members:
+    :undoc-members:
+
+.. autoclass:: Wire
+    :members:
+    :undoc-members:
+
