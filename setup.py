@@ -29,6 +29,13 @@ folder_path = os.path.normpath(os.path.join(os.path.dirname(__file__), "spydrnet
 for filename in glob.glob(os.path.join(folder_path, "**", "*"), recursive=True):
     if os.path.isfile(filename) and os.path.getsize(filename) < 1024 * 10:
         example_edif_files.append("support_files/" + str(filename)[len(folder_path) + 1:].replace('\\', '/'))
+        
+extras_require = {
+    "all": [
+        "pytest",
+    ],
+    "pytest": ["pytest"],
+}
 
 if __name__ == "__main__":
 
@@ -50,6 +57,7 @@ if __name__ == "__main__":
         classifiers=release.classifiers,
         package_data={ 'spydrnet': ['VERSION'] + example_edif_files},
         packages=setuptools.find_packages(),
+        extras_require=extras_require
         python_requires='>=3.6',
         zip_safe=False
     )
