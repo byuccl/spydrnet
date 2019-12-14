@@ -20,21 +20,29 @@ class ListView:
         return self._list.__hash__()
 
     def __ge__(self, other):
+        if isinstance(other, ListView):
+            return self._list.__ge__(other._list)
         return self._list.__ge__(other)
 
     def __gt__(self, other):
+        if isinstance(other, ListView):
+            return self._list.__gt__(other._list)
         return self._list.__gt__(other)
 
     def __iter__(self):
         return self._list.__iter__()
 
     def __le__(self, other):
-        return self._list.__le__()
+        if isinstance(other, ListView):
+            return self._list.__le__(other._list)
+        return self._list.__le__(other)
 
     def __len__(self):
         return self._list.__len__()
 
     def __lt__(self, other):
+        if isinstance(other, ListView):
+            return self._list.__lt__(other._list)
         return self._list.__lt__(other)
 
     def __ne__(self, other):

@@ -43,10 +43,6 @@ class EdifParser:
         elif self.file_handle:
             self.tokenizer = EdifTokenizer.from_stream(self.file_handle)
 
-    def initialize_design(self):
-        self.design = Design()
-        self.design.netlist = Netlist()
-
     def parse_edif(self):
         environment = Netlist()
         self.append_new_element(environment)
@@ -250,9 +246,6 @@ class EdifParser:
     def parse_numberDefinition(self):
         self.expect(NUMBER_DEFINITION)
         self.skip_until_next_construct()
-        #while self.begin_construct():
-        #    raise NotImplementedError()
-        #    self.expect_end_construct()
 
     def parse_cell(self):
         definition = Definition()
@@ -409,13 +402,13 @@ class EdifParser:
             if self.construct_is(RENAME):
                 self.parse_rename()
                 port = self.elements[-1]
-                port.initialize_pins(1)
+                port.create_pins(1)
 
             elif self.construct_is(ARRAY):
                 dimension_sizes = self.parse_array()
                 pin_count = reduce((lambda x, y: x * y), dimension_sizes)
                 port = self.elements[-1]
-                port.initialize_pins(pin_count)
+                port.create_pins(pin_count)
                 port.is_array = True
                 if 'EDIF.original_identifier' in port:
                     # TODO: what about multi-dimensional ports, non-downto ports, and when non-square brackets are used <0:17><31:0>
@@ -432,7 +425,7 @@ class EdifParser:
         else:
             self.parse_nameDef()
             port = self.elements[-1]
-            port.initialize_pins(1)
+            port.create_pins(1)
             # TODO: what about single pin array ports with a non_zero starting index.
 
         has_direction = False
@@ -621,7 +614,7 @@ class EdifParser:
         self.expect(NET)
         self.parse_nameDef()
         self.elements[-1].is_scalar = True
-        self.elements[-1].initialize_wires(1)  # EDIF nets are single wire cables.
+        self.elements[-1].create_wires(1)  # EDIF nets are single wire cables.
         self.parse_construct(self.parse_joined)
 
         while self.begin_construct():

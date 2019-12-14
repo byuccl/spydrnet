@@ -31,7 +31,7 @@ class Cable(Bundle):
             "Set of values does not match, assigment can only be used for reordering, values must be unique"
         self._wires = value_list
 
-    def initialize_wires(self, wire_count):
+    def create_wires(self, wire_count):
         '''creates wire_count wires for this cable and adds them to it.
 
         parameters
@@ -40,6 +40,7 @@ class Cable(Bundle):
         wire_count - (int) the number of wires to be added to the cable.'''
         for _ in range(wire_count):
             self.create_wire()
+        return self.wires[-wire_count:]
 
     def create_wire(self):
         '''creates a wire and adds it to the cable. returns the wire that was created'''

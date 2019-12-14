@@ -87,7 +87,7 @@ class Port(Bundle):
             "Set of values do not match, assignment can only be used to reorder values, values must be unique"
         self._pins = value_list
 
-    def initialize_pins(self, pin_count):
+    def create_pins(self, pin_count):
         """
         create pin_count pins in the given port a downto style syntax is assumed
 
@@ -98,7 +98,7 @@ class Port(Bundle):
         """
         for _ in range(pin_count):
             self.create_pin()
-        return self.pins
+        return self.pins[-pin_count:]
 
     def create_pin(self):
         """

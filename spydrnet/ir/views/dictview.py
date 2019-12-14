@@ -5,27 +5,19 @@ class DictView:
         self._dict = dict_object
 
     def __eq__(self, other):
+        if isinstance(other, DictView):
+            return self._dict.__eq__(other._dict)
         return self._dict.__eq__(other)
-
-    def __ge__(self, other):
-        return self._dict.__ge__(other)
-
-    def __gt__(self, other):
-        return self._dict.__gt__(other)
 
     def __hash__(self):
         return self._dict.__hash__()
 
-    def __le__(self, other):
-        return self._dict.__le__(other)
-
     def __len__(self):
         return self._dict.__len__()
 
-    def __lt__(self, other):
-        return self._dict.__lt__(other)
-
     def __ne__(self, other):
+        if isinstance(other, DictView):
+            return self._dict.__ne__(other._dict)
         return self._dict.__ne__(other)
 
     def __repr__(self):
@@ -49,8 +41,8 @@ class DictView:
     def copy(self):
         return self._dict.copy()
 
-    def fromkeys(self, seq):
-        return self._dict.fromkeys(seq)
+    def fromkeys(self, *args, **kwargs):
+        return self._dict.fromkeys(*args, **kwargs)
 
     def items(self):
         return self._dict.items()

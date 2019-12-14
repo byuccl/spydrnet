@@ -11,7 +11,7 @@ class TestCable(unittest.TestCase):
         self.assertEqual(self.cable._items(), self.cable._wires)
 
     def test_initialize_wires(self):
-        self.cable.initialize_wires(2)
+        self.cable.create_wires(2)
         self.assertEqual(len(self.cable.wires), 2)
         self.cable.remove_wires_from(self.cable.wires)
         self.assertEqual(len(self.cable.wires), 0)

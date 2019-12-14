@@ -8,11 +8,25 @@ import spydrnet as sdn
 
 
 class TestCompareNetlists(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.dir_of_edif_netlists = os.path.join(sdn.base_dir, "support_files", "EDIF_netlists")
+        cls.edif_files = sorted(glob.glob(os.path.join(cls.dir_of_edif_netlists, "*.edf.zip")), key=os.path.getsize)
+
     @unittest.skip("Test takes a long time right now.")
-    def test_edif(self):
-        dir_of_edif_netlists = os.path.join(sdn.base_dir, "support_files", "EDIF_netlists")
-        edif_files = sorted(glob.glob(os.path.join(dir_of_edif_netlists, "*.edf.zip")), key=os.path.getsize)
-        for ii, filename in enumerate(edif_files):
+    def test_large_edif(self):
+        for ii, filename in enumerate(self.edif_files):
+            if os.path.getsize(filename) <= 1024 * 10:
+                continue
+            self.compare_parser_and_composer_on(filename, ii)
+
+    def test_small_edif(self):
+        for ii, filename in enumerate(self.edif_files):
+            if os.path.getsize(filename) > 1024 * 10:
+                continue
+            self.compare_parser_and_composer_on(filename, ii)
+
+    def compare_parser_and_composer_on(self, filename, ii):
             with self.subTest(i=ii):
                 print(filename)
                 orig_netlist = sdn.parse(filename)

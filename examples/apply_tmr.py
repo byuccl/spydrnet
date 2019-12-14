@@ -141,7 +141,7 @@ def replicate_port(virtual_port):
         new_port.is_downto = port.is_downto
         new_port.is_scalar = port.is_scalar
         new_port.lower_index = port.lower_index
-        new_port.initialize_pins(len(port.inner_pins))
+        new_port.create_pins(len(port.inner_pins))
         if 'EDIF.identifier' in port:
             new_port['EDIF.identifier'] = port['EDIF.identifier'] + "_TMR_" + str(ii)
         if 'EDIF.original_identifier' in port:
@@ -234,7 +234,7 @@ def replicate_net(virtual_cable):
         new_cable.is_downto = cable.is_downto
         new_cable.is_scalar = cable.is_scalar
         new_cable.lower_index = cable.lower_index
-        new_cable.initialize_wires(len(cable.wires))
+        new_cable.create_wires(len(cable.wires))
         if 'EDIF.identifier' in cable:
             new_cable['EDIF.identifier'] = cable['EDIF.identifier'] + "_TMR_" + str(ii)
         #if 'EDIF.original_identifier' in cable:
@@ -310,7 +310,7 @@ def insert_voters():
                         new_cable.is_downto = outer_virtual_cable.cable.is_downto
                         new_cable.is_scalar = outer_virtual_cable.cable.is_scalar
                         new_cable.lower_index = outer_virtual_cable.cable.lower_index
-                        new_cable.initialize_wires(len(outer_virtual_cable.cable.wires))
+                        new_cable.create_wires(len(outer_virtual_cable.cable.wires))
                         if 'EDIF.identifier' in outer_virtual_cable.cable:
                             new_cable['EDIF.identifier'] = outer_virtual_cable.cable['EDIF.identifier'] + "_VOTER"
                         #if 'EDIF.original_identifier' in cable:

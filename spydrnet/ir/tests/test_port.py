@@ -44,7 +44,7 @@ class TestPort(unittest.TestCase):
         self.port.direction = list()
 
     def test_initialize_pins(self):
-        self.port.initialize_pins(2)
+        self.port.create_pins(2)
         self.assertEqual(len(self.port.pins), 2)
         self.assertNotEqual(self.port.pins[0], self.port.pins[1])
 
@@ -86,7 +86,7 @@ class TestPort(unittest.TestCase):
         self.assertFalse(self.port.is_scalar)
         self.port.is_scalar = True
         self.assertTrue(self.port.is_scalar)
-        self.port.initialize_pins(2)
+        self.port.create_pins(2)
         self.assertFalse(self.port.is_scalar)
         self.port.is_scalar = False
         self.port.remove_pins_from(self.port.pins)
@@ -94,7 +94,7 @@ class TestPort(unittest.TestCase):
 
     @unittest.expectedFailure
     def test_is_scalar_set_on_array_bundle(self):
-        self.port.initialize_pins(2)
+        self.port.create_pins(2)
         self.port.is_scalar = True
 
     def test_is_array(self):
@@ -103,7 +103,7 @@ class TestPort(unittest.TestCase):
         self.assertTrue(self.port.is_array)
         self.port.is_array = False
         self.assertFalse(self.port.is_array)
-        self.port.initialize_pins(2)
+        self.port.create_pins(2)
         self.assertTrue(self.port.is_array)
         self.port.is_array = True
         self.port.remove_pins_from(self.port.pins)
@@ -111,5 +111,5 @@ class TestPort(unittest.TestCase):
 
     @unittest.expectedFailure
     def test_is_array_clear_on_array_bundle(self):
-        self.port.initialize_pins(2)
+        self.port.create_pins(2)
         self.port.is_array = False

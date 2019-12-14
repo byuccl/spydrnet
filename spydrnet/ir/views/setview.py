@@ -10,32 +10,41 @@ class SetView:
     def __rand__(self, *args, **kwargs):
         return self._set.__rand__(*args, **kwargs)
 
-    def __eq__(self, *args, **kwargs):
-        return self._set.__eq__(*args, **kwargs)
+    def __eq__(self, other):
+        if isinstance(other, SetView):
+            return self._set.__eq__(other._set)
+        return self._set.__eq__(other)
 
-    def __ge__(self, *args, **kwargs):
-        return self._set.__ge__(*args, **kwargs)
+    def __ge__(self, other):
+        if isinstance(other, SetView):
+            return self._set.__ge__(other._set)
+        return self._set.__ge__(other)
 
-    def __gt__(self, *args, **kwargs):
-        return self._set.__gt__(*args, **kwargs)
-
-    def __hash__(self, *args, **kwargs):
-        return self._set.__hash__(*args, **kwargs)
+    def __gt__(self, other):
+        if isinstance(other, SetView):
+            return self._set.__gt__(other._set)
+        return self._set.__gt__(other)
 
     def __iter__(self, *args, **kwargs):
         return self._set.__iter__(*args, **kwargs)
 
-    def __le__(self, *args, **kwargs):
-        return self._set.__le__(*args, **kwargs)
+    def __le__(self, other):
+        if isinstance(other, SetView):
+            return self._set.__le__(other._set)
+        return self._set.__le__(other)
 
     def __len__(self, *args, **kwargs):
         return self._set.__len__(*args, **kwargs)
 
-    def __lt__(self, *args, **kwargs):
-        return self._set.__lt__(*args, **kwargs)
+    def __lt__(self, other):
+        if isinstance(other, SetView):
+            return self._set.__lt__(other._set)
+        return self._set.__lt__(other)
 
-    def __ne__(self, *args, **kwargs):
-        return self._set.__ne__(*args, **kwargs)
+    def __ne__(self, other):
+        if isinstance(other, SetView):
+            return self._set.__ne__(other._set)
+        return self._set.__ne__(other)
 
     def __or__(self, *args, **kwargs):
         return self._set.__or__(*args, **kwargs)

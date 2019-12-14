@@ -6,7 +6,7 @@ class TestOuterPinsView(unittest.TestCase):
     def setUp(self) -> None:
         definition = sdn.Definition()
         port = definition.create_port()
-        self.inner_pins = port.initialize_pins(10)
+        self.inner_pins = port.create_pins(10)
         self.instance = sdn.Instance()
         self.instance.reference = definition
         self.outer_pins_view = self.instance.pins

@@ -62,3 +62,28 @@ class TestListView(unittest.TestCase):
     @unittest.expectedFailure
     def test_add_assignment(self):
         self.list_view += list(range(10))
+
+    def test_ge(self):
+        self.assertTrue(self.list_view >= ListView(list(range(10))))
+        self.assertTrue(self.list_view >= list(range(10)))
+
+    def test_gt(self):
+        self.assertTrue(self.list_view > ListView(list(range(9))))
+        self.assertTrue(self.list_view > list(range(9)))
+
+    def test_le(self):
+        self.assertTrue(self.list_view <= ListView(list(range(10))))
+        self.assertTrue(self.list_view <= list(range(10)))
+
+    def test_lt(self):
+        self.assertTrue(self.list_view < ListView(list(range(11))))
+        self.assertTrue(self.list_view < list(range(11)))
+
+    def test_repr(self):
+        self.assertEqual(repr(self.list_view), repr(list(range(10))))
+
+    def test_str(self):
+        self.assertEqual(str(self.list_view), str(list(range(10))))
+
+    def test_hash(self):
+        self.assertRaises(TypeError, hash, self.list_view)
