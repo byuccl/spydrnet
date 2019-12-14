@@ -20,14 +20,11 @@ def parse(filename):
     return _parse(filename)
 
 
-def _parse(filename, file_handle=None):
+def _parse(filename):
     extension = get_lowercase_extension(filename)
     if extension in [".edf", ".edif"]:
         from spydrnet.parsers.edif.parser import EdifParser
-        if file_handle:
-            parser = EdifParser.from_file_handle(file_handle)
-        else:
-            parser = EdifParser.from_filename(filename)
+        parser = EdifParser.from_filename(filename)
     else:
         raise RuntimeError("Extension {} not recognized.".format(extension))
     parser.parse()

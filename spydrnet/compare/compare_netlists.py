@@ -84,25 +84,25 @@ class Comparer:
             "Net does not connect the same pin"
 
     def are_instances_equivalent(self, orig_instance, composer_instance):
-        if self.get_identifier(orig_instance) == self.get_identifier(composer_instance) and \
+        assert self.get_identifier(orig_instance) == self.get_identifier(composer_instance) and \
             self.get_identifier(orig_instance.reference) == self.get_identifier(composer_instance.reference) and \
             self.get_identifier(orig_instance.reference.library) == \
                self.get_identifier(composer_instance.reference.library) and \
             self.get_identifier(orig_instance.parent) == self.get_identifier(composer_instance.parent) and \
             self.get_identifier(orig_instance.parent.library) == \
-                self.get_identifier(composer_instance.parent.library):
-            return True
-        return False
+                self.get_identifier(composer_instance.parent.library), \
+            'Instances are not equivalent'
+        return True
 
     def are_inner_pins_equivalent(self, orig_pin, composer_pin):
-        if orig_pin.port.pins.index(orig_pin) != composer_pin.port.pins.index(composer_pin):
-            return False
-        if self.get_identifier(orig_pin.port) == self.get_identifier(composer_pin.port) and \
+        assert orig_pin.port.pins.index(orig_pin) == composer_pin.port.pins.index(composer_pin), \
+            "Pin indices do not match"
+        assert self.get_identifier(orig_pin.port) == self.get_identifier(composer_pin.port) and \
             self.get_identifier(orig_pin.port.definition) == self.get_identifier(composer_pin.port.definition) and \
             self.get_identifier(orig_pin.port.definition.library) == \
-                self.get_identifier(composer_pin.port.definition.library):
-            return True
-        return False
+                self.get_identifier(composer_pin.port.definition.library), \
+            "Pins are not from equivalent ports"
+        return True
 
     def compare_ports(self, port_orig, port_composer):
         assert self.get_identifier(port_orig) == self.get_identifier(port_composer), \
@@ -147,17 +147,13 @@ class Comparer:
             "Instances do not have the same reference definition."
 
         if "EDIF.properties" in instances_orig:
-            if "EDIF.properties" not in instances_composer:
-                raise Exception("Composer is missing properties")
+            assert "EDIF.properties" in instances_composer, "Composer is missing properties"
             properties_orig = instances_orig["EDIF.properties"]
             properties_composer = instances_composer["EDIF.properties"]
-            for x in range(properties_orig.__len__()):
+            for x in range(len(properties_orig)):
                 for key, value in properties_orig[x].items():
-                    if value is None:
-                        continue
-                    else:
-                        if properties_orig[x][key] != properties_composer[x][key]:
-                            raise Exception("Instances do not have the same properties")
+                    assert properties_orig[x][key] == properties_composer[x][key], \
+                        "Instances do not have the same properties"
 
     @staticmethod
     def get_identifier(obj):
@@ -168,8 +164,3 @@ class Comparer:
     def get_original_identifier(obj):
         if "EDIF.original_identifier" in obj:
             return obj["EDIF.original_identifier"]
-
-
-if __name__ == "__main__":
-    compare = Comparer("unique_challenge.edf", "unique_challenge_composed.edf")
-    compare.run()
