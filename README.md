@@ -14,7 +14,8 @@ From pip
 pip3 install SpyDrNet
 
 From Source
-TODO fill in instructions on how to install
+Please run the following from within the SpyDrNet directory:
+pip3 install -e ./
 
 Without Installing
 Just extract/pull this folder in the same directory as the code that you wish to write. The structure should allow for import SpyDrNet from code written in that folder.
@@ -32,4 +33,4 @@ property management
 EDIF parser rework to use the creation API
 EDIF composer rework to use the analysis API
 
-Add plugin capability. - this should probably be discussed more with nailed down details.
+Add plugin capability.
