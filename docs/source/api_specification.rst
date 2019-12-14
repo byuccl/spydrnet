@@ -16,20 +16,12 @@ API Specification 1.0
 .. autoclass:: Definition
     :members:
     :undoc-members:
-
-.. autoclass:: Bundle
-    :members:
-    :undoc-members:
     
 .. autoclass:: Instance
     :members:
     :undoc-members:
     
 .. autoclass:: Port
-    :members:
-    :undoc-members:
-
-.. autoclass:: Pin
     :members:
     :undoc-members:
 
@@ -49,3 +41,14 @@ API Specification 1.0
     :members:
     :undoc-members:
 
+.. autoclass:: Pin
+    :members:
+    :undoc-members:
+
+.. autoclass:: Bundle
+    :members:
+    :undoc-members:
+
+.. autoclass:: Element
+    :members:
+    :undoc-members:
