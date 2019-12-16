@@ -22,3 +22,8 @@ class TestElement(unittest.TestCase):
         element['NAME'] = "DifferentName"
         name = element.pop('NAME')
         self.assertEqual(name, "DifferentName")
+
+    def test_data_view(self):
+        element = Element()
+        element['NAME'] = "TestName"
+        self.assertEqual(element.data, {'NAME': 'TestName'})

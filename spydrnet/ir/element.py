@@ -1,4 +1,5 @@
 import sys
+from spydrnet.ir.views.dictview import DictView
 
 
 class Element(object):
@@ -31,6 +32,10 @@ class Element(object):
         Initialize an element with an empty data dictionary.
         """
         self._data = dict()
+
+    @property
+    def data(self):
+        return DictView(self._data)
 
     def __setitem__(self, key, value):
         """

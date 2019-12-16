@@ -16,11 +16,11 @@ authors = {'Keller': ('Andrew Keller', 'andrewmkeller@byu.edu'),
            'Wirthlin': ('Michael Wirthlin', 'wirthlin@byu.edu')}
 maintainer = "SpyDrNet Developers"
 maintainer_email = "spydrnet-discuss@googlegroups.com"
-url = 'https://byuccl.github.io/SpyDrNet'
+url = 'https://byuccl.github.io/spydrnet'
 project_urls = {
-    "Bug Tracker": "https://github.com/byuccl/SpyDrNet/issues",
-    "Documentation": "https://byuccl.github.io/SpyDrNet",
-    "Source Code": "https://github.com/byuccl/SpyDrNet",
+    "Bug Tracker": "https://github.com/byuccl/spydrnet/issues",
+    "Documentation": "https://byuccl.github.io/spydrnet/documentation/stable",
+    "Source Code": "https://github.com/byuccl/spydrnet",
 }
 platforms = ['Linux', 'Mac OSX', 'Windows', 'Unix']
 keywords = ['Netlist', 'Analysis', 'Transformation',
