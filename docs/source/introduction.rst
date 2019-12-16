@@ -3,7 +3,7 @@
 Introduction
 ============
 
-Welcome tp SpyDrNet, a tool that will help you analyze and transform netlists. Please note that SpyDrNet is currently in a pre-alpha testing and some features, detailed in this guide, may not be fully implemented. Those features that are implimented, may not be bug free. Use at your own risk. 
+Welcome to SpyDrNet, a tool that will help you analyze and transform netlists. Please note that SpyDrNet is currently in alpha testing and some features may not be bug free or may be incomplete.
 
 SpyDrNet is developed and maintained by the `Configurable Computing Lab`_ of `Brigham Young University`_. This tool is related to the `BYU EDIF Tools`_ and is considered to be the next generation tool for FPGA netlist analysis and tranformation.
 
@@ -13,7 +13,7 @@ SpyDrNet is developed and maintained by the `Configurable Computing Lab`_ of `Br
 
 What makes SpyDrNet different is its intermediate representation of netlists (IR) and its ability to interact with other powerful tools. Netlists are represented as a relational data stucture. In the representation, every netlist element (library, definition, port, pin, instance, cable, and wire) is stored in a Netlist object. Relationships between elements are preserved with pointers, and some additional pointers and helper objects are maintained to improve performance and usablility. A Design object within a Netlist holds basic information about about the netlist including the top-level module, the target FPGA chip, and any other information associated with a design that utilized the netlist.  The Netlist object hold information on how elements connect to each other and the hierarchy within the netlist. More detail on the IR is provided in sec:ir_.
 
-.. SpyDrNet is currently in active development. Functionality is limited, but some of the goals the authors would like to accomplish are:
+.. SpyDrNet is currently in active development. Functionality is currently limited but growing, some of the goals the authors would like to accomplish are:
 
 .. * Provide a runtime API in three different languages: C++, Python, and Java.
 .. * Provide parsers and composers for at least five different netlist formats: EDIF, structural Verilog, structural VHDL, Intel's Verilog Quartus Mapping (VQM), and generic JSON. Other parsers can be added. Currently, only EDIF .. is supported.

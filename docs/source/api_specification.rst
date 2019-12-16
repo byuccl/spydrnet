@@ -1,7 +1,9 @@
 .. _sec:api_spec:
 
-API Specification 1.0
-=====================
+Spydrnet api specification
+==========================
+Version 1.0
+
 
 .. automodule:: spydrnet.ir
 
@@ -40,6 +42,9 @@ API Specification 1.0
 .. autoclass:: Wire
     :members:
     :undoc-members:
+
+The following three variables are variables from which the above variables inherit. They are included here for completeness of
+documenataion and can be used if you need but if the above types will suffice it may be simpler to use them.
 
 .. autoclass:: Pin
     :members:
