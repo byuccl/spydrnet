@@ -11,19 +11,20 @@ SpyDrNet is developed and maintained by the `Configurable Computing Lab`_ of `Br
 .. _Brigham Young University: https://www.byu.edu/
 .. _BYU EDIF Tools: http://reliability.ee.byu.edu/edif/
 
-What makes SpyDrNet different is its intermediate representation of netlists (IR) and its ability to interact with other powerful tools. Netlists are represented as a relational data stucture. In the representation, every netlist element (library, definition, port, pin, instance, cable, and wire) is stored in a Netlist object. Relationships between elements are preserved with pointers, and some additional pointers and helper objects are maintained to improve performance and usablility. A Design object within a Netlist holds basic information about about the netlist including the top-level module, the target FPGA chip, and any other information associated with a design that utilized the netlist.  The Netlist object hold information on how elements connect to each other and the hierarchy within the netlist. More detail on the IR is provided in sec:ir_.
+Digital designs for FPGAs are represented as netlists, a list of components and connections. Netlists come from various vendors in many different formats. SpyDrNet allows you to look at and alter a netlist in a language inspecific way. SpyDrNet parses a netlist into an intermediate represention (IR) that is designed to be easily traversed and effortlessly manipulated. SpyDrNet aims to provide the tools you need to accomplish the netlist analysis and transformation tasks you have in mind without having to reinvent the wheel.
 
-.. SpyDrNet is currently in active development. Functionality is currently limited but growing, some of the goals the authors would like to accomplish are:
+This intermediate representation of netlists (IR) and its ability to interact with other powerful tools are what set SpyDrNet apart. Netlists are represented as a relational data stucture. In the representation, every netlist element (library, definition, port, pin, instance, cable, and wire) is stored in a Netlist object. Relationships between elements are preserved with pointers, and some additional pointers and helper objects are maintained to improve performance and usablility. Emphasis was put on remiaining generic in the implementation of the intermediate representation. Elements can be used as dictionaries to store information relevant to the design. This is particualarly useful when storing information about the environment in which a design runs, or vendor specific information about components. More detail on the IR, including built in structure, is provided in the sections titled API Specification 1.0 and Intermediate Representation sec:ir_.
 
-.. * Provide a runtime API in three different languages: C++, Python, and Java.
+.. SpyDrNet is currently in active development. Functionality is limited but growing, contributions are welcome. please browse the github wiki and projects to get an idea of what is coming in the future. Some of the things that the SpyDrNet team would like to accomplish are listed here:
+
+.. * Provide a runtime API in three different languages: C++, Python, and Java and perhaps more in the future.
 .. * Provide parsers and composers for at least five different netlist formats: EDIF, structural Verilog, structural VHDL, Intel's Verilog Quartus Mapping (VQM), and generic JSON. Other parsers can be added. Currently, only EDIF .. is supported.
 .. * Provide an intermediate representation that can capture common elements found most netlist formats and preserve language specific elements as needed.
 .. * Complete valuable research in the field of FPGA reliability.
 
-.. Digital designs for FPGAs are represented as netlists, a list of components and connections. Netlists come from various vendors in many different formats. SpyDrNet allows you to look at and alter a netlist in a language inspecific way. SpyDrNet parses a netlist into an intermediate represention (IR) that is designed to be easily traversed and effortlessly manipulated. SpyDrNet provides the tools you need to accomplish the netlist analysis and transformation tasks you have in mind.
 
-Using the API Example: Four-Bit Counter
----------------------------------------
+Using the API Example: Read in Primatives
+-----------------------------------------
 
 >>> import spydrnet as sdn
 >>> netlist = sdn.parse('four_bit_counter.edf')
@@ -33,16 +34,16 @@ Before we can start using the more powerful features of Spydrnet, a basic unders
 
 After we get Spydrnet set up, we start building our four-bit counter by creating a design to hold our work in. By using “design = Spydrnet.createDesgin()”, Spydrnet will generate a Design object for us. After creating the Design object, we need to create Library objects to hold our four-bit counter. 
 
-At this time, Spydrnet is unable to read in a library that holds defines the primitives on FPGA chip, so we need to do this manually. Since we are working on getting primitives into our design, we must use the same names that the FPGA vendor tool expects. Because of this, we will be using Xilinx’s Artix 7 family primitives for this section of the guide. Start by using “prim_lib = design.createLibrary()”. We will be using this library to hold the primitives that we need to create the counter. After making a Library object, we need to create Definitions objects that will populate the Library. To do so, we will use “FDCE = prim_lib.createDefinition(‘FDCE’)”. This will create a Definition object with the identifier ‘FDCE’. 
+At this time, Spydrnet is unable to read in a library that defines the primitives on an FPGA chip, so we need to do this manually. Since all vendors have their own names for primitives, we must use the same names that the FPGA vendor tool expects. In this example, we will be using Xilinx’s Artix 7 family primitives for this section of the guide. Start by using “prim_lib = design.createLibrary()”. We will be using this library to hold the primitives that we need to create the counter. After making a Library object, we need to create a Definitions objects that will populate the Library. To do so, we will use “FDCE = prim_lib.createDefinition(‘FDCE’)”. This will create a Definition object with the identifier ‘FDCE’. 
 
 Once we have created the Definition, we need to add ports. By looking at Xilinx’s documentation for primitives found on the Artix 7, we know we need add ports with the name ‘D’, ‘Q’, ‘C’, ‘CE’, and ‘CLR’. To create ports on a design, we will use definition.createPort(portName, direction). To continue with our example of the FDCE primitive, we will use “FDCE.createPort(‘D’, INPUT)”. For sake of brevity, we will leave the rest of setting up the primitive as an exercise for the reader. In a future update, the ability to import a file that contains the primitives will be supported. 
 
-Once we have the primitive library completed, we can start the process of bringing the primitives together to create a functional four-bit counter. To begin, we will create another library to hold the design elements of four-bit counter.
+Once we have the primitive library completed, we can start the process of bringing the primitives together to create a functional four-bit counter. 
 
 Tool Flow
 ---------
 
-Netlists flow through SpyDrNet in a three step process (see :numref:`fig:flow`). First, they are parsed by a *parser* into an intermediate representation (IR). Second, their IR is analysed and transformed. Finally, their IR is composed by a *composer* back into a netlist format that a 3rd-party tool can use. This flow is inspired by `LLVM`_ and `Pandoc`_. LLVM has a similar flow for compiling computer programs and Pandoc has a similar flow for converting document formats. Using this flow, SpyDrNet is designed to be able to work on any netlist.
+Netlists flow through SpyDrNet in a three step process (see :numref:`fig:flow`). First, they are parsed by a *parser* into an intermediate representation (IR). Second, their IR is analyzed and transformed. Finally, their IR is composed by a *composer* back into a netlist format that a 3rd-party tool can use. This flow is inspired by `LLVM`_ and `Pandoc`_. LLVM has a similar flow for compiling computer programs and Pandoc has a similar flow for converting document formats. Using this flow, SpyDrNet is designed to be able to work on any netlist.
 
 .. _LLVM: http://www.aosabook.org/en/llvm.html
 .. _Pandoc: https://pandoc.org/
@@ -56,7 +57,7 @@ Netlists flow through SpyDrNet in a three step process (see :numref:`fig:flow`).
    
 **Parsing a netlist**
 
-Normally, one will not create a digital design from scratch, and this is not the main propose of this tool. The normal way of getting a netlist into the tool is to use a parser. Spydrnet already comes will multiple parsers (currently Spydrnet only comes with a EDIF parser in the pre-alpha build). To parse a file, use Spydrnet.parse(pathToNetlist, netlistFormat). The path to the netlist can be either an absolute path or a relative path. For example, if the file fourBitCounter.edf is in the same directory as the python file, one can use design = Spydrnet.parse(fourBitCounter.edf, EDIF). One is not limited to the parsers provided, it is possible to use the Spydrnet API to write a parser for unsupported formats, but that is not covered in this guide. Please check the developer documentation 
+Normally, one will not create a digital design from scratch, and this is not the main propose of this tool. The normal way of getting a netlist into the tool is to use a parser. Spydrnet already comes will multiple parsers (currently Spydrnet only comes with a EDIF parser in the alpha build). To parse a file, use Spydrnet.parse(pathToNetlist, netlistFormat). The path to the netlist can be either an absolute path or a relative path. For example, if the file fourBitCounter.edf is in the same directory as the python file, one can use design = Spydrnet.parse(fourBitCounter.edf, EDIF). One is not limited to the parsers provided, it is possible to use the Spydrnet API to write a parser for unsupported formats, but that is not covered in this guide.
 
 **Composing a netlist**
 
@@ -67,7 +68,7 @@ Spydrnet.compose(Design, outputName, netlistFormat)/design.compose(outputName, n
 Intermediate Representation:
 ----------------------------
 
-:numref:`fig:IR` shows a summary of the SpyDrNet intermediate representation (IR). The top level element type is Environment. An Environnment object has pointers to the libraries that belong to it. A Library object has a pointer to the environment it belongs to and it has pointers to the definitions that belong to it. Likewise, a Definition object has a pointer to the library it belongs to and it has pointers to the ports, cables, and instances that belong to it. The same pattern is followed for Port, Cable, and Instance objects. An Instance object has an additional pointer to the definition that it instances (represented as a dashed arrow). A Wire object has a pointer to the cable it belongs to and it has pointers the pins that are connected to it. A Pin object has a pointer to its parent object and it has a pointer to the wire it is connected to. The parent object of an InnerPin is a port, and the parent object of an OuterPin is an instance. An OuterPin object also has an additional pointer to the innerPin that it instances. More details can be found in :ref:`sec:ir`.
+:numref:`fig:IR` shows a summary of the SpyDrNet intermediate representation (IR). The top level element type is Netlist. A Netlist object has pointers to the libraries that belong to it. A Library object has a pointer to the Netlist it belongs to and it has pointers to the definitions that belong to it. Likewise, a Definition object has a pointer to the library it belongs to and it has pointers to the ports, cables, and instances that belong to it. The same pattern is followed for Port, Cable, and Instance objects. An Instance object has an additional pointer to the definition that it instances (represented as a dashed arrow). A Wire object has a pointer to the cable it belongs to and it has pointers the pins that are connected to it. A Pin object has a pointer to its parent object and it has a pointer to the wire it is connected to. The parent object of an InnerPin is a port, and the parent object of an OuterPin is an instance. An OuterPin object also has an additional pointer to the innerPin that it instances. More details can be found in :ref:`sec:ir`.
 
 .. _fig:IR:
 .. figure:: figures/IR.*
@@ -82,16 +83,14 @@ The Name of the Tool
 
 Spiders are masters at spinning webs. These webs often created like nets are stronger than steel when stretched and much more elastic. SpyDrNet aims to give end users the ability to pass these traits on to their netlists by enabling reliablity and other applications through generic analysis and transformations on netlist. Of course this is just scratching the surface of the ways in which this name is applicable to the tool. Finding these fun meanings is (as it is said in academia) left as an exercise to the curious reader. For now we would rather discuss what this tool can be used to do. 
 
+Other Information
+-----------------
 
 .. <DIAGRAM OF FLOW>
 
-.. SpyDrNet supports netlists written in EDIF (Electronic Design Interchange Format). Support is comming soon for structural VHDL, Verilog, VQM (Verilog Quartus Mapping File), generic serialized objects (JSON, XML, YAML). Right now, SpyDrNet is blind to device and vendor and will do with a netlist only exactly what you tell it to do. Support is comming soon for Xilinx and Intel FPGAs are thier respective devices and archtectures.
+.. SpyDrNet supports netlists written in EDIF (Electronic Design Interchange Format). Support is comming soon for structural VHDL, Verilog, VQM (Verilog Quartus Mapping File), generic serialized objects (JSON, XML, YAML). Right now, SpyDrNet is blind to device and vendor and will do with a netlist only exactly what you tell it to do. Support is comming soon for Xilinx and Intel FPGAs and thier respective devices and archtectures.
 
 .. The IR is organized into eight different object types: Environment, Library, Definition, Port, Pin, Cable, Wire, and Instance. Pin is subclassed into InnerPin and OuterPin. InnerPins belong to a Port and represent the inside connection point for a Pin on a Port of a Definition. OuterPins belong to an Instance and represent the outside connection point for a Pin on an Instance of a Definition. Figure 
-
-.. What specifically can I do with SpyDrNet that I can't do with any other tool?
-
-.. Applications (reliability)
 
 
 SpyDrNet is part of a rising ecosystem of free and open source software (FOSS) for FPGA developement. Think MyHDL, pyEDA, Yosys, L-graph, ABC, BLIF, RapidWright, RapidSmith, RapidSmith2, JHDL, BYU EDIF Tools, VQM, Project X-ray
