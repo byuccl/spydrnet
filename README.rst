@@ -16,8 +16,6 @@ SpyDrNet can be used to create netlists from scratch. Because it is a low-level 
 
 Several example netlists are included with the package to introduce the framework, its features, and functionality. To list and load these netlists, modify the following example: 
 
-.. code:: python
-
     >>> import spydrnet as sdn
     >>> sdn.example_netlist_names
     ['4bitadder', '8051', ... , 'zpu4']
@@ -25,35 +23,25 @@ Several example netlists are included with the package to introduce the framewor
 
 **Parsing a Netlist**
 
-.. code:: python
-
     >>> netlist = sdn.parse('<netlist_filename>.edf')
 
 **View Data Associated with any Netlist Element**
-
-.. code:: python
 
    >>> netlist.data
    {'EDIF.identifier': 'Z4bitadder', 'EDIF.original_identifier': 'adder', ... }
 
 **List Libraries in a Netlist**
 
-.. code:: python
-
     >>> list(x['EDIF.identifier'] for x in netlist.libraries)
     ['VIRTEX', 'UNILIB', 'work']
 
 **List Definitions in a Library**
-
-.. code:: python
 
     >>> library = netlist.libraries[2]
     >>> list(x['EDIF.identifier'] for x in library.definitions)
 
 
 **List Ports, Cables, and Instances in a Definition**
-
-.. code:: python
 
     >>> definition = library.definitions[0]
     >>> list(x['EDIF.identifier'] for x in definitions.ports)
@@ -66,8 +54,6 @@ Several example netlists are included with the package to introduce the framewor
 **Compose a Netlist**
 
 This example exports a netlist into an EDIF formatted netlist file by the given name.
-
-.. code:: python
 
    >>> sdn.compose('<filename>.edf', netlist)
 

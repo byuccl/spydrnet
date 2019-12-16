@@ -12,10 +12,11 @@ Welcome to SpyDrNet!
    :maxdepth: 2
 
    introduction
+   element_data
    intermediate_representation
-   hierarchical_references
    api_specification
    SpyDrNet
+   developer/index
    license
    credits
 

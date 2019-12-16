@@ -3,15 +3,53 @@
 Introduction
 ============
 
-Welcome tp SpyDrNet, a tool that will help you analyze and transform netlists. Please note that SpyDrNet is currently in a pre-alpha testing and some features, detailed in this guide, may not be fully implemented. Those features that are implimented, may not be bug free. Use at your own risk. 
+.. currentmodule:: spydrnet
 
-SpyDrNet is developed and maintained by the `Configurable Computing Lab`_ of `Brigham Young University`_. This tool is related to the `BYU EDIF Tools`_ and is considered to be the next generation tool for FPGA netlist analysis and tranformation.
+Welcome to SpyDrNet, a tool that will help you analyze and transform 
+`netlists <https://en.wikipedia.org/wiki/Netlist>`_. SpyDrNet is developed and maintained by the 
+`Configurable Computing Lab`_ of `Brigham Young University`_. This tool is related to the `BYU EDIF Tools`_ and is 
+considered to be the next generation tool for FPGA netlist analysis and transformation.
 
 .. _Configurable Computing Lab: https://ccl.ee.byu.edu/
 .. _Brigham Young University: https://www.byu.edu/
 .. _BYU EDIF Tools: http://reliability.ee.byu.edu/edif/
 
-What makes SpyDrNet different is its intermediate representation of netlists (IR) and its ability to interact with other powerful tools. Netlists are represented as a relational data stucture. In the representation, every netlist element (library, definition, port, pin, instance, cable, and wire) is stored in a Netlist object. Relationships between elements are preserved with pointers, and some additional pointers and helper objects are maintained to improve performance and usablility. A Design object within a Netlist holds basic information about about the netlist including the top-level module, the target FPGA chip, and any other information associated with a design that utilized the netlist.  The Netlist object hold information on how elements connect to each other and the hierarchy within the netlist. More detail on the IR is provided in sec:ir_.
+SpyDrNet Getting Started
+------------------------
+
+SpyDrNet can be installed one of several simple ways, see `README.rst` for details.
+
+**Loading SpyDrNet**
+
+To load spydrnet, import it into a Python interactive interpreter or code::
+
+    >>> import spydrnet as sdn
+    >>>
+    
+At this point, SpyDrNet features and functionality are accessible via ``sdn.<function/feature>``. The abbreviation of 
+``sdn`` is used thoroughout code examples to reference the ``spydrnet`` package. 
+
+**Intermediate Representation Basics**
+
+SpyDrNet's intermediate representation of netlists (IR) makes it different than other EDA netlist tools. The IR is 
+structured to house netlists in a generic way while allowing for format specific constructs to be preserved.
+
+:class:`Element`
+    Most IR classes inherit from this Python class. Objects of this class are referred to as a netlist elements. A netlist
+    element contains a dictionary for storing data specific to itself. This is accomplished using Python get/set item 
+    functions, (see :ref:`sec:element-data`).
+
+:class:`Netlist`
+    This class of Python objects is the netlist element with the highest level of organization (a whole netlist). It 
+    contains an ordered collection of libraries and any data associated with the netlist as a whole.
+   
+:class:`Library`
+    This netlist element contains an order collection of cell or module definitions associated with a library.
+    
+:class:`Definition`
+    hello world.
+   
+More detail on the IR is provided in :ref:`sec:ir`.
 
 .. SpyDrNet is currently in active development. Functionality is limited, but some of the goals the authors would like to accomplish are:
 
