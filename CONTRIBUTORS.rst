@@ -16,7 +16,7 @@ Persons
 ^^^^^^^
 
 - Andrew M. Keller <andrewmkeller@byu.edu>
-- Dallin Skouson <skousond@gmail.com>
+- Dallin Skouson <skousond@byu.edu>
 - Michael Bjerregaard <michael.bjerregaard14@gmail.com>
 - Dr. Michael Wirthlin <wirthlin@byu.edu>
 - Dr. Jeffery Goeders <jgoeders@byu.edu>

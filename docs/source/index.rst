@@ -13,9 +13,7 @@ Welcome to SpyDrNet!
 
    introduction
    element_data
-   intermediate_representation
    api_specification
-   SpyDrNet
    developer/index
    license
    credits
