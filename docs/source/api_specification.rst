@@ -43,8 +43,8 @@ Version 1.0
     :members:
     :undoc-members:
 
-The following three variables are variables from which the above variables inherit. They are included here for completeness of
-documenataion and can be used if you need but if the above types will suffice it may be simpler to use them.
+The following three classes are the classes from which the above elements inherit. They are included here for completeness of
+documenataion and can be used if needed. if the above types will suffice it may be simpler to use them.
 
 .. autoclass:: Pin
     :members:

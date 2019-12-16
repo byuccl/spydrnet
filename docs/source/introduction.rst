@@ -56,7 +56,7 @@ Netlists flow through SpyDrNet in a three step process (see :numref:`fig:flow`).
    
 **Parsing a netlist**
 
-Normally, one will not create a digital design from scratch, and this is not the main propose of this tool. The normal way of getting a netlist into the tool is to use a parser. Spydrnet already comes will multiple parsers (currently Spydrnet only comes with a EDIF parser in the pre-alpha build). To parse a file, use Spydrnet.parse(pathToNetlist, netlistFormat). The path to the netlist can be either an absolute path or a relative path. For example, if the file fourBitCounter.edf is in the same directory as the python file, one can use design = Spydrnet.parse(fourBitCounter.edf, EDIF). One is not limited to the parsers provided, it is possible to use the Spydrnet API to write a parser for unsupported formats, but that is not covered in this guide. 
+Normally, one will not create a digital design from scratch, and this is not the main propose of this tool. The normal way of getting a netlist into the tool is to use a parser. Spydrnet already comes will multiple parsers (currently Spydrnet only comes with a EDIF parser in the pre-alpha build). To parse a file, use Spydrnet.parse(pathToNetlist, netlistFormat). The path to the netlist can be either an absolute path or a relative path. For example, if the file fourBitCounter.edf is in the same directory as the python file, one can use design = Spydrnet.parse(fourBitCounter.edf, EDIF). One is not limited to the parsers provided, it is possible to use the Spydrnet API to write a parser for unsupported formats, but that is not covered in this guide. Please check the developer documentation 
 
 **Composing a netlist**
 
@@ -80,8 +80,7 @@ Intermediate Representation:
 The Name of the Tool
 --------------------
 
-SpyDrNet's name comes from the language it is written in, the things it can do with with netlists, and the clever creatures in nature that do something similar. Spiders create beautiful and intricate webs using strands of silk. The strands are like nets and the connection points between strands are like components. Spiders move around their web and change it like SpyDrNet moves around a netlist and transforms it. The "Spy" in SpyDrNet ties into its ability to peer into a netlist for analysis. The "py" refers to the Python language that SpyDrNet is implemented in. The "Dr" references doctoring or tranforming netlists and it also references the research that supports the tool. The "Net" refers to a netlist, the thing this tool is meant to work on. Too much fun is had in the name, but what really matters is what the tool can do.
-
+Spiders are masters at spinning webs. These webs often created like nets are stronger than steel when stretched and much more elastic. SpyDrNet aims to give end users the ability to pass these traits on to their netlists by enabling reliablity and other applications through generic analysis and transformations on netlist. Of course this is just scratching the surface of the ways in which this name is applicable to the tool. Finding these fun meanings is (as it is said in academia) left as an exercise to the curious reader. For now we would rather discuss what this tool can be used to do. 
 
 
 .. <DIAGRAM OF FLOW>
