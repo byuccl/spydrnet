@@ -131,15 +131,14 @@ class Comparer:
         instances_orig_identifier = self.get_identifier(instances_orig)
         instances_composer_identifier = self.get_identifier(instances_composer)
         assert instances_orig_identifier == instances_composer_identifier, \
-            f"Instances do not have the same identifier, orig \"{instances_orig_identifier}\" " \
-            f"composer \"{instances_composer_identifier}\""
+            "Instances do not have the same identifier, orig \"{}\" " \
+            "composer \"{}\"".format(instances_orig_identifier, instances_composer_identifier)
 
         instances_orig_original_identifier = self.get_original_identifier(instances_orig)
         instances_composer_original_identifier = self.get_original_identifier(instances_composer)
         assert instances_orig_original_identifier == instances_composer_original_identifier, \
-            f"Instances do not have the same original identifier, orig " \
-            f"\"{instances_orig_original_identifier}\" composer " \
-            f"\"{instances_composer_original_identifier}\""
+            "Instances do not have the same original identifier, orig " \
+            "\"{}\" composer \"{}\"".format(instances_orig_original_identifier, instances_composer_original_identifier)
 
         assert self.get_identifier(instances_orig.reference) == self.get_identifier(instances_composer.reference) and \
             self.get_identifier(instances_orig.reference.library) == \
