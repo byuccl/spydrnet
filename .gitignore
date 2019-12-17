@@ -105,3 +105,7 @@ venv.bak/
 spydrnet/**/*.c
 
 spydrnet/VERSION
+
+# pycharm files
+.idea/
+*.iml
