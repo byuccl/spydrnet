@@ -1,0 +1,316 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Introduction &mdash; SpyDrNet 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Element Data" href="element_data.html" />
+    <link rel="prev" title="Welcome to SpyDrNet!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> SpyDrNet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#spydrnet-getting-started">SpyDrNet Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#aracnid-etymology">Aracnid Etymology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#other-information">Other Information</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="element_data.html">Element Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_specification.html">API Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SpyDrNet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Introduction</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/introduction.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="introduction">
+<span id="id1"></span><h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>Welcome to SpyDrNet, a tool that will help you analyze and transform
+<a class="reference external" href="https://en.wikipedia.org/wiki/Netlist">netlists</a>. SpyDrNet is developed and maintained by the
+<a class="reference external" href="https://ccl.ee.byu.edu/">Configurable Computing Lab</a> of <a class="reference external" href="https://www.byu.edu/">Brigham Young University</a>. This tool is related to the <a class="reference external" href="http://reliability.ee.byu.edu/edif/">BYU EDIF Tools</a> and is
+considered to be the next generation tool for FPGA netlist analysis and transformation.</p>
+<div class="section" id="spydrnet-getting-started">
+<h2>SpyDrNet Getting Started<a class="headerlink" href="#spydrnet-getting-started" title="Permalink to this headline">¶</a></h2>
+<p><strong>Installation</strong></p>
+<p>This package will be available on Python Package Index shortly. Once it is, the stable release of SpyDrNet can be installed using <code class="docutils literal notranslate"><span class="pre">pip</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">spydrnet</span>
+</pre></div>
+</div>
+<p>To install from PyPI with all optional dependicies use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">spydrnet</span><span class="p">[</span><span class="nb">all</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>SpyDrNet can also be installed from a source archive:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">spydrnet</span><span class="o">-</span><span class="mf">1.0</span><span class="o">.</span><span class="mf">0.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+</pre></div>
+</div>
+<p>Or a built distribution:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">spydrnet</span><span class="o">-</span><span class="mf">1.0</span><span class="o">.</span><span class="mi">0</span><span class="o">-</span><span class="n">py3</span><span class="o">-</span><span class="n">none</span><span class="o">-</span><span class="nb">any</span><span class="o">.</span><span class="n">whl</span>
+</pre></div>
+</div>
+<p>If a development environment is desired, the project can be installed in editable mode from the project directory:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span>
+</pre></div>
+</div>
+<p><strong>Tool Flow</strong></p>
+<p>Netlists flow through SpyDrNet in a three step process (see <a class="reference internal" href="#fig-flow"><span class="std std-numref">Fig. 1</span></a>). First, they are parsed by a <em>parser</em> into an intermediate representation (IR). Second, their IR is analyzed and transformed. Finally, their IR is composed by a <em>composer</em> back into a netlist format that a 3rd-party tool can use. This flow is inspired by <a class="reference external" href="http://www.aosabook.org/en/llvm.html">LLVM</a> and <a class="reference external" href="https://pandoc.org/">Pandoc</a>. LLVM has a similar flow for compiling computer programs and Pandoc has a similar flow for converting document formats. Using this flow, SpyDrNet is designed to be able to work on any netlist.</p>
+<div class="figure align-center" id="id2">
+<span id="fig-flow"></span><img alt="SpyDrNet Flow" src="_images/flow.png" />
+<p class="caption"><span class="caption-number">Fig. 1 </span><span class="caption-text">Flow</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</div>
+<p>SpyDrNet can be used to create a netlist from scratch. Thus, the API can be used to implement a parser and composer for arbitrary formats.</p>
+<p><em>Parsing a netlist</em></p>
+<p>SpyDrNet currently includes a parser for EDIF:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">netlist</span> <span class="o">=</span> <span class="n">sdn</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;&lt;netlist_filename&gt;.edf&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><em>Composing a netlist</em></p>
+<p>SpyDrNet currently includes a composer for EDIF:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sdn</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span><span class="s1">&#39;&lt;filename&gt;.edf&#39;</span><span class="p">,</span> <span class="n">netlist</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Loading SpyDrNet</strong></p>
+<p>To load <code class="docutils literal notranslate"><span class="pre">spydrnet</span></code>, import it into a Python interactive interpreter or code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">spydrnet</span> <span class="k">as</span> <span class="nn">sdn</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>At this point, SpyDrNet features and functionality are accessible via <code class="docutils literal notranslate"><span class="pre">sdn.&lt;function/feature&gt;</span></code>. The abbreviation of
+<code class="docutils literal notranslate"><span class="pre">sdn</span></code> is used throughout code examples to reference the <code class="docutils literal notranslate"><span class="pre">spydrnet</span></code> package.</p>
+<p><strong>Intermediate Representation Basics</strong></p>
+<p>Digital designs for FPGAs are represented as netlists, a list of components and connections. Netlists come from various vendors in many different formats. SpyDrNet allows you to look at and alter a netlist in a language inspecific way. SpyDrNet parses a netlist into an intermediate represention (IR) that is designed to be easily traversed and effortlessly manipulated. SpyDrNet aims to provide the tools you need to accomplish the netlist analysis and transformation tasks you have in mind without having to reinvent the wheel. <a class="reference internal" href="#fig-ir"><span class="std std-numref">Fig. 2</span></a> shows a summary of the SpyDrNet intermediate representation (IR).</p>
+<div class="figure align-center" id="id3">
+<span id="fig-ir"></span><img alt="SpyDrNet Intermediate Representation" src="_images/IR.png" />
+<p class="caption"><span class="caption-number">Fig. 2 </span><span class="caption-text">Intermediate Representaion</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</div>
+<p>SpyDrNet’s intermediate representation of netlists (IR) is what sets it apart for other EDA tools. The IR is structured to house netlists in a generic way while allowing for format specific constructs to be preserved.</p>
+<dl class="simple">
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">Element</span></code></dt><dd><p>Most IR classes inherit from this Python class. Objects of this class are referred to as a netlist elements. A netlist
+element contains a dictionary for storing data specific to itself. This is accomplished using Python get/set item
+functions, (see <a class="reference internal" href="element_data.html#sec-element-data"><span class="std std-ref">Element Data</span></a>).</p>
+</dd>
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">Netlist</span></code></dt><dd><p>This class of Python objects is the netlist element with the highest level of organization (a whole netlist). It
+contains an ordered collection of libraries and any data associated with the netlist as a whole.</p>
+</dd>
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">Library</span></code></dt><dd><p>This netlist element contains an ordered collection of cell or module definitions associated with a library.</p>
+</dd>
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">Definition</span></code></dt><dd><p>A definition outlines the contents of each component that can be instantiated elsewhere in the design. It holds information that is pertinant to all instances of itself including subcomponents ports and connections</p>
+</dd>
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">Instance</span></code></dt><dd><p>This element holds pointers to the definition which it instances, and contains its own set of pins to be connected to within its parent definition.</p>
+</dd>
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">Bundle</span></code></dt><dd><p>The Bundle class is a parent class of Ports and Cables because each can be thought of as an array. This class defines the structure that helps us properly represent array objects in netlists including the width, direction (to or downto) and starting index. As a parent class this class is not directly instantiated in netlist.</p>
+</dd>
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">Port</span></code></dt><dd><p>The Port element inherits from Bundles and can be thought of as containing the information on how a Definition connects the outside world to the elements it contains.</p>
+</dd>
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">Cable</span></code></dt><dd><p>Cables are bundles of connectors between components within a definition. They connect ports to their destination pins</p>
+</dd>
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">Pin</span></code></dt><dd><p>The pin class is also a parent class, inherited from by the inner pin and outer pin objects. Unlike the Element and Bundle objects, Pins are useful because they can hide some of the implementation details of the underlying inner pins and outer pins.</p>
+</dd>
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">InnerPin</span></code></dt><dd><p>These pins are collected in Ports and are contained on the inside of the definitions. There is one set of inner pins per definition but they could refer to several sets of OuterPins</p>
+</dd>
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">OuterPin</span></code></dt><dd><p>These pins are collected on instances. They let us distinguish between connections to multiple instances of a single definition. These objects remove the need to carefuly track hierarcy while navegating a netlist.</p>
+</dd>
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">Wire</span></code></dt><dd><p>Wires are grouped inside cables and are elements that help hold connection information between single pins on instances within a definition and within it’s ports.</p>
+</dd>
+</dl>
+<p>More detail on the IR is provided in <a class="reference internal" href="api_specification.html#sec-api-spec"><span class="std std-ref">API Specification</span></a>.</p>
+</div>
+<div class="section" id="aracnid-etymology">
+<h2>Aracnid Etymology<a class="headerlink" href="#aracnid-etymology" title="Permalink to this headline">¶</a></h2>
+<p>Spiders are masters at spinning webs. These webs often created like nets are stronger than steel when stretched and much more elastic. SpyDrNet aims to give end users the ability to pass these traits on to their netlists by enabling reliability and other applications through generic analysis and transformations on netlist. Of course this is just scratching the surface of the ways in which this name is applicable to the tool. Finding these fun meanings is (as it is said in academia) left as an exercise to the curious reader. For now we would rather discuss what this tool can be used to do.</p>
+</div>
+<div class="section" id="other-information">
+<h2>Other Information<a class="headerlink" href="#other-information" title="Permalink to this headline">¶</a></h2>
+<p>SpyDrNet is part of a rising ecosystem of free and open source software (FOSS) for FPGA development. Consider MyHDL, pyEDA, Yosys, L-graph, ABC, BLIF, RapidWright, RapidSmith, RapidSmith2, JHDL, BYU EDIF Tools, VQM, and Project X-ray.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="element_data.html" class="btn btn-neutral float-right" title="Element Data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to SpyDrNet!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, BYU Configurable Computing Lab
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
