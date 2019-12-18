@@ -395,53 +395,35 @@ class ComposeEdif:
         self._output_.write(")")
         self._lisp_depth_ -= 1
 
-    def _output_property_(self, key, value):
-        # TODO this only handles string properties for now
-        self._lisp_increment_()
-        self._output_.write("property ")
-        self._output_.write(key)
-        self._output_.write(" ")
-        self._lisp_increment_()
-        self._output_.write('string "')
-        self._output_.write(value)
-        self._output_.write('"')
-        self._lisp_decrement_()
-        self._lisp_decrement_()
-        self._new_line_()
-
     def _output_property_(self, prop):
         # TODO this only handles string properties for now
         self._lisp_increment_()
-        test = list(prop.items())
-        # key, value, test = prop.items()
         self._output_.write("property ")
-        if len(test) > 2:
+        if 'original_identifier' in prop:
             self._lisp_increment_()
             self._output_.write("rename ")
-            self._output_.write(test[0][1])
+            self._output_.write(prop['identifier'])
             self._output_.write(' "')
-            self._output_.write(test[1][1])
+            self._output_.write(prop['original_identifier'])
             self._output_.write('"')
             self._lisp_decrement_()
-            value = test[2]
         else:
-            key = test[0]
-            value = test[1]
-            self._output_.write(key[1])
+            self._output_.write(prop['identifier'])
+        value = prop['value']
         self._output_.write(" ")
         self._lisp_increment_()
-        if isinstance(value[1], str):
+        if isinstance(value, str):
             self._output_.write('string "')
-            self._output_.write(value[1])
+            self._output_.write(value)
             self._output_.write('"')
-        elif isinstance(value[1], bool):
-            self._output_.write('boolean')
+        elif isinstance(value, bool):
+            self._output_.write('boolean ')
             self._lisp_increment_()
-            self._output_.write(str(value[1]))
+            self._output_.write(str(value))
             self._lisp_decrement_()
         else:
             self._output_.write('integer ')
-            self._output_.write(str(value[1]))
+            self._output_.write(str(value))
         self._lisp_decrement_()
         self._lisp_decrement_()
         self._new_line_()
