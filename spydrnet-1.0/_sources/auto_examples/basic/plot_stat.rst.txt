@@ -1,0 +1,306 @@
+.. note::
+    :class: sphx-glr-download-link-note
+
+    Click :ref:`here <sphx_glr_download_auto_examples_basic_plot_stat.py>` to download the full example code
+.. rst-class:: sphx-glr-example-title
+
+.. _sphx_glr_auto_examples_basic_plot_stat.py:
+
+
+=====================================
+Traversal and Statistics of a Netlist
+=====================================
+
+Traverse a netlist and collect statistics on the netlist.
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+    Netlist stats
+    Top instance: fourBitCounter
+    2 libraies detected
+    Library name: hdi_primitives
+             9 definitions detected
+            Definition name: BUFG
+                     Defintion used 0 times
+                     2 ports detected
+                            Port name: O
+                                    Port length: 1
+                            Port name: I
+                                    Port length: 1
+                     0 children detected
+                     0 cables detected
+            Definition name: IBUF
+                     Defintion used 0 times
+                     2 ports detected
+                            Port name: O
+                                    Port length: 1
+                            Port name: I
+                                    Port length: 1
+                     0 children detected
+                     0 cables detected
+            Definition name: LUT1
+                     Defintion used 0 times
+                     2 ports detected
+                            Port name: O
+                                    Port length: 1
+                            Port name: I0
+                                    Port length: 1
+                     0 children detected
+                     0 cables detected
+            Definition name: LUT3
+                     Defintion used 0 times
+                     4 ports detected
+                            Port name: O
+                                    Port length: 1
+                            Port name: I0
+                                    Port length: 1
+                            Port name: I1
+                                    Port length: 1
+                            Port name: I2
+                                    Port length: 1
+                     0 children detected
+                     0 cables detected
+            Definition name: LUT4
+                     Defintion used 0 times
+                     5 ports detected
+                            Port name: O
+                                    Port length: 1
+                            Port name: I0
+                                    Port length: 1
+                            Port name: I1
+                                    Port length: 1
+                            Port name: I2
+                                    Port length: 1
+                            Port name: I3
+                                    Port length: 1
+                     0 children detected
+                     0 cables detected
+            Definition name: LUT5
+                     Defintion used 0 times
+                     6 ports detected
+                            Port name: O
+                                    Port length: 1
+                            Port name: I0
+                                    Port length: 1
+                            Port name: I1
+                                    Port length: 1
+                            Port name: I2
+                                    Port length: 1
+                            Port name: I3
+                                    Port length: 1
+                            Port name: I4
+                                    Port length: 1
+                     0 children detected
+                     0 cables detected
+            Definition name: OBUF
+                     Defintion used 0 times
+                     2 ports detected
+                            Port name: O
+                                    Port length: 1
+                            Port name: I
+                                    Port length: 1
+                     0 children detected
+                     0 cables detected
+            Definition name: FDCE
+                     Defintion used 0 times
+                     5 ports detected
+                            Port name: Q
+                                    Port length: 1
+                            Port name: C
+                                    Port length: 1
+                            Port name: CE
+                                    Port length: 1
+                            Port name: CLR
+                                    Port length: 1
+                            Port name: D
+                                    Port length: 1
+                     0 children detected
+                     0 cables detected
+            Definition name: INV
+                     Defintion used 0 times
+                     2 ports detected
+                            Port name: I
+                                    Port length: 1
+                            Port name: O
+                                    Port length: 1
+                     0 children detected
+                     0 cables detected
+    Library name: work
+             1 definitions detected
+            Definition name: fourBitCounter
+                     Defintion used 17 times
+                     5 ports detected
+                            Port name: clk
+                                    Port length: 1
+                            Port name: enable
+                                    Port length: 1
+                            Port name: inc_dec
+                                    Port length: 1
+                            Port name: rst
+                                    Port length: 1
+                            Port name: out
+                                    Port length: 4
+                     17 children detected
+                            Child name: clk_IBUF_BUFG_inst
+                                    Referenced Definition: BUFG
+                            Child name: clk_IBUF_inst
+                                    Referenced Definition: IBUF
+                            Child name: enable_IBUF_inst
+                                    Referenced Definition: IBUF
+                            Child name: inc_dec_IBUF_inst
+                                    Referenced Definition: IBUF
+                            Child name: out_0__i_1
+                                    Referenced Definition: LUT1
+                            Child name: out_1__i_1
+                                    Referenced Definition: LUT3
+                            Child name: out_2__i_1
+                                    Referenced Definition: LUT4
+                            Child name: out_3__i_1
+                                    Referenced Definition: LUT5
+                            Child name: out_OBUF_0__inst
+                                    Referenced Definition: OBUF
+                            Child name: out_OBUF_1__inst
+                                    Referenced Definition: OBUF
+                            Child name: out_OBUF_2__inst
+                                    Referenced Definition: OBUF
+                            Child name: out_OBUF_3__inst
+                                    Referenced Definition: OBUF
+                            Child name: out_reg_0_
+                                    Referenced Definition: FDCE
+                            Child name: out_reg_1_
+                                    Referenced Definition: FDCE
+                            Child name: out_reg_2_
+                                    Referenced Definition: FDCE
+                            Child name: out_reg_3_
+                                    Referenced Definition: FDCE
+                            Child name: rst_IBUF_inst
+                                    Referenced Definition: IBUF
+                     21 cables detected
+                            Cable Name clk
+                                    Number of wires: 1
+                            Cable Name clk_IBUF
+                                    Number of wires: 1
+                            Cable Name clk_IBUF_BUFG
+                                    Number of wires: 1
+                            Cable Name enable
+                                    Number of wires: 1
+                            Cable Name enable_IBUF
+                                    Number of wires: 1
+                            Cable Name inc_dec
+                                    Number of wires: 1
+                            Cable Name inc_dec_IBUF
+                                    Number of wires: 1
+                            Cable Name out_0_
+                                    Number of wires: 1
+                            Cable Name out_0__i_1_n_0
+                                    Number of wires: 1
+                            Cable Name out_1_
+                                    Number of wires: 1
+                            Cable Name out_1__i_1_n_0
+                                    Number of wires: 1
+                            Cable Name out_2_
+                                    Number of wires: 1
+                            Cable Name out_2__i_1_n_0
+                                    Number of wires: 1
+                            Cable Name out_3_
+                                    Number of wires: 1
+                            Cable Name out_3__i_1_n_0
+                                    Number of wires: 1
+                            Cable Name out_OBUF_0_
+                                    Number of wires: 1
+                            Cable Name out_OBUF_1_
+                                    Number of wires: 1
+                            Cable Name out_OBUF_2_
+                                    Number of wires: 1
+                            Cable Name out_OBUF_3_
+                                    Number of wires: 1
+                            Cable Name rst
+                                    Number of wires: 1
+                            Cable Name rst_IBUF
+                                    Number of wires: 1
+
+
+
+
+
+
+|
+
+
+.. code-block:: default
+
+
+
+    import spydrnet as sdn
+
+
+    ir = sdn.load_example_netlist_by_name("fourBitCounter")
+
+    print("Netlist stats")
+    print("Top instance:", ir.top_instance['EDIF.identifier'])
+    print(str(len(ir.libraries)) + " libraies detected")
+    for library in ir.libraries:
+        print("Library name:", library['EDIF.identifier'])
+        print("\t", str(len(library.definitions)), "definitions detected")
+        for definition in library.definitions:
+            print("\tDefinition name:", definition['EDIF.identifier'])
+            print("\t\t", "Defintion used", str(len(definition.children)), "times")
+            print("\t\t", str(len(definition.ports)), "ports detected")
+            for port in definition.ports:
+                print("\t\t\tPort name:", port['EDIF.identifier'])
+                if port.direction is 0:
+                    print("\t\t\t\tPort Direction: UNDEFINED")
+                if port.direction is 1:
+                    print("\t\t\t\tPort Direction: INOUT")
+                if port.direction is 1:
+                    print("\t\t\t\tPort Direction: IN")
+                if port.direction is 1:
+                    print("\t\t\t\tPort Direction: OUT")
+                print("\t\t\t\tPort length:", str(len(port.pins)))
+            print("\t\t", str(len(definition.children)), "children detected")
+            for child in definition.children:
+                print("\t\t\tChild name:", child['EDIF.identifier'])
+                print("\t\t\t\tReferenced Definition:", child.reference['EDIF.identifier'])
+            print("\t\t", str(len(definition.cables)), "cables detected")
+            for cable in definition.cables:
+                print("\t\t\tCable Name", cable['EDIF.identifier'])
+                print("\t\t\t\tNumber of wires:", len(cable.wires))
+
+.. rst-class:: sphx-glr-timing
+
+   **Total running time of the script:** ( 0 minutes  0.020 seconds)
+
+
+.. _sphx_glr_download_auto_examples_basic_plot_stat.py:
+
+
+.. only :: html
+
+ .. container:: sphx-glr-footer
+    :class: sphx-glr-footer-example
+
+
+
+  .. container:: sphx-glr-download
+
+     :download:`Download Python source code: plot_stat.py <plot_stat.py>`
+
+
+
+  .. container:: sphx-glr-download
+
+     :download:`Download Jupyter notebook: plot_stat.ipynb <plot_stat.ipynb>`
+
+
+.. only:: html
+
+ .. rst-class:: sphx-glr-signature
+
+    `Gallery generated by Sphinx-Gallery <https://sphinx-gallery.github.io>`_
