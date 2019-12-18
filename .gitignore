@@ -109,3 +109,6 @@ spydrnet/VERSION
 # pycharm files
 .idea/
 *.iml
+
+# temp folder for failed tests
+temp/
