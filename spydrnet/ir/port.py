@@ -65,7 +65,7 @@ class Port(Bundle):
                     self._direction = direction
                     break
         else:
-            raise TypeError(f"Type {type(value)} cannot be assigned to direction")
+            raise TypeError("Type {} cannot be assigned to direction".format(type(value)))
 
     @property
     def pins(self):
