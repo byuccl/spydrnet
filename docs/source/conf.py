@@ -54,6 +54,7 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
+    'sphinx_gallery.gen_gallery',
 ]
 
 # generate autosummary pages
@@ -194,5 +195,11 @@ epub_title = project
 # A list of files that should not be packed into the epub file.
 epub_exclude_files = ['search.html']
 
+# -- Options for Sphinx-Gallery ----------------------------------------------
+
+sphinx_gallery_conf = {
+     'examples_dirs': os.path.join('..', '..', 'examples'),   # path to your example scripts
+     'gallery_dirs': 'auto_examples',  # path to where to save gallery generated output
+}
 
 # -- Extension configuration -------------------------------------------------
