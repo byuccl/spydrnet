@@ -112,3 +112,6 @@ spydrnet/VERSION
 
 # temp folder for failed tests
 temp/
+
+# auto_examples_folder
+docs/source/auto_examples/

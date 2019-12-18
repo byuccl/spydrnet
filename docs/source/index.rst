@@ -17,6 +17,7 @@ Welcome to SpyDrNet!
    developer/index
    license
    credits
+   auto_examples/index
 
 Indices and tables
 ==================
