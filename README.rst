@@ -124,7 +124,7 @@ Special thanks is given to `NetworkX <https://networkx.github.io/>`_ - "a python
 License
 -------
 
-Released under the 3-clause BSD license (see `LICENSE.txt`)::
+Released under the 3-clause BSD license (see `LICENSE`)::
 
    Copyright (C) 2019, Brigham Young University
    All rights reserved.

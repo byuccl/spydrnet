@@ -49,7 +49,6 @@ if __name__ == "__main__":
         description=release.description,
         keywords=release.keywords,
         long_description=long_description,
-        long_description_content_type="text/markdown",
         license=release.license,
         platforms=release.platforms,
         url=release.url,
