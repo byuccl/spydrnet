@@ -1,12 +1,13 @@
 License
 =======
-SpyDrNet is distributed with the BSD 3-Clause License.
+SpyDrNet is distributed with the `BSD 3-clause license <https://choosealicense.com/licenses/bsd-3-clause/>`_.
 
 ::
 
-   Copyright (C) 2014-2019; Brigham Young University; Department of Electrical
-   and Computer Engineering; Configurable Computing Lab; NSF Center for Space,
-   High-Performance, and Resilient Computing (SHREC); SpyDrNet Developers
+   Copyright (C) 2016-2019, SpyDrNet Developers
+   Andrew Keller <andrewmkeller@byu.edu>
+   Dallin Skouson <dallinskouson@byu.edu>
+   Michael Wirthlin <wirthlin@byu.edu>
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without
