@@ -19,7 +19,7 @@ maintainer_email = "spydrnet-discuss@googlegroups.com"
 url = 'https://byuccl.github.io/spydrnet'
 project_urls = {
     "Bug Tracker": "https://github.com/byuccl/spydrnet/issues",
-    "Documentation": "https://byuccl.github.io/spydrnet/documentation/stable",
+    "Documentation": "https://byuccl.github.io/spydrnet/docs/stable",
     "Source Code": "https://github.com/byuccl/spydrnet",
 }
 platforms = ['Linux', 'Mac OSX', 'Windows', 'Unix']
