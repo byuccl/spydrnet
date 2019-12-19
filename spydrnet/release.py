@@ -12,7 +12,7 @@ dev = False
 description = "Python package for analyzing and transforming netlists"
 license = 'BSD'
 authors = {'Keller': ('Andrew Keller', 'andrewmkeller@byu.edu'),
-           'Skouson': ('Dallin Skouson', 'skousond@gmail.com'),
+           'Skouson': ('Dallin Skouson', 'dallinskouson@byu.edu'),
            'Wirthlin': ('Michael Wirthlin', 'wirthlin@byu.edu')}
 maintainer = "SpyDrNet Developers"
 maintainer_email = "spydrnet-discuss@googlegroups.com"
@@ -24,9 +24,10 @@ project_urls = {
 }
 platforms = ['Linux', 'Mac OSX', 'Windows', 'Unix']
 keywords = ['Netlist', 'Analysis', 'Transformation',
-            'netlist', 'fpga', 'primitives', 'module', 'port',]
+            'netlist', 'FPGA', 'primitives', 'module', 
+            'port', 'EDIF', 'Digital', 'Hardware',]
 classifiers = [
-            "Development Status :: 2 - Pre-Alpha",
+            "Development Status :: 5 - Production/Stable",
             "Intended Audience :: Developers",
             "Intended Audience :: Education",
             "Intended Audience :: Science/Research",

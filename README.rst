@@ -124,9 +124,7 @@ Special thanks is given to `NetworkX <https://networkx.github.io/>`_ - "a python
 License
 -------
 
-Released under the 3-Clause BSD license (see `LICENSE.txt`)::
+Released under the 3-clause BSD license (see `LICENSE.txt`)::
 
-   Copyright (C) 2016-2019, SpyDrNet Developers
-   Andrew Keller <andrewmkeller@byu.edu>
-   Dallin Skouson <dallinskouson@byu.edu>
-   Michael Wirthlin <wirthlin@byu.edu>
+   Copyright (C) 2019, Brigham Young University
+   All rights reserved.

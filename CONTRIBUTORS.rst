@@ -1,7 +1,7 @@
 Credits
 =======
 
-SpyDrNet was first conceived by Andrew Keller, Dr. Michael Wirthlin, and a few
+SpyDrNet was first conceived by Andrew Keller, Dr. Michael Wirthlin, and some
 additional students. They envisioned a next generation tool for the analysis and
 transformation of netlists in many different formats for many different 
 applications. The tool follows its predecessor, BYU EDIF Tools. Many persons,
