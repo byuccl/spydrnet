@@ -77,7 +77,7 @@ Additional examples are available in the documentation for netlist creation, ana
 How to install
 --------------
 
-This package will be available on Python Package Index shortly. Once it is, the stable release of SpyDrNet can be installed using ``pip``::
+The stable release of SpyDrNet can be installed using ``pip``::
 
     > pip install spydrnet
 
@@ -105,7 +105,7 @@ Bugs can be reported on the `issues page <https://github.com/byuccl/spydrnet/iss
 A Brief History
 ---------------
 
-The `BYU Configurable Computing Lab <https://ccl.ee.byu.edu/>`_ actively maintains the `BYU EDIF Tools <http://reliability.ee.byu.edu/edif/>`_ - a Java API for creating, modifying, or analyzing EDIF netlists. These tools are tied to the EDIF netlist format and provide JEDIF tools capable of flattening a circuit (by removing hierarchical organization) and applying fault-tolerance techniques such as `triple modular redundancy (TMR) <https://en.wikipedia.org/wiki/Triple_modular_redundancy>`_. Development of SpyDrNet began back in 2016 with the idea of creating an accessible, format independent, tool for netlist analysis and transformation. The underlying intermediate data structure is designed preserve proper netlist reliationship as a generic netlist while allowing for the preservation of format specific constructs. A language agnostic prototype was developed and this prototype soon became useful in the lab for netlist analysis and reliability transformation studies. A more mature (though still having room for growth) tool is presented here. 
+The `BYU Configurable Computing Lab <https://ccl.ee.byu.edu/>`_ actively maintains the `BYU EDIF Tools <http://reliability.ee.byu.edu/edif/>`_ - a Java API for creating, modifying, or analyzing EDIF netlists. These tools are tied to the EDIF netlist format and provide JEDIF tools capable of flattening a circuit (by removing hierarchical organization) and applying fault-tolerance techniques such as `triple modular redundancy (TMR) <https://en.wikipedia.org/wiki/Triple_modular_redundancy>`_. Development of SpyDrNet began back in 2016 with the idea of creating an accessible, format independent, tool for netlist analysis and transformation. The underlying intermediate data structure is designed preserve proper netlist relationship as a generic netlist while allowing for the preservation of format specific constructs. A language agnostic prototype was developed and this prototype soon became useful in the lab for netlist analysis and reliability transformation studies. A more mature (though still having room for growth) tool is presented here. 
 
 Design Notes
 ------------
@@ -119,12 +119,12 @@ If this tool has been useful to you, or have new feature ideas that you would li
 Special Thanks
 --------------
 
-Special thanks is given to `NetworkX <https://networkx.github.io/>`_ - "a python package for the creation, manipulation, and study of the structure, dynamics and functions of complex networks."  This mature project has been used as a template for much of SpyDrNet's documentation and code structure. It also has saved enormous effort in heavy graph analysis as a robust and complete library used to analize the relationships between circuit nodes.
+Special thanks is given to `NetworkX <https://networkx.github.io/>`_ - "a python package for the creation, manipulation, and study of the structure, dynamics and functions of complex networks."  This mature project has been used as a template for much of SpyDrNet's documentation and code structure. It also has saved enormous effort in heavy graph analysis as a robust and complete library used to analyze the relationships between circuit nodes.
 
 License
 -------
 
-Released under the 3-clause BSD license (see `LICENSE`)::
+Released under the BSD 3-Clause License (see `LICENSE`)::
 
    Copyright (C) 2019, Brigham Young University
    All rights reserved.
