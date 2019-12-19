@@ -23,8 +23,8 @@ sys.path.insert(0,os.path.abspath('../..'))
 # -- Project information -----------------------------------------------------
 
 project = 'SpyDrNet'
-copyright = '2019, BYU Configurable Computing Lab'
-author = 'BYU Configurable Computing Lab'
+copyright = '2019, SpyDrNet Developers'
+author = 'Andrew Keller, Dallin Skouson, Michael Wirthlin'
 
 # The short X.Y version
 version = '1.0'
