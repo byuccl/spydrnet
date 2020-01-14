@@ -150,8 +150,6 @@ def _deregister(dictionary_to_deregister, method):
     assert(current_netlist in dictionary_to_deregister)
     assert(method in dictionary_to_deregister[current_netlist])
     dictionary_to_deregister[current_netlist].remove(method)
-    
-
 
 def deregister_cable_add_wire(method):
     _deregister(_container_cable_add_wire, method)
