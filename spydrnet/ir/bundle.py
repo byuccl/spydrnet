@@ -1,6 +1,5 @@
 from spydrnet.ir.element import Element
 
-
 class Bundle(Element):
     """
     parent class of ports and cables. Since both of these objects represent arrays of objects they both inherit from
