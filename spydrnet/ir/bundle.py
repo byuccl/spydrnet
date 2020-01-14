@@ -75,7 +75,7 @@ class Bundle(Element):
         is_scalar to True
         """
         _items = self._items()
-        if _items and len(_items) > 0 and value is True:
+        if _items and len(_items) > 1 and value is True:
             raise RuntimeError("Cannot set is_scalar to True on a multi-item bundle")
         else:
             self._is_scalar = value
@@ -101,7 +101,7 @@ class Bundle(Element):
         false.
         """
         _items = self._items()
-        if _items and len(_items) > 0 and value is False:
+        if _items and len(_items) > 1 and value is False:
             raise RuntimeError("Cannot set is_array to False on a multi-item bundle")
         else:
             self._is_scalar = not value
