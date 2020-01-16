@@ -5,7 +5,7 @@ from spydrnet.ir.instance import Instance
 from spydrnet.ir.outerpin import OuterPin
 from spydrnet.ir.views.listview import ListView
 from spydrnet.ir.views.setview import SetView
-from global_state import global_callback
+from spydrnet.global_state import global_callback
 
 
 class Definition(Element):

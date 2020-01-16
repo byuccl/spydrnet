@@ -1,6 +1,7 @@
 from spydrnet.ir.element import Element
 from spydrnet.ir.definition import Definition
 from spydrnet.ir.views.listview import ListView
+from spydrnet.global_state import global_callback
 
 
 class Library(Element):
@@ -69,6 +70,7 @@ class Library(Element):
         """
         assert definition.library is not self, "Definition already included in library"
         assert definition.library is None, "Definition already belongs to a different library"
+        global_callback._call_library_add_definition(self, definition, position = position)
         if position is not None:
             self._definitions.insert(position, definition)
         else:
@@ -111,9 +113,9 @@ class Library(Element):
                 self._remove_definition(definition)
         self._definitions = included_definitions
 
-    @staticmethod
-    def _remove_definition(definition):
+    def _remove_definition(self, definition):
         """
         internal function to dissociate a definition from the library
         """
+        global_callback._call_library_remove_definition(self, definition)
         definition._library = None

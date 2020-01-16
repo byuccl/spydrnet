@@ -1,7 +1,7 @@
 from spydrnet.ir.bundle import Bundle
 from spydrnet.ir.wire import Wire
 from spydrnet.ir.views.listview import ListView
-from global_state import global_callback
+from spydrnet.global_state import global_callback
 
 
 class Cable(Bundle):

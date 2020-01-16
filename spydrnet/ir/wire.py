@@ -1,5 +1,6 @@
 from spydrnet.ir.outerpin import OuterPin
 from spydrnet.ir.views.listview import ListView
+from spydrnet.global_state import global_callback
 
 
 class Wire:
@@ -26,6 +27,7 @@ class Wire:
         self._pins = value_list
 
     def connect_pin(self, pin, position=None):
+        global_callback._call_wire_connect_pin(self, pin, position = position)
         if isinstance(pin, OuterPin):
             instance = pin.instance
             inner_pin = pin.inner_pin
@@ -88,6 +90,6 @@ class Wire:
             self._disconnect_pin(pin)
         self._pins = list(x for x in self._pins if x not in excluded_pins)
 
-    @staticmethod
-    def _disconnect_pin(pin):
+    def _disconnect_pin(self, pin):
+        global_callback._call_wire_disconnect_pin(self, pin)
         pin._wire = None
