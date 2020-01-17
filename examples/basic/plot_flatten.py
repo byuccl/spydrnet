@@ -8,6 +8,7 @@ Remove hierarchy from a netlist.
 
 import spydrnet as sdn
 
+
 # Check if given instance is a black box
 # instance: std.Instance to check
 # Return True if instance is a black box
@@ -59,8 +60,9 @@ def clean_up(instance):
         pin.wire.disconnect_pin(pin)
     instance.parent.remove_child(instance)
 
+
 # Recursively flatten a given definition
-def flatten_definition(definition):
+def flatten_definition(definition, top):
     children = definition.children.copy()
     created = list()
     for child in children:
@@ -68,10 +70,13 @@ def flatten_definition(definition):
         child_reference = child.reference
         grandchildren = child_reference.children.copy()
         map = dict()
+        if top and not is_black_box(child):
+            print("Need to move cells from", child['EDIF.identifier'], "that references", child.reference['EDIF.identifier'])
         for grandchild in grandchildren:
             if not is_black_box(grandchild):
-                print("Need to also flatten", child['EDIF.identifier'], "that references", child.reference['EDIF.identifier'])
-                leaf_grandchildren.extend(flatten_definition(child.reference))
+                print("Need to move cells from", grandchild['EDIF.identifier'], "that references", grandchild.reference['EDIF.identifier'])
+                leaf_grandchildren.extend(flatten_definition(child.reference, False))
+                print("Finished moving cells from", grandchild['EDIF.identifier'])
             else:
                 leaf_grandchildren.append(grandchild)
         for grandchild in leaf_grandchildren:
@@ -79,7 +84,6 @@ def flatten_definition(definition):
             copy_instance(child, grandchild, new_instance)
             map[grandchild] = new_instance
             created.append(new_instance)
-        # TODO Copy Cables from within grandchild definition to flatten or reuse cables connecting to instance
         cables = child_reference.cables.copy()
         for cable in cables:
             name_cable = True
@@ -97,14 +101,16 @@ def flatten_definition(definition):
                 use_outside_cable(new_cable, cable, child)
         if not is_black_box(child):
             clean_up(child)
-    print("Finished flattening", definition['EDIF.identifier'])
+        if top and not is_black_box(child):
+            print("Finished moving cells from", child['EDIF.identifier'])
     return created
 
 
 
 example_name1 = "unique_challenge"
 example_name2 = "three_layer_hierarchy"
-example_name = example_name1
+example_name3 = "unique_different_modules"
+example_name = example_name3
 ir = sdn.load_example_netlist_by_name(example_name)
 #ir = sdn.load_example_netlist_by_name("unique_challenge")
 top_def = ir.top_instance.reference
@@ -115,7 +121,7 @@ for child in top_def.children:
             if inner_child['EDIF.identifier'] == 'b0':
                 test = inner_child.reference
         break
-flatten_definition(top_def)
+flatten_definition(top_def, True)
 
 from spydrnet.composers.edif.composer import ComposeEdif
 compose = ComposeEdif()
