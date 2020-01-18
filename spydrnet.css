@@ -95,6 +95,7 @@ font-size:19px;
 margin-left:15px;
 margin-right:12px;
 margin-bottom:12px;
+margin-top: 12px;
 width:573px;
 }
 
@@ -116,6 +117,7 @@ width:560px;
 	background-color:#E7EDF8;
 	width:600px;
 	clear:both;
+	padding-top: 12px;
 }
 
 #header
