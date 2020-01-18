@@ -1,6 +1,7 @@
 from spydrnet.ir.bundle import Bundle
 from spydrnet.ir.wire import Wire
 from spydrnet.ir.views.listview import ListView
+from spydrnet.global_state import global_callback
 
 
 class Cable(Bundle):
@@ -59,6 +60,7 @@ class Cable(Bundle):
         position - (int, default None) the index in the wires list at which to add the wire.'''
         assert wire.cable is not self, "Wire already belongs to this cable"
         assert wire.cable is None, "Wire already belongs to a different cable"
+        global_callback._call_cable_add_wire(self, wire, position=position)
         if position is not None:
             self._wires.insert(position, wire)
         else:
@@ -92,7 +94,7 @@ class Cable(Bundle):
             self._remove_wire(wire)
         self._wires = list(x for x in self._wires if x not in excluded_wires)
 
-    @staticmethod
-    def _remove_wire(wire):
+    def _remove_wire(self, wire):
         '''internal wire removal call. dissociates the wire from the cable'''
+        global_callback._call_cable_remove_wire(self, wire)
         wire._cable = None

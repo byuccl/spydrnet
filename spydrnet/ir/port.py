@@ -2,6 +2,7 @@ from spydrnet.ir.bundle import Bundle
 from spydrnet.ir.innerpin import InnerPin
 from spydrnet.ir.outerpin import OuterPin
 from spydrnet.ir.views.listview import ListView
+from spydrnet.global_state import global_callback
 
 from enum import Enum
 
@@ -127,6 +128,7 @@ class Port(Bundle):
         assert isinstance(pin, InnerPin)
         assert pin.port is not self, "Pin already belongs to this port"
         assert pin.port is None, "Pin already belongs to another port"
+        global_callback._call_port_add_pin(self, pin, position = position)
         if position is None:
             self._pins.append(pin)
         else:
@@ -168,6 +170,7 @@ class Port(Bundle):
 
     def _remove_pin(self, pin):
         '''internal pin removal function. disconnects the wires from the pin and remvoes all the pins reference to other pins.'''
+        global_callback._call_port_remove_pin(self, pin)
         if self.definition:
             for reference in self.definition.references:
                 outer_pin = reference.pins[pin]

@@ -5,6 +5,7 @@ from spydrnet.ir.instance import Instance
 from spydrnet.ir.outerpin import OuterPin
 from spydrnet.ir.views.listview import ListView
 from spydrnet.ir.views.setview import SetView
+from spydrnet.global_state import global_callback
 
 
 class Definition(Element):
@@ -139,6 +140,7 @@ class Definition(Element):
         """
         assert port.definition is not self, "Port already included in definition"
         assert port.definition is None, "Port already belongs to a different definition"
+        global_callback._call_definition_add_port(self, port, position = position)
         if position is not None:
             self._ports.insert(position, port)
         else:
@@ -189,6 +191,7 @@ class Definition(Element):
 
         port - (Port) the port to remove from the definition
         """
+        global_callback._call_definition_remove_port(self, port)
         for reference in self.references:
             for pin in port.pins:
                 outer_pin = reference.pins[pin]
@@ -221,6 +224,7 @@ class Definition(Element):
         """
         assert instance.parent is not self, "Instance already included in definition"
         assert instance.parent is None, "Instance already belongs to a different definition"
+        global_callback._call_definition_add_child(self, instance, position = position)
         if position is not None:
             self._children.insert(position, instance)
         else:
@@ -262,11 +266,11 @@ class Definition(Element):
                 self._remove_child(child)
         self._children = included_children
 
-    @staticmethod
-    def _remove_child(child):
+    def _remove_child(self, child):
         """
         internal function for dissociating a child instance from the definition.
         """
+        global_callback._call_definition_remove_child(self, child)
         child._parent = None
 
     def create_cable(self):
@@ -290,6 +294,7 @@ class Definition(Element):
         """
         assert cable.definition is not self, "Cable already included in definition"
         assert cable.definition is None, "Cable already belongs to a different definition"
+        global_callback._call_definition_add_cable(self, cable, position = position)
         if position is not None:
             self._cables.insert(position, cable)
         else:
@@ -331,9 +336,9 @@ class Definition(Element):
                 self._remove_cable(cable)
         self._cables = included_cables
 
-    @staticmethod
-    def _remove_cable(cable):
+    def _remove_cable(self, cable):
         """
         dissociate the cable from this definition. This function is internal and should not be called.
         """
+        global_callback._call_definition_remove_cable(self, cable)
         cable._definition = None

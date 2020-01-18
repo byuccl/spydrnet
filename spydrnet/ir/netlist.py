@@ -2,6 +2,7 @@ from spydrnet.ir.element import Element
 from spydrnet.ir.library import Library
 from spydrnet.ir.instance import Instance
 from spydrnet.ir.views.listview import ListView
+from spydrnet.global_state import global_callback
 
 
 class Netlist(Element):
@@ -62,6 +63,7 @@ class Netlist(Element):
         instance - (Instance) the instance to set as the top instance.
         """
         assert instance is None or isinstance(instance, Instance), "Must specify an instance"
+        global_callback._call_netlist_top_instance(self, instance)
         # TODO: should We have a DRC that makes sure the instance is of a definition contained in netlist? I think no
         #  but I am open to hear other points of veiw.
         self._top_instance = instance
@@ -87,6 +89,7 @@ class Netlist(Element):
         """
         assert library not in self._libraries, "Library already included in netlist"
         assert library.netlist is None, "Library already belongs to a different netlist"
+        global_callback._call_netlist_add_library(self, library, position = position)
         if position is not None:
             self._libraries.insert(position, library)
         else:
@@ -128,9 +131,9 @@ class Netlist(Element):
                 self._remove_library(library)
         self._libraries = included_libraries
 
-    @staticmethod
-    def _remove_library(library):
+    def _remove_library(self, library):
         """
         internal function which will separate a particular libraries binding from the netlist
         """
+        global_callback._call_netlist_remove_library(self, library)
         library._netlist = None
