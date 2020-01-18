@@ -10,4 +10,3 @@ from spydrnet.ir.outerpin import OuterPin
 from spydrnet.ir.bundle import Bundle
 from spydrnet.ir.pin import Pin
 from spydrnet.ir.element import Element
-from spydrnet.ir.callback_manager import AddCallback, RemoveCallback, RenameCallback

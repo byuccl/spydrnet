@@ -1,4 +1,4 @@
-from global_netlist import current_netlist
+from spydrnet.global_state.global_netlist import current_netlist
 
 _container_cable_add_wire = dict()
 _container_cable_remove_wire = dict()
@@ -21,62 +21,63 @@ _container_wire_disconnect_pin = dict()
 
 #look into inlining this function perhaps
 def _call(dictionary_to_call, *args, **kwargs):
-    for func in dictionary_to_call[current_netlist]:
-        func(args, kwargs)
+    if current_netlist in dictionary_to_call:
+        for func in dictionary_to_call[current_netlist]:
+            func(*args, **kwargs)
 
 def _call_cable_add_wire(*args, **kwargs):
-    _call(_container_cable_add_wire, args, kwargs)
+    _call(_container_cable_add_wire, *args, **kwargs)
 
 def _call_cable_remove_wire(*args, **kwargs):
-    _call(_container_cable_remove_wire, args, kwargs)
+    _call(_container_cable_remove_wire, *args, **kwargs)
 
 def _call_definition_add_port(*args, **kwargs):
-    _call(_container_definition_add_port, args, kwargs)
+    _call(_container_definition_add_port, *args, **kwargs)
 
 def _call_definition_remove_port(*args, **kwargs):
-    _call(_container_definition_remove_port, args, kwargs)
+    _call(_container_definition_remove_port, *args, **kwargs)
 
 def _call_definition_add_child(*args, **kwargs):
-    _call(_container_definition_add_child, args, kwargs)
+    _call(_container_definition_add_child, *args, **kwargs)
 
 def _call_definition_remove_child(*args, **kwargs):
-    _call(_container_definition_remove_child, args, kwargs)
+    _call(_container_definition_remove_child, *args, **kwargs)
 
 def _call_definition_add_cable(*args, **kwargs):
-    _call(_container_definition_add_cable, args, kwargs)
+    _call(_container_definition_add_cable, *args, **kwargs)
 
 def _call_definition_remove_cable(*args, **kwargs):
-    _call(_container_definition_remove_cable, args, kwargs)
+    _call(_container_definition_remove_cable, *args, **kwargs)
 
 def _call_instance_reference(*args, **kwargs):
-    _call(_container_instance_reference, args, kwargs)
+    _call(_container_instance_reference, *args, **kwargs)
 
 def _call_library_add_definition(*args, **kwargs):
-    _call(_container_library_add_definition, args, kwargs)
+    _call(_container_library_add_definition, *args, **kwargs)
 
 def _call_library_remove_definition(*args, **kwargs):
-    _call(_container_library_remove_definition, args, kwargs)
+    _call(_container_library_remove_definition, *args, **kwargs)
 
 def _call_netlist_top_instance(*args, **kwargs):
-    _call(_container_netlist_top_instance, args, kwargs)
+    _call(_container_netlist_top_instance, *args, **kwargs)
 
 def _call_netlist_add_library(*args, **kwargs):
-    _call(_container_netlist_add_library, args, kwargs)
+    _call(_container_netlist_add_library, *args, **kwargs)
 
 def _call_netlist_remove_library(*args, **kwargs):
-    _call(_container_netlist_remove_library, args, kwargs)
+    _call(_container_netlist_remove_library, *args, **kwargs)
 
 def _call_port_add_pin(*args, **kwargs):
-    _call(_container_port_add_pin, args, kwargs)
+    _call(_container_port_add_pin, *args, **kwargs)
 
 def _call_port_remove_pin(*args, **kwargs):
-    _call(_container_port_remove_pin, args, kwargs)
+    _call(_container_port_remove_pin, *args, **kwargs)
 
 def _call_wire_connect_pin(*args, **kwargs):
-    _call(_container_wire_connect_pin, args, kwargs)
+    _call(_container_wire_connect_pin, *args, **kwargs)
 
 def _call_wire_disconnect_pin(*args, **kwargs):
-    _call(_container_wire_disconnect_pin, args, kwargs)
+    _call(_container_wire_disconnect_pin, *args, **kwargs)
 
 '''register functions'''
 
