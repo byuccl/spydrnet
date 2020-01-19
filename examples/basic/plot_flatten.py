@@ -164,10 +164,11 @@ ir = sdn.load_example_netlist_by_name(example_name)
 top_def = ir.top_instance.reference
 flatten_definition(top_def, top_definition=True)
 
-from spydrnet.composers.edif.composer import ComposeEdif
-compose = ComposeEdif()
-file_name = "C:\\hold\\" + example_name + '_flat.edf'
-compose.run(ir, file_name)
+import tempfile
+import os
+with tempfile.TemporaryDirectory() as td:
+    file_name = example_name + '_flat.edf'
+    sdn.compose(os.path.join(td, file_name), ir)
 
 # sdn.composers.compose("test.edf", ir)
 print()

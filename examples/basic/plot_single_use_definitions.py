@@ -171,7 +171,8 @@ for definition in reverse_topological_order:
     make_definition_copies(definition, definition_count[definition] - 1)
 clean(top_def)
 
-from spydrnet.composers.edif.composer import ComposeEdif
-compose = ComposeEdif()
-file_name = "C:\\hold\\" + example_name + '_unique.edf'
-compose.run(ir, file_name)
+import tempfile
+import os
+with tempfile.TemporaryDirectory() as td:
+    file_name = example_name + '_unique.edf'
+    sdn.compose(os.path.join(td, file_name), ir)
