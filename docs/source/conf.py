@@ -18,7 +18,7 @@
 import os
 import sys
 sys.path.insert(0,os.path.abspath('../..'))
-
+import spydrnet as sdn
 
 # -- Project information -----------------------------------------------------
 
@@ -26,10 +26,10 @@ project = 'SpyDrNet'
 copyright = '2019, Brigham Young Universitiy'
 author = 'BYU Configurable Computing Lab'
 
-# The short X.Y version
-version = '1.0'
 # The full version, including alpha/beta/rc tags
-release = '1.0.0'
+release = sdn.__version__
+# The short X.Y version
+version = release[:release.rindex('.')]
 
 numfig = True
 

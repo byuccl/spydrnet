@@ -148,4 +148,18 @@ Spiders are masters at spinning webs. These webs often created like nets are str
 Other Information
 -----------------
 
-SpyDrNet is part of a rising ecosystem of free and open source software (FOSS) for FPGA development. Consider MyHDL, pyEDA, Yosys, L-graph, ABC, BLIF, RapidWright, RapidSmith, RapidSmith2, JHDL, BYU EDIF Tools, VQM, and Project X-ray.
+SpyDrNet is part of a rising ecosystem of free and open source software (FOSS) for FPGA development. Consider `MyHDL`_, `PyEDA`_, `Yosys`_, `LiveHD`_, `ABC`_, `BLIF`_, `RapidWright`_, `RapidSmith`_, `RapidSmith2`_, `JHDL`_, `BYU EDIF Tools`_, VQM, and `Project X-ray`_.
+
+.. _MyHDL: http://www.myhdl.org/
+.. _PyEDA: https://pyeda.readthedocs.io/en/latest/
+.. _Yosys: http://www.clifford.at/yosys/
+.. _LiveHD: https://github.com/masc-ucsc/livehd
+.. _ABC: https://people.eecs.berkeley.edu/~alanmi/abc/
+.. _BLIF: http://www.cs.columbia.edu/~cs6861/sis/blif/index.html
+.. _RapidWright: https://www.rapidwright.io/
+.. _RapidSmith: http://rapidsmith.sourceforge.net/
+.. _RapidSmith2: https://github.com/byuccl/RapidSmith2
+.. _JHDL: http://www.jhdl.org/
+.. _BYU EDIF Tools: http://reliability.ee.byu.edu/edif/
+.. _Project X-ray: https://github.com/SymbiFlow/prjxray
+

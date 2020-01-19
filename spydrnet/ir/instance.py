@@ -1,6 +1,7 @@
 from spydrnet.ir.element import Element
 from spydrnet.ir.outerpin import OuterPin
 from spydrnet.ir.views.outerpinsview import OuterPinsView
+from spydrnet.global_state import global_callback
 
 
 class Instance(Element):
@@ -39,6 +40,7 @@ class Instance(Element):
         ----------
 
         value - (Definition) the definition that this instance should be an instance of'''
+        global_callback._call_instance_reference(self, value)
         if value is None:
             for pin in self.pins:
                 wire = pin.wire

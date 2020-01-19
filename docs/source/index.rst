@@ -1,7 +1,7 @@
 Welcome to SpyDrNet!
 ====================
 
-.. figure:: figures/Spider.*
+.. figure:: figures/spydrnet_logo.*
 
 .. only:: html
 
