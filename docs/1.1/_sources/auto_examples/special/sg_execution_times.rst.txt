@@ -1,0 +1,12 @@
+
+:orphan:
+
+.. _sphx_glr_auto_examples_special_sg_execution_times:
+
+Computation times
+=================
+**00:00.290** total execution time for **auto_examples_special** files:
+
++---------------------------------------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr_auto_examples_special_plot_connectivity_graph.py` (``plot_connectivity_graph.py``) | 00:00.290 | 0.0 MB |
++---------------------------------------------------------------------------------------------------+-----------+--------+

@@ -1,0 +1,298 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>spydrnet.ir.cable &mdash; SpyDrNet 1.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> SpyDrNet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../element_data.html">Element Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_specification.html">API Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../credits.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SpyDrNet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>spydrnet.ir.cable</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for spydrnet.ir.cable</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">spydrnet.ir.bundle</span> <span class="k">import</span> <span class="n">Bundle</span>
+<span class="kn">from</span> <span class="nn">spydrnet.ir.wire</span> <span class="k">import</span> <span class="n">Wire</span>
+<span class="kn">from</span> <span class="nn">spydrnet.ir.views.listview</span> <span class="k">import</span> <span class="n">ListView</span>
+<span class="kn">from</span> <span class="nn">spydrnet.global_state</span> <span class="k">import</span> <span class="n">global_callback</span>
+
+
+<div class="viewcode-block" id="Cable"><a class="viewcode-back" href="../../../api_specification.html#spydrnet.ir.Cable">[docs]</a><span class="k">class</span> <span class="nc">Cable</span><span class="p">(</span><span class="n">Bundle</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Much like Ports cable extend the bundle class, giving them indexing ability they represent several wires in a collection or bus that are generally related.</span>
+<span class="sd">    This could be thought of much like vector types in VHDL ie std_logic_vector (7 downto 0)&#39;&#39;&#39;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_wires&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;create a cable with no wires and default values for a bundle.&#39;&#39;&#39;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wires</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;overrides the bundle _items function to return wires&#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wires</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">wires</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;get a list of wires that are in this cable&#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">ListView</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wires</span><span class="p">)</span>
+
+    <span class="nd">@wires</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">wires</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;set the wires to a reordered list of wires. This function is to be used for reordering of wires&#39;&#39;&#39;</span>
+        <span class="n">value_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">value_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">value_list</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">value_list</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">value_set</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wires</span><span class="p">)</span> <span class="o">==</span> <span class="n">value_set</span><span class="p">,</span> \
+            <span class="s2">&quot;Set of values does not match, assigment can only be used for reordering, values must be unique&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wires</span> <span class="o">=</span> <span class="n">value_list</span>
+
+<div class="viewcode-block" id="Cable.create_wires"><a class="viewcode-back" href="../../../api_specification.html#spydrnet.ir.Cable.create_wires">[docs]</a>    <span class="k">def</span> <span class="nf">create_wires</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wire_count</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;creates wire_count wires for this cable and adds them to it.</span>
+
+<span class="sd">        parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        wire_count - (int) the number of wires to be added to the cable.&#39;&#39;&#39;</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">wire_count</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">create_wire</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wires</span><span class="p">[</span><span class="o">-</span><span class="n">wire_count</span><span class="p">:]</span></div>
+
+<div class="viewcode-block" id="Cable.create_wire"><a class="viewcode-back" href="../../../api_specification.html#spydrnet.ir.Cable.create_wire">[docs]</a>    <span class="k">def</span> <span class="nf">create_wire</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;creates a wire and adds it to the cable. returns the wire that was created&#39;&#39;&#39;</span>
+        <span class="n">wire</span> <span class="o">=</span> <span class="n">Wire</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_wire</span><span class="p">(</span><span class="n">wire</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">wire</span></div>
+
+<div class="viewcode-block" id="Cable.add_wire"><a class="viewcode-back" href="../../../api_specification.html#spydrnet.ir.Cable.add_wire">[docs]</a>    <span class="k">def</span> <span class="nf">add_wire</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wire</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;adds a wire to the cable at the given position. This wire must not belong to a cable already</span>
+
+<span class="sd">        parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        wire - (Wire) the wire to be added to the cable. This wire must not belong to any other cable.</span>
+
+<span class="sd">        position - (int, default None) the index in the wires list at which to add the wire.&#39;&#39;&#39;</span>
+        <span class="k">assert</span> <span class="n">wire</span><span class="o">.</span><span class="n">cable</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;Wire already belongs to this cable&quot;</span>
+        <span class="k">assert</span> <span class="n">wire</span><span class="o">.</span><span class="n">cable</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Wire already belongs to a different cable&quot;</span>
+        <span class="n">global_callback</span><span class="o">.</span><span class="n">_call_cable_add_wire</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wire</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="n">position</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">position</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_wires</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">wire</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_wires</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wire</span><span class="p">)</span>
+        <span class="n">wire</span><span class="o">.</span><span class="n">_cable</span> <span class="o">=</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Cable.remove_wire"><a class="viewcode-back" href="../../../api_specification.html#spydrnet.ir.Cable.remove_wire">[docs]</a>    <span class="k">def</span> <span class="nf">remove_wire</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wire</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;remove the given wire from the cable and return it. The wire must belong to this cable</span>
+
+<span class="sd">        parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        wire - (Wire) the wire to be removed from the cable.&#39;&#39;&#39;</span>
+        <span class="k">assert</span> <span class="n">wire</span><span class="o">.</span><span class="n">cable</span> <span class="o">==</span> <span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;Wire does not belong to this cable&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_remove_wire</span><span class="p">(</span><span class="n">wire</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wires</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">wire</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Cable.remove_wires_from"><a class="viewcode-back" href="../../../api_specification.html#spydrnet.ir.Cable.remove_wires_from">[docs]</a>    <span class="k">def</span> <span class="nf">remove_wires_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wires</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;remove all wires given from the cable. Each must be a member of this cable.</span>
+
+<span class="sd">        parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        wires - (List of Wire objects) wires to be removed from the cable.&#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wires</span><span class="p">,</span> <span class="nb">set</span><span class="p">):</span>
+            <span class="n">excluded_wires</span> <span class="o">=</span> <span class="n">wires</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">excluded_wires</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">wires</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">cable</span> <span class="o">==</span> <span class="bp">self</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">excluded_wires</span><span class="p">),</span> <span class="s2">&quot;Some wires do not belong to this cable&quot;</span>
+        <span class="k">for</span> <span class="n">wire</span> <span class="ow">in</span> <span class="n">excluded_wires</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_remove_wire</span><span class="p">(</span><span class="n">wire</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wires</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wires</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">excluded_wires</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_remove_wire</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wire</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;internal wire removal call. dissociates the wire from the cable&#39;&#39;&#39;</span>
+        <span class="n">global_callback</span><span class="o">.</span><span class="n">_call_cable_remove_wire</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wire</span><span class="p">)</span>
+        <span class="n">wire</span><span class="o">.</span><span class="n">_cable</span> <span class="o">=</span> <span class="kc">None</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Brigham Young Universitiy
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
