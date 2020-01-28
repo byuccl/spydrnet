@@ -30,6 +30,8 @@ class data_manager(CallbackListener):
         # instance dictionary from instance to dictionary from name to value
         self.ins_dict = dict()
         # call this to register the listeners
+        self.top_namespace = dict()
+
         super.__init__()
     
 
