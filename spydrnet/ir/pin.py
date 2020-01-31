@@ -1,3 +1,4 @@
+
 class Pin:
     '''pin connects to a single wire. This class is extended by InnerPin and OuterPin'''
     __slots__ = ['_wire']

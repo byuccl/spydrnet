@@ -2,6 +2,7 @@ from spydrnet.ir.element import Element
 from spydrnet.ir.definition import Definition
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
+from copy import deepcopy, copy, error
 
 
 class Library(Element):
@@ -119,3 +120,25 @@ class Library(Element):
         """
         global_callback._call_library_remove_definition(self, definition)
         definition._library = None
+
+    def __deepcopy__(self, memo):
+        if self in memo:
+            raise error("the object should not have been copied twice in this pass")
+        c = Library()
+        memo[self] = c
+        c._netlist = None
+        c._data = deepcopy(self._data)
+        c._definitions = deepcopy(self._definitions, memo=memo)
+        for definition in c._definitions:
+            definition._library = c
+            new_references = set()
+            for instance in definition._references:
+                if instance in memo:
+                    new_references.add(memo[instance])
+                else:
+                    new_references.add(instance)
+            definition._references = new_references
+            for instance in definition._children:
+                if instance._reference in memo:
+                    instance._reference = memo[instance._reference]
+        return c

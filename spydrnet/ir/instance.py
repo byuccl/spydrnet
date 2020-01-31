@@ -2,6 +2,7 @@ from spydrnet.ir.element import Element
 from spydrnet.ir.outerpin import OuterPin
 from spydrnet.ir.views.outerpinsview import OuterPinsView
 from spydrnet.global_state import global_callback
+from copy import deepcopy, copy, error
 
 
 class Instance(Element):
@@ -71,3 +72,17 @@ class Instance(Element):
     def pins(self):
         '''get the pins on this instance.'''
         return OuterPinsView(self._pins)
+
+    def __deepcopy__(self, memo):
+        if self in memo:
+            raise error("the object should not have been copied twice in this pass")
+        c = Instance()
+        memo[self] = c
+        c._parent = None
+        for (inner_pin, outer_pin) in self._pins.items():
+            new_outer_pin = deepcopy(outer_pin, memo=memo)
+            new_outer_pin.instance = c
+            c._pins[inner_pin] = new_outer_pin
+        c._reference = self._reference
+        c._data = deepcopy(self._data)
+        return c

@@ -3,6 +3,7 @@ from spydrnet.ir.innerpin import InnerPin
 from spydrnet.ir.outerpin import OuterPin
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
+from copy import deepcopy, copy, error
 
 from enum import Enum
 
@@ -181,3 +182,20 @@ class Port(Bundle):
                 outer_pin._instance = None
                 outer_pin._inner_pin = None
         pin._port = None
+
+    
+    def __deepcopy__(self, memo):
+        if self in memo:
+            raise error("the object should not have been copied twice in this pass")
+        c = Port()
+        memo[self] = c
+        c._direction = deepcopy(self._direction)
+        c._pins = deepcopy(self._pins, memo=memo)
+        c._definition = None
+        c._is_downto = deepcopy(self._is_downto)
+        c._is_scalar = deepcopy(self._is_scalar)
+        c._lower_index = deepcopy(self._lower_index)
+        for p in c._pins:
+            p._port = c
+        c._data = deepcopy(self.data)
+        return c

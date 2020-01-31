@@ -2,6 +2,7 @@ from spydrnet.ir.bundle import Bundle
 from spydrnet.ir.wire import Wire
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
+from copy import deepcopy, copy, error
 
 
 class Cable(Bundle):
@@ -98,3 +99,18 @@ class Cable(Bundle):
         '''internal wire removal call. dissociates the wire from the cable'''
         global_callback._call_cable_remove_wire(self, wire)
         wire._cable = None
+
+    def __deepcopy__(self, memo):
+        if self in memo:
+            raise error("the object should not have been copied twice in this pass")
+        c = Cable()
+        memo[self] = c
+        c._wires = deepcopy(self._wires, memo=memo)
+        for w in c._wires:
+            w._cable = c
+        c._definition = None
+        c._is_downto = deepcopy(self._is_downto)
+        c._is_scalar = deepcopy(self._is_scalar)
+        c._lower_index = deepcopy(self._lower_index)
+        c._data = deepcopy(self._data)
+        return c
