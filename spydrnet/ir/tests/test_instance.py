@@ -116,6 +116,7 @@ class TestInstance(unittest.TestCase):
         pin1 = port.create_pin()
         pin2 = port.create_pin()
         self.instance.reference = definition
+        self.assertTrue(self.instance in definition.references)
         outer_pin1 = self.instance.pins[pin1]
         outer_pin2 = self.instance.pins[pin2]
 
@@ -124,5 +125,25 @@ class TestInstance(unittest.TestCase):
         pin1 = port.create_pin()
         pin2 = port.create_pin()
         self.instance.reference = definition2
+        self.assertTrue(self.instance not in definition.references)
+        self.assertTrue(self.instance in definition2.references)
         self.assertEqual(outer_pin1, self.instance.pins[pin1])
         self.assertEqual(outer_pin2, self.instance.pins[pin2])
+
+    def test_reference_removal(self):
+        definition = sdn.Definition()
+        port = definition.create_port()
+        pin1 = port.create_pin()
+        pin2 = port.create_pin()
+        self.instance.reference = definition
+        self.assertTrue(self.instance in definition.references)
+        outer_pin1 = self.instance.pins[pin1]
+        outer_pin2 = self.instance.pins[pin2]
+        self.assertEqual(outer_pin1.inner_pin, pin1)
+        self.assertEqual(outer_pin2.inner_pin, pin2)
+
+        del self.instance.reference
+        self.assertTrue(self.instance not in definition.references)
+        self.assertIsNone(outer_pin1.inner_pin)
+        self.assertIsNone(outer_pin2.inner_pin)
+
