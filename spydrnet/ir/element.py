@@ -36,6 +36,22 @@ class Element(object):
     @property
     def data(self):
         return DictView(self._data)
+        
+    @property
+    def name(self):
+        return self._data.get(".NAME", None)
+        
+    @name.setter
+    def name(self, value):
+        if value is None and ".NAME" in self:
+            del self[".NAME"]
+        else:
+            self[".NAME"] = value
+
+    @name.deleter
+    def name(self):
+        if ".NAME" in self:
+            del self[".NAME"]
 
     def __setitem__(self, key, value):
         """
