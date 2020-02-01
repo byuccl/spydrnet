@@ -3,7 +3,16 @@
 API Specification
 =================
 
-These API calls can be used in python as follows
+The SpyDrNet API can be used to create, analyze, and transform a netlist. Netlist are represented in memory in an Intermediate Representation. :numref:`fig:ExampleIR` show the representation of a simple circuit in the SpyDrNet Intermediate Representation.
+
+.. _fig:ExampleIR:
+.. figure:: figures/ExampleCircuit.*
+   :align: center
+   :alt: Example Netlist in a SpyDrNet Intermediate Representation
+
+   Example Netlist in the Intermediate Representaion
+
+The API calls documented here can be used in Python as follows:
 
 >>> # create an empty netlist and add an empty library to it
 >>> import spydrnet as sdn
@@ -11,7 +20,7 @@ These API calls can be used in python as follows
 >>> library = netlist.create_library()
 >>>
 
-Similarly if the parser is used the calls can be made in the same way.
+Similarly if the parser is used the calls can be made in the same way:
 
 >>> # parse an edif file in and add an empty library to the netlist.
 >>> import spydrnet as sdn
