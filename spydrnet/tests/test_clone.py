@@ -14,10 +14,24 @@ class TestClone(unittest.TestCase):
 
     def _create_netlist(self):
         netlist = Netlist()
+        lib = netlist.create_library()
+        defin = lib.create_definition()
+        port = defin.create_port()
+        cable = defin.create_cable()
+        instance = defin.create_child()
+        defin2 = lib.create_definition()
+        instance.reference = defin2
+        wire = cable.create_wire()
+        port.create_pins(2)
+        port2 = defin2.create_port()
+        port2.create_pins(1)
+        for pin in port.pins:
+            wire.connect_pin(pin)
+        for pin in instance.pins:
+            wire.connect_pin(pin)
         return netlist
 
-    def _compare_netlists(self, nl1, nl2):
-        pass
+    #we need to use the built in compare functions
 
 
     def test_cable(self):
