@@ -1,4 +1,4 @@
-from global_state import global_callback
+from spydrnet.global_state import global_callback
 
 
 class CallbackListener:

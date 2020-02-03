@@ -1,8 +1,8 @@
 #COPYRIGHT BYUCCL 2020
 
-from spydrnet.callback.callback_manager import CallbackListener
+from spydrnet.callback.callback_listener import CallbackListener
 
-class data_manager(CallbackListener):
+class DataManager(CallbackListener):
     '''
     this class is a plugin using the callback listener to manage a database for name management.
     
@@ -32,7 +32,7 @@ class data_manager(CallbackListener):
         # call this to register the listeners
         self.top_namespace = dict()
 
-        super.__init__()
+        super().__init__()
     
 
     def register_all_listeners(self):

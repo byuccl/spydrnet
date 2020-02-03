@@ -89,7 +89,7 @@ class Netlist(Element):
         """
         assert library not in self._libraries, "Library already included in netlist"
         assert library.netlist is None, "Library already belongs to a different netlist"
-        global_callback._call_netlist_add_library(self, library, position = position)
+        global_callback._call_netlist_add_library(self, library)
         if position is not None:
             self._libraries.insert(position, library)
         else:
