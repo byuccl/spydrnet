@@ -68,13 +68,13 @@ class DataManager(CallbackListener):
     #    pass
 
     def definition_add_port(self, definition, port):
-        self.add_from_dict(self.def_dict, definition, port)
+        self.add_to_dict(self.def_dict, definition, port)
 
     def definition_remove_port(self, definition, port):
         self.remove_from_dict(self.def_dict, definition, port)
 
     def definition_add_child(self, definition, child):
-        self.add_from_dict(self.def_dict, definition, child)
+        self.add_to_dict(self.def_dict, definition, child)
 
     def definition_remove_child(self, definition, child):
         self.remove_from_dict(self.def_dict, definition, child)
@@ -100,20 +100,20 @@ class DataManager(CallbackListener):
 
     def netlist_add_library(self, netlist, library):
         #add the library.edif.identifier to the data structure for netlists
-        if(library.edif.identifier in self.netlistdict):
+        if(library.edif.identifier in self.net_dict):
             raise ValueError("Edif namespace violation while adding Library to Netlist")
         else:
-            self.netlistdict[library.edif.identifier] = library
+            self.net_dict[library.edif.identifier] = library
 
     def netlist_remove_library(self, netlist, library):
         #remove the library.edif.identifier from the data structure for netlists
-        if(library.edif.identifier not in self.netlistdict):
+        if(library.edif.identifier not in self.net_dict):
             raise ValueError("Library not present in given object netlist")
         else:
-            if self.netlistdict[library.edif.identifier] != library:
+            if self.net_dict[library.edif.identifier] != library:
                 raise ValueError("Library not present in given object netlist")
             else:
-                self.netlistdict.pop(library.edif.identifier)
+                self.net_dict.pop(library.edif.identifier)
     #def port_add_pin(self, port, pin):
     #    pass
 

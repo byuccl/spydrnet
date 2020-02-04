@@ -72,6 +72,18 @@ class CallbackListener:
     def wire_disconnect_pin(self, wire, pin):
         raise NotImplementedError
 
+    #dictionary watchers
+    
+    def dictionary_set(self, element, key, value):
+        raise NotImplementedError
+
+    def dictionary_delete(self, element, key, value):
+        raise NotImplementedError
+
+    def dictionary_pop(self, element, key, value):
+        raise NotImplementedError
+
+
     '''
     call the register_ prefixed methods in your register_all_listners_function.
     '''
@@ -129,3 +141,12 @@ class CallbackListener:
 
     def register_wire_disconnect_pin(self):
         global_callback.register_wire_disconnect_pin(self.wire_disconnect_pin)
+
+    def register_dictionary_set(self):
+        global_callback.register_dictionary_set(self.dictionary_set)
+
+    def register_dictionary_delete(self):
+        global_callback.register_dictionary_delete(self.dictionary_delete)
+
+    def register_dictionary_pop(self):
+        global_callback.register_dictionary_pop(self.dictionary_pop)

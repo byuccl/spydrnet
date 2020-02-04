@@ -18,6 +18,10 @@ _container_port_add_pin = dict()
 _container_port_remove_pin = dict()
 _container_wire_connect_pin = dict()
 _container_wire_disconnect_pin = dict()
+#dictionary containers
+_container_dictionary_set = dict()
+_container_dictionary_delete = dict()
+_container_dictionary_pop = dict()
 
 #look into inlining this function perhaps
 def _call(dictionary_to_call, *args, **kwargs):
@@ -78,6 +82,17 @@ def _call_wire_connect_pin(*args, **kwargs):
 
 def _call_wire_disconnect_pin(*args, **kwargs):
     _call(_container_wire_disconnect_pin, *args, **kwargs)
+
+#dictionary functions
+
+def _call_dictionary_set(*args, **kwargs):
+    _call(_container_dictionary_set, *args, **kwargs)
+
+def _call_dictionary_delete(*args, **kwargs):
+    _call(_container_dictionary_delete, *args, **kwargs)
+
+def _call_dictionary_pop(*args, **kwargs):
+    _call(_container_dictionary_pop, *args, **kwargs)
 
 '''register functions'''
 
@@ -144,6 +159,15 @@ def register_wire_connect_pin(method):
 def register_wire_disconnect_pin(method):
     _register(_container_wire_disconnect_pin, method)
 
+def register_dictionary_set(*args, **kwargs):
+    _register(_container_dictionary_set, *args, **kwargs)
+
+def register_dictionary_delete(*args, **kwargs):
+    _register(_container_dictionary_delete, *args, **kwargs)
+
+def register_dictionary_pop(*args, **kwargs):
+    _register(_container_dictionary_pop, *args, **kwargs)
+
 '''deregister functions'''
 
 #look into inlining this function perhaps
@@ -205,3 +229,12 @@ def deregister_wire_connect_pin(method):
 
 def deregister_wire_disconnect_pin(method):
     _deregister(_container_wire_disconnect_pin, method)
+
+def deregister_dictionary_set(*args, **kwargs):
+    _deregister(_container_dictionary_set, *args, **kwargs)
+
+def deregister_dictionary_delete(*args, **kwargs):
+    _deregister(_container_dictionary_delete, *args, **kwargs)
+
+def deregister_dictionary_pop(*args, **kwargs):
+    _deregister(_container_dictionary_pop, *args, **kwargs)
