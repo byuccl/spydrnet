@@ -30,7 +30,32 @@ class TestDataManager(unittest.TestCase):
         lib2 = netlist.create_library()
         lib1['EDIF.identifier'] = "my_lib1"
         lib2['EDIF.identifier'] = "my_lib2"
+        def1 = lib1.create_definition()
+        def1['EDIF.identifier'] = "d1"
+        def2 = lib2.create_definition()
+        def2['EDIF.identifier'] = "d1"
+        def3 = lib1.create_definition()
+        def3['EDIF.identifier'] = "my_lib1"
+        c1 = def1.create_cable()
+        p1 = def1.create_port()
+        i1 = def1.create_child()
+        c2 = def1.create_cable()
+        p2 = def1.create_port()
+        i2 = def1.create_child()
+        c1['EDIF.identifier'] = "1"
+        i1['EDIF.identifier'] = "1"
+        p1['EDIF.identifier'] = "1"
+        c2['EDIF.identifier'] = "2"
+        i2['EDIF.identifier'] = "2"
+        p2['EDIF.identifier'] = "2"
+
         
+
+    def test_dont_track_orphaned(self):
+        lib1 = sdn.Library()
+        lib2 = sdn.Library()
+        lib1['EDIF.identifier'] = "my_lib1"
+        lib2['EDIF.identifier'] = "my_lib1"
 
     @unittest.expectedFailure
     def test_duplicate_library_name(self):
@@ -51,15 +76,42 @@ class TestDataManager(unittest.TestCase):
         def1['EDIF.identifier'] = "my_lib"
         def2['EDIF.identifier'] = "my_lib"
 
-    @unittest.expectedFailure
     def test_duplicate_definition_elements(self):
         def1 = self.gen_definition()
         dm = DataManager()
         port = def1.create_port()
         instance = def1.create_child()
+        cable = def1.create_cable()
         port['EDIF.identifier'] = "my_lib"
         instance['EDIF.identifier'] = "my_lib"
+        cable['EDIF.identifier'] = "my_lib"
 
+    @unittest.expectedFailure
+    def test_duplicate_definition_ports(self):
+        def1 = self.gen_definition()
+        dm = DataManager()
+        port = def1.create_port()
+        port2 = def1.create_port()
+        port['EDIF.identifier'] = "my_lib"
+        port2['EDIF.identifier'] = "my_lib"
+
+    @unittest.expectedFailure
+    def test_duplicate_definition_cables(self):
+        def1 = self.gen_definition()
+        dm = DataManager()
+        cable = def1.create_cable()
+        cable2 = def1.create_cable()
+        cable['EDIF.identifier'] = "my_lib"
+        cable2['EDIF.identifier'] = "my_lib"
+
+    @unittest.expectedFailure
+    def test_duplicate_definition_children(self):
+        def1 = self.gen_definition()
+        dm = DataManager()
+        instance = def1.create_child()
+        instance2 = def1.create_child()
+        instance['EDIF.identifier'] = "my_lib"
+        instance2['EDIF.identifier'] = "my_lib"
 
     '''tests TODO:
     rename an object

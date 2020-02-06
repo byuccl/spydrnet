@@ -27,7 +27,9 @@ class DataManager(CallbackListener):
         # library dictionary from library to dictionary from name to value
         self.lib_dict = dict()
         # definition dictionary from defintion to dictionary from name to value
-        self.def_dict = dict()
+        self.defp_dict = dict()
+        self.defc_dict = dict()
+        self.defi_dict = dict()
         # call this to register the listeners
         super().__init__()
     
@@ -68,22 +70,22 @@ class DataManager(CallbackListener):
     #    pass
 
     def definition_add_port(self, definition, port):
-        self.add_to_dict(self.def_dict, definition, port)
+        self.add_to_dict(self.defp_dict, definition, port)
 
     def definition_remove_port(self, definition, port):
-        self.remove_from_dict(self.def_dict, definition, port)
+        self.remove_from_dict(self.defp_dict, definition, port)
 
     def definition_add_child(self, definition, child):
-        self.add_to_dict(self.def_dict, definition, child)
+        self.add_to_dict(self.defi_dict, definition, child)
 
     def definition_remove_child(self, definition, child):
-        self.remove_from_dict(self.def_dict, definition, child)
+        self.remove_from_dict(self.defi_dict, definition, child)
 
     def definition_add_cable(self, definition, cable):
-        self.add_to_dict(self.def_dict, definition, cable)
+        self.add_to_dict(self.defc_dict, definition, cable)
 
     def definition_remove_cable(self, definition, cable):
-        self.remove_from_dict(self.def_dict, definition, cable)
+        self.remove_from_dict(self.defc_dict, definition, cable)
 
     def instance_reference(self, instance, reference):
         #TODO make this work out the change.
@@ -106,7 +108,7 @@ class DataManager(CallbackListener):
         if isinstance(element, Cable):
             if element.definition is None:
                 return
-            self.dict_set(self.def_dict, element.definition, element, value)
+            self.dict_set(self.defc_dict, element.definition, element, value)
         if isinstance(element, Definition):
             if element.library is None:
                 return
@@ -118,11 +120,11 @@ class DataManager(CallbackListener):
         if isinstance(element, Port):
             if element.definition is None:
                 return
-            self.dict_set(self.def_dict, element.definition, element, value)
+            self.dict_set(self.defp_dict, element.definition, element, value)
         if isinstance(element, Instance):
             if element.parent is None:
                 return
-            self.dict_set(self.def_dict, element.parent, element, value)
+            self.dict_set(self.defi_dict, element.parent, element, value)
 
     def dictionary_pop(self, element, item):
         key = item[0]
@@ -171,15 +173,15 @@ class DataManager(CallbackListener):
 
     def key_remover(self, element, key):
         if isinstance(element, Cable):
-            self.remove_from_dict(self.def_dict, element.definition, element)
+            self.remove_from_dict(self.defc_dict, element.definition, element)
         if isinstance(element, Definition):
             self.remove_from_dict(self.lib_dict, element.library, element)
         if isinstance(element, Library):
             self.remove_from_dict(self.net_dict, element.netlist, element)
         if isinstance(element, Port):
-            self.remove_from_dict(self.def_dict, element.definition, element)
+            self.remove_from_dict(self.defp_dict, element.definition, element)
         if isinstance(element, Instance):
-            self.remove_from_dict(self.def_dict, element.definition, element)
+            self.remove_from_dict(self.defi_dict, element.definition, element)
 
     def remove_from_dict(self, container, parent, child):
         if parent not in container:
