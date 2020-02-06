@@ -1,6 +1,7 @@
 #COPYRIGHT BYUCCL 2020
 
 from spydrnet.callback.callback_listener import CallbackListener
+from spydrnet.ir import Library, Definition, Instance, Port, Cable
 
 class DataManager(CallbackListener):
     '''
@@ -27,11 +28,7 @@ class DataManager(CallbackListener):
         self.lib_dict = dict()
         # definition dictionary from defintion to dictionary from name to value
         self.def_dict = dict()
-        # instance dictionary from instance to dictionary from name to value
-        self.ins_dict = dict()
         # call this to register the listeners
-        self.top_namespace = dict()
-
         super().__init__()
     
 
@@ -55,6 +52,9 @@ class DataManager(CallbackListener):
         #self.register_port_remove_pin()
         #self.register_wire_connect_pin()
         #self.register_wire_disconnect_pin()
+        self.register_dictionary_delete()
+        self.register_dictionary_set()
+        self.register_dictionary_pop()
 
 
     ######################################################
@@ -95,25 +95,59 @@ class DataManager(CallbackListener):
     def library_remove_definition(self, library, definition):
         self.remove_from_dict(self.lib_dict, library, definition)
 
+    def dictionary_delete(self, element, key):
+        if key != 'EDIF.identifier':
+            return
+        self.key_remover(element,key)
+
+    def dictionary_set(self, element, key, value):
+        if key != 'EDIF.identifier':
+            return
+        if isinstance(element, Cable):
+            if element.definition is None:
+                return
+            self.dict_set(self.def_dict, element.definition, element, value)
+        if isinstance(element, Definition):
+            if element.library is None:
+                return
+            self.dict_set(self.lib_dict, element.library, element, value)
+        if isinstance(element, Library):
+            if element.netlist is None:
+                return
+            self.net_dict_set(self.net_dict, element.netlist, element, value)
+        if isinstance(element, Port):
+            if element.definition is None:
+                return
+            self.dict_set(self.def_dict, element.definition, element, value)
+        if isinstance(element, Instance):
+            if element.parent is None:
+                return
+            self.dict_set(self.def_dict, element.parent, element, value)
+
+    def dictionary_pop(self, element, item):
+        key = item[0]
+        if key != 'EDIF.identifier':
+            return
+        self.key_remover(element,key)
+
     #def netlist_top_instance(self, netlist, instance):
     #    pass
 
     def netlist_add_library(self, netlist, library):
-        #add the library.edif.identifier to the data structure for netlists
-        if(library.edif.identifier in self.net_dict):
-            raise ValueError("Edif namespace violation while adding Library to Netlist")
-        else:
-            self.net_dict[library.edif.identifier] = library
+        #add the library["EDIF.identifier"] to the data structure for netlists
+        if "EDIF.identifier" not in library:
+            return
+        self.net_dict_set(self.net_dict, netlist, library, library["EDIF.identifier"])
 
     def netlist_remove_library(self, netlist, library):
-        #remove the library.edif.identifier from the data structure for netlists
-        if(library.edif.identifier not in self.net_dict):
+        #remove the library["EDIF.identifier"] from the data structure for netlists
+        if(library["EDIF.identifier"] not in self.net_dict):
             raise ValueError("Library not present in given object netlist")
         else:
-            if self.net_dict[library.edif.identifier] != library:
+            if self.net_dict[library["EDIF.identifier"]] != library:
                 raise ValueError("Library not present in given object netlist")
             else:
-                self.net_dict.pop(library.edif.identifier)
+                self.net_dict.pop(library["EDIF.identifier"])
     #def port_add_pin(self, port, pin):
     #    pass
 
@@ -131,20 +165,43 @@ class DataManager(CallbackListener):
     #################################################################################
 
     def add_to_dict(self, container, parent, child):
-        if parent in container:
-            if child.edif.identifier in container[parent]:
-               raise ValueError("Edif namespace violation while adding " + child.__class__.__name__ + " to " + parent.__class__.__name__)
-            else:
-                container[parent][child.edif.identifier] = child
-        else:
-            container[parent] = dict()
-            container[parent][child.edif.identifier] = child
+        if "EDIF.identifier" not in child:
+            return
+        self.dict_set(container, parent, child, child["EDIF.identifier"])
+
+    def key_remover(self, element, key):
+        if isinstance(element, Cable):
+            self.remove_from_dict(self.def_dict, element.definition, element)
+        if isinstance(element, Definition):
+            self.remove_from_dict(self.lib_dict, element.library, element)
+        if isinstance(element, Library):
+            self.remove_from_dict(self.net_dict, element.netlist, element)
+        if isinstance(element, Port):
+            self.remove_from_dict(self.def_dict, element.definition, element)
+        if isinstance(element, Instance):
+            self.remove_from_dict(self.def_dict, element.definition, element)
 
     def remove_from_dict(self, container, parent, child):
         if parent not in container:
             raise ValueError("Child object " + child.__class__.__name__ + " not present in given object " + parent.__class__.__name__)
         else:
-            if child.edif.identifier not in container[parent]:
+            if child["EDIF.identifier"] not in container[parent]:
                 raise ValueError("Child object " + child.__class__.__name__ + " not present in given object " + parent.__class__.__name__)
             else:
-                container[parent].pop(child.edif.identifier)
+                container[parent].pop(child["EDIF.identifier"])
+
+    def dict_set(self, container, parent, child, value):
+        if parent in container:
+            if value in container[parent]:
+               raise ValueError("Edif namespace violation while adding " + child.__class__.__name__ + " to " + parent.__class__.__name__)
+            else:
+                container[parent][value] = child
+        else:
+            container[parent] = dict()
+            container[parent][value] = child
+
+    def net_dict_set(self, container, parent, child, value):
+        if(value in self.net_dict):
+            raise ValueError("Edif namespace violation while adding Library to Netlist")
+        else:
+            self.net_dict[value] = child
