@@ -1,3 +1,12 @@
+Version 1.2.0
+-------------
+February 7, 2020
+* Added a .name property that points to element[".NAME"]
+* Added a figure to the API specification
+* Added a EDIF namespace manager using the callback framework
+* Added a references to definitions (pointing to all instances of a definition)
+* Converted several EDIF netlists to verilog for aiding parser converted with Vivado
+
 Version 1.1.0
 -------------
 January 18, 2020

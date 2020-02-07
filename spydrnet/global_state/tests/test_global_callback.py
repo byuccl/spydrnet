@@ -107,3 +107,13 @@ class TestBundle(unittest.TestCase):
 
     def test_wire_disconnect_pin(self):
         self.call_for_each(gc._container_wire_disconnect_pin, gc.register_wire_disconnect_pin, gc._call_wire_disconnect_pin, gc.deregister_wire_disconnect_pin)
+
+    def test_dictionary_delete(self):
+        self.call_for_each(gc._container_dictionary_delete, gc.register_dictionary_delete, gc._call_dictionary_delete, gc.deregister_dictionary_delete)
+
+    def test_dictionary_pop(self):
+        self.call_for_each(gc._container_dictionary_pop, gc.register_dictionary_pop, gc._call_dictionary_pop, gc.deregister_dictionary_pop)
+    
+    def test_dictionary_add(self):
+        self.call_for_each(gc._container_dictionary_set, gc.register_dictionary_set, gc._call_dictionary_set, gc.deregister_dictionary_set)
+        

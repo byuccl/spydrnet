@@ -128,7 +128,7 @@ class Port(Bundle):
         assert isinstance(pin, InnerPin)
         assert pin.port is not self, "Pin already belongs to this port"
         assert pin.port is None, "Pin already belongs to another port"
-        global_callback._call_port_add_pin(self, pin, position = position)
+        global_callback._call_port_add_pin(self, pin)
         if position is None:
             self._pins.append(pin)
         else:
