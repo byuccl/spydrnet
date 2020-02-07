@@ -31,29 +31,21 @@ class DataManager(CallbackListener):
         self.defc_dict = dict()
         self.defi_dict = dict()
         # call this to register the listeners
-        super().__init__()
+        super().__init__() #calls register_all_listeners
     
 
     def register_all_listeners(self):
         '''override the function that registers what listeners are available.'''
-        #self.register_cable_add_wire()
-        #self.register_cable_remove_wire()
         self.register_definition_add_port()
         self.register_definition_remove_port()
         self.register_definition_add_child()
         self.register_definition_remove_child()
         self.register_definition_add_cable()
         self.register_definition_remove_cable()
-        self.register_instance_reference()
         self.register_library_add_definition()
         self.register_library_remove_definition()
-        #self.register_netlist_top_instance()
         self.register_netlist_add_library()
         self.register_netlist_remove_library()
-        #self.register_port_add_pin()
-        #self.register_port_remove_pin()
-        #self.register_wire_connect_pin()
-        #self.register_wire_disconnect_pin()
         self.register_dictionary_delete()
         self.register_dictionary_set()
         self.register_dictionary_pop()
@@ -62,12 +54,6 @@ class DataManager(CallbackListener):
     ######################################################
     #Override functions that listen
     ######################################################
-
-    #def cable_add_wire(self, cable, wire):
-    #    pass
-
-    #def cable_remove_wire(self, cable, wire):
-    #    pass
 
     def definition_add_port(self, definition, port):
         self.add_to_dict(self.defp_dict, definition, port)
@@ -86,10 +72,6 @@ class DataManager(CallbackListener):
 
     def definition_remove_cable(self, definition, cable):
         self.remove_from_dict(self.defc_dict, definition, cable)
-
-    def instance_reference(self, instance, reference):
-        #TODO make this work out the change.
-        pass
 
     def library_add_definition(self, library, definition):
         self.add_to_dict(self.lib_dict, library, definition)
@@ -135,9 +117,6 @@ class DataManager(CallbackListener):
             return
         self.key_remover(element,key)
 
-    #def netlist_top_instance(self, netlist, instance):
-    #    pass
-
     def netlist_add_library(self, netlist, library):
         #add the library["EDIF.identifier"] to the data structure for netlists
         if "EDIF.identifier" not in library:
@@ -150,17 +129,7 @@ class DataManager(CallbackListener):
         #remove the library["EDIF.identifier"] from the data structure for netlists
         assert library["EDIF.identifier"] in self.net_dict and self.net_dict[library["EDIF.identifier"]] == library, "Library not present in given object netlist"
         self.net_dict.pop(library["EDIF.identifier"])
-    #def port_add_pin(self, port, pin):
-    #    pass
 
-    #def port_remove_pin(self, port, pin):
-    #   pass
-
-    #def wire_connect_pin(self, wire, pin):
-    #    pass
-
-    #def wire_disconnect_pin(self, wire, pin):
-    #   pass
 
     #################################################################################
     # Helper functions
