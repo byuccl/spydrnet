@@ -140,7 +140,7 @@ class Definition(Element):
         """
         assert port.definition is not self, "Port already included in definition"
         assert port.definition is None, "Port already belongs to a different definition"
-        global_callback._call_definition_add_port(self, port, position = position)
+        global_callback._call_definition_add_port(self, port)
         if position is not None:
             self._ports.insert(position, port)
         else:
@@ -224,7 +224,7 @@ class Definition(Element):
         """
         assert instance.parent is not self, "Instance already included in definition"
         assert instance.parent is None, "Instance already belongs to a different definition"
-        global_callback._call_definition_add_child(self, instance, position = position)
+        global_callback._call_definition_add_child(self, instance)
         if position is not None:
             self._children.insert(position, instance)
         else:
@@ -294,7 +294,7 @@ class Definition(Element):
         """
         assert cable.definition is not self, "Cable already included in definition"
         assert cable.definition is None, "Cable already belongs to a different definition"
-        global_callback._call_definition_add_cable(self, cable, position = position)
+        global_callback._call_definition_add_cable(self, cable)
         if position is not None:
             self._cables.insert(position, cable)
         else:

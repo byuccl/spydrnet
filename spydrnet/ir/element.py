@@ -1,5 +1,6 @@
 import sys
 from spydrnet.ir.views.dictview import DictView
+from spydrnet.global_state import global_callback
 
 
 class Element(object):
@@ -57,10 +58,12 @@ class Element(object):
         """
         create an entry in the dictionary of the element it will be stored in the metadata.
         """
+        global_callback._call_dictionary_set(self, key, value)
         key = sys.intern(key)
         self._data.__setitem__(sys.intern(key), value)
 
     def __delitem__(self, key):
+        global_callback._call_dictionary_delete(self, key)
         self._data.__delitem__(key)
 
     def __getitem__(self, key):
@@ -73,4 +76,5 @@ class Element(object):
         return self._data.__iter__()
 
     def pop(self, item):
+        global_callback._call_dictionary_pop(self, item)
         return self._data.pop(item)
