@@ -4,8 +4,8 @@ from copy import deepcopy, copy, error
 '''provide the clone function for spydrnet.'''
 
 def clone(element):
-    '''Clone an element of the netlist and return the cloned element
-    Each element has a different behavior when cloned. Please take care when cloning because each element can retain some connections to the old netlist.
+    '''Clone an element of the netlist and return the cloned element. This can be thought of as SpyDrNet's deep copy function.
+    Each element has a different behavior when cloned. Please take care when cloning because each element can retain some connections to its old environment.
 
     The general strategy when cloning is as follows:
      * objects that referenced other objects that are cloned will now connect to the clone
@@ -68,25 +68,43 @@ def clone(element):
     else:
         #uses python deepcopy behind the scenes. these are overwritten in most objects.
         c = deepcopy(element)
-        #TODO: determine if the behavior makes sense for each of the elements at the top level and add fixes here.
-        #I am a little worried that some of the behavior will require access to private members to fix.
         if isinstance(c, ir.Cable):
+            #all wires need to be disconnected from pins
+            for w in c._wires:
+                w._pins = list()
             pass
         elif isinstance(c, ir.Definition):
+            c.references = set()
+            #all other connections are internal except the instance references which stay.
             pass
         elif isinstance(c, ir.InnerPin):
-            pass
+            #connections to wires must be cut
+            c._wire = None
         elif isinstance(c, ir.OuterPin):
-            pass
+            #connections to wires and inner pins must be cut.
+            c._wire = None
+            c._inner_pin = None
         elif isinstance(c, ir.Instance):
+            #outer pins are still associated in the dictionary with inner pins since the reference is maintained.
+            #outer pin connections to wires must be severed.
+            for (ip, op) in c._pins.items():
+                op._wire = None
+                #op._inner_pin = None
             pass
         elif isinstance(c, ir.Library):
+            #all connections are internal except the instance references which stay.
             pass
         elif isinstance(c, ir.netlist):
+            #all connections are internal
             pass
         elif isinstance(c, ir.Port):
+            #all pins must be disconnected from their wires and outer pins.
+            for p in c._pins:
+                p._wire = None
             pass
         elif isinstance(c, ir.Wire):
+            #connections to pins need to be removed
+            c._pins = list()
             pass
         else:
             raise NotImplementedError("the object you are trying to clone is not one of the supported objects, (cable, definition, inner/outer pin, instance, library, netlist, port, or wire)")
