@@ -1,4 +1,4 @@
-from spydrnet.global_state.global_netlist import current_netlist
+from spydrnet.global_state.global_netlist import get_current_netlist
 
 _container_cable_add_wire = dict()
 _container_cable_remove_wire = dict()
@@ -25,8 +25,8 @@ _container_dictionary_pop = dict()
 
 #look into inlining this function perhaps
 def _call(dictionary_to_call, *args, **kwargs):
-    if current_netlist in dictionary_to_call:
-        for func in dictionary_to_call[current_netlist]:
+    if get_current_netlist() in dictionary_to_call:
+        for func in dictionary_to_call[get_current_netlist()]:
             func(*args, **kwargs)
 
 def _call_cable_add_wire(*args, **kwargs):
@@ -98,12 +98,12 @@ def _call_dictionary_pop(*args, **kwargs):
 
 #look into inlining this function perhaps
 def _register(dictionary_to_register, method):
-    if current_netlist in dictionary_to_register:
-        assert(method not in dictionary_to_register[current_netlist])
-        dictionary_to_register[current_netlist].append(method)
+    if get_current_netlist() in dictionary_to_register:
+        assert(method not in dictionary_to_register[get_current_netlist()])
+        dictionary_to_register[get_current_netlist()].append(method)
     else:
-        dictionary_to_register[current_netlist] = []
-        dictionary_to_register[current_netlist].append(method)
+        dictionary_to_register[get_current_netlist()] = []
+        dictionary_to_register[get_current_netlist()].append(method)
 
 def register_cable_add_wire(method):
     _register(_container_cable_add_wire, method)
@@ -172,9 +172,9 @@ def register_dictionary_pop(*args, **kwargs):
 
 #look into inlining this function perhaps
 def _deregister(dictionary_to_deregister, method):
-    assert(current_netlist in dictionary_to_deregister)
-    assert(method in dictionary_to_deregister[current_netlist])
-    dictionary_to_deregister[current_netlist].remove(method)
+    assert(get_current_netlist() in dictionary_to_deregister)
+    assert(method in dictionary_to_deregister[get_current_netlist()])
+    dictionary_to_deregister[get_current_netlist()].remove(method)
 
 def deregister_cable_add_wire(method):
     _deregister(_container_cable_add_wire, method)

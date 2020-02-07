@@ -105,6 +105,9 @@ class DataManager(CallbackListener):
     def dictionary_set(self, element, key, value):
         if key != 'EDIF.identifier':
             return
+        if "EDIF.identifier" in element:
+            #this is a rename we must remove first.
+            self.dictionary_delete(element, "EDIF.identifier")
         if isinstance(element, Cable):
             if element.definition is None:
                 return
@@ -127,7 +130,7 @@ class DataManager(CallbackListener):
             self.dict_set(self.defi_dict, element.parent, element, value)
 
     def dictionary_pop(self, element, item):
-        key = item[0]
+        key = item
         if key != 'EDIF.identifier':
             return
         self.key_remover(element,key)
@@ -142,14 +145,11 @@ class DataManager(CallbackListener):
         self.net_dict_set(self.net_dict, netlist, library, library["EDIF.identifier"])
 
     def netlist_remove_library(self, netlist, library):
+        if "EDIF.identifier" not in library:
+            return
         #remove the library["EDIF.identifier"] from the data structure for netlists
-        if(library["EDIF.identifier"] not in self.net_dict):
-            raise ValueError("Library not present in given object netlist")
-        else:
-            if self.net_dict[library["EDIF.identifier"]] != library:
-                raise ValueError("Library not present in given object netlist")
-            else:
-                self.net_dict.pop(library["EDIF.identifier"])
+        assert library["EDIF.identifier"] in self.net_dict and self.net_dict[library["EDIF.identifier"]] == library, "Library not present in given object netlist"
+        self.net_dict.pop(library["EDIF.identifier"])
     #def port_add_pin(self, port, pin):
     #    pass
 
@@ -177,20 +177,18 @@ class DataManager(CallbackListener):
         if isinstance(element, Definition):
             self.remove_from_dict(self.lib_dict, element.library, element)
         if isinstance(element, Library):
-            self.remove_from_dict(self.net_dict, element.netlist, element)
+            self.netlist_remove_library(element.netlist, element)
         if isinstance(element, Port):
             self.remove_from_dict(self.defp_dict, element.definition, element)
         if isinstance(element, Instance):
-            self.remove_from_dict(self.defi_dict, element.definition, element)
+            self.remove_from_dict(self.defi_dict, element.parent, element)
 
     def remove_from_dict(self, container, parent, child):
-        if parent not in container:
-            raise ValueError("Child object " + child.__class__.__name__ + " not present in given object " + parent.__class__.__name__)
-        else:
-            if child["EDIF.identifier"] not in container[parent]:
-                raise ValueError("Child object " + child.__class__.__name__ + " not present in given object " + parent.__class__.__name__)
-            else:
-                container[parent].pop(child["EDIF.identifier"])
+        if "EDIF.identifier" not in child:
+            return
+        assert parent in container and child["EDIF.identifier"] in container[parent], "Child object " + child.__class__.__name__ + " not present in given object's namespace " + parent.__class__.__name__
+        container[parent].pop(child["EDIF.identifier"])
+    
 
     def dict_set(self, container, parent, child, value):
         if parent in container:
