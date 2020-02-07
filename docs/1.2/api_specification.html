@@ -1,0 +1,893 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>API Specification &mdash; SpyDrNet 1.2.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Developer’s Guide" href="developer/index.html" />
+    <link rel="prev" title="Element Data" href="element_data.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> SpyDrNet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="element_data.html">Element Data</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SpyDrNet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>API Specification</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/api_specification.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="api-specification">
+<span id="sec-api-spec"></span><h1>API Specification<a class="headerlink" href="#api-specification" title="Permalink to this headline">¶</a></h1>
+<p>The SpyDrNet API can be used to create, analyze, and transform a netlist. Netlist are represented in memory in an Intermediate Representation. <a class="reference internal" href="#fig-exampleir"><span class="std std-numref">Fig. 3</span></a> show the representation of a simple circuit in the SpyDrNet Intermediate Representation.</p>
+<div class="figure align-center" id="id1">
+<span id="fig-exampleir"></span><img alt="Example Netlist in a SpyDrNet Intermediate Representation" src="_images/ExampleCircuit.svg" /><p class="caption"><span class="caption-number">Fig. 3 </span><span class="caption-text">Example Netlist in the Intermediate Representaion</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+<p>The API calls documented here can be used in Python as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># create an empty netlist and add an empty library to it</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">spydrnet</span> <span class="k">as</span> <span class="nn">sdn</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">netlist</span> <span class="o">=</span> <span class="n">sdn</span><span class="o">.</span><span class="n">ir</span><span class="o">.</span><span class="n">Netlist</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">library</span> <span class="o">=</span> <span class="n">netlist</span><span class="o">.</span><span class="n">create_library</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Similarly if the parser is used the calls can be made in the same way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># parse an edif file in and add an empty library to the netlist.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">spydrnet</span> <span class="k">as</span> <span class="nn">sdn</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">netlist</span> <span class="o">=</span> <span class="n">sdn</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;four_bit_counter.edf&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">library</span> <span class="o">=</span> <span class="n">netlist</span><span class="o">.</span><span class="n">create_library</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<span class="target" id="module-spydrnet.ir"></span><dl class="class">
+<dt id="spydrnet.ir.Netlist">
+<em class="property">class </em><code class="sig-prename descclassname">spydrnet.ir.</code><code class="sig-name descname">Netlist</code><a class="reference internal" href="_modules/spydrnet/ir/netlist.html#Netlist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Netlist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a netlist object.</p>
+<p>Contains a top level instance and libraries</p>
+<dl class="method">
+<dt id="spydrnet.ir.Netlist.add_library">
+<code class="sig-name descname">add_library</code><span class="sig-paren">(</span><em class="sig-param">library</em>, <em class="sig-param">position=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/netlist.html#Netlist.add_library"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Netlist.add_library" title="Permalink to this definition">¶</a></dt>
+<dd><p>add an already existing library to the netlist. This library should not belong to another netlist. Use
+remove_library from other netlists before adding</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>-</strong><strong> (</strong><strong>Library</strong><strong>) </strong><strong>the library to be added to the netlist</strong> (<em>library</em>) – </p></li>
+<li><p><strong>-</strong><strong> (</strong><strong>int</strong><strong>, </strong><strong>default None</strong><strong>) </strong><strong>when set it is the index at which to add the library in the libraries list</strong> (<em>position</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Netlist.create_library">
+<code class="sig-name descname">create_library</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/netlist.html#Netlist.create_library"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Netlist.create_library" title="Permalink to this definition">¶</a></dt>
+<dd><p>create a library and add it to the netlist and return that library</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Netlist.libraries">
+<em class="property">property </em><code class="sig-name descname">libraries</code><a class="headerlink" href="#spydrnet.ir.Netlist.libraries" title="Permalink to this definition">¶</a></dt>
+<dd><p>get a list of all libraries included in the netlist</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Netlist.remove_libraries_from">
+<code class="sig-name descname">remove_libraries_from</code><span class="sig-paren">(</span><em class="sig-param">libraries</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/netlist.html#Netlist.remove_libraries_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Netlist.remove_libraries_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>removes all the given libraries from the netlist. All libraries must be in the netlist</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>-</strong><strong> (</strong><strong>Set</strong><strong>) </strong><strong>libraries to be removed</strong> (<em>libraries</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Netlist.remove_library">
+<code class="sig-name descname">remove_library</code><span class="sig-paren">(</span><em class="sig-param">library</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/netlist.html#Netlist.remove_library"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Netlist.remove_library" title="Permalink to this definition">¶</a></dt>
+<dd><p>removes the given library if it is in the netlist</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>-</strong><strong> (</strong><strong>Library</strong><strong>) </strong><strong>the library to be removed</strong> (<em>library</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Netlist.top_instance">
+<em class="property">property </em><code class="sig-name descname">top_instance</code><a class="headerlink" href="#spydrnet.ir.Netlist.top_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the top instance in the netlist.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The top level instance in the environment</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#spydrnet.ir.Instance" title="spydrnet.ir.Instance">Instance</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="spydrnet.ir.Library">
+<em class="property">class </em><code class="sig-prename descclassname">spydrnet.ir.</code><code class="sig-name descname">Library</code><a class="reference internal" href="_modules/spydrnet/ir/library.html#Library"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Library" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a library object.</p>
+<p>Contains a pointer to parent netlist and definitions.</p>
+<dl class="method">
+<dt id="spydrnet.ir.Library.add_definition">
+<code class="sig-name descname">add_definition</code><span class="sig-paren">(</span><em class="sig-param">definition</em>, <em class="sig-param">position=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/library.html#Library.add_definition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Library.add_definition" title="Permalink to this definition">¶</a></dt>
+<dd><p>add an existing definition to the library. The definition must not belong to a library including this one.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>-</strong><strong> (</strong><strong>Definition</strong><strong>) </strong><strong>the defintion to add to the library</strong> (<em>definition</em>) – </p></li>
+<li><p><strong>-</strong><strong> (</strong><strong>int</strong><strong>, </strong><strong>default None</strong><strong>) </strong><strong>the index in the library list at which to add the definition</strong> (<em>position</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Library.create_definition">
+<code class="sig-name descname">create_definition</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/library.html#Library.create_definition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Library.create_definition" title="Permalink to this definition">¶</a></dt>
+<dd><p>create a definition, add it to the library, and return the definition</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Library.definitions">
+<em class="property">property </em><code class="sig-name descname">definitions</code><a class="headerlink" href="#spydrnet.ir.Library.definitions" title="Permalink to this definition">¶</a></dt>
+<dd><p>return a list of all the definitions that are included in this library</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Library.netlist">
+<em class="property">property </em><code class="sig-name descname">netlist</code><a class="headerlink" href="#spydrnet.ir.Library.netlist" title="Permalink to this definition">¶</a></dt>
+<dd><p>get the netlist that contains this library</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Library.remove_definition">
+<code class="sig-name descname">remove_definition</code><span class="sig-paren">(</span><em class="sig-param">definition</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/library.html#Library.remove_definition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Library.remove_definition" title="Permalink to this definition">¶</a></dt>
+<dd><p>remove the given definition from the library</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>-</strong><strong> (</strong><strong>Definition</strong><strong>) </strong><strong>the definition to be removed</strong> (<em>definition</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Library.remove_definitions_from">
+<code class="sig-name descname">remove_definitions_from</code><span class="sig-paren">(</span><em class="sig-param">definitions</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/library.html#Library.remove_definitions_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Library.remove_definitions_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>remove a set of definitions from the library. all definitions provided must be in the library</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>-</strong><strong> (</strong><strong>Set of Definition type objects</strong><strong>) </strong><strong>the definitions to be removed</strong> (<em>definitions</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="spydrnet.ir.Definition">
+<em class="property">class </em><code class="sig-prename descclassname">spydrnet.ir.</code><code class="sig-name descname">Definition</code><a class="reference internal" href="_modules/spydrnet/ir/definition.html#Definition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Definition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a definition of a cell, module, entity/architecture, or paralleled structure object.</p>
+<p>Contains a pointer to parent library, ports, cables, and instances.</p>
+<dl class="method">
+<dt id="spydrnet.ir.Definition.add_cable">
+<code class="sig-name descname">add_cable</code><span class="sig-paren">(</span><em class="sig-param">cable</em>, <em class="sig-param">position=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/definition.html#Definition.add_cable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Definition.add_cable" title="Permalink to this definition">¶</a></dt>
+<dd><p>add a cable to the definition. The cable must not already be a member of another definition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>-</strong><strong> (</strong><strong>Cable</strong><strong>) </strong><strong>the cable to be added</strong> (<em>cable</em>) – </p></li>
+<li><p><strong>-</strong><strong> (</strong><strong>int</strong><strong>, </strong><strong>default None</strong><strong>) </strong><strong>the position in the cable list at which to add the cable</strong> (<em>position</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Definition.add_child">
+<code class="sig-name descname">add_child</code><span class="sig-paren">(</span><em class="sig-param">instance</em>, <em class="sig-param">position=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/definition.html#Definition.add_child"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Definition.add_child" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an existing instance to the definition. This instance must not already be included in a definition</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>-</strong><strong> (</strong><strong>Instance</strong><strong>) </strong><strong>the instance to add as a child of the definition</strong> (<em>instance</em>) – </p></li>
+<li><p><strong>-</strong><strong> (</strong><strong>int</strong><strong>, </strong><strong>default None</strong><strong>) </strong><strong>the index in the children list at which to add the instance.</strong> (<em>position</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Definition.add_port">
+<code class="sig-name descname">add_port</code><span class="sig-paren">(</span><em class="sig-param">port</em>, <em class="sig-param">position=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/definition.html#Definition.add_port"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Definition.add_port" title="Permalink to this definition">¶</a></dt>
+<dd><p>add a preexisting port to the definition. this port must not be a member of any definition</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>-</strong><strong> (</strong><strong>Port</strong><strong>) </strong><strong>the port to add to the definition</strong> (<em>port</em>) – </p></li>
+<li><p><strong>-</strong><strong> (</strong><strong>int</strong><strong>, </strong><strong>default None</strong><strong>) </strong><strong>the index in the port list at which to add the port</strong> (<em>position</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Definition.cables">
+<em class="property">property </em><code class="sig-name descname">cables</code><a class="headerlink" href="#spydrnet.ir.Definition.cables" title="Permalink to this definition">¶</a></dt>
+<dd><p>get the cables that are instanced in this definition</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Definition.children">
+<em class="property">property </em><code class="sig-name descname">children</code><a class="headerlink" href="#spydrnet.ir.Definition.children" title="Permalink to this definition">¶</a></dt>
+<dd><p>return a list of all instances instantiated in this definition</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Definition.create_cable">
+<code class="sig-name descname">create_cable</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/definition.html#Definition.create_cable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Definition.create_cable" title="Permalink to this definition">¶</a></dt>
+<dd><p>create a cable, add it to the definition, and return the cable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Definition.create_child">
+<code class="sig-name descname">create_child</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/definition.html#Definition.create_child"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Definition.create_child" title="Permalink to this definition">¶</a></dt>
+<dd><p>create an instance to add to the definition, add it, and return the instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Definition.create_port">
+<code class="sig-name descname">create_port</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/definition.html#Definition.create_port"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Definition.create_port" title="Permalink to this definition">¶</a></dt>
+<dd><p>create a port, add it to the definition, and return that port</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Definition.is_leaf">
+<code class="sig-name descname">is_leaf</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/definition.html#Definition.is_leaf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Definition.is_leaf" title="Permalink to this definition">¶</a></dt>
+<dd><p>check to see if this definition represents a leaf cell. Leaf cells are cells with no children instances or no
+children cables. Blackbox cells are considered leaf cells as well as direct pass through cells with cables only</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Definition.library">
+<em class="property">property </em><code class="sig-name descname">library</code><a class="headerlink" href="#spydrnet.ir.Definition.library" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the library that contains this definition</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Definition.ports">
+<em class="property">property </em><code class="sig-name descname">ports</code><a class="headerlink" href="#spydrnet.ir.Definition.ports" title="Permalink to this definition">¶</a></dt>
+<dd><p>get the ports that are instanced in this definition</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Definition.references">
+<em class="property">property </em><code class="sig-name descname">references</code><a class="headerlink" href="#spydrnet.ir.Definition.references" title="Permalink to this definition">¶</a></dt>
+<dd><p>get a list of all the instances of this definition</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Definition.remove_cable">
+<code class="sig-name descname">remove_cable</code><span class="sig-paren">(</span><em class="sig-param">cable</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/definition.html#Definition.remove_cable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Definition.remove_cable" title="Permalink to this definition">¶</a></dt>
+<dd><p>remove a cable from the definition. The cable must be a member of the definition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>-</strong><strong> (</strong><strong>Cable</strong><strong>) </strong><strong>the cable to be removed from the definition</strong> (<em>cable</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Definition.remove_cables_from">
+<code class="sig-name descname">remove_cables_from</code><span class="sig-paren">(</span><em class="sig-param">cables</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/definition.html#Definition.remove_cables_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Definition.remove_cables_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>remove a set of cables from the definition. The cables must be members of the definition</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>-</strong><strong> (</strong><strong>Set of Cable type objects</strong><strong>) </strong><strong>the cables to be remove from the definition</strong> (<em>cables</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Definition.remove_child">
+<code class="sig-name descname">remove_child</code><span class="sig-paren">(</span><em class="sig-param">child</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/definition.html#Definition.remove_child"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Definition.remove_child" title="Permalink to this definition">¶</a></dt>
+<dd><p>remove an instance from the definition. The instance must be a member of the definition already</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>-</strong><strong> (</strong><strong>Instance</strong><strong>) </strong><strong>the instance to be removed from the definition</strong> (<em>instance</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Definition.remove_children_from">
+<code class="sig-name descname">remove_children_from</code><span class="sig-paren">(</span><em class="sig-param">children</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/definition.html#Definition.remove_children_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Definition.remove_children_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>remove a set of instances from the definition. All instances must be members of the definition</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>-</strong><strong> (</strong><strong>Set of Instance type objects</strong><strong>) </strong><strong>the children to be removed from the definition</strong> (<em>children</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Definition.remove_port">
+<code class="sig-name descname">remove_port</code><span class="sig-paren">(</span><em class="sig-param">port</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/definition.html#Definition.remove_port"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Definition.remove_port" title="Permalink to this definition">¶</a></dt>
+<dd><p>remove a port from the definition. This port must be a member of the definition in order to be removed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>-</strong><strong> (</strong><strong>Port</strong><strong>) </strong><strong>the port to be removed</strong> (<em>port</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Definition.remove_ports_from">
+<code class="sig-name descname">remove_ports_from</code><span class="sig-paren">(</span><em class="sig-param">ports</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/definition.html#Definition.remove_ports_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Definition.remove_ports_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>remove a set of ports from the definition. All these ports must be included in the definition</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>-</strong><strong> (</strong><strong>Set containing Port type objects</strong><strong>) </strong><strong>the ports to remove from the definition</strong> (<em>ports</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="spydrnet.ir.Instance">
+<em class="property">class </em><code class="sig-prename descclassname">spydrnet.ir.</code><code class="sig-name descname">Instance</code><a class="reference internal" href="_modules/spydrnet/ir/instance.html#Instance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>netlist instance of a netlist definition. Instances are literally instances of definitions and they reside inside definitions.
+Function names have been set to adjust for the potential confusion that could arise because instances both have a parent definition and have definitions which they reference.</p>
+<dl class="method">
+<dt id="spydrnet.ir.Instance.parent">
+<em class="property">property </em><code class="sig-name descname">parent</code><a class="headerlink" href="#spydrnet.ir.Instance.parent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the definition that contains this instance</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Instance.pins">
+<em class="property">property </em><code class="sig-name descname">pins</code><a class="headerlink" href="#spydrnet.ir.Instance.pins" title="Permalink to this definition">¶</a></dt>
+<dd><p>get the pins on this instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Instance.reference">
+<em class="property">property </em><code class="sig-name descname">reference</code><a class="headerlink" href="#spydrnet.ir.Instance.reference" title="Permalink to this definition">¶</a></dt>
+<dd><p>get the definition that this instance is instantiating</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="spydrnet.ir.Port">
+<em class="property">class </em><code class="sig-prename descclassname">spydrnet.ir.</code><code class="sig-name descname">Port</code><a class="reference internal" href="_modules/spydrnet/ir/port.html#Port"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Port" title="Permalink to this definition">¶</a></dt>
+<dd><p>Located on the inside of a definition. Ports contain information about the quantity and directon of pins that go into and out of the defined struture when instanced.</p>
+<dl class="class">
+<dt id="spydrnet.ir.Port.Direction">
+<em class="property">class </em><code class="sig-name descname">Direction</code><a class="reference internal" href="_modules/spydrnet/ir/port.html#Port.Direction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Port.Direction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Define the possible directions for a given port</p>
+<p>Possible Directions are:</p>
+<p>UNDEFINED, INOUT, IN, OUT</p>
+<dl class="attribute">
+<dt id="spydrnet.ir.Port.Direction.IN">
+<code class="sig-name descname">IN</code><em class="property"> = 2</em><a class="headerlink" href="#spydrnet.ir.Port.Direction.IN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="spydrnet.ir.Port.Direction.INOUT">
+<code class="sig-name descname">INOUT</code><em class="property"> = 1</em><a class="headerlink" href="#spydrnet.ir.Port.Direction.INOUT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="spydrnet.ir.Port.Direction.OUT">
+<code class="sig-name descname">OUT</code><em class="property"> = 3</em><a class="headerlink" href="#spydrnet.ir.Port.Direction.OUT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="spydrnet.ir.Port.Direction.UNDEFINED">
+<code class="sig-name descname">UNDEFINED</code><em class="property"> = 0</em><a class="headerlink" href="#spydrnet.ir.Port.Direction.UNDEFINED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Port.add_pin">
+<code class="sig-name descname">add_pin</code><span class="sig-paren">(</span><em class="sig-param">pin</em>, <em class="sig-param">position=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/port.html#Port.add_pin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Port.add_pin" title="Permalink to this definition">¶</a></dt>
+<dd><p>add a pin to the port at the given position.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>-</strong><strong> (</strong><strong>Pin</strong><strong>) </strong><strong>the pin to be added to the port.</strong> (<em>pin</em>) – </p></li>
+<li><p><strong>-</strong><strong> (</strong><strong>int</strong><strong>, </strong><strong>default None</strong><strong>) </strong><strong>the index at which to add the pin</strong> (<em>position</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Port.create_pin">
+<code class="sig-name descname">create_pin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/port.html#Port.create_pin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Port.create_pin" title="Permalink to this definition">¶</a></dt>
+<dd><p>create a pin and add it to the port.
+return:
+the inner_pin created</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Port.create_pins">
+<code class="sig-name descname">create_pins</code><span class="sig-paren">(</span><em class="sig-param">pin_count</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/port.html#Port.create_pins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Port.create_pins" title="Permalink to this definition">¶</a></dt>
+<dd><p>create pin_count pins in the given port a downto style syntax is assumed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>-</strong><strong> (</strong><strong>int</strong><strong>) </strong><strong>this is the number of pins to add to the port</strong> (<em>pin_count</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Port.direction">
+<em class="property">property </em><code class="sig-name descname">direction</code><a class="headerlink" href="#spydrnet.ir.Port.direction" title="Permalink to this definition">¶</a></dt>
+<dd><p>get the direction of the port. This will be a variable of type Port.Direction</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Port.pins">
+<em class="property">property </em><code class="sig-name descname">pins</code><a class="headerlink" href="#spydrnet.ir.Port.pins" title="Permalink to this definition">¶</a></dt>
+<dd><p>get a list of the pins that are in the port</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Port.remove_pin">
+<code class="sig-name descname">remove_pin</code><span class="sig-paren">(</span><em class="sig-param">pin</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/port.html#Port.remove_pin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Port.remove_pin" title="Permalink to this definition">¶</a></dt>
+<dd><p>remove the given pin from the port. The pin must belong to the port in order to be removed. Wires are disconnected from the pin that is removed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>-</strong><strong> (</strong><strong>Pin</strong><strong>) </strong><strong>a pin to be removed from the port.</strong> (<em>pin</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Port.remove_pins_from">
+<code class="sig-name descname">remove_pins_from</code><span class="sig-paren">(</span><em class="sig-param">pins</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/port.html#Port.remove_pins_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Port.remove_pins_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>remove several pins from the port at once. The wires are disconnected from the pins that are removed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>-</strong><strong> (</strong><strong>List of Pin objects</strong><strong>) </strong><strong>a list of all pins to be removed from the port.</strong> (<em>pins</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="spydrnet.ir.InnerPin">
+<em class="property">class </em><code class="sig-prename descclassname">spydrnet.ir.</code><code class="sig-name descname">InnerPin</code><a class="reference internal" href="_modules/spydrnet/ir/innerpin.html#InnerPin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.InnerPin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pins that correspond to definitions. These pins can be thought of as on the inside of a definition. There can be
+many outer pins for each inner pin</p>
+<dl class="method">
+<dt id="spydrnet.ir.InnerPin.port">
+<em class="property">property </em><code class="sig-name descname">port</code><a class="headerlink" href="#spydrnet.ir.InnerPin.port" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the port that the inner pin is a part of. This object cannot be modified directly by the end user.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="spydrnet.ir.OuterPin">
+<em class="property">class </em><code class="sig-prename descclassname">spydrnet.ir.</code><code class="sig-name descname">OuterPin</code><span class="sig-paren">(</span><em class="sig-param">instance=None</em>, <em class="sig-param">inner_pin=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/outerpin.html#OuterPin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.OuterPin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pins that correspond to instances. These pins can be thought of as on the outside of an instance. There can be many
+outer pins for each inner pin</p>
+<dl class="method">
+<dt id="spydrnet.ir.OuterPin.from_instance_and_inner_pin">
+<em class="property">static </em><code class="sig-name descname">from_instance_and_inner_pin</code><span class="sig-paren">(</span><em class="sig-param">instance</em>, <em class="sig-param">inner_pin</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/outerpin.html#OuterPin.from_instance_and_inner_pin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.OuterPin.from_instance_and_inner_pin" title="Permalink to this definition">¶</a></dt>
+<dd><p>create an outer pin associated with a given inner_pin and instance object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>-</strong><strong> (</strong><strong>Instance</strong><strong>) </strong><strong>the instance to associate with this pin</strong> (<em>instance</em>) – </p></li>
+<li><p><strong>-</strong><strong> (</strong><strong>InnerPin</strong><strong>) </strong><strong>the inner pin with which to associate this outer pin</strong> (<em>inner_pin</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.OuterPin.inner_pin">
+<em class="property">property </em><code class="sig-name descname">inner_pin</code><a class="headerlink" href="#spydrnet.ir.OuterPin.inner_pin" title="Permalink to this definition">¶</a></dt>
+<dd><p>get the inner pin associated with this outer pin</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.OuterPin.instance">
+<em class="property">property </em><code class="sig-name descname">instance</code><a class="headerlink" href="#spydrnet.ir.OuterPin.instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the instance with which this pin is associated</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="spydrnet.ir.Cable">
+<em class="property">class </em><code class="sig-prename descclassname">spydrnet.ir.</code><code class="sig-name descname">Cable</code><a class="reference internal" href="_modules/spydrnet/ir/cable.html#Cable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Cable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Much like Ports cable extend the bundle class, giving them indexing ability they represent several wires in a collection or bus that are generally related.
+This could be thought of much like vector types in VHDL ie std_logic_vector (7 downto 0)</p>
+<dl class="method">
+<dt id="spydrnet.ir.Cable.add_wire">
+<code class="sig-name descname">add_wire</code><span class="sig-paren">(</span><em class="sig-param">wire</em>, <em class="sig-param">position=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/cable.html#Cable.add_wire"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Cable.add_wire" title="Permalink to this definition">¶</a></dt>
+<dd><p>adds a wire to the cable at the given position. This wire must not belong to a cable already</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>-</strong><strong> (</strong><strong>Wire</strong><strong>) </strong><strong>the wire to be added to the cable. This wire must not belong to any other cable.</strong> (<em>wire</em>) – </p></li>
+<li><p><strong>-</strong><strong> (</strong><strong>int</strong><strong>, </strong><strong>default None</strong><strong>) </strong><strong>the index in the wires list at which to add the wire.</strong> (<em>position</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Cable.create_wire">
+<code class="sig-name descname">create_wire</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/cable.html#Cable.create_wire"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Cable.create_wire" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates a wire and adds it to the cable. returns the wire that was created</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Cable.create_wires">
+<code class="sig-name descname">create_wires</code><span class="sig-paren">(</span><em class="sig-param">wire_count</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/cable.html#Cable.create_wires"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Cable.create_wires" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates wire_count wires for this cable and adds them to it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>-</strong><strong> (</strong><strong>int</strong><strong>) </strong><strong>the number of wires to be added to the cable.</strong> (<em>wire_count</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Cable.remove_wire">
+<code class="sig-name descname">remove_wire</code><span class="sig-paren">(</span><em class="sig-param">wire</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/cable.html#Cable.remove_wire"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Cable.remove_wire" title="Permalink to this definition">¶</a></dt>
+<dd><p>remove the given wire from the cable and return it. The wire must belong to this cable</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>-</strong><strong> (</strong><strong>Wire</strong><strong>) </strong><strong>the wire to be removed from the cable.</strong> (<em>wire</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Cable.remove_wires_from">
+<code class="sig-name descname">remove_wires_from</code><span class="sig-paren">(</span><em class="sig-param">wires</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/cable.html#Cable.remove_wires_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Cable.remove_wires_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>remove all wires given from the cable. Each must be a member of this cable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>-</strong><strong> (</strong><strong>List of Wire objects</strong><strong>) </strong><strong>wires to be removed from the cable.</strong> (<em>wires</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Cable.wires">
+<em class="property">property </em><code class="sig-name descname">wires</code><a class="headerlink" href="#spydrnet.ir.Cable.wires" title="Permalink to this definition">¶</a></dt>
+<dd><p>get a list of wires that are in this cable</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="spydrnet.ir.Wire">
+<em class="property">class </em><code class="sig-prename descclassname">spydrnet.ir.</code><code class="sig-name descname">Wire</code><a class="reference internal" href="_modules/spydrnet/ir/wire.html#Wire"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Wire" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="spydrnet.ir.Wire.cable">
+<em class="property">property </em><code class="sig-name descname">cable</code><a class="headerlink" href="#spydrnet.ir.Wire.cable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Wire.connect_pin">
+<code class="sig-name descname">connect_pin</code><span class="sig-paren">(</span><em class="sig-param">pin</em>, <em class="sig-param">position=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/wire.html#Wire.connect_pin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Wire.connect_pin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Wire.disconnect_pin">
+<code class="sig-name descname">disconnect_pin</code><span class="sig-paren">(</span><em class="sig-param">pin</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/wire.html#Wire.disconnect_pin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Wire.disconnect_pin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Wire.disconnect_pins_from">
+<code class="sig-name descname">disconnect_pins_from</code><span class="sig-paren">(</span><em class="sig-param">pins</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/wire.html#Wire.disconnect_pins_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Wire.disconnect_pins_from" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Wire.pins">
+<em class="property">property </em><code class="sig-name descname">pins</code><a class="headerlink" href="#spydrnet.ir.Wire.pins" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<p>The following three classes are the classes from which the above elements inherit. They are included here for completeness of
+documenataion and can be used if needed. if the above types will suffice it may be simpler to use them.</p>
+<dl class="class">
+<dt id="spydrnet.ir.Pin">
+<em class="property">class </em><code class="sig-prename descclassname">spydrnet.ir.</code><code class="sig-name descname">Pin</code><a class="reference internal" href="_modules/spydrnet/ir/pin.html#Pin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Pin" title="Permalink to this definition">¶</a></dt>
+<dd><p>pin connects to a single wire. This class is extended by InnerPin and OuterPin</p>
+<dl class="method">
+<dt id="spydrnet.ir.Pin.wire">
+<em class="property">property </em><code class="sig-name descname">wire</code><a class="headerlink" href="#spydrnet.ir.Pin.wire" title="Permalink to this definition">¶</a></dt>
+<dd><p>get the wire the pin is connected to. This value cannot be modified directly by the end user.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="spydrnet.ir.Bundle">
+<em class="property">class </em><code class="sig-prename descclassname">spydrnet.ir.</code><code class="sig-name descname">Bundle</code><a class="reference internal" href="_modules/spydrnet/ir/bundle.html#Bundle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Bundle" title="Permalink to this definition">¶</a></dt>
+<dd><p>parent class of ports and cables. Since both of these objects represent arrays of objects they both inherit from
+this parent class.</p>
+<dl class="method">
+<dt id="spydrnet.ir.Bundle.definition">
+<em class="property">property </em><code class="sig-name descname">definition</code><a class="headerlink" href="#spydrnet.ir.Bundle.definition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the definition that this bundle belongs to. The definition is responsible for changing this value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Bundle.is_array">
+<em class="property">property </em><code class="sig-name descname">is_array</code><a class="headerlink" href="#spydrnet.ir.Bundle.is_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>this is the logical inverse of is_scalar. see the is_scalar documentation for more insight into the properties
+of this value</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Bundle.is_downto">
+<em class="property">property </em><code class="sig-name descname">is_downto</code><a class="headerlink" href="#spydrnet.ir.Bundle.is_downto" title="Permalink to this definition">¶</a></dt>
+<dd><p>get the downto status of the bundle. Downto is False if the right index is higher than the left one. True
+otherwise</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Bundle.is_scalar">
+<em class="property">property </em><code class="sig-name descname">is_scalar</code><a class="headerlink" href="#spydrnet.ir.Bundle.is_scalar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if the item is a scalar False otherwise. the item is not a scalar if it has more than one pin or
+wire in it. if it has one pin or wire in it it may be a scalar. This mimics vhdl’s downto usage which can
+represent single pin arrays ie. std_logic_vector(0 downto 0) which would have a single pin but not be a scalar.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Bundle.lower_index">
+<em class="property">property </em><code class="sig-name descname">lower_index</code><a class="headerlink" href="#spydrnet.ir.Bundle.lower_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>get the value of the lower index of the array. this would be the right index in the case of downto and the left
+in the case of to</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="spydrnet.ir.Element">
+<em class="property">class </em><code class="sig-prename descclassname">spydrnet.ir.</code><code class="sig-name descname">Element</code><a class="reference internal" href="_modules/spydrnet/ir/element.html#Element"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class of all intermediate representation objects.</p>
+<p>An intermediate representation object represents an item in a netlist. Items range in specificity from pins on a
+port or wires in a cable up to an item that represents the netlist as a whole.</p>
+<p>Each element implements a dictionary for storing key-value pairs. The key should be a case sensitive string and the
+value should be a primitive type (string, integer, float, boolean) or potentially nested collections of primitive
+types. The purpose of this dictionary is to provide a space for properties and metadata associated with the element.</p>
+<p>Key namespaces are separated with a <em>period</em> character. If the key is void of a <em>period</em> than the key resides in the
+root namespace. Keys in the root namespace are considered properties. Other keys are considered metadata. For
+example ‘&lt;LANG_OF_ORIGIN&gt;.&lt;METADATA_TAG&gt;’:&lt;metadata_value&gt; is considered metadata associated with the netlist’s
+language of origin.</p>
+<p>Only data pertinent to the netlist should be stored in this dictionary. Cached data (namespace management, anything
+that can be recreated from the netlist) should be excluded from this dictionary. The intent of the IR is to house
+the basis of data for the netlist.</p>
+<p>The only key that is reserved is ‘NAME’. It is the primary name of the element. NAME may be undefined or inferred,
+for example, a pin on a port may be nameless, but infer its name for its parent port and position.</p>
+<dl class="method">
+<dt id="spydrnet.ir.Element.data">
+<em class="property">property </em><code class="sig-name descname">data</code><a class="headerlink" href="#spydrnet.ir.Element.data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Element.name">
+<em class="property">property </em><code class="sig-name descname">name</code><a class="headerlink" href="#spydrnet.ir.Element.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="spydrnet.ir.Element.pop">
+<code class="sig-name descname">pop</code><span class="sig-paren">(</span><em class="sig-param">item</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spydrnet/ir/element.html#Element.pop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.ir.Element.pop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="developer/index.html" class="btn btn-neutral float-right" title="Developer’s Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="element_data.html" class="btn btn-neutral float-left" title="Element Data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Brigham Young Universitiy
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
