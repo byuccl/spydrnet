@@ -66,11 +66,7 @@ class ComposeEdif:
         self._output_.write("keywordlevel 0")
         self._lisp_decrement_()
         self._lisp_decrement_()
-        # now = datetime.now()
-        # self._output_.write("""\n(status\n (written\n  (timeStamp {})\n  (program "Vivado" (version "2018.2"))\n  (comment "Built on '{}'")\n  (comment "Built by 'BYU's spydrnet tool'")\n )\n)""".format(now.strftime("%Y %m %d %H %M %S"), now.strftime("%a %b %d %H:%M:%S %Z %Y")))
-        # print("WARNING: edif.py Line: {} - hard coded vivado version".format(self._lineno_()-1))
         self._output_status_()
-        # print(self._data_.__dict__)
         self._new_line_()
         for library in self._data_.libraries:
             self._output_library_(library)
@@ -80,7 +76,6 @@ class ComposeEdif:
         self._output_name_of_object_(self._data_.top_instance)
         self._new_line_()
         self._lisp_increment_()
-        # self._output_.write("cellref base_mb_wrapper (libraryref work)")  # TODO: don't Hard code!!
         self._output_.write("cellref ")
         test = self._data_.top_instance
         self._output_.write(self._data_.top_instance.reference['EDIF.identifier'])
@@ -94,11 +89,8 @@ class ComposeEdif:
         self._new_line_()
 
         self._lisp_decrement_()
-        # print for debug only
-        # print("Current LISP level (if not 0 there was a problem): {}".format(self._lisp_depth_))
-        if self._lisp_depth_ != 0:
-            print("There was an error with parenthesis matching off by ", end="")
-            print(self._lisp_depth_)
+        
+        assert self._lisp_depth_ == 0, "There was an error with parenthesis matching off by " + str(self._lisp_depth_)
 
     def _output_status_(self):
         self._new_line_()
@@ -132,9 +124,6 @@ class ComposeEdif:
         self._lisp_decrement_()
         self._new_line_()
         self._lisp_decrement_()
-
-    def _lineno_(self):
-        return inspect.currentframe().f_back.f_lineno
 
     def _output_library_(self, library):
         self._lisp_increment_()
