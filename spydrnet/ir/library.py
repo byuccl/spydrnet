@@ -86,7 +86,7 @@ class Library(Element):
 
         definition - (Definition) the definition to be removed
         """
-        assert definition.library == self, "Library is not included in netlist"
+        assert definition.library == self, "definition is not included in library"
         self._remove_definition(definition)
         self._definitions.remove(definition)
 
