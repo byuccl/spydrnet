@@ -2,14 +2,13 @@ import unittest
 import spydrnet as sdn
 
 from spydrnet.plugins.data_manager import DataManager
-from spydrnet.global_state.global_netlist import current_netlist
+from spydrnet.global_state.global_netlist import set_current_netlist, get_current_netlist
 
 
 class TestDataManager(unittest.TestCase):
     def gen_netlist(self):
-        global current_netlist
         netlist = sdn.Netlist()
-        current_netlist = netlist
+        set_current_netlist(netlist)
         return netlist
 
     def gen_library(self):
@@ -52,6 +51,8 @@ class TestDataManager(unittest.TestCase):
         
 
     def test_dont_track_orphaned(self):
+        netlist = self.gen_netlist()
+        dm = DataManager()
         lib1 = sdn.Library()
         lib2 = sdn.Library()
         lib1['EDIF.identifier'] = "my_lib1"
@@ -112,6 +113,16 @@ class TestDataManager(unittest.TestCase):
         instance2 = def1.create_child()
         instance['EDIF.identifier'] = "my_lib"
         instance2['EDIF.identifier'] = "my_lib"
+
+    def test_rename(self):
+        netlist = self.gen_netlist()
+        dm = DataManager()
+        lib1 = netlist.create_library()
+        lib2 = netlist.create_library()
+        lib1['EDIF.identifier'] = "my_lib1"
+        lib2['EDIF.identifier'] = "my_lib2"
+        #lib1['EDIF.identifier'] = "my_lib3"
+        #lib2['EDIF.identifier'] = "my_lib"
 
     '''tests TODO:
     rename an object
