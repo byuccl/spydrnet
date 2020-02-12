@@ -61,7 +61,7 @@ class Cable(Bundle):
         position - (int, default None) the index in the wires list at which to add the wire.'''
         assert wire.cable is not self, "Wire already belongs to this cable"
         assert wire.cable is None, "Wire already belongs to a different cable"
-        global_callback._call_cable_add_wire(self, wire, position=position)
+        global_callback._call_cable_add_wire(self, wire)
         if position is not None:
             self._wires.insert(position, wire)
         else:

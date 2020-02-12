@@ -71,7 +71,7 @@ class Library(Element):
         """
         assert definition.library is not self, "Definition already included in library"
         assert definition.library is None, "Definition already belongs to a different library"
-        global_callback._call_library_add_definition(self, definition, position = position)
+        global_callback._call_library_add_definition(self, definition)
         if position is not None:
             self._definitions.insert(position, definition)
         else:
@@ -87,7 +87,7 @@ class Library(Element):
 
         definition - (Definition) the definition to be removed
         """
-        assert definition.library == self, "Library is not included in netlist"
+        assert definition.library == self, "definition is not included in library"
         self._remove_definition(definition)
         self._definitions.remove(definition)
 

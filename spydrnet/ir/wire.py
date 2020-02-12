@@ -28,7 +28,7 @@ class Wire:
         self._pins = value_list
 
     def connect_pin(self, pin, position=None):
-        global_callback._call_wire_connect_pin(self, pin, position = position)
+        global_callback._call_wire_connect_pin(self, pin)
         if isinstance(pin, OuterPin):
             instance = pin.instance
             inner_pin = pin.inner_pin

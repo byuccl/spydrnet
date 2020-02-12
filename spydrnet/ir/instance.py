@@ -51,11 +51,14 @@ class Instance(Element):
                     pin._instance = None
                     pin._inner_pin = None
             self._pins.clear()
+            if self._reference:
+                self._reference._references.remove(self)
         else:
             if self._reference is not None:
                 assert len(self.reference.ports) == len(value.ports) and all(len(x.pins) == len(y.pins) for x, y in
                                                                              zip(self.reference.ports, value.ports)), \
                     "Reference reassignment only supported for definitions with matching port positions"
+                self._reference._references.remove(self)
                 for cur_port, new_port in zip(self.reference.ports, value.ports):
                     for cur_pin, new_pin in zip(cur_port.pins, new_port.pins):
                         outer_pin = self._pins.pop(cur_pin)
@@ -67,6 +70,10 @@ class Instance(Element):
                         self._pins[pin] = OuterPin.from_instance_and_inner_pin(self, pin)
             value._references.add(self)
         self._reference = value
+
+    @reference.deleter
+    def reference(self):
+        self.reference = None
 
     @property
     def pins(self):
