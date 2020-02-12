@@ -144,8 +144,11 @@ class Netlist(Element):
         c = Netlist()
         memo[self] = c
         c._data = deepcopy(self._data)
-        c._libraries = deepcopy(self._libraries(), memo)
-        c._top_instance = memo[self._top_instance]
+        c._libraries = deepcopy(self._libraries, memo)
+        if self._top_instance == None:
+            c._top_instance = None
+        else:
+            c._top_instance = memo[self._top_instance]
         for library in c._libraries:
             library._netlist = c
             for definition in library._definitions:

@@ -2,15 +2,23 @@ import unittest
 
 from spydrnet.clone import clone
 from spydrnet.ir import *
+from spydrnet.compare.compare_netlists import Comparer
 
 
 class TestClone(unittest.TestCase):
     
-    def setUp(self):
+    def _run_first(self):
         #create a test netlist
-        self.nl = self._create_netlist()
+        nl = self._create_netlist()
         #create my own backup of the test netlist (just create another that is identical)
-        self.nl2 = self._create_netlist()
+        nl2 = self._create_netlist()
+        
+        #both netlists are created and checkout as the same.
+        return nl, nl2
+
+    def _compare_netlists(self, n1, n2):
+        comparer = Comparer(n1, n2)
+        comparer.compare()
 
     def _create_netlist(self):
         netlist = Netlist()
@@ -33,9 +41,11 @@ class TestClone(unittest.TestCase):
 
     #we need to use the built in compare functions
 
-
     def test_cable(self):
         #clone a cable and make sure the test netlist has not changed
+        nl1, nl2 = self._run_first()
+        
+
         pass
 
     def test_definition(self):
@@ -54,6 +64,11 @@ class TestClone(unittest.TestCase):
         pass
 
     def test_netlist(self):
+        nl1, nl2 = self._run_first()
+        nl3 = clone(nl1)
+        self._compare_netlists(nl1, nl3)
+        self._compare_netlists(nl1, nl2)
+        #now check that no references overlap.
         pass
 
     def test_outerpin(self):

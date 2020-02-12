@@ -16,7 +16,8 @@ class Comparer:
             "Environments do not have the same identifier"
         assert self.get_original_identifier(self.ir_orig) == self.get_original_identifier(self.ir_composer), \
             "Environments do not have the same original identifier"
-        self.compare_instances(self.ir_orig.top_instance, self.ir_composer.top_instance)
+        if (self.ir_composer.top_instance != None or self.ir_orig.top_instance != None): #if there is no top instance in either then this test passes.
+            self.compare_instances(self.ir_orig.top_instance, self.ir_composer.top_instance)
         assert len(self.ir_orig.libraries) == len(self.ir_composer.libraries), \
             "Environments do not have the same number of libraries"
         for orig_library, composer_library in zip(self.ir_orig.libraries, self.ir_composer.libraries):

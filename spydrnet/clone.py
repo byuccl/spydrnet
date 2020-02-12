@@ -67,7 +67,8 @@ def clone(element):
         raise NotImplementedError("list clone of multiple objects is not yet supported.")
     else:
         #uses python deepcopy behind the scenes. these are overwritten in most objects.
-        c = deepcopy(element)
+        memo = dict()
+        c = deepcopy(element, memo=memo)
         if isinstance(c, ir.Cable):
             #all wires need to be disconnected from pins
             for w in c._wires:
@@ -92,9 +93,18 @@ def clone(element):
                 #op._inner_pin = None
             pass
         elif isinstance(c, ir.Library):
-            #all connections are internal except the instance references which stay.
+            #definitions are no longer referenced from outside the library
+            #definitions outside library are still instanced
+            for definition in c._definitions:
+                definition._library = c
+                new_references = set()
+                for instance in definition._references:
+                    #if the instance was not cloned then remove it from the set
+                    if instance in memo.values():
+                        new_references.add(instance)
+                definition._references = new_references
             pass
-        elif isinstance(c, ir.netlist):
+        elif isinstance(c, ir.Netlist):
             #all connections are internal
             pass
         elif isinstance(c, ir.Port):
