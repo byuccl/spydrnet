@@ -289,6 +289,21 @@ class TestClone(unittest.TestCase):
         nl2 = clone(nl1)
         self._compare_netlists(nl1, nl2)
         self.check_overlap_references(nl1, nl2)
+
+
+    def test_library_change_top_instace(self):
+        nl1 = Netlist()
+        nl2 = Netlist()
+        lib1 = nl1.create_library()
+        def1 = lib1.create_definition()
+        nl1.top_instance = Instance()
+        nl1.top_instance.reference = def1
+        nl1.top_instance = None
+        lib2 = clone(lib1)
+        nl2.add_library(lib2)
+        self._compare_netlists(nl1, nl2)
+        self.check_overlap_references(nl1, nl2)
+        
     
     def test_netlist(self):
         nl1, nl2 = self._get_two_netlists()
