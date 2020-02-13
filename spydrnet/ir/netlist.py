@@ -169,6 +169,16 @@ class Netlist(Element):
     #                     instance._reference = memo[instance._reference]
     #     return c
 
+    def _clone_rip(self, memo):
+        '''need to remove any extraneous references to floating, no parent instances'''
+        for lib in self._libraries:
+            for defin in lib._definitions:
+                new_ref = set()
+                for ref in defin._references:
+                    if ref in memo.values():
+                        new_ref.add(ref)
+                defin._references = new_ref
+
     def _clone(self, memo):
         '''clone leaving all references in tact.
         the element can then either be ripped or ripped and replaced'''
@@ -204,5 +214,7 @@ class Netlist(Element):
         This clone function should act just the way you would expect
         All references are internal to the netlist that has been cloned.
          '''
-        c = self._clone(dict())
+        memo = dict()
+        c = self._clone(memo)
+        c._clone_rip(memo)
         return c

@@ -383,7 +383,6 @@ class Definition(Element):
         for each of the children instances, we should also update the reference to refer to any cloned dictionaries
         inner pins now also need to be updated with new inner pins for each of the definitions that was cloned.'''
         new_references = set()
-        print(self)
         for instance in self._references:
             #if the instance was cloned then replace it in our references also update its reference
             if instance in memo:

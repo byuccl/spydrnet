@@ -188,41 +188,108 @@ class TestClone(unittest.TestCase):
         assert len(def1c.references) == 0
         assert ins1.reference is def1
 
-    def check_overlap_references(self, nl1, nl2):
-        assert nl2 is not nl1, "The netlist references cannot be the same"
-        assert nl2.top_instance is not nl1.top_instance or nl2.top_instance == None and nl1.top_instance == None
-        for library in nl1.libraries:
-            assert library not in nl2.libraries, "library references cannot be the same between netlists"
-            for library2 in nl2.libraries:
-                for definition1 in library.definitions:
-                    assert definition1 not in library2.definitions, "definition references cannot be in both netlists libraries"
-                    for definition2 in library2:
-                        for instance1 in definition1.references:
-                            assert instance1 not in definition2.references, "reference cannot cross netlist bounds"
-                            for instance2 in definition2.references:
-                                assert instance2.reference is not instance1.reference, "references cannot be the same in 2 netlists."
-                        for instance1 in definition1.children:
-                            assert instance1 not in definition2.children, "instance cannot belong in definitions in 2 netlists"
-                            for instance2 in definition2.references:
-                                for pin1 in instance1.pins:
-                                    assert pin1 not in instance2.pins, "pins can't be in 2 netlists"
-                                    for pin2 in instance2.pins:
-                                        assert pin1.wire is not pin2.wire, "wires can't be referenced between 2 netlists"
-                        for cable1 in definition1.cables:
-                            assert cable1 not in definition2.cables, "cable cannot belong in definitions in 2 netlists"
-                            for cable2 in definition2.cables:
-                                for wire1 in cable1.wires:
-                                    assert wire1 not in cable2.wires, "wire in 2 netlists"
-                                    for wire2 in cable2.wires:
-                                        for pin1 in wire1.pins:
-                                            assert pin1 not in wire2.pins, "pin referenced accross netlist bounds"
-                        for port1 in definition1.ports:
-                            for port2 in definition2.ports:
-                                for pin1 in port1.pins:
-                                    assert pin1 not in port2.pins, "pin in 2 netlists"
-                                    for pin2 in port2.pins:
-                                        assert pin1.wire is not pin2.wire, "wire referenced accross netlist bounds"
+    def check(self, r1, e):
+        if e is None:
+            return
+        assert e not in r1
 
+    def not_among_all_references(self,r1, nl1):
+        self.check(r1, nl1)
+        self.check(r1, nl1.top_instance)
+        for l in nl1.libraries:
+            self.check(r1, l)
+            for d in l.definitions:
+                self.check(r1, d)
+                for c in d.children:
+                    self.check(r1, c)
+                    self.check(r1, c.reference)
+                    for k, v in c.pins.items():
+                        self.check(r1, k)
+                        self.check(r1, v)
+                for r in d.references:
+                    self.check(r1, r)
+                for c in d.cables:
+                    self.check(r1, c)
+                    for w in c.wires:
+                        self.check(r1, w)
+                for p in d.ports:
+                    self.check(r1, p)
+                    for pi in p.pins:
+                        self.check(r1, pi)
+
+    def add_all_references(self,r1, nl1):
+        r1.add(nl1)
+        r1.add(nl1.top_instance)
+        for l in nl1.libraries:
+            r1.add(l)
+            for d in l.definitions:
+                r1.add(d)
+                for c in d.children:
+                    r1.add(c)
+                    r1.add(c.reference)
+                    for k, v in c.pins.items():
+                        r1.add(k)
+                        r1.add(v)
+                for r in d.references:
+                    r1.add(r)
+                for c in d.cables:
+                    r1.add(c)
+                    for w in c.wires:
+                        r1.add(w)
+                for p in d.ports:
+                    r1.add(p)
+                    for pi in p.pins:
+                        r1.add(pi)
+
+    def check_overlap_references(self, nl1, nl2):
+        r1 = set()
+        self.add_all_references(r1, nl1)
+        self.not_among_all_references(r1, nl2)
+        
+    def test_netlist_several_lib(self):
+        netlist = Netlist()
+        lib1 = netlist.create_library()
+        lib2 = netlist.create_library()
+        lib3 = netlist.create_library()
+        lib4 = netlist.create_library()
+        def1a = lib1.create_definition()
+        def2a = lib2.create_definition()
+        def3a = lib3.create_definition()
+        def4a = lib4.create_definition()
+        def1b = lib1.create_definition()
+        def2b = lib2.create_definition()
+        def3b = lib3.create_definition()
+        def4b = lib4.create_definition()
+        ins1a = def1a.create_child()
+        ins2a = def2a.create_child()
+        ins3a = def3a.create_child()
+        ins4a = def4a.create_child()
+        ins1b = def1b.create_child()
+        ins2b = def2b.create_child()
+        ins3b = def3b.create_child()
+        def4b.create_child()
+        ins1a.reference = def2a
+        ins2a.reference = def3a
+        ins3a.reference = def4a
+        ins4a.reference = def1b
+        ins1b.reference = def2b
+        ins2b.reference = def3b
+        ins3b.reference = def4b
+        netlist2 = clone(netlist)
+        self._compare_netlists(netlist, netlist2)
+        self.check_overlap_references(netlist, netlist2)
+        
+    def test_netlist_change_top_instance(self):
+        nl1 = Netlist()
+        lib1 = nl1.create_library()
+        def1 = lib1.create_definition()
+        nl1.top_instance = Instance()
+        nl1.top_instance.reference = def1
+        nl1.top_instance = None
+        nl2 = clone(nl1)
+        self._compare_netlists(nl1, nl2)
+        self.check_overlap_references(nl1, nl2)
+    
     def test_netlist(self):
         nl1, nl2 = self._get_two_netlists()
         nl3 = clone(nl1)
