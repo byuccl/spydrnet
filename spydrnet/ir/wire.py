@@ -123,8 +123,7 @@ class Wire:
         '''not api safe clone function
         clone leaving all references in tact.
         the element can then either be ripped or ripped and replaced'''
-        if self in memo:
-            raise error("the object should not have been copied twice in this pass")
+        assert self not in memo, "the object should not have been copied twice in this pass"
         c = Wire()
         memo[self] = c
         c._cable = None

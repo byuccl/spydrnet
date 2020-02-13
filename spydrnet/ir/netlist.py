@@ -169,21 +169,10 @@ class Netlist(Element):
     #                     instance._reference = memo[instance._reference]
     #     return c
 
-
-    def _clone_rip_and_replace(self, memo):
-        '''remove from its current environment and place it into the new cloned environment with references held in the memo dictionary'''
-        pass #shouldn't have to do anything
-
-    def _clone_rip(self):
-        '''remove from its current environmnet. This will remove all pin pointers and create a floating stand alone instance.'''   
-        pass #shouldn't have to do anything.
-
-
     def _clone(self, memo):
         '''clone leaving all references in tact.
         the element can then either be ripped or ripped and replaced'''
-        if self in memo:
-            raise error("the object should not have been copied twice in this pass")
+        assert self not in memo, "the object should not have been copied twice in this pass"
         c = Netlist()
         memo[self] = c
         c._data = deepcopy(self._data)
@@ -216,5 +205,4 @@ class Netlist(Element):
         All references are internal to the netlist that has been cloned.
          '''
         c = self._clone(dict())
-        c._clone_rip()
         return c

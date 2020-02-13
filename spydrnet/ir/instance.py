@@ -97,7 +97,7 @@ class Instance(Element):
 
     def _clone_rip_and_replace_in_definition(self, memo):
         '''slide the outerpins references into a new context. the instance still references something outside of what has been cloned.'''
-        for ip, op in self._pins.items():
+        for op in self._pins.values():
             op._clone_rip_and_replace(memo)
             
 
@@ -110,7 +110,7 @@ class Instance(Element):
 
     def _clone_rip(self):
         '''remove the instance from its current environmnet. This will remove the instance from any wires but it will add it in to the references set on the definition which it instantiates.'''   
-        for ip, op in self._pins.items():
+        for op in self._pins.values():
             op._wire = None
         self._reference._references.add(self)
 
@@ -118,8 +118,7 @@ class Instance(Element):
         '''not api safe clone function
         clone the instance leaving all references in tact.
         the instance can then either be ripped or ripped and replaced'''
-        if self in memo:
-            raise error("the object should not have been copied twice in this pass")
+        assert self not in memo, "the object should not have been copied twice in this pass"
         c = Instance()
         memo[self] = c
         c._parent = None
