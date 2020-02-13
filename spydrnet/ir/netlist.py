@@ -138,28 +138,83 @@ class Netlist(Element):
         global_callback._call_netlist_remove_library(self, library)
         library._netlist = None
 
-    def __deepcopy__(self, memo):
+    # def __deepcopy__(self, memo):
+    #     if self in memo:
+    #         raise error("the object should not have been copied twice in this pass")
+    #     c = Netlist()
+    #     memo[self] = c
+    #     c._data = deepcopy(self._data)
+    #     c._libraries = deepcopy(self._libraries, memo)
+    #     if self._top_instance == None:
+    #         c._top_instance = None
+    #     else:
+    #         if self._top_instance in memo:
+    #             c._top_instance = memo[self._top_instance]
+    #         else:
+    #             new_top = deepcopy(self.top_instance)
+    #             memo[self.top_instance] = new_top
+
+    #     for library in c._libraries:
+    #         library._netlist = c
+    #         for definition in library._definitions:
+    #             new_references = set()
+    #             for instance in definition._references:
+    #                 if instance in memo:
+    #                     new_references.add(memo[instance])
+    #                 else:
+    #                     new_references.add(instance)
+    #             definition._references = new_references
+    #             for instance in definition._children:
+    #                 if instance._reference in memo:
+    #                     instance._reference = memo[instance._reference]
+    #     return c
+
+
+    def _clone_rip_and_replace(self, memo):
+        '''remove from its current environment and place it into the new cloned environment with references held in the memo dictionary'''
+        pass #shouldn't have to do anything
+
+    def _clone_rip(self):
+        '''remove from its current environmnet. This will remove all pin pointers and create a floating stand alone instance.'''   
+        pass #shouldn't have to do anything.
+
+
+    def _clone(self, memo):
+        '''clone leaving all references in tact.
+        the element can then either be ripped or ripped and replaced'''
         if self in memo:
             raise error("the object should not have been copied twice in this pass")
         c = Netlist()
         memo[self] = c
         c._data = deepcopy(self._data)
-        c._libraries = deepcopy(self._libraries, memo)
+        
+        new_libraries = list()
+        for library in self._libraries:
+            new_libraries.append(library._clone(memo))
+        c._libraries = new_libraries
+
         if self._top_instance == None:
             c._top_instance = None
         else:
-            c._top_instance = memo[self._top_instance]
+            if self._top_instance in memo:
+                c._top_instance = memo[self._top_instance]
+            else:
+                new_top = self.top_instance._clone(memo)
+                new_top._clone_rip_and_replace_in_definition(memo)
+                new_top._clone_rip_and_replace_in_library(memo)
+                c._top_instance = new_top
+
         for library in c._libraries:
             library._netlist = c
-            for definition in library._definitions:
-                new_references = set()
-                for instance in definition._references:
-                    if instance in memo:
-                        new_references.add(memo[instance])
-                    else:
-                        new_references.add(instance)
-                definition._references = new_references
-                for instance in definition._children:
-                    if instance._reference in memo:
-                        instance._reference = memo[instance._reference]
+            library._clone_rip_and_replace(memo)
+        return c
+
+    def clone(self):
+        '''
+        Api safe clone on a netlist
+        This clone function should act just the way you would expect
+        All references are internal to the netlist that has been cloned.
+         '''
+        c = self._clone(dict())
+        c._clone_rip()
         return c

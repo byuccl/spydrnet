@@ -51,7 +51,32 @@ class OuterPin(Pin):
     def __hash__(self):
         return hash((self._instance, self._inner_pin))
 
-    def __deepcopy__(self, memo):
+    # def __deepcopy__(self, memo):
+    #     if self in memo:
+    #         raise error("the object should not have been copied twice in this pass")
+    #     c = OuterPin()
+    #     memo[self] = c
+    #     c._instance = None
+    #     c._inner_pin = self._inner_pin
+    #     c._wire = self._wire
+    #     return c
+
+    def _clone_rip_and_replace(self, memo):
+        '''remove from its current environment and place it into the new cloned environment with references held in the memo dictionary'''
+        if self._wire != None:
+            assert self._wire in memo, "can't call this function when the wire has not been cloned yet"
+            self._wire = memo[self._wire]
+
+    def _clone_rip(self):
+        '''remove from its current environmnet. This will remove all pin pointers and create a floating stand alone instance.'''   
+        self._inner_pin = None
+        self._wire = None
+
+
+    def _clone(self, memo):
+        '''not api safe clone function
+        clone leaving all references in tact.
+        the element can then either be ripped or ripped and replaced'''
         if self in memo:
             raise error("the object should not have been copied twice in this pass")
         c = OuterPin()
@@ -59,4 +84,15 @@ class OuterPin(Pin):
         c._instance = None
         c._inner_pin = self._inner_pin
         c._wire = self._wire
+        return c
+
+    def clone(self):
+        '''clone the pin in an api safe way
+        the following conditions will be met with the returned outer pin:
+         * the pin will not be connected to any wires
+         * the pin will be orphaned from any instance
+         * the pin will not be connected to any inner pins
+         '''
+        c = self._clone(dict())
+        c._clone_rip()
         return c

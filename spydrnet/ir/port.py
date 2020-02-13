@@ -35,6 +35,7 @@ class Port(Bundle):
         self._direction = self.Direction.UNDEFINED
         self._pins = list()
 
+
     def _items(self):
         '''overrides the _items function in the bundles class. For ports, pins are returned'''
         return self._pins
@@ -184,13 +185,46 @@ class Port(Bundle):
         pin._port = None
 
     
-    def __deepcopy__(self, memo):
+    # def __deepcopy__(self, memo):
+    #     if self in memo:
+    #         raise error("the object should not have been copied twice in this pass")
+    #     c = Port()
+    #     memo[self] = c
+    #     c._direction = deepcopy(self._direction)
+    #     c._pins = deepcopy(self._pins, memo)
+    #     c._definition = None
+    #     c._is_downto = deepcopy(self._is_downto)
+    #     c._is_scalar = deepcopy(self._is_scalar)
+    #     c._lower_index = deepcopy(self._lower_index)
+    #     for p in c._pins:
+    #         p._port = c
+    #     c._data = deepcopy(self.data)
+    #     return c
+
+    def _clone_rip_and_replace(self, memo):
+        '''remove from its current environment and place it into the new cloned environment with references held in the memo dictionary'''
+        for p in self._pins:
+            p._clone_rip_and_replace(memo)
+
+    def _clone_rip(self):
+        '''remove from its current environmnet. This will remove all pin pointers and create a floating stand alone instance.'''   
+        for p in self._pins:
+            p._clone_rip()
+
+
+    def _clone(self, memo):
+        '''not api safe clone function
+        clone leaving all references in tact.
+        the element can then either be ripped or ripped and replaced'''
         if self in memo:
             raise error("the object should not have been copied twice in this pass")
         c = Port()
         memo[self] = c
         c._direction = deepcopy(self._direction)
-        c._pins = deepcopy(self._pins, memo=memo)
+        new_pins = list()
+        for p in self._pins:
+            new_pins.append(p._clone(memo))
+        c._pins = new_pins
         c._definition = None
         c._is_downto = deepcopy(self._is_downto)
         c._is_scalar = deepcopy(self._is_scalar)
@@ -198,4 +232,19 @@ class Port(Bundle):
         for p in c._pins:
             p._port = c
         c._data = deepcopy(self.data)
+        return c
+
+
+
+    def clone(self):
+        '''
+        Clone the port in an api safe way.
+        The following rules will be observed:
+         * all the pins will be disconnected from wires
+         * the port will be orphaned
+         * all pins will belong to the returned port
+         * direction, downto, is_scalar, lower_index will all be maintained
+         '''
+        c = self._clone(dict())
+        c._clone_rip()
         return c

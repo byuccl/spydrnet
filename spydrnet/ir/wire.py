@@ -95,11 +95,49 @@ class Wire:
         global_callback._call_wire_disconnect_pin(self, pin)
         pin._wire = None
 
-    def __deepcopy__(self, memo):
+    # def __deepcopy__(self, memo):
+    #     if self in memo:
+    #         raise error("the object should not have been copied twice in this pass")
+    #     c = Wire()
+    #     memo[self] = c
+    #     c._cable = None
+    #     c._pins = copy(self._pins) #shallow copy the list so that it is a new list but it still refers to the pins.
+    #     return c
+
+    def _clone_rip_and_replace(self, memo):
+        '''remove from its current environment and place it into the new cloned environment with references held in the memo dictionary'''
+        new_pins = list()
+        for p in self._pins:
+            assert p in memo, "the pin must be cloned"
+            new_pins.append(memo[p])
+        self._pins = new_pins
+        pass
+
+    def _clone_rip(self):
+        '''remove from its current environmnet. This will remove all pin pointers and create a floating stand alone instance.'''   
+        self._pins = list()
+        pass
+
+
+    def _clone(self, memo):
+        '''not api safe clone function
+        clone leaving all references in tact.
+        the element can then either be ripped or ripped and replaced'''
         if self in memo:
             raise error("the object should not have been copied twice in this pass")
         c = Wire()
         memo[self] = c
         c._cable = None
-        c._pins = copy(self._pins) #shallow copy the list so that it is a new list but it still refers to the pins.
+        c._pins = copy(self._pins) #shallow copy the list so that it retains its pin references
+        return c
+        
+
+    def clone(self):
+        '''clone wire in an api safe way. The following properties can be expected from the returned element:
+         * The wire is not connected to any pins.
+         * The wire is orphaned from any cable.
+         * No pins are connected to the wire
+         '''
+        c = self._clone(dict())
+        c._clone_rip()
         return c
