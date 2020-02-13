@@ -44,6 +44,12 @@ class TestCompareNetlists(unittest.TestCase):
                         raise e
                 comparer = Comparer(orig_netlist, composer_netlist)
                 comparer.run()
+    
+    def test_empty_netlists(self):
+        nl1 = sdn.ir.Netlist()
+        nl2 = sdn.ir.Netlist()
+        comp = Comparer(nl1, nl2)
+        comp.compare()
 
 
 if __name__ == '__main__':

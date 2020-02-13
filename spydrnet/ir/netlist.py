@@ -3,7 +3,7 @@ from spydrnet.ir.library import Library
 from spydrnet.ir.instance import Instance
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
-
+from copy import deepcopy, copy, error
 
 class Netlist(Element):
     """
@@ -137,3 +137,54 @@ class Netlist(Element):
         """
         global_callback._call_netlist_remove_library(self, library)
         library._netlist = None
+
+
+    def _clone_rip(self, memo):
+        '''need to remove any extraneous references to floating, no parent instances'''
+        for lib in self._libraries:
+            for defin in lib._definitions:
+                new_ref = set()
+                for ref in defin._references:
+                    if ref in memo.values():
+                        new_ref.add(ref)
+                defin._references = new_ref
+
+    def _clone(self, memo):
+        '''clone leaving all references in tact.
+        the element can then either be ripped or ripped and replaced'''
+        assert self not in memo, "the object should not have been copied twice in this pass"
+        c = Netlist()
+        memo[self] = c
+        c._data = deepcopy(self._data)
+        
+        new_libraries = list()
+        for library in self._libraries:
+            new_libraries.append(library._clone(memo))
+        c._libraries = new_libraries
+
+        if self._top_instance == None:
+            c._top_instance = None
+        else:
+            if self._top_instance in memo:
+                c._top_instance = memo[self._top_instance]
+            else:
+                new_top = self.top_instance._clone(memo)
+                new_top._clone_rip_and_replace_in_definition(memo)
+                new_top._clone_rip_and_replace_in_library(memo)
+                c._top_instance = new_top
+
+        for library in c._libraries:
+            library._netlist = c
+            library._clone_rip_and_replace(memo)
+        return c
+
+    def clone(self):
+        '''
+        Api safe clone on a netlist
+        This clone function should act just the way you would expect
+        All references are internal to the netlist that has been cloned.
+         '''
+        memo = dict()
+        c = self._clone(memo)
+        c._clone_rip(memo)
+        return c

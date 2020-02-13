@@ -2,6 +2,7 @@ from spydrnet.ir.element import Element
 from spydrnet.ir.outerpin import OuterPin
 from spydrnet.ir.views.outerpinsview import OuterPinsView
 from spydrnet.global_state import global_callback
+from copy import deepcopy, copy, error
 
 
 class Instance(Element):
@@ -78,3 +79,51 @@ class Instance(Element):
     def pins(self):
         '''get the pins on this instance.'''
         return OuterPinsView(self._pins)
+
+
+    def _clone_rip_and_replace_in_definition(self, memo):
+        '''slide the outerpins references into a new context. the instance still references something outside of what has been cloned.'''
+        for op in self._pins.values():
+            op._clone_rip_and_replace(memo)
+            
+
+    def _clone_rip_and_replace_in_library(self, memo):
+        '''move the instance into a new library/netlist. this will replace the reference if affected and replace the inner pins that will be affected as well. The instance should not be in the references list of the reference definition'''
+        new_pins = dict()
+        for ip, op in self._pins.items():
+            new_pins[memo[ip]] = op
+        self._pins = new_pins
+
+    def _clone_rip(self):
+        '''remove the instance from its current environmnet. This will remove the instance from any wires but it will add it in to the references set on the definition which it instantiates.'''   
+        for op in self._pins.values():
+            op._wire = None
+        self._reference._references.add(self)
+
+    def _clone(self, memo):
+        '''not api safe clone function
+        clone the instance leaving all references in tact.
+        the instance can then either be ripped or ripped and replaced'''
+        assert self not in memo, "the object should not have been copied twice in this pass"
+        c = Instance()
+        memo[self] = c
+        c._parent = None
+        for inner_pin, outer_pin in self._pins.items():
+            new_outer_pin = outer_pin._clone(memo)
+            new_outer_pin._instance = c
+            c._pins[inner_pin] = new_outer_pin
+        c._reference = self._reference
+        c._data = deepcopy(self._data)
+        return c
+
+    def clone(self):
+        '''clone the instance in an api safe way.
+        This call will return a cloned instance that has the following properties:
+         * the pins in the instance will all be disconnected from wires but they will maintain their references to inner pins
+         * the instance references is the same as the cloned object
+         * the reference's references list contains this instance
+         * the instance is orphaned (no longer a child of the definition to which the cloned definition belonged
+         '''
+        c = self._clone(dict())
+        c._clone_rip()
+        return c

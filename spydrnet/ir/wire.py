@@ -1,6 +1,7 @@
 from spydrnet.ir.outerpin import OuterPin
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
+from copy import copy, deepcopy, error
 
 
 class Wire:
@@ -93,3 +94,40 @@ class Wire:
     def _disconnect_pin(self, pin):
         global_callback._call_wire_disconnect_pin(self, pin)
         pin._wire = None
+
+    def _clone_rip_and_replace(self, memo):
+        '''remove from its current environment and place it into the new cloned environment with references held in the memo dictionary'''
+        new_pins = list()
+        for p in self._pins:
+            assert p in memo, "the pin must be cloned"
+            new_pins.append(memo[p])
+        self._pins = new_pins
+        pass
+
+    def _clone_rip(self):
+        '''remove from its current environmnet. This will remove all pin pointers and create a floating stand alone instance.'''   
+        self._pins = list()
+        pass
+
+
+    def _clone(self, memo):
+        '''not api safe clone function
+        clone leaving all references in tact.
+        the element can then either be ripped or ripped and replaced'''
+        assert self not in memo, "the object should not have been copied twice in this pass"
+        c = Wire()
+        memo[self] = c
+        c._cable = None
+        c._pins = copy(self._pins) #shallow copy the list so that it retains its pin references
+        return c
+        
+
+    def clone(self):
+        '''clone wire in an api safe way. The following properties can be expected from the returned element:
+         * The wire is not connected to any pins.
+         * The wire is orphaned from any cable.
+         * No pins are connected to the wire
+         '''
+        c = self._clone(dict())
+        c._clone_rip()
+        return c

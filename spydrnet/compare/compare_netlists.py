@@ -16,7 +16,8 @@ class Comparer:
             "Environments do not have the same identifier"
         assert self.get_original_identifier(self.ir_orig) == self.get_original_identifier(self.ir_composer), \
             "Environments do not have the same original identifier"
-        self.compare_instances(self.ir_orig.top_instance, self.ir_composer.top_instance)
+        if (self.ir_composer.top_instance != None or self.ir_orig.top_instance != None): #if there is no top instance in either then this test passes.
+            self.compare_instances(self.ir_orig.top_instance, self.ir_composer.top_instance)
         assert len(self.ir_orig.libraries) == len(self.ir_composer.libraries), \
             "Environments do not have the same number of libraries"
         for orig_library, composer_library in zip(self.ir_orig.libraries, self.ir_composer.libraries):
@@ -140,9 +141,10 @@ class Comparer:
             "Instances do not have the same original identifier, orig " \
             "\"{}\" composer \"{}\"".format(instances_orig_original_identifier, instances_composer_original_identifier)
 
-        assert self.get_identifier(instances_orig.reference) == self.get_identifier(instances_composer.reference) and \
+        assert (instances_orig.reference == None and instances_composer.reference == None) or \
+            (self.get_identifier(instances_orig.reference) == self.get_identifier(instances_composer.reference) and \
             self.get_identifier(instances_orig.reference.library) == \
-               self.get_identifier(instances_composer.reference.library), \
+               self.get_identifier(instances_composer.reference.library)), \
             "Instances do not have the same reference definition."
 
         if "EDIF.properties" in instances_orig:
@@ -156,10 +158,14 @@ class Comparer:
 
     @staticmethod
     def get_identifier(obj):
+        if obj == None:
+            return None
         if "EDIF.identifier" in obj:
             return obj["EDIF.identifier"]
 
     @staticmethod
     def get_original_identifier(obj):
+        if obj == None:
+            return None
         if "EDIF.original_identifier" in obj:
             return obj["EDIF.original_identifier"]
