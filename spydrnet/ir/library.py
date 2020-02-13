@@ -191,6 +191,8 @@ class Library(Element):
             for ref in definition._references:
                 if ref in memo.values():
                     new_references.add(ref)
+            for instance in definition._children:
+                instance._reference._references.add(instance)
                 
             definition._references = new_references
 

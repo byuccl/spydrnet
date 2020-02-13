@@ -89,7 +89,28 @@ class TestClone(unittest.TestCase):
         self.create_and_clone_cable(pincount, array, downto, index, key, value)        
 
     def test_definition(self):
-        pass
+        lib = Library()
+        def1 = lib.create_definition()
+        def2 = lib.create_definition()
+        ins1 = def2.create_child()
+        ins2 = def2.create_child()
+        ins1.reference = def1
+        ins2.reference = def1
+        def2.create_port()
+        def2.create_cable()
+        def3 = clone(def2)
+        assert def3.library == None
+        assert len(def3.children) == len(def2.children)
+        assert len(def3.cables) == len(def2.cables)
+        assert len(def3.ports) == len(def2.ports)
+        for p in def3.ports:
+            assert p not in def2.ports
+        for c in def3.cables:
+            assert c not in def2.cables
+        for c in def3.children:
+            assert c not in def2.children
+            assert c in def1.references
+        assert len(def1.references) == 4
 
     def test_innerpin(self):
         port = Port()
@@ -113,11 +134,50 @@ class TestClone(unittest.TestCase):
             assert v not in child.pins.values()
 
 
-    def test_library(self):
-        pass
+    def test_library_instance_references(self):
+        lib1 = Library()
+        lib2 = Library()
+        def1 = lib1.create_definition()
+        def2 = lib1.create_definition()
+        def3 = lib2.create_definition()
+        ins2 = def1.create_child()
+        ins3 = def1.create_child()
+        ins2.reference = def2
+        ins3.reference = def3
+        lib3 = clone(lib1)
+        assert lib3.netlist == None
+        assert len(lib3.definitions) == len(lib1.definitions)
+        for d in lib3.definitions:
+            assert d not in lib1.definitions
+        def1c = lib3.definitions[0]
+        def2c = lib3.definitions[1]
+        ins2c = def1c.children[0]
+        ins3c = def1c.children[1]
+        assert ins2c in def2c.references
+        assert ins2c not in def2.references
+        assert ins3c in def3.references
+        assert ins2c.reference is def2c
+        assert ins3c.reference is def3
+        assert ins2 in def2.references
+        assert ins2 not in def2c.references
+        assert len(def3.references) == 2
+
+
+    def test_library_definition_references(self):
+        lib1 = Library()
+        lib2 = Library()
+        def1 = lib1.create_definition()
+        def2 = lib2.create_definition()
+        ins1 = def2.create_child()
+        ins1.reference = def1
+        lib3 = clone(lib1)
+        def1c = lib3.definitions[0]
+        assert len(def1c.references) == 0
+        assert ins1.reference is def1
 
     def check_overlap_references(self, nl1, nl2):
-        assert nl2 != nl1, "The netlist references cannot be the same"
+        assert nl2 is not nl1, "The netlist references cannot be the same"
+        assert nl2.top_instance is not nl1.top_instance or nl2.top_instance == None and nl1.top_instance == None
         for library in nl1.libraries:
             assert library not in nl2.libraries, "library references cannot be the same between netlists"
             for library2 in nl2.libraries:
@@ -127,14 +187,14 @@ class TestClone(unittest.TestCase):
                         for instance1 in definition1.references:
                             assert instance1 not in definition2.references, "reference cannot cross netlist bounds"
                             for instance2 in definition2.references:
-                                assert instance2.reference != instance1.reference, "references cannot be the same in 2 netlists."
+                                assert instance2.reference is not instance1.reference, "references cannot be the same in 2 netlists."
                         for instance1 in definition1.children:
                             assert instance1 not in definition2.children, "instance cannot belong in definitions in 2 netlists"
                             for instance2 in definition2.references:
                                 for pin1 in instance1.pins:
                                     assert pin1 not in instance2.pins, "pins can't be in 2 netlists"
                                     for pin2 in instance2.pins:
-                                        assert pin1.wire != pin2.wire, "wires can't be referenced between 2 netlists"
+                                        assert pin1.wire is not pin2.wire, "wires can't be referenced between 2 netlists"
                         for cable1 in definition1.cables:
                             assert cable1 not in definition2.cables, "cable cannot belong in definitions in 2 netlists"
                             for cable2 in definition2.cables:
@@ -148,7 +208,7 @@ class TestClone(unittest.TestCase):
                                 for pin1 in port1.pins:
                                     assert pin1 not in port2.pins, "pin in 2 netlists"
                                     for pin2 in port2.pins:
-                                        assert pin1.wire != pin2.wire, "wire referenced accross netlist bounds"
+                                        assert pin1.wire is not pin2.wire, "wire referenced accross netlist bounds"
 
     def test_netlist(self):
         nl1, nl2 = self._get_two_netlists()
@@ -238,7 +298,7 @@ class TestClone(unittest.TestCase):
         self.create_and_clone_port(pincount, direction, array, downto, index, key, value)        
 
     def test_port_with_connectivity(self):
-        pass
+        pass #TODO
 
     def test_wire(self):
         cable = Cable()
