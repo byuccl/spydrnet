@@ -100,21 +100,6 @@ class Cable(Bundle):
         global_callback._call_cable_remove_wire(self, wire)
         wire._cable = None
 
-    # def __deepcopy__(self, memo):
-    #     if self in memo:
-    #         raise error("the object should not have been copied twice in this pass")
-    #     c = Cable()
-    #     memo[self] = c
-    #     c._wires = deepcopy(self._wires, memo=memo)
-    #     for w in c._wires:
-    #         w._cable = c
-    #     c._definition = None
-    #     c._is_downto = deepcopy(self._is_downto)
-    #     c._is_scalar = deepcopy(self._is_scalar)
-    #     c._lower_index = deepcopy(self._lower_index)
-    #     c._data = deepcopy(self._data)
-    #     return c
-
     def _clone_rip_and_replace(self, memo):
         '''remove from its current environment and place it into the new cloned environment with references held in the memo dictionary'''
         for w in self._wires:

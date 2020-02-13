@@ -95,15 +95,6 @@ class Wire:
         global_callback._call_wire_disconnect_pin(self, pin)
         pin._wire = None
 
-    # def __deepcopy__(self, memo):
-    #     if self in memo:
-    #         raise error("the object should not have been copied twice in this pass")
-    #     c = Wire()
-    #     memo[self] = c
-    #     c._cable = None
-    #     c._pins = copy(self._pins) #shallow copy the list so that it is a new list but it still refers to the pins.
-    #     return c
-
     def _clone_rip_and_replace(self, memo):
         '''remove from its current environment and place it into the new cloned environment with references held in the memo dictionary'''
         new_pins = list()

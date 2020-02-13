@@ -138,36 +138,6 @@ class Netlist(Element):
         global_callback._call_netlist_remove_library(self, library)
         library._netlist = None
 
-    # def __deepcopy__(self, memo):
-    #     if self in memo:
-    #         raise error("the object should not have been copied twice in this pass")
-    #     c = Netlist()
-    #     memo[self] = c
-    #     c._data = deepcopy(self._data)
-    #     c._libraries = deepcopy(self._libraries, memo)
-    #     if self._top_instance == None:
-    #         c._top_instance = None
-    #     else:
-    #         if self._top_instance in memo:
-    #             c._top_instance = memo[self._top_instance]
-    #         else:
-    #             new_top = deepcopy(self.top_instance)
-    #             memo[self.top_instance] = new_top
-
-    #     for library in c._libraries:
-    #         library._netlist = c
-    #         for definition in library._definitions:
-    #             new_references = set()
-    #             for instance in definition._references:
-    #                 if instance in memo:
-    #                     new_references.add(memo[instance])
-    #                 else:
-    #                     new_references.add(instance)
-    #             definition._references = new_references
-    #             for instance in definition._children:
-    #                 if instance._reference in memo:
-    #                     instance._reference = memo[instance._reference]
-    #     return c
 
     def _clone_rip(self, memo):
         '''need to remove any extraneous references to floating, no parent instances'''

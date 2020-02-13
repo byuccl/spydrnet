@@ -51,15 +51,6 @@ class OuterPin(Pin):
     def __hash__(self):
         return hash((self._instance, self._inner_pin))
 
-    # def __deepcopy__(self, memo):
-    #     if self in memo:
-    #         raise error("the object should not have been copied twice in this pass")
-    #     c = OuterPin()
-    #     memo[self] = c
-    #     c._instance = None
-    #     c._inner_pin = self._inner_pin
-    #     c._wire = self._wire
-    #     return c
 
     def _clone_rip_and_replace(self, memo):
         '''remove from its current environment and place it into the new cloned environment with references held in the memo dictionary'''

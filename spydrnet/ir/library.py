@@ -121,61 +121,6 @@ class Library(Element):
         global_callback._call_library_remove_definition(self, definition)
         definition._library = None
 
-    # def __deepcopy__(self, memo):
-    #     if self in memo:
-    #         raise error("the object should not have been copied twice in this pass")
-    #     c = Library()
-    #     memo[self] = c
-    #     c._netlist = None
-    #     c._data = deepcopy(self._data)
-    #     c._definitions = deepcopy(self._definitions, memo=memo)
-    #     for definition in c._definitions:
-    #         definition._library = c
-    #         new_references = set()
-    #         for instance in definition._references:
-    #             #if the instance was cloned then replace it in the references
-    #             if instance in memo:
-    #                 new_instance = memo[instance]
-    #                 new_references.add(new_instance)
-    #                 assert new_instance._reference != definition, "the instance is an instance of the definition we are iterating in..."
-    #                 new_instance._reference._references.remove(new_instance)
-    #                 new_instance._reference = definition
-    #                 new_pins = dict()
-    #                 for inner_pin, outer_pin in new_instance._pins.items():
-    #                     #setup the new dictionary to replace the old one, all keys are updated
-    #                     new_pins[memo[inner_pin]] = outer_pin
-    #                     #fix the things the outerpins point to, inner pins have already been fixed by the port call.
-    #                     outer_pin._inner_pin = memo[outer_pin._inner_pin]
-    #                     outer_pin._wire = memo[outer_pin._wire]
-    #                 new_instance._pins = new_pins
-    #             else:
-    #                 new_references.add(instance)
-    #         definition._references = new_references
-
-    #     # for definition in c._definitions:
-    #     #     definition._library = c
-    #     #     new_references = set()
-    #     #     for instance in definition._references:
-    #     #         if instance in memo:
-    #     #             new_references.add(memo[instance])
-    #     #             #change the pins on the instance to reference the new definition.
-
-    #     #             new_pins = dict()
-    #     #             for inner_pin, outer_pin in instance._pins.items():
-    #     #                 #setup the new dictionary to replace the old one, all keys are updated
-    #     #                 new_pins[memo[inner_pin]] = outer_pin
-    #     #                 #fix the things the outerpins point to, inner pins have already been fixed by the port call.
-    #     #                 outer_pin._inner_pin = memo[outer_pin._inner_pin]
-    #     #                 outer_pin._wire = memo[outer_pin._wire]
-    #     #             instance._pins = new_pins
-    #     #         else:
-    #     #             new_references.add(instance)
-                
-    #     #     definition._references = new_references
-    #     #     for instance in definition._children:
-    #     #         if instance._reference in memo:
-    #     #             instance._reference = memo[instance._reference]
-    #     return c
 
     def _clone_rip_and_replace(self, memo):
         '''remove from its current environment and place it into the new cloned environment with references held in the memo dictionary'''

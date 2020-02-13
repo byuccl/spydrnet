@@ -344,40 +344,6 @@ class Definition(Element):
         global_callback._call_definition_remove_cable(self, cable)
         cable._definition = None
 
-
-    # def __deepcopy__(self, memo):
-    #     if self in memo:
-    #         raise error("the object should not have been copied twice in this pass")
-    #     c = Definition()
-    #     memo[self] = c
-    #     c._data = deepcopy(self._data)
-    #     c._library = None
-    #     c._ports = deepcopy(self._ports, memo)
-    #     c._cables = deepcopy(self._cables, memo)
-    #     c._children = deepcopy(self._children, memo)
-    #     c._references = copy(self._references)
-    #     for port in c._ports:
-    #         port._definition = c
-    #         for pin in port._pins:
-    #             if pin._wire != None:
-    #                 pin._wire = memo[pin._wire]
-    #     for cable in c._cables:
-    #         cable._definition = c
-    #         for wire in cable:
-    #             for i in range(len(wire._pins)):
-    #                 wire._pins[i] = memo[wire._pins[i]]
-    #     for instance in c._children:
-    #         instance._parent = c
-    #     #     new_pins = dict()
-    #     #     for inner_pin, outer_pin in instance._pins.items():
-    #     #         #setup the new dictionary to replace the old one, all keys are updated
-    #     #         new_pins[memo[inner_pin]] = outer_pin
-    #     #         #fix the things the outerpins point to, inner pins have already been fixed by the port call.
-    #     #         outer_pin._inner_pin = memo[outer_pin._inner_pin]
-    #     #         outer_pin._wire = memo[outer_pin._wire]
-    #     #     instance._pins = new_pins
-    #     return c
-
     def _clone_rip_and_replace(self, memo):
         '''if an instance that is a reference of this definition was cloned then update the list of references of the definition.
         for each of the children instances, we should also update the reference to refer to any cloned dictionaries
@@ -388,8 +354,6 @@ class Definition(Element):
             if instance in memo:
                 new_instance = memo[instance]
                 new_references.add(new_instance)
-                # new_instance._reference = self
-                # new_instance._clone_rip_and_replace_in_library(memo)
             else:
                 new_references.add(instance)
         self._references = new_references

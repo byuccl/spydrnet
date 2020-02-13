@@ -80,20 +80,6 @@ class Instance(Element):
         '''get the pins on this instance.'''
         return OuterPinsView(self._pins)
 
-    # def __deepcopy__(self, memo):
-    #     if self in memo:
-    #         raise error("the object should not have been copied twice in this pass")
-    #     c = Instance()
-    #     memo[self] = c
-    #     c._parent = None
-    #     for inner_pin, outer_pin in self._pins.items():
-    #         new_outer_pin = deepcopy(outer_pin, memo)
-    #         new_outer_pin._instance = c
-    #         c._pins[inner_pin] = new_outer_pin
-    #     c._reference = self._reference
-    #     c._reference._references.add(c)
-    #     c._data = deepcopy(self._data)
-    #     return c
 
     def _clone_rip_and_replace_in_definition(self, memo):
         '''slide the outerpins references into a new context. the instance still references something outside of what has been cloned.'''

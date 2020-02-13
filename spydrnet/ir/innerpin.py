@@ -17,15 +17,6 @@ class InnerPin(Pin):
         '''return the port that the inner pin is a part of. This object cannot be modified directly by the end user.'''
         return self._port
 
-    # def __deepcopy__(self, memo):
-    #     if self in memo:
-    #         raise error("the object should not have been copied twice in this pass")
-    #     c = InnerPin()
-    #     memo[self] = c
-    #     c._wire = self._wire
-    #     c._port = None
-    #     return c
-
 
     def _clone_rip_and_replace(self, memo):
         '''remove from its current environment and place it into the new cloned environment with references held in the memo dictionary'''
