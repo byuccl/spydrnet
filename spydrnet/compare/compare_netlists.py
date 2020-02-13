@@ -141,9 +141,10 @@ class Comparer:
             "Instances do not have the same original identifier, orig " \
             "\"{}\" composer \"{}\"".format(instances_orig_original_identifier, instances_composer_original_identifier)
 
-        assert self.get_identifier(instances_orig.reference) == self.get_identifier(instances_composer.reference) and \
+        assert (instances_orig.reference == None and instances_composer.reference == None) or \
+            (self.get_identifier(instances_orig.reference) == self.get_identifier(instances_composer.reference) and \
             self.get_identifier(instances_orig.reference.library) == \
-               self.get_identifier(instances_composer.reference.library), \
+               self.get_identifier(instances_composer.reference.library)), \
             "Instances do not have the same reference definition."
 
         if "EDIF.properties" in instances_orig:
@@ -157,10 +158,14 @@ class Comparer:
 
     @staticmethod
     def get_identifier(obj):
+        if obj == None:
+            return None
         if "EDIF.identifier" in obj:
             return obj["EDIF.identifier"]
 
     @staticmethod
     def get_original_identifier(obj):
+        if obj == None:
+            return None
         if "EDIF.original_identifier" in obj:
             return obj["EDIF.original_identifier"]

@@ -39,6 +39,19 @@ class TestClone(unittest.TestCase):
             wire.connect_pin(pin)
         for pin in instance.pins:
             wire.connect_pin(pin)
+        lib1 = netlist.create_library()
+        lib2 = netlist.create_library()
+        def1 = lib1.create_definition()
+        def2 = lib2.create_definition()
+        def3 = lib1.create_definition()
+        def4 = lib2.create_definition()
+        ins1 = def1.create_child()
+        ins2 = def2.create_child()
+        ins3 = def3.create_child()
+        def4.create_child()
+        ins1.reference = def2
+        ins2.reference = def3
+        ins3.reference = def4
         return netlist
 
 
