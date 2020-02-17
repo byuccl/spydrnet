@@ -3,6 +3,7 @@ from spydrnet.ir.library import Library
 from spydrnet.ir.instance import Instance
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
+from spydrnet.global_state.global_netlist import _call_create_netlist
 from copy import deepcopy, copy, error
 
 class Netlist(Element):
@@ -17,6 +18,7 @@ class Netlist(Element):
         super().__init__()
         self._libraries = list()
         self._top_instance = None
+        _call_create_netlist(self)
 
     @property
     def libraries(self):

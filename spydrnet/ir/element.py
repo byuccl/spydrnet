@@ -26,7 +26,7 @@ class Element(object):
     The only key that is reserved is 'NAME'. It is the primary name of the element. NAME may be undefined or inferred,
     for example, a pin on a port may be nameless, but infer its name for its parent port and position.
     """
-    __slots__ = ['_data']
+    __slots__ = ['_data', '__weakref__']
 
     def __init__(self):
         """

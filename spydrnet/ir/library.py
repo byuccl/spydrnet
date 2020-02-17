@@ -2,6 +2,7 @@ from spydrnet.ir.element import Element
 from spydrnet.ir.definition import Definition
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
+from spydrnet.global_state.global_netlist import _call_create_library
 from copy import deepcopy, copy, error
 
 
@@ -17,6 +18,7 @@ class Library(Element):
         super().__init__()
         self._netlist = None
         self._definitions = list()
+        _call_create_library(self)
 
     @property
     def netlist(self):

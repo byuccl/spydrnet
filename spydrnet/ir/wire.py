@@ -5,7 +5,7 @@ from copy import copy, deepcopy, error
 
 
 class Wire:
-    __slots__ = ['_cable', '_pins']
+    __slots__ = ['_cable', '_pins', '__weakref__']
 
     def __init__(self):
         self._cable = None

@@ -11,12 +11,71 @@ class CallbackListener:
     '''
 
     def __init__(self):
-        self.register_all_listeners()
+        self._register_all_listeners()
         
-    def register_all_listeners(self):
-        '''can be called when needed'''
-        '''override this function to call all the register functions that you want to listen for'''
-        pass
+    def _register_all_listeners(self):
+        if self.cable_add_wire.__func__ is not CallbackListener.cable_add_wire:
+            self.register_cable_add_wire()
+
+        if self.cable_remove_wire.__func__ is not CallbackListener.cable_remove_wire:
+            self.register_cable_remove_wire()
+
+        if self.definition_add_port.__func__ is not CallbackListener.definition_add_port:
+            self.register_definition_add_port()
+
+        if self.definition_remove_port.__func__ is not CallbackListener.definition_remove_port:
+            self.register_definition_remove_port()
+
+        if self.definition_add_child.__func__ is not CallbackListener.definition_add_child:
+            self.register_definition_add_child()
+
+        if self.definition_remove_child.__func__ is not CallbackListener.definition_remove_child:
+            self.register_definition_remove_child()
+
+        if self.definition_add_cable.__func__ is not CallbackListener.definition_add_cable:
+            self.register_definition_add_cable()
+
+        if self.definition_remove_cable.__func__ is not CallbackListener.definition_remove_cable:
+            self.register_definition_remove_cable()
+
+        if self.instance_reference.__func__ is not CallbackListener.instance_reference:
+            self.register_instance_reference()
+
+        if self.library_add_definition.__func__ is not CallbackListener.library_add_definition:
+            self.register_library_add_definition()
+
+        if self.library_remove_definition.__func__ is not CallbackListener.library_remove_definition:
+            self.register_library_remove_definition()
+
+        if self.netlist_top_instance.__func__ is not CallbackListener.netlist_top_instance:
+            self.register_netlist_top_instance()
+
+        if self.netlist_add_library.__func__ is not CallbackListener.netlist_add_library:
+            self.register_netlist_add_library()
+
+        if self.netlist_remove_library.__func__ is not CallbackListener.netlist_remove_library:
+            self.register_netlist_remove_library()
+
+        if self.port_add_pin.__func__ is not CallbackListener.port_add_pin:
+            self.register_port_add_pin()
+
+        if self.port_remove_pin.__func__ is not CallbackListener.port_remove_pin:
+            self.register_port_remove_pin()
+
+        if self.wire_connect_pin.__func__ is not CallbackListener.wire_connect_pin:
+            self.register_wire_connect_pin()
+
+        if self.wire_disconnect_pin.__func__ is not CallbackListener.wire_disconnect_pin:
+            self.register_wire_disconnect_pin()
+
+        if self.dictionary_set.__func__ is not CallbackListener.dictionary_set:
+            self.register_dictionary_set()
+
+        if self.dictionary_delete.__func__ is not CallbackListener.dictionary_delete:
+            self.register_dictionary_delete()
+
+        if self.dictionary_pop.__func__ is not CallbackListener.dictionary_pop:
+            self.register_dictionary_pop()
 
     def cable_add_wire(self, cable, wire):
         raise NotImplementedError

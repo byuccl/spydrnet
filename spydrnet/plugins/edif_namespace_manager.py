@@ -3,7 +3,7 @@
 from spydrnet.callback.callback_listener import CallbackListener
 from spydrnet.ir import Library, Definition, Instance, Port, Cable
 
-class DataManager(CallbackListener):
+class EdifNamespaceManager(CallbackListener):
     '''
     this class is a plugin using the callback listener to manage a database for name management.
     
@@ -21,6 +21,7 @@ class DataManager(CallbackListener):
     ######################################################
 
     def __init__(self):
+        super().__init__()
         # dictionary for each namespace
         # netlist simple dictionary
         self.net_dict = dict()
@@ -30,25 +31,6 @@ class DataManager(CallbackListener):
         self.defp_dict = dict()
         self.defc_dict = dict()
         self.defi_dict = dict()
-        # call this to register the listeners
-        super().__init__() #calls register_all_listeners
-    
-
-    def register_all_listeners(self):
-        '''override the function that registers what listeners are available.'''
-        self.register_definition_add_port()
-        self.register_definition_remove_port()
-        self.register_definition_add_child()
-        self.register_definition_remove_child()
-        self.register_definition_add_cable()
-        self.register_definition_remove_cable()
-        self.register_library_add_definition()
-        self.register_library_remove_definition()
-        self.register_netlist_add_library()
-        self.register_netlist_remove_library()
-        self.register_dictionary_delete()
-        self.register_dictionary_set()
-        self.register_dictionary_pop()
 
 
     ######################################################

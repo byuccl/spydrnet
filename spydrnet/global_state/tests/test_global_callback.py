@@ -37,22 +37,22 @@ class TestBundle(unittest.TestCase):
         call the function
         check to make sure the funciton was not called
         '''
-        assert((current_netlist not in container) or self.mycall not in container[current_netlist])
-        assert((current_netlist not in container) or self.mycall2 not in container[current_netlist])
+        assert (current_netlist() not in container) or self.mycall not in container[current_netlist()]
+        assert (current_netlist() not in container) or self.mycall2 not in container[current_netlist()]
         register(self.mycall)
-        assert((current_netlist in container) and self.mycall in container[current_netlist])
+        assert (current_netlist() in container) and self.mycall in container[current_netlist()]
         register(self.mycall2)
-        assert((current_netlist in container) and self.mycall2 in container[current_netlist])
+        assert (current_netlist() in container) and self.mycall2 in container[current_netlist()]
         call(self.arg1, self.arg2, ka = self.kwarg)
-        assert(self.callcount == 1 and self.callcount2 == 1)
+        assert self.callcount == 1 and self.callcount2 == 1
         deregister(self.mycall)
-        assert((current_netlist not in container) or self.mycall not in container[current_netlist])
+        assert (current_netlist() not in container) or self.mycall not in container[current_netlist()]
         call(self.arg1, self.arg2, ka = self.kwarg)
-        assert((self.callcount2 == 2 and self.callcount == 1))
+        assert (self.callcount2 == 2 and self.callcount == 1)
         deregister(self.mycall2)
-        assert((current_netlist not in container) or self.mycall2 not in container[current_netlist])
+        assert (current_netlist() not in container) or self.mycall2 not in container[current_netlist()]
         call(self.arg1, self.arg2, ka = self.kwarg)
-        assert(self.callcount == 1 and self.callcount2 == 2)
+        assert self.callcount == 1 and self.callcount2 == 2
 
     def test_cable_add_wire(self):
         self.call_for_each(gc._container_cable_add_wire, gc.register_cable_add_wire, gc._call_cable_add_wire, gc.deregister_cable_add_wire)

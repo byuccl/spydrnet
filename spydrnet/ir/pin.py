@@ -1,7 +1,7 @@
 
 class Pin:
     '''pin connects to a single wire. This class is extended by InnerPin and OuterPin'''
-    __slots__ = ['_wire']
+    __slots__ = ['_wire', '__weakref__']
 
     def __init__(self):
         self._wire = None

@@ -2,6 +2,7 @@ from spydrnet.ir.element import Element
 from spydrnet.ir.outerpin import OuterPin
 from spydrnet.ir.views.outerpinsview import OuterPinsView
 from spydrnet.global_state import global_callback
+from spydrnet.global_state.global_netlist import _call_create_instance
 from copy import deepcopy, copy, error
 
 
@@ -20,6 +21,7 @@ class Instance(Element):
         self._parent = None
         self._reference = None
         self._pins = dict()
+        _call_create_instance(self)
 
     @property
     def parent(self):

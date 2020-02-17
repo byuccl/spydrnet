@@ -1,7 +1,7 @@
 import unittest
 import spydrnet as sdn
 
-from spydrnet.plugins.data_manager import DataManager
+from spydrnet.plugins.edif_namespace_manager import EdifNamespaceManager
 from spydrnet.global_state.global_netlist import set_current_netlist, get_current_netlist
 
 
@@ -24,7 +24,7 @@ class TestDataManager(unittest.TestCase):
 
     def test_basic_setup(self):
         netlist = self.gen_netlist()
-        dm = DataManager()
+        dm = EdifNamespaceManager()
         lib1 = netlist.create_library()
         lib2 = netlist.create_library()
         lib1['EDIF.identifier'] = "my_lib1"
@@ -52,7 +52,7 @@ class TestDataManager(unittest.TestCase):
 
     def test_dont_track_orphaned(self):
         netlist = self.gen_netlist()
-        dm = DataManager()
+        dm = EdifNamespaceManager()
         lib1 = sdn.Library()
         lib2 = sdn.Library()
         lib1['EDIF.identifier'] = "my_lib1"
@@ -61,7 +61,7 @@ class TestDataManager(unittest.TestCase):
     @unittest.expectedFailure
     def test_duplicate_library_name(self):
         netlist = self.gen_netlist()
-        dm = DataManager()
+        dm = EdifNamespaceManager()
         lib1 = netlist.create_library()
         lib2 = netlist.create_library()
         lib1['EDIF.identifier'] = "my_lib"
@@ -71,7 +71,7 @@ class TestDataManager(unittest.TestCase):
     @unittest.expectedFailure
     def test_duplicate_definition_name(self):
         lib1 = self.gen_library()
-        dm = DataManager()
+        dm = EdifNamespaceManager()
         def1 = lib1.create_definition()
         def2 = lib1.create_definition()
         def1['EDIF.identifier'] = "my_lib"
@@ -79,7 +79,7 @@ class TestDataManager(unittest.TestCase):
 
     def test_duplicate_definition_elements(self):
         def1 = self.gen_definition()
-        dm = DataManager()
+        dm = EdifNamespaceManager()
         port = def1.create_port()
         instance = def1.create_child()
         cable = def1.create_cable()
@@ -90,7 +90,7 @@ class TestDataManager(unittest.TestCase):
     @unittest.expectedFailure
     def test_duplicate_definition_ports(self):
         def1 = self.gen_definition()
-        dm = DataManager()
+        dm = EdifNamespaceManager()
         port = def1.create_port()
         port2 = def1.create_port()
         port['EDIF.identifier'] = "my_lib"
@@ -99,7 +99,7 @@ class TestDataManager(unittest.TestCase):
     @unittest.expectedFailure
     def test_duplicate_definition_cables(self):
         def1 = self.gen_definition()
-        dm = DataManager()
+        dm = EdifNamespaceManager()
         cable = def1.create_cable()
         cable2 = def1.create_cable()
         cable['EDIF.identifier'] = "my_lib"
@@ -108,7 +108,7 @@ class TestDataManager(unittest.TestCase):
     @unittest.expectedFailure
     def test_duplicate_definition_children(self):
         def1 = self.gen_definition()
-        dm = DataManager()
+        dm = EdifNamespaceManager()
         instance = def1.create_child()
         instance2 = def1.create_child()
         instance['EDIF.identifier'] = "my_lib"
@@ -116,7 +116,7 @@ class TestDataManager(unittest.TestCase):
 
     def test_rename(self):
         netlist = self.gen_netlist()
-        dm = DataManager()
+        dm = EdifNamespaceManager()
         lib1 = netlist.create_library()
         lib1['EDIF.identifier'] = "my_lib1"
         lib1['EDIF.identifier'] = "my_lib2"
@@ -144,7 +144,7 @@ class TestDataManager(unittest.TestCase):
 
     def test_remove(self):
         netlist = self.gen_netlist()
-        dm = DataManager()
+        dm = EdifNamespaceManager()
         lib1 = netlist.create_library()
         lib1['EDIF.identifier'] = "my_lib1"
         netlist.remove_library(lib1)
@@ -173,7 +173,7 @@ class TestDataManager(unittest.TestCase):
 
     def test_orphaned_add(self):
         netlist = self.gen_netlist()
-        dm = DataManager()
+        dm = EdifNamespaceManager()
         lib1 = sdn.Library()
         lib1["EDIF.identifier"] = '1'
         netlist.add_library(lib1)
@@ -181,7 +181,7 @@ class TestDataManager(unittest.TestCase):
     @unittest.expectedFailure
     def test_orphaned_add_collision(self):
         netlist = self.gen_netlist()
-        dm = DataManager()
+        dm = EdifNamespaceManager()
         lib1 = sdn.Library()
         lib1["EDIF.identifier"] = '1'
         netlist.add_library(lib1)
@@ -192,7 +192,7 @@ class TestDataManager(unittest.TestCase):
     @unittest.expectedFailure
     def test_remove_twice_library(self):
         netlist = self.gen_netlist()
-        dm = DataManager()
+        dm = EdifNamespaceManager()
         lib1 = netlist.create_library()
         lib1['EDIF.identifier'] = "my_lib1"
         netlist.remove_library(lib1)
@@ -201,7 +201,7 @@ class TestDataManager(unittest.TestCase):
     @unittest.expectedFailure
     def test_remove_twice_definition(self):
         lib = self.gen_library()
-        dm = DataManager()
+        dm = EdifNamespaceManager()
         d1 = lib.create_definition()
         d1['EDIF.identifier'] = "1"
         lib.remove_definition(d1)
@@ -209,7 +209,7 @@ class TestDataManager(unittest.TestCase):
 
     def test_remove_untracked(self):
         netlist = self.gen_netlist()
-        dm = DataManager()
+        dm = EdifNamespaceManager()
         lib1 = netlist.create_library()
         def1 = lib1.create_definition()
         c1 = def1.create_cable()
@@ -223,7 +223,7 @@ class TestDataManager(unittest.TestCase):
 
     def test_remove_tracked(self):
         netlist = self.gen_netlist()
-        dm = DataManager()
+        dm = EdifNamespaceManager()
         lib1 = netlist.create_library()
         lib1["EDIF.identifier"] = "test"
         def1 = lib1.create_definition()
@@ -242,7 +242,7 @@ class TestDataManager(unittest.TestCase):
 
     def test_pop_name(self):
         netlist = self.gen_netlist()
-        dm = DataManager()
+        dm = EdifNamespaceManager()
         lib1 = netlist.create_library()
         lib1['EDIF.identifier'] = "my_lib1"
         lib1.pop('EDIF.identifier')
