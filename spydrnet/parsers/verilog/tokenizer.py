@@ -17,16 +17,22 @@ tokens = (
     'RIGHT_BRACKET',
     'POUND',
     'DOT',
-    'DIGIT',
-    'HEXDIGIT',
-    'SINGLEQUOTE'
+    # 'DIGIT',
+    # 'HEXDIGIT',
+    'NUMBER',
+    'BINARY_NUMBER',
+    'DECIMAL_NUMBER',
+    'HEX_NUMBER',
+    # 'SINGLEQUOTE',
+    'BLOCK_START',
+    'BLOCK_END',
     # 'CONSTENT',
-    # 'STRING'
+    'STRING',
     # 'PORT',
-    # 'PRIMITIVE',
-    # 'ENDPRIMITIVE',
+    'PRIMITIVE',
+    'ENDPRIMITIVE',
     # 'MODULE_NAME',
-    # 'COMMENT',
+    'COMMENT',
     # 'MULTILINECOMMENT',
     # 'SOMETHING',
     # 'NAME',
@@ -36,11 +42,12 @@ tokens = (
 )
 
 
-# states = (
+states = (
+    ('blockComment', 'exclusive'),
 #     ('modulename', 'inclusive'),
 #     ('portname', 'inclusive'),
 #
-# )
+)
 
 t_SIMPLE_IDENTIFIER = r'[a-zA-Z_][a-zA-Z0-9_$]*'
 t_LEFT_PAREN = r'\('
@@ -52,10 +59,53 @@ t_DOT = r'\.'
 t_COLON = r':'
 t_LEFT_BRACKET = r'\['
 t_RIGHT_BRACKET = r'\]'
-t_DIGIT = r'[0-9]'
-t_HEXDIGIT = r'[a-fA-F]'
-t_SINGLEQUOTE = r'\''
+# t_DIGIT = r'[0-9]'
+# t_HEXDIGIT = r'[a-fA-F]'
+# t_SINGLEQUOTE = r'\''
+t_NUMBER = r'[0-9]+'
+t_STRING = r'".*"'
 
+
+def t_BINARY_NUMBER(t):
+    r'[0-9]+\'b[0-1]+'
+    return t
+
+
+def t_DECIMAL_NUMBER(t):
+    r'[0-9]+\'d[0-9]+'
+    return t
+
+
+def t_HEX_NUMBER(t):
+    r'[0-9]+\'h[0-9a-fA-F]+'
+    return t
+
+
+def t_PRIMITIVE(t):
+    r'primitive'
+    return t
+
+
+def t_ENDPRIMITIVE(t):
+    r'endprimitive'
+    return t
+
+
+def t_comment(t):
+    r'//.*'
+
+
+def t_blockComment_comment(t):
+    r'[a-zA-Z0-9]+(?<!\*/)'
+
+
+def t_BLOCK_START(t):
+    r'/\*'
+    t.lexer.begin('blockComment')
+
+def t_blockComment_BLOCK_END(t):
+    r'\*/'
+    t.lexer.begin('INITIAL')
 
 def t_WIRE(t):
     r'wire'
@@ -116,33 +166,63 @@ def t_ENDMODULE(t):
 #     return t
 
 
-def t_error(t):
-    print("Illegal character '%s' on line %d" % (t.value[0], t.lexer.lineno))
-    # outfile.write("Illegal character '%s' on line %d\n" % (t.value[0], t._lexer.lineno))
-    t.lexer.skip(1)
-    # count.increment_count()
+def t_ANY_error(t):
+    for x in range(len(t.value)):
+        if(t.value[x].isspace()):
+            t.value = t.value[:x]
+            break
+    raise UnsupportedTokenException(t)
 
-def t_newline(t):
+
+def t_ANY_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
 
 
-t_ignore = ' \t'
+t_ANY_ignore = ' \t'
+
+
+class UnsupportedTokenException(Exception):
+
+    def __init__(self, *args):
+        self.badToken = args[0]
+
+    def __str__(self):
+        return 'Got a bad token "{0}" on line number {1}'.format(self.badToken.value, self.badToken.lineno)
 
 
 class verilogTokenizer():
 
-    def __init__(self, file=None):
-        if file is None:
-            raise Exception('Tokenizer requires a file')
-        self._lexer = lex.lex()
+    @staticmethod
+    def from_string(string):
+        tokenizer = verilogTokenizer(string)
+        return tokenizer
+
+    @staticmethod
+    def from_file(file):
         file = open(file, 'r')
-        self._lexer.input(file.read())
+        string = file.read()
         file.close()
-        self._next_token = self._lexer.next()
+        tokenizer = verilogTokenizer(string)
+        return tokenizer
+
+    def __init__(self, string):
+        self._lexer = lex.lex()
+        self._lexer.input(string)
+        try:
+            self._next_token = self._lexer.next()
+        except Exception as error:
+            self.error = error
+        self._stopitteration = False
 
     def next(self):
+        if hasattr(self, 'error'):
+            raise self.error
         current_token = self._next_token
+        if self._stopitteration:
+            raise StopIteration
+        if current_token is None:
+            self._stopitteration = True
         try:
             self._next_token = self._lexer.next()
         except StopIteration:
@@ -154,7 +234,8 @@ class verilogTokenizer():
 
 
 if __name__ == '__main__':
-    tokenizer = verilogTokenizer('test.v')
+    # tokenizer = verilogTokenizer.from_file('test.v')
+    tokenizer = verilogTokenizer.from_string('4\'b1010\n16\'b1010001111110001')
     while True:
         tok = tokenizer.next()
         if not tok:
