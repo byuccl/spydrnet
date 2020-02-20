@@ -1,26 +1,26 @@
 from spydrnet.global_state.global_netlist import get_current_netlist
 
-_container_cable_add_wire = dict()
-_container_cable_remove_wire = dict()
-_container_definition_add_port = dict()
-_container_definition_remove_port = dict()
-_container_definition_add_child = dict()
-_container_definition_remove_child = dict()
-_container_definition_add_cable = dict()
-_container_definition_remove_cable = dict()
-_container_instance_reference = dict()
-_container_library_add_definition = dict()
-_container_library_remove_definition = dict()
-_container_netlist_top_instance = dict()
-_container_netlist_add_library = dict()
-_container_netlist_remove_library = dict()
-_container_port_add_pin = dict()
-_container_port_remove_pin = dict()
-_container_wire_connect_pin = dict()
-_container_wire_disconnect_pin = dict()
-_container_dictionary_set = dict()
-_container_dictionary_delete = dict()
-_container_dictionary_pop = dict()
+_container_cable_add_wire = list()
+_container_cable_remove_wire = list()
+_container_definition_add_port = list()
+_container_definition_remove_port = list()
+_container_definition_add_child = list()
+_container_definition_remove_child = list()
+_container_definition_add_cable = list()
+_container_definition_remove_cable = list()
+_container_instance_reference = list()
+_container_library_add_definition = list()
+_container_library_remove_definition = list()
+_container_netlist_top_instance = list()
+_container_netlist_add_library = list()
+_container_netlist_remove_library = list()
+_container_port_add_pin = list()
+_container_port_remove_pin = list()
+_container_wire_connect_pin = list()
+_container_wire_disconnect_pin = list()
+_container_dictionary_set = list()
+_container_dictionary_delete = list()
+_container_dictionary_pop = list()
 
 
 def _call_cable_add_wire(*args, **kwargs):
@@ -107,11 +107,10 @@ def _call_dictionary_pop(*args, **kwargs):
     _call(_container_dictionary_pop, *args, **kwargs)
 
 
-def _call(dictionary_to_call, *args, **kwargs):
+def _call(container_to_call, *args, **kwargs):
     # TODO: look into inlining this function perhaps, it is going to get called alot.
-    if get_current_netlist() in dictionary_to_call:
-        for func in dictionary_to_call[get_current_netlist()]:
-            func(*args, **kwargs)
+    for func in container_to_call:
+        func(*args, **kwargs)
 
 
 def register_cable_add_wire(method):
@@ -198,14 +197,10 @@ def register_dictionary_pop(*args, **kwargs):
     _register(_container_dictionary_pop, *args, **kwargs)
 
 
-def _register(dictionary_to_register, method):
+def _register(container_to_register, method):
     # TODO: look into inlining this function perhaps, not not be necessary since is won't be called often.
-    if get_current_netlist() in dictionary_to_register:
-        assert(method not in dictionary_to_register[get_current_netlist()])
-        dictionary_to_register[get_current_netlist()].append(method)
-    else:
-        dictionary_to_register[get_current_netlist()] = []
-        dictionary_to_register[get_current_netlist()].append(method)
+    assert method not in container_to_register
+    container_to_register.append(method)
 
 
 def deregister_cable_add_wire(method):
@@ -292,8 +287,7 @@ def deregister_dictionary_pop(*args, **kwargs):
     _deregister(_container_dictionary_pop, *args, **kwargs)
 
 
-def _deregister(dictionary_to_deregister, method):
+def _deregister(container_to_deregister, method):
     # TODO: look into inlining this function perhaps, may not be necessary since it won't be called often.
-    assert(get_current_netlist() in dictionary_to_deregister)
-    assert(method in dictionary_to_deregister[get_current_netlist()])
-    dictionary_to_deregister[get_current_netlist()].remove(method)
+    assert method in container_to_deregister
+    container_to_deregister.remove(method)
