@@ -29,6 +29,10 @@ from spydrnet.testing.test import run as test
 from spydrnet.parsers import parse
 from spydrnet.composers import compose
 
+from spydrnet.global_state.global_netlist import current_netlist, get_netlists, current_namespace_manager
+from spydrnet.plugins.namespace_manager import NamespaceManager
+current_namespace_manager(NamespaceManager())
+
 import os
 base_dir = os.path.dirname(os.path.abspath(__file__))
 

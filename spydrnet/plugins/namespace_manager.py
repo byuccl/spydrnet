@@ -1,8 +1,10 @@
+from abc import ABC
+
 from spydrnet.callback.callback_listener import CallbackListener
-from spydrnet.ir import Library, Definition, Instance, Port, Cable
+from spydrnet.ir import *
 
 
-class DefaultNamespaceManager(CallbackListener):
+class NamespaceManager(CallbackListener, ABC):
     def __init__(self):
         super().__init__()
         self.netlists_namespace = dict()  # name -> netlist
@@ -11,3 +13,6 @@ class DefaultNamespaceManager(CallbackListener):
         self.port_namespaces = dict()  # definition -> ports_namespace; name -> port
         self.cable_namespaces = dict()  # definition -> cables_namespace; name -> cable
         self.instance_namespaces = dict()  # definition -> instance_namespace; name -> instance
+
+    #def dictionary_set(self, element, key, value):
+    #    pass  # print(element, key, value)

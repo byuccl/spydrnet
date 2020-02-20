@@ -1,6 +1,8 @@
 import weakref
+from spydrnet.plugins.namespace_manager import NamespaceManager
 
 _current_netlist = None
+_current_namespace_manager = None
 _alive_netlists = weakref.WeakSet()
 
 
@@ -20,6 +22,21 @@ def current_netlist(*args):
     elif args_len != 0:
         raise TypeError("current_netlist() takes upto 1 positional argument but {} were given".format(args_len))
     return _current_netlist
+
+
+def get_netlists(*args, **kwargs):
+    return (x for x in _alive_netlists)
+
+
+def current_namespace_manager(*args):
+    args_len = len(args)
+    if args_len == 1:
+        global _current_namespace_manager
+        _current_namespace_manager = args[0]
+    elif args_len != 0:
+        raise TypeError("current_namespace_manager() takes upto 1 positional argument but {} were given".format(
+            args_len))
+    return _current_namespace_manager
 
 
 def _call_create_netlist(netlist):

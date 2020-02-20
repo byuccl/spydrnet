@@ -3,6 +3,7 @@
 from spydrnet.callback.callback_listener import CallbackListener
 from spydrnet.ir import Library, Definition, Instance, Port, Cable
 
+
 class EdifNamespaceManager(CallbackListener):
     '''
     this class is a plugin using the callback listener to manage a database for name management.
