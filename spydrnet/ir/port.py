@@ -3,7 +3,7 @@ from spydrnet.ir.innerpin import InnerPin
 from spydrnet.ir.outerpin import OuterPin
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
-from spydrnet.global_state.global_netlist import _call_create_port
+from spydrnet.global_state.global_callback import _call_create_port
 from copy import deepcopy, copy, error
 
 from enum import Enum

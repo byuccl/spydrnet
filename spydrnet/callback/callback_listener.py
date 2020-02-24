@@ -11,7 +11,25 @@ class CallbackListener:
     """
 
     def __init__(self):
-        self._register_all_listeners()
+        self.register_all_listeners()
+
+    def create_netlist(self, netlist):
+        raise NotImplementedError
+
+    def create_library(self, library):
+        raise NotImplementedError
+
+    def create_definition(self, definition):
+        raise NotImplementedError
+
+    def create_port(self, port):
+        raise NotImplementedError
+
+    def create_cable(self, cable):
+        raise NotImplementedError
+
+    def create_instance(self, instance):
+        raise NotImplementedError
 
     def cable_add_wire(self, cable, wire):
         raise NotImplementedError
@@ -76,7 +94,25 @@ class CallbackListener:
     def dictionary_pop(self, element, item):
         raise NotImplementedError
 
-    def _register_all_listeners(self):
+    def register_all_listeners(self):
+        if self.create_netlist.__func__ is not CallbackListener.create_netlist:
+            self.register_create_netlist()
+
+        if self.create_library.__func__ is not CallbackListener.create_library:
+            self.register_create_library()
+
+        if self.create_definition.__func__ is not CallbackListener.create_definition:
+            self.register_create_definition()
+
+        if self.create_port.__func__ is not CallbackListener.create_port:
+            self.register_create_port()
+
+        if self.create_cable.__func__ is not CallbackListener.create_cable:
+            self.register_create_cable()
+
+        if self.create_instance.__func__ is not CallbackListener.create_instance:
+            self.register_create_instance()
+
         if self.cable_add_wire.__func__ is not CallbackListener.cable_add_wire:
             self.register_cable_add_wire()
 
@@ -140,6 +176,24 @@ class CallbackListener:
         if self.dictionary_pop.__func__ is not CallbackListener.dictionary_pop:
             self.register_dictionary_pop()
                 
+    def register_create_netlist(self):
+        global_callback.register_create_netlist(self.create_netlist)
+
+    def register_create_library(self):
+        global_callback.register_create_library(self.create_library)
+
+    def register_create_definition(self):
+        global_callback.register_create_definition(self.create_definition)
+
+    def register_create_port(self):
+        global_callback.register_create_port(self.create_port)
+
+    def register_create_cable(self):
+        global_callback.register_create_cable(self.create_cable)
+
+    def register_create_instance(self):
+        global_callback.register_create_instance(self.create_instance)
+
     def register_cable_add_wire(self):
         global_callback.register_cable_add_wire(self.cable_add_wire)
 
@@ -203,7 +257,25 @@ class CallbackListener:
     def register_dictionary_pop(self):
         global_callback.register_dictionary_pop(self.dictionary_pop)
 
-    def _deregister_all_listeners(self):
+    def deregister_all_listeners(self):
+        if self.create_netlist.__func__ is not CallbackListener.create_netlist:
+            self.deregister_create_netlist()
+
+        if self.create_library.__func__ is not CallbackListener.create_library:
+            self.deregister_create_library()
+
+        if self.create_definition.__func__ is not CallbackListener.create_definition:
+            self.deregister_create_definition()
+
+        if self.create_port.__func__ is not CallbackListener.create_port:
+            self.deregister_create_port()
+
+        if self.create_cable.__func__ is not CallbackListener.create_cable:
+            self.deregister_create_cable()
+
+        if self.create_instance.__func__ is not CallbackListener.create_instance:
+            self.deregister_create_instance()
+
         if self.cable_add_wire.__func__ is not CallbackListener.cable_add_wire:
             self.deregister_cable_add_wire()
 
@@ -266,6 +338,24 @@ class CallbackListener:
 
         if self.dictionary_pop.__func__ is not CallbackListener.dictionary_pop:
             self.deregister_dictionary_pop()
+
+    def deregister_create_netlist(self):
+        global_callback.deregister_create_netlist(self.create_netlist)
+
+    def deregister_create_library(self):
+        global_callback.deregister_create_library(self.create_library)
+
+    def deregister_create_definition(self):
+        global_callback.deregister_create_definition(self.create_definition)
+
+    def deregister_create_port(self):
+        global_callback.deregister_create_port(self.create_port)
+
+    def deregister_create_cable(self):
+        global_callback.deregister_create_cable(self.create_cable)
+
+    def deregister_create_instance(self):
+        global_callback.deregister_create_instance(self.create_instance)
 
     def deregister_cable_add_wire(self):
         global_callback.deregister_cable_add_wire(self.cable_add_wire)

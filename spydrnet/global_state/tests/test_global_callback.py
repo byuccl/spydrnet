@@ -1,11 +1,18 @@
 import unittest
 
-import spydrnet as sdn
 import spydrnet.global_state.global_callback as gc
-from spydrnet.global_state.global_netlist import current_netlist
+from spydrnet.plugins import namespace_manager
 
 
-class TestBundle(unittest.TestCase):
+class TestGlobalCallback(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        namespace_manager.deregister_all_listeners()
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        namespace_manager.register_all_listeners()
+
     def setUp(self) -> None:
         self.arg1 = 1
         self.arg2 = 2
@@ -24,36 +31,6 @@ class TestBundle(unittest.TestCase):
         assert(a1 is self.arg1)
         assert(a2 is self.arg2)
         assert(ka is self.kwarg)
-
-    def call_for_each(self, container, register, call, deregister): 
-        '''
-        general strategy:
-        check to make sure the _container is empty
-        register a function
-        check to make sure the function is registered
-        call the function with some parameters
-        check to make sure the function was called with the parameters
-        deregister the function
-        check to make sure the function was deregistered
-        call the function
-        check to make sure the funciton was not called
-        '''
-        assert self.mycall not in container
-        assert self.mycall2 not in container
-        register(self.mycall)
-        assert self.mycall in container
-        register(self.mycall2)
-        assert self.mycall2 in container
-        call(self.arg1, self.arg2, ka=self.kwarg)
-        assert self.callcount == 1 and self.callcount2 == 1
-        deregister(self.mycall)
-        assert self.mycall not in container
-        call(self.arg1, self.arg2, ka=self.kwarg)
-        assert self.callcount2 == 2 and self.callcount == 1
-        deregister(self.mycall2)
-        assert self.mycall2 not in container
-        call(self.arg1, self.arg2, ka=self.kwarg)
-        assert self.callcount == 1 and self.callcount2 == 2
 
     def test_cable_add_wire(self):
         self.call_for_each(gc._container_cable_add_wire, gc.register_cable_add_wire, gc._call_cable_add_wire, gc.deregister_cable_add_wire)
@@ -117,3 +94,33 @@ class TestBundle(unittest.TestCase):
     
     def test_dictionary_add(self):
         self.call_for_each(gc._container_dictionary_set, gc.register_dictionary_set, gc._call_dictionary_set, gc.deregister_dictionary_set)
+
+    def call_for_each(self, container, register, call, deregister):
+        '''
+        general strategy:
+        check to make sure the _container is empty
+        register a function
+        check to make sure the function is registered
+        call the function with some parameters
+        check to make sure the function was called with the parameters
+        deregister the function
+        check to make sure the function was deregistered
+        call the function
+        check to make sure the funciton was not called
+        '''
+        assert self.mycall not in container
+        assert self.mycall2 not in container
+        register(self.mycall)
+        assert self.mycall in container
+        register(self.mycall2)
+        assert self.mycall2 in container
+        call(self.arg1, self.arg2, ka=self.kwarg)
+        assert self.callcount == 1 and self.callcount2 == 1
+        deregister(self.mycall)
+        assert self.mycall not in container
+        call(self.arg1, self.arg2, ka=self.kwarg)
+        assert self.callcount2 == 2 and self.callcount == 1
+        deregister(self.mycall2)
+        assert self.mycall2 not in container
+        call(self.arg1, self.arg2, ka=self.kwarg)
+        assert self.callcount == 1 and self.callcount2 == 2

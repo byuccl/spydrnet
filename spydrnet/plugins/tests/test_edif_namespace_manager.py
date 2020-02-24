@@ -2,13 +2,11 @@ import unittest
 import spydrnet as sdn
 
 from spydrnet.plugins.edif_namespace_manager import EdifNamespaceManager
-from spydrnet.global_state.global_netlist import set_current_netlist, get_current_netlist
 
 
 class TestDataManager(unittest.TestCase):
     def gen_netlist(self):
         netlist = sdn.Netlist()
-        set_current_netlist(netlist)
         return netlist
 
     def gen_library(self):
@@ -269,9 +267,5 @@ class TestDataManager(unittest.TestCase):
         i1.pop('EDIF.identifier')
         i2['EDIF.identifier'] = "1"
 
-
-    '''tests TODO:
-    rename an object
-    orphan an object and see what happens
-    ...
-    '''
+    # TODO: rename an object
+    # TODO: orphan an object and see what happens
