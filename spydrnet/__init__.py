@@ -29,6 +29,8 @@ from spydrnet.testing.test import run as test
 from spydrnet.parsers import parse
 from spydrnet.composers import compose
 
+from spydrnet.plugins import namespace_manager
+
 import os
 base_dir = os.path.dirname(os.path.abspath(__file__))
 

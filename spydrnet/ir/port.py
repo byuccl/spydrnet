@@ -3,6 +3,7 @@ from spydrnet.ir.innerpin import InnerPin
 from spydrnet.ir.outerpin import OuterPin
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
+from spydrnet.global_state.global_callback import _call_create_port
 from copy import deepcopy, copy, error
 
 from enum import Enum
@@ -34,6 +35,7 @@ class Port(Bundle):
         super().__init__()
         self._direction = self.Direction.UNDEFINED
         self._pins = list()
+        _call_create_port(self)
 
 
     def _items(self):
