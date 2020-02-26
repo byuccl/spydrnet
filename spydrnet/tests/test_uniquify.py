@@ -75,22 +75,22 @@ class TestUniquify(unittest.TestCase):
         uniquify(nl)
         assert self.is_unique(nl), "netlist should remain unique in this test. somehow uniquify made the netlist un-unique"
 
-    def simple_recursive_netlist_visualizer(self, netlist):
-        #TODO put this code somewhere where people can use it to visualize simple netlists
-        top_instance = netlist.top_instance
-        #should look something like this:
-        #top
-        #   child1
-        #       child1.child
-        #   child2
-        #       child2.child
-        def recurse(instance, depth):
-            s = depth * "\t"
-            print(s, instance.name, "(", instance.reference.name, ")")
-            for c in instance.reference.children:  
-                recurse(c, depth + 1)
+    # def simple_recursive_netlist_visualizer(self, netlist):
+    #     #TODO put this code somewhere where people can use it to visualize simple netlists
+    #     top_instance = netlist.top_instance
+    #     #should look something like this:
+    #     #top
+    #     #   child1
+    #     #       child1.child
+    #     #   child2
+    #     #       child2.child
+    #     def recurse(instance, depth):
+    #         s = depth * "\t"
+    #         print(s, instance.name, "(", instance.reference.name, ")")
+    #         for c in instance.reference.children:  
+    #             recurse(c, depth + 1)
         
-        recurse(top_instance, 0)
+    #     recurse(top_instance, 0)
 
 
     def test_uniquify_simple_with_names(self):
