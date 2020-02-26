@@ -93,7 +93,7 @@ class TestUniquify(unittest.TestCase):
         recurse(top_instance, 0)
 
 
-    def test_uniquify_simple(self):
+    def test_uniquify_simple_with_names(self):
         '''simple test with 2 definitions.'''
         nl = Netlist()
         lib = nl.create_library()
