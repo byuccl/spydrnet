@@ -33,8 +33,10 @@ for filename in glob.glob(os.path.join(folder_path, "**", "*"), recursive=True):
 extras_require = {
     "all": [
         "pytest",
+        "ply",
     ],
     "pytest": ["pytest"],
+    "ply": ["ply"],
 }
 
 if __name__ == "__main__":
