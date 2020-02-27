@@ -118,3 +118,9 @@ class DefaultNamespace:
                     old_name = element[".NAME"]
                     if old_name in namespace:
                         del namespace[old_name]
+
+    def lookup(self, element_type, key, value):
+        if key == ".NAME":
+            if element_type in self.namespaces:
+                namespace = self.namespaces[element_type]
+                return namespace.get(value, None)

@@ -1,6 +1,7 @@
 from spydrnet.parsers.edif.tokenizer import EdifTokenizer
 from spydrnet.parsers.edif.edif_tokens import *
-from spydrnet.ir import *
+from spydrnet.ir import Netlist, Library, Definition, Port, Cable, Instance
+from spydrnet.plugins import namespace_manager
 
 from functools import reduce
 import re
@@ -34,7 +35,10 @@ class EdifParser:
 
     def parse(self):
         self.initialize_tokenizer()
+        ns_default = namespace_manager.default
+        namespace_manager.default = "EDIF"
         self.netlist = self.parse_construct(self.parse_edif)
+        namespace_manager.default = ns_default
         self.tokenizer.__del__()
 
     def initialize_tokenizer(self):
@@ -102,12 +106,10 @@ class EdifParser:
                 library = self.parse_library()
                 environment = self.elements[-1]
                 environment.add_library(library)
-                self.add_element_to_namespace(library)
             elif self.construct_is(EXTERNAL):
                 library = self.parse_external()
                 environment = self.elements[-1]
                 environment.add_library(library)
-                self.add_element_to_namespace(library)
             elif self.construct_is(DESIGN):
                 self.parse_design()
             elif self.construct_is(COMMENT):
@@ -227,8 +229,22 @@ class EdifParser:
             elif self.construct_is(CELL):
                 definition = self.parse_cell()
                 library = self.elements[-1]
-                library.add_definition(definition)
-                self.add_element_to_namespace(definition)
+                add_exception = None
+                try:
+                    library.add_definition(definition)
+                except ValueError as e:
+                    name = definition.name
+                    identifier = definition['EDIF.identifier']
+                    if name != identifier:
+                        try:
+                            definition.name = identifier
+                            library.add_definition(definition)
+                        except ValueError:
+                            raise e
+                    else:
+                        add_exception = e
+                if add_exception:
+                    raise add_exception
             elif self.construct_is(COMMENT):
                 self.parse_comment()
             elif self.construct_is(USER_DATA):
@@ -352,7 +368,6 @@ class EdifParser:
                 port = self.parse_port()
                 cell = self.elements[-1]
                 cell.add_port(port)
-                self.add_element_to_namespace(port)
             elif self.construct_is(PORT_BUNDLE):
                 raise NotImplementedError()
             elif self.construct_is(SYMBOL):
@@ -492,16 +507,42 @@ class EdifParser:
             if self.construct_is(INSTANCE):
                 instance = self.parse_instance()
                 definition = self.elements[-1]
-                definition.add_child(instance)
-                self.add_element_to_namespace(instance)
+                add_exception = None
+                try:
+                    definition.add_child(instance)
+                except ValueError as e:
+                    name = instance.name
+                    identifier = instance['EDIF.identifier']
+                    if name != identifier:
+                        try:
+                            instance.name = identifier
+                            definition.add_child(instance)
+                        except ValueError:
+                            raise e
+                    else:
+                        add_exception = e
+                if add_exception:
+                    raise add_exception
             elif self.construct_is(NET):
                 cable = self.parse_net()
                 definition = self.elements[-1]
-                try:
-                    definition.add_cable(cable)
-                except KeyError:
-                    print()
-                    raise KeyError("Error on line",  self.tokenizer.line_number)
+                is_connected = False
+                for wire in cable.wires:
+                    if len(wire.pins) > 0:
+                        is_connected = True
+                if is_connected is False:
+                    try:
+                        definition.add_cable(cable)
+                    except ValueError as e:
+                        # TODO: Add warning about merging nets together
+                        existing_cable = next(definition.get_cables(cable.name), None)
+                        if existing_cable is None:
+                            existing_cable = next(definition.get_cables(cable['EDIF.identifier'], key="EDIF.identifier"))
+                        for existing_wire, pending_wire in zip(existing_cable.wires, cable.wires):
+                            pins = list(pending_wire.pins)
+                            pending_wire.disconnect_pins_from(pins)
+                            for pin in pins:
+                                existing_wire.connect_pin(pin)
 
             elif self.construct_is(OFF_PAGE_CONNECTOR):
                 raise NotImplementedError()
@@ -593,7 +634,8 @@ class EdifParser:
         if self.begin_construct():
             library = self.parse_libraryRef()
             self.expect_end_construct()
-        definition = self.get_element_by_identifier(library, Definition, definition_identifer)
+        definition = next(library.get_definitions(definition_identifer, key="EDIF.identifier"), None)
+        assert definition is not None, "Definition not found within library by EDIF identifier"
         self.prefix_pop()
         return definition
 
@@ -605,7 +647,8 @@ class EdifParser:
         environment = self.elements[-4]
         library = self.elements[-3]
         if library['EDIF.identifier'].lower() != library_identifier.lower():
-            library = self.get_element_by_identifier(environment, Library, library_identifier)
+            library = next(environment.get_libraries(library_identifier, key="EDIF.identifier"), None)
+            assert library is not None, "Library not found within netlist by EDIF identifier"
         self.prefix_pop()
         return library
 
@@ -668,11 +711,13 @@ class EdifParser:
         port_identifier = self.elements[-1].pop('EDIF.portRef.identifier')
         if isinstance(instance_or_definition, Instance):
             definition = instance_or_definition.reference
-            port = self.get_element_by_identifier(definition, Port, port_identifier)
+            port = next(definition.get_ports(port_identifier, key="EDIF.identifier"), None)
+            assert port is not None, "Port not found within definition by EDIF identifier"
             inner_pin = port.pins[index]
             pin = instance_or_definition.pins[inner_pin]
         else:
-            port = self.get_element_by_identifier(instance_or_definition, Port, port_identifier)
+            port = next(instance_or_definition.get_ports(port_identifier, key="EDIF.identifier"), None)
+            assert port is not None, "Port not found within instance or definition by EDIF identifier"
             pin = port.pins[index]
         self.prefix_pop()
         return pin
@@ -688,7 +733,8 @@ class EdifParser:
         else:
             self.parse_nameRef()
         instance_identifier = self.elements[-1].pop('EDIF.portRef.instanceRef.identifier')
-        instance = self.get_element_by_identifier(definition, Instance, instance_identifier)
+        instance = next(definition.get_instances(instance_identifier, key="EDIF.identifier"), None)
+        assert instance is not None, "Instance not found within definition by EDIF identifier"
         self.prefix_pop()
         return instance
 
@@ -916,7 +962,15 @@ class EdifParser:
 
     def set_attribute(self, value):
         element = self.elements[-1]
-        element['.'.join(element['metadata_prefix'])] = value
+        key = '.'.join(element['metadata_prefix'])
+        if key == "EDIF.original_identifier":
+            element.name = value
+        elif key == "EDIF.identifier":
+            if element.name is None:
+                element.name = value
+            element[key] = value
+        else:
+            element[key] = value
 
     def append_attribute(self, attribute):
         element = self.elements[-1]
@@ -975,40 +1029,3 @@ class EdifParser:
                   Port: lambda x: x.definition,
                   Cable: lambda x: x.definition,
                   Instance: lambda x: x.parent}
-
-    def add_element_to_namespace(self, element):
-        parent = self.get_parent[type(element)](element)
-        if parent in self.edif_identifier_namespace:
-            parent_namespace = self.edif_identifier_namespace[parent]
-        else:
-            parent_namespace = dict()
-            self.edif_identifier_namespace[parent] = parent_namespace
-        element_type = type(element)
-        if element_type in parent_namespace:
-            element_namespace = parent_namespace[element_type]
-        else:
-            element_namespace = dict()
-            parent_namespace[element_type] = element_namespace
-        identifier = element['EDIF.identifier']
-        identifier_lower = identifier.lower()
-        assert identifier_lower not in element_namespace, "Identifier collision"
-        element_namespace[identifier_lower] = element
-
-    def get_element_by_identifier(self, parent, element_type, identifier):
-        assert parent in self.edif_identifier_namespace, "No name space associated with parent element"
-        parent_namespace = self.edif_identifier_namespace[parent]
-        assert element_type in parent_namespace, "No elements in parent namespace of element type"
-        element_namespace = parent_namespace[element_type]
-        identifier_lower = identifier.lower()
-        assert identifier_lower in element_namespace, "No element by name of identifier"
-        return element_namespace[identifier_lower]
-
-
-
-if __name__ == "__main__":
-    # filename = r"C:\Users\keller\workplace\SpyDrNet\data\large_edif\osfbm.edf"
-    filename = r"C:\Users\akeller9\workspace\SpyDrNet\data\large_edif\osfbm.edf"
-    parser = EdifParser.from_filename(filename)
-    import cProfile
-
-    cProfile.run('parser.parse()')

@@ -4,6 +4,7 @@ from spydrnet.callback.callback_listener import CallbackListener
 from spydrnet.plugins.namespace_manager.default_namespace import DefaultNamespace
 from spydrnet.plugins.namespace_manager.edif_namespace import EdifNamespace
 from spydrnet.ir import Netlist, Library, Definition, Port, Cable, Instance
+from spydrnet.global_state.global_service import register_lookup, deregister_lookup
 import weakref
 
 
@@ -21,6 +22,21 @@ class NamespaceManager(CallbackListener, ABC):
         super().__init__()
         self.namespaces = weakref.WeakKeyDictionary()
         self.ignore_ns_change = False
+
+    def register_all_listeners(self):
+        super().register_all_listeners()
+        register_lookup(".NAME", self.lookup)
+        register_lookup("EDIF.identifier", self.lookup)
+
+    def deregister_all_listeners(self):
+        super().deregister_all_listeners()
+        deregister_lookup(".NAME")
+        deregister_lookup("EDIF.identifier")
+
+    def lookup(self, parent, element_type, key, value):
+        if parent in self.namespaces:
+            namespace = self.namespaces[parent]
+            return namespace.lookup(element_type, key, value)
 
     def create_netlist(self, netlist):
         netlist[".NS"] = self.default
@@ -123,12 +139,11 @@ class NamespaceManager(CallbackListener, ABC):
             namespace = None
             if parent in self.namespaces:
                 namespace = self.namespaces[parent]
-                no_conflict = True
                 for key in ["EDIF.identifier", ".NAME"]:
                     if key in child:
                         no_conflict = namespace.no_conflict(child, key, child[key])
-                if no_conflict is False:
-                    raise ValueError("Adding this element would result in a naming conflict.")
+                        if no_conflict is False:
+                            raise ValueError("Adding this element would result in a naming conflict.")
             if ".NS" in parent:
                 parent_namespace = parent[".NS"]
                 if ".NS" not in child or child[".NS"] != parent_namespace:

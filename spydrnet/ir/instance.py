@@ -77,6 +77,10 @@ class Instance(Element):
     def reference(self):
         self.reference = None
 
+    def get_ports(self, *args, **kwargs):
+        from spydrnet.util.get_ports import get_ports
+        get_ports(self, *args, **kwargs)
+
     @property
     def pins(self):
         '''get the pins on this instance.'''
