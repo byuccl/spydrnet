@@ -40,13 +40,13 @@ class EdifNamespace:
         if starts_with_ampersand:
             if identifier_length < 2 or identifier_length > 256:
                 return False
-            return bool(re.match(r"^&[0-9A-Za-z_]+$"))
+            return bool(re.match(r"^&[0-9A-Za-z_]+$", identifier))
         else:
             if identifier_length < 1 or identifier_length > 255:
                 return False
             if identifier[0].isalpha() is False:
                 return False
-            return bool(re.match(r"^[0-9A-Za-z_]+$"))
+            return bool(re.match(r"^[0-9A-Za-z_]+$", identifier))
 
     @staticmethod
     def no_name_conflicts(element):
@@ -193,3 +193,13 @@ class EdifNamespace:
                     old_name = element["EDIF.identifier"]
                     if old_name in namespace:
                         del namespace[old_name]
+
+    def lookup(self, element_type, key, value):
+        if key == ".NAME":
+            if element_type in self.namespaces:
+                namespace = self.namespaces[element_type]
+                return namespace.get(value, None)
+        elif key == "EDIF.identifier":
+            if element_type in self.edif_namespaces:
+                namespace = self.edif_namespaces[element_type]
+                return namespace.get(value.lower(), None)
