@@ -109,26 +109,25 @@ class HRefMgr(callback_listener.CallbackListener, ABC):
                 for href in self.defmap[definition]:
                     cable_href = href.children[element]
                     self._remove_from_defmap_and_namemap(cable_href)
-                    self._update_defmap_and_namemap(cable_href, new_name='')
+                    self._update_defmap_and_namemap(cable_href, new_name=name)
         elif isinstance(element, ir.Port):
             definition = element.definition
             if definition in self.defmap:
                 for href in self.defmap[definition]:
                     port_href = href.children[element]
                     self._remove_from_defmap_and_namemap(port_href)
-                    self._update_defmap_and_namemap(port_href, new_name='')
+                    self._update_defmap_and_namemap(port_href, new_name=name)
         elif isinstance(element, ir.Instance):
             definition = element.reference
             if definition:
                 if definition in self.defmap:
-                    for href in self.defmap[definition]:
-                        inst_href = href.children[element]
-                        self._remove_from_defmap_and_namemap(inst_href)
-                        self._update_defmap_and_namemap(inst_href, new_name='')
+                    for href in list(self.defmap[definition]):
+                        self._remove_from_defmap_and_namemap(href)
+                        self._update_defmap_and_namemap(href, new_name=name)
             elif element in self.instance_without_reference_map:
                 inst_href = self.instance_without_reference_map[element]
                 self._remove_from_defmap_and_namemap(inst_href)
-                self._update_defmap_and_namemap(inst_href, new_name='')
+                self._update_defmap_and_namemap(inst_href, new_name=name)
 
     def instance_reference(self, instance, reference):
         current_reference = instance.reference
