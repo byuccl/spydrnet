@@ -1,13 +1,13 @@
 from abc import ABC
 
-import spydrnet.callback.callback_listener as callback_listener
-import spydrnet.ir as ir
+from spydrnet.callback.callback_listener import CallbackListener
+from spydrnet.ir import Port, Cable, Instance
 import weakref
 
-import spydrnet.plugins.hierarchical_reference_manager.hierarchical_reference as hr
+from spydrnet.plugins.hierarchical_reference_manager.hierarchical_reference import HRef
 
 
-class HRefMgr(callback_listener.CallbackListener, ABC):
+class HRefMgr(CallbackListener, ABC):
     def __init__(self):
         super().__init__()
         self.htrees = weakref.WeakKeyDictionary()
@@ -20,7 +20,7 @@ class HRefMgr(callback_listener.CallbackListener, ABC):
         if definition and definition in self.defmap:
             for href in self.defmap[definition]:
                 cable_href = href.children[cable]
-                wire_href = hr.HRef.from_item(wire, cable_href)
+                wire_href = HRef.from_item(wire, cable_href)
                 cable_href.children[wire] = wire_href
 
     def cable_remove_wire(self, cable, wire):
@@ -33,7 +33,7 @@ class HRefMgr(callback_listener.CallbackListener, ABC):
     def definition_add_port(self, definition, port):
         if definition in self.defmap:
             for href in self.defmap[definition]:
-                port_href = hr.HRef.from_item(port, href)
+                port_href = HRef.from_item(port, href)
                 self._update_defmap_and_namemap(port_href)
                 href.children[port] = port_href
 
@@ -47,7 +47,7 @@ class HRefMgr(callback_listener.CallbackListener, ABC):
     def definition_add_child(self, definition, child):
         if definition in self.defmap:
             for href in self.defmap[definition]:
-                inst_href = hr.HRef.from_item(child, href)
+                inst_href = HRef.from_item(child, href)
                 self._update_defmap_and_namemap(inst_href)
                 href.children[child] = inst_href
 
@@ -61,7 +61,7 @@ class HRefMgr(callback_listener.CallbackListener, ABC):
     def definition_add_cable(self, definition, cable):
         if definition in self.defmap:
             for href in self.defmap[definition]:
-                cable_href = hr.HRef.from_item(cable, href)
+                cable_href = HRef.from_item(cable, href)
                 self._update_defmap_and_namemap(cable_href)
                 href.children[cable] = cable_href
 
@@ -77,7 +77,7 @@ class HRefMgr(callback_listener.CallbackListener, ABC):
         if definition and definition in self.defmap:
             for href in self.defmap[definition]:
                 cable_href = href.children[port]
-                wire_href = hr.HRef.from_item(pin, cable_href)
+                wire_href = HRef.from_item(pin, cable_href)
                 cable_href.children[pin] = wire_href
 
     def port_remove_pin(self, port, pin):
@@ -100,21 +100,21 @@ class HRefMgr(callback_listener.CallbackListener, ABC):
             self._rename(element, '')
 
     def _rename(self, element, name):
-        if isinstance(element, ir.Cable):
+        if isinstance(element, Cable):
             definition = element.definition
             if definition in self.defmap:
                 for href in self.defmap[definition]:
                     cable_href = href.children[element]
                     self._remove_from_defmap_and_namemap(cable_href)
                     self._update_defmap_and_namemap(cable_href, new_name=name)
-        elif isinstance(element, ir.Port):
+        elif isinstance(element, Port):
             definition = element.definition
             if definition in self.defmap:
                 for href in self.defmap[definition]:
                     port_href = href.children[element]
                     self._remove_from_defmap_and_namemap(port_href)
                     self._update_defmap_and_namemap(port_href, new_name=name)
-        elif isinstance(element, ir.Instance):
+        elif isinstance(element, Instance):
             definition = element.reference
             if definition:
                 if definition in self.defmap:
@@ -134,14 +134,14 @@ class HRefMgr(callback_listener.CallbackListener, ABC):
                 for href in hrefs:
                     self._remove_from_defmap_and_namemap(href)
                     if reference:
-                        for child in hr.HRef.from_reference_change(href, reference):
+                        for child in HRef.from_reference_change(href, reference):
                             href.children[child.item] = child
                     self._update_defmap_and_namemap(href, reference)
         elif reference and instance in self.instance_without_reference_map:
             href = self.instance_without_reference_map[instance]
             if href:
                 self._remove_from_defmap_and_namemap(href)
-                for child in hr.HRef.from_reference_change(href, reference):
+                for child in HRef.from_reference_change(href, reference):
                     href.children[child.item] = child
                 self._update_defmap_and_namemap(href, reference)
 
@@ -150,7 +150,7 @@ class HRefMgr(callback_listener.CallbackListener, ABC):
             self._remove_from_defmap_and_namemap(self.htrees[netlist])
             del self.htrees[netlist]
         if (netlist not in self.htrees or self.htrees[netlist].item != instance) and instance is not None:
-            top_ref = hr.HRef.from_item(instance, netlist=netlist)
+            top_ref = HRef.from_item(instance, netlist=netlist)
             self.htrees[netlist] = top_ref
             self._update_defmap_and_namemap(top_ref)
 
@@ -169,7 +169,7 @@ class HRefMgr(callback_listener.CallbackListener, ABC):
                 name_stack.pop()
                 continue
             item = href.item
-            if isinstance(item, ir.Instance):
+            if isinstance(item, Instance):
                 if new_reference is not None:
                     reference = new_reference
                     new_reference = None
@@ -181,7 +181,7 @@ class HRefMgr(callback_listener.CallbackListener, ABC):
                     self.defmap[reference].add(href)
                 else:
                     self.instance_without_reference_map[item] = href
-            if isinstance(item, (ir.Port, ir.Cable, ir.Instance)):
+            if isinstance(item, (Port, Cable, Instance)):
                 if new_name is not None:
                     name = new_name
                     new_name = None
@@ -236,7 +236,7 @@ class HRefMgr(callback_listener.CallbackListener, ABC):
                 name_stack.pop()
                 continue
 
-            if isinstance(item, ir.Instance):
+            if isinstance(item, Instance):
                 reference = item.reference
                 if reference:
                     if reference in self.defmap:
@@ -246,7 +246,7 @@ class HRefMgr(callback_listener.CallbackListener, ABC):
                             del self.defmap[reference]
                 else:
                     del self.instance_without_reference_map[item]
-            if isinstance(item, (ir.Port, ir.Cable, ir.Instance)):
+            if isinstance(item, (Port, Cable, Instance)):
                 name = item.name
                 name_stack.append("" if name is None else name)
                 search_stack.append((href, True))

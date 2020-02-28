@@ -1,5 +1,5 @@
 from spydrnet.plugins.namespace_manager import NamespaceManager
-import spydrnet.plugins.hierarchical_reference_manager as hrefmgr
+from spydrnet.plugins.hierarchical_reference_manager import HRefMgr
 
 namespace_manager = NamespaceManager()
-hierarchical_reference_manager = hrefmgr.HRefMgr()
+hierarchical_reference_manager = HRefMgr()
