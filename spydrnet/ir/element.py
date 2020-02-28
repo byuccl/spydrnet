@@ -78,3 +78,6 @@ class Element(object):
     def pop(self, item):
         global_callback._call_dictionary_pop(self, item)
         return self._data.pop(item)
+
+    def get(self, *args, **kwargs):
+        return self._data.get(*args, **kwargs)

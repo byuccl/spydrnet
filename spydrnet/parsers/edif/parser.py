@@ -757,13 +757,15 @@ class EdifParser:
         instance = Instance()
         instance['metadata_prefix'] = list()
         self.elements.append(instance)
+        instance['metadata_prefix'] = ['EDIF']
         if self.begin_construct():
-            instance['metadata_prefix'] = ['EDIF']
             self.parse_rename()
-            instance['metadata_prefix'] = []
             self.tokenizer.next()
         else:
-            instance['EDIF.identifier'] = self.tokenizer.next()
+            self.prefix_append('identifier')
+            self.set_attribute(self.parse_identifier())
+            self.prefix_pop()
+        self.prefix_pop()
         self.tokenizer.next()
         self.tokenizer.next()
         definition_name = self.tokenizer.next()

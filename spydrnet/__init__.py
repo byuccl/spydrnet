@@ -30,6 +30,7 @@ from spydrnet.parsers import parse
 from spydrnet.composers import compose
 
 from spydrnet.plugins import namespace_manager
+from spydrnet.plugins import hierarchical_reference_manager
 from spydrnet.util.get_libraries import get_libraries
 from spydrnet.util.get_definitions import get_definitions
 

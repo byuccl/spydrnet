@@ -91,7 +91,7 @@ class CallbackListener:
     def dictionary_delete(self, element, key):
         raise NotImplementedError
 
-    def dictionary_pop(self, element, item):
+    def dictionary_pop(self, element, key):
         raise NotImplementedError
 
     def register_all_listeners(self):
