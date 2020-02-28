@@ -8,9 +8,6 @@ import spydrnet.plugins.hierarchical_reference_manager.hierarchical_reference as
 
 
 class HRefMgr(callback_listener.CallbackListener, ABC):
-    default_hierarchical_seperator = '/'
-    hierarchical_seperator = weakref.WeakKeyDictionary()
-
     def __init__(self):
         super().__init__()
         self.htrees = weakref.WeakKeyDictionary()
@@ -153,14 +150,13 @@ class HRefMgr(callback_listener.CallbackListener, ABC):
             self._remove_from_defmap_and_namemap(self.htrees[netlist])
             del self.htrees[netlist]
         if (netlist not in self.htrees or self.htrees[netlist].item != instance) and instance is not None:
-            self.hierarchical_seperator[netlist] = self.default_hierarchical_seperator
             top_ref = hr.HRef.from_item(instance, netlist=netlist)
             self.htrees[netlist] = top_ref
             self._update_defmap_and_namemap(top_ref)
 
     def _update_defmap_and_namemap(self, href, new_reference=None, new_name=None):
         netlist = href.netlist
-        hseperator = self.hierarchical_seperator[netlist]
+        hseperator = '/'
         if netlist not in self.namemaps:
             self.namemaps[netlist] = dict()
         namemap = self.namemaps[netlist]
@@ -215,7 +211,7 @@ class HRefMgr(callback_listener.CallbackListener, ABC):
 
     def _remove_from_defmap_and_namemap(self, href):
         netlist = href.netlist
-        hseperator = self.hierarchical_seperator[netlist]
+        hseperator = '/'
         namemap = self.namemaps[netlist]
         parent = href.parent
         name_stack = [] if parent is None else [parent.name]

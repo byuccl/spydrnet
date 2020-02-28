@@ -1,5 +1,4 @@
 import spydrnet.ir as ir
-import spydrnet.plugins.hierarchical_reference_manager as hrm
 
 
 class HRef:
@@ -64,7 +63,7 @@ class HRef:
 
     @property
     def name(self):
-        hseperator = hrm.HRefMgr.hierarchical_seperator.get(self.netlist, hrm.HRefMgr.default_hierarchical_seperator)
+        hseperator = '/'
         names = list()
         index = None
         item = self.item
