@@ -530,7 +530,7 @@ class EdifParser:
                 for wire in cable.wires:
                     if len(wire.pins) > 0:
                         is_connected = True
-                if is_connected is False:
+                if is_connected is True:
                     try:
                         definition.add_cable(cable)
                     except ValueError as e:

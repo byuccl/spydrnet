@@ -50,15 +50,15 @@ def get_cables(obj, *args, **kwargs):
     key = kwargs.get('key', ".NAME")
 
     if isinstance(obj, (Element, InnerPin, OuterPin, Wire)) is False:
-        object_collection = list(iter(obj))
-        if all(isinstance(x, (Netlist, Library, Definition)) for x in object_collection) is False:
-            raise ValueError("get_cables() only supports netlists, libraries, and definitions, or a collection "
-                             "of these as the object searched")
+        try:
+            object_collection = list(iter(obj))
+        except TypeError:
+            object_collection = (obj,)
     else:
-        if isinstance(obj, (Netlist, Library, Definition)) is False:
-            raise ValueError("get_cables() only supports netlists, libraries, and definitions, or a collection "
-                             "of these as the object searched")
         object_collection = (obj,)
+    if all(isinstance(x, (Netlist, Library, Definition)) for x in object_collection) is False:
+        raise TypeError("get_cables() only supports netlists, libraries, and definitions, or a collection of these as "
+                        "the object searched")
 
     if isinstance(patterns, str):
         patterns = (patterns,)
@@ -83,11 +83,11 @@ def _get_cables_raw(object_collection, patterns, key, is_case, is_re):
                 if result is not None:
                     yield result
             else:
-                for definition in parent.definitions:
-                    if key in definition:
-                        value = definition[key]
+                for cable in parent.cables:
+                    if key in cable:
+                        value = cable[key]
                         if _value_matches_pattern(value, pattern, is_case, is_re):
-                            yield definition
+                            yield cable
 
 
 def _get_cable_parents(object_collection):
@@ -97,7 +97,7 @@ def _get_cable_parents(object_collection):
                 for definition in library.definitions:
                     yield definition
         elif isinstance(obj, Library):
-            for definition in library.definitions:
+            for definition in obj.definitions:
                 yield definition
         else:
             yield obj

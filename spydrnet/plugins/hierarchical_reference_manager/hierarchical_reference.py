@@ -52,7 +52,7 @@ class HRef:
     __slots__ = ['_hashcode', 'netlist', 'parent', 'item', 'children']
 
     def __init__(self, item, parent=None, netlist=None):
-        self._hashcode = (0 if parent is None else hash(parent))*31 + hash(item)
+        self._hashcode = ((0 if parent is None else hash(parent))*31 + hash(item) & 0xFFFF_FFFF_FFFF_FFFF)
         self.parent = parent
         if parent is not None:
             self.netlist = parent.netlist

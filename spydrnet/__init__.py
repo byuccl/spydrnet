@@ -33,6 +33,9 @@ from spydrnet.plugins import namespace_manager
 from spydrnet.plugins import hierarchical_reference_manager
 from spydrnet.util.get_libraries import get_libraries
 from spydrnet.util.get_definitions import get_definitions
+from spydrnet.util.get_ports import get_ports
+from spydrnet.util.get_cables import get_cables
+from spydrnet.util.get_instances import get_instances
 
 import os
 base_dir = os.path.dirname(os.path.abspath(__file__))

@@ -2,6 +2,8 @@ from spydrnet import Element, InnerPin, OuterPin, Wire, Netlist, Library, Defini
 from spydrnet.global_state.global_service import lookup
 from spydrnet.util.patterns import _is_pattern_absolute, _value_matches_pattern
 
+import abc
+
 
 def get_ports(obj, *args, **kwargs):
     """
@@ -50,15 +52,15 @@ def get_ports(obj, *args, **kwargs):
     key = kwargs.get('key', ".NAME")
 
     if isinstance(obj, (Element, InnerPin, OuterPin, Wire)) is False:
-        object_collection = list(iter(obj))
-        if all(isinstance(x, (Netlist, Library, Definition, Instance)) for x in object_collection) is False:
-            raise ValueError("get_ports() only supports netlists, libraries, definitions, and instances, or a "
-                             "collection of these as the object searched")
+        try:
+            object_collection = list(iter(obj))
+        except TypeError:
+            object_collection = (obj,)
     else:
-        if isinstance(obj, (Netlist, Library, Definition, Instance)) is False:
-            raise ValueError("get_ports() only supports netlists, libraries, definitions, and instances, or a "
-                             "collection of these as the object searched")
         object_collection = (obj,)
+    if all(isinstance(x, (Netlist, Library, Definition, Instance)) for x in object_collection) is False:
+        raise TypeError("get_ports() only supports netlists, libraries, definitions, and instances, or a collection of "
+                        "these as the object searched")
 
     if isinstance(patterns, str):
         patterns = (patterns,)
@@ -83,11 +85,11 @@ def _get_ports_raw(object_collection, patterns, key, is_case, is_re):
                 if result is not None:
                     yield result
             else:
-                for definition in parent.definitions:
-                    if key in definition:
-                        value = definition[key]
+                for port in parent.ports:
+                    if key in port:
+                        value = port[key]
                         if _value_matches_pattern(value, pattern, is_case, is_re):
-                            yield definition
+                            yield port
 
 
 def _get_port_parents(object_collection):
@@ -97,7 +99,7 @@ def _get_port_parents(object_collection):
                 for definition in library.definitions:
                     yield definition
         elif isinstance(obj, Library):
-            for definition in library.definitions:
+            for definition in obj.definitions:
                 yield definition
         elif isinstance(obj, Instance):
             reference = obj.reference

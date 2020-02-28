@@ -79,7 +79,7 @@ class Instance(Element):
 
     def get_ports(self, *args, **kwargs):
         from spydrnet.util.get_ports import get_ports
-        get_ports(self, *args, **kwargs)
+        return get_ports(self, *args, **kwargs)
 
     @property
     def pins(self):
