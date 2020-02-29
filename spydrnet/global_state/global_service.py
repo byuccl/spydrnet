@@ -1,6 +1,7 @@
 from spydrnet.ir import Netlist, Library, Definition, Port, Cable, Instance
 
 _registered_lookups = dict()
+_registered_hierarchical_lookup = None
 
 
 def register_lookup(key, func):
@@ -44,3 +45,4 @@ def lookup(parent, element_type, key, value):
                     if key in instance and value == instance[key]:
                         return instance
     return None
+
