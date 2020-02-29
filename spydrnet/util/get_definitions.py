@@ -50,15 +50,15 @@ def get_definitions(obj, *args, **kwargs):
     key = kwargs.get('key', ".NAME")
 
     if isinstance(obj, (Element, InnerPin, OuterPin, Wire)) is False:
-        object_collection = list(iter(obj))
-        if all(isinstance(x, (Netlist, Library)) for x in object_collection) is False:
-            raise ValueError(
-                "get_definitions() only supports netlists and libraries or a collection of them as the object searched")
+        try:
+            object_collection = list(iter(obj))
+        except TypeError:
+            object_collection = (obj,)
     else:
-        if isinstance(obj, (Netlist, Library)) is False:
-            raise ValueError(
-                "get_definitions() only supports netlists and libraries or a collection of them as the object searched")
         object_collection = (obj,)
+    if all(isinstance(x, (Netlist, Library, Definition)) for x in object_collection) is False:
+        raise TypeError("get_definitions() only supports netlists and libraries or a collection of them as the object "
+                        "searched")
 
     if isinstance(patterns, str):
         patterns = (patterns,)

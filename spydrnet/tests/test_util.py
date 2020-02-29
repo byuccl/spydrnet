@@ -20,6 +20,3 @@ class TestUtil(unittest.TestCase):
         library2 = netlist2.create_library()
         get_libraries([netlist1, netlist2])
 
-
-if __name__ == '__main__':
-    unittest.main()

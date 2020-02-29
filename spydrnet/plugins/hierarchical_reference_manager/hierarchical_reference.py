@@ -1,7 +1,75 @@
 import spydrnet.ir as ir
 
 
-class HRef:
+class HRefBase:
+    @staticmethod
+    def from_parent_and_item(parent, item):
+        return HRefBase(item, parent)
+
+    @staticmethod
+    def from_sequence(sequence):
+        parent = None
+        for item in sequence:
+            href = HRefBase.from_parent_and_item(parent, item)
+            parent = href
+        return href
+
+    __slots__ = ['_hashcode', 'parent', 'item']
+
+    def __init__(self, item, parent=None):
+        self._hashcode = hash(hash(parent)*31 + hash(item))
+        self.parent = parent
+        self.item = item
+
+    def __hash__(self):
+        return self._hashcode
+
+    def __eq__(self, other):
+        if self is other:
+            return True
+        if isinstance(other, HRefBase) is False:
+            return False
+        this = self
+        that = other
+        while this is not None and that is not None:
+            if this.item == that.item:
+                this = this.parent
+                that = that.parent
+            else:
+                return False
+        if this is None and that is None:
+            return True
+        return False
+
+    @property
+    def name(self):
+        hseperator = '/'
+        names = list()
+        index = None
+        item = self.item
+        if isinstance(item, ir.Wire):
+            cable = item.cable
+            if cable.is_array:
+                index = cable.lower_index + cable.wires.index(item)
+            href = self.parent
+        elif isinstance(item, ir.InnerPin):
+            port = item.port
+            if port.is_array:
+                index = port.lower_index + port.pins.index(item)
+            href = self.parent
+        else:
+            href = self
+        while href is not None:
+            item = href.item
+            item_name = item.get(".NAME", "")
+            names.append(item_name)
+            href = href.parent
+        bus_index = "" if index is None else "[{}]".format(index)
+        hname = "{}{}".format(hseperator.join(reversed(names)), bus_index)
+        return hname
+
+
+class HRef(HRefBase):
     @staticmethod
     def from_item(item, parent=None, netlist=None):
         if parent is None and netlist is None:
@@ -49,61 +117,12 @@ class HRef:
             for instance in definition.children:
                 yield HRef(instance, parent_href)
 
-    __slots__ = ['_hashcode', 'netlist', 'parent', 'item', 'children']
+    __slots__ = ['netlist', 'children']
 
     def __init__(self, item, parent=None, netlist=None):
-        self._hashcode = (0 if parent is None else hash(parent))*31 + hash(item)
-        self.parent = parent
+        super().__init__(item, parent)
         if parent is not None:
             self.netlist = parent.netlist
         else:
             self.netlist = netlist
-        self.item = item
         self.children = dict()
-
-    @property
-    def name(self):
-        hseperator = '/'
-        names = list()
-        index = None
-        item = self.item
-        if isinstance(item, ir.Wire):
-            cable = item.cable
-            if cable.is_array:
-                index = cable.lower_index + cable.wires.index(item)
-            href = self.parent
-        elif isinstance(item, ir.Pin):
-            port = item.port
-            if port.is_array:
-                index = port.lower_index + port.pins.index(item)
-            href = self.parent
-        else:
-            href = self
-        while href is not None:
-            item = href.item
-            item_name = item.get(".NAME", "")
-            names.append(item_name)
-            href = href.parent
-        bus_index = "" if index is None else "[{}]".format(index)
-        hname = "{}{}".format(hseperator.join(reversed(names)), bus_index)
-        return hname
-
-    def __hash__(self):
-        return self._hashcode
-
-    def __eq__(self, other):
-        if self is other:
-            return True
-        if isinstance(other, HRef) is False:
-            return False
-        this = self
-        that = other
-        while this is not None and that is not None:
-            if this.item == that.item:
-                this = this.parent
-                that = that.parent
-            else:
-                return False
-        if this is None and that is None:
-            return True
-        return False

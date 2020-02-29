@@ -82,7 +82,3 @@ class TestVerilogTokenizer(unittest.TestCase):
         self.assertEqual(tokenizer.next().type, 'STRING')
         tokenizer = verilogTokenizer.from_string('"This is a \nillegal string"')
         self.assertRaises(UnsupportedTokenException, tokenizer.next)
-
-
-if __name__ == '__main__':
-    unittest.main()

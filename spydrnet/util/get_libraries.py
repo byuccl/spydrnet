@@ -53,15 +53,14 @@ def get_libraries(obj, *args, **kwargs):
     key = kwargs.get('key', ".NAME")
 
     if isinstance(obj, (Element, InnerPin, OuterPin, Wire)) is False:
-        netlist_collection = list(iter(obj))
-        if all(isinstance(x, Netlist) for x in netlist_collection) is False:
-            raise ValueError(
-                "get_libraries() only supports netlists or a collection of netlists as the object searched")
+        try:
+            netlist_collection = list(iter(obj))
+        except TypeError:
+            netlist_collection = (obj,)
     else:
-        if isinstance(obj, Netlist) is False:
-            raise ValueError(
-                "get_libraries() only supports netlists or a collection of netlists as the object searched")
         netlist_collection = (obj,)
+    if all(isinstance(x, Netlist) for x in netlist_collection) is False:
+        raise TypeError("get_libraries() only supports netlist or a collection of netlists as the object searched")
 
     if isinstance(patterns, str):
         patterns = (patterns,)
