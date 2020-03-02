@@ -96,6 +96,7 @@ def t_comment(t):
 
 
 def t_blockComment_comment(t):
+    # TODO Fix this to accept any characters that is not newline
     r'[a-zA-Z0-9]+(?<!\*/)'
 
 
@@ -180,6 +181,8 @@ def t_ANY_newline(t):
 
 
 t_ANY_ignore = ' \t'
+
+mylexer = lex.lex()
 
 
 class UnsupportedTokenException(Exception):
