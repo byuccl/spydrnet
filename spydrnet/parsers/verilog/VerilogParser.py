@@ -5,6 +5,10 @@ from parsers.verilog.tokenizer import tokens
 direction = sdn.UNDEFINED
 lock = False
 undefined = dict()
+defined = dict()
+instance_absolute = None
+
+#TODO Fix port direction, currently not getting direction if direction not declared when interface defined
 
 def p_netlist(p):
     'nestlist : finalDefinition'
@@ -12,6 +16,10 @@ def p_netlist(p):
     library = netlist.create_library()
     library.add_definition(p[1])
     p[0] = netlist
+
+# def p_test(p):
+#     'netlist : netlist'
+#     p[0] = p[1]
 
 def p_final_definition(p):
     'finalDefinition : MODULE definition ENDMODULE'
@@ -137,15 +145,82 @@ def p_index(p):
     p[0] = int(p[2])
 
 
-def p_element(p):
-    'element : wire'
+def p_connections_list(p):
+    'connections : connections COMMA DOT SIMPLE_IDENTIFIER LEFT_PAREN SIMPLE_IDENTIFIER RIGHT_PAREN'
+    if not p.parser.instance_absolute:
+        p_error(p)
+    p[1].append((p[4], p[6]))
     p[0] = p[1]
-# def p_element(p):
-#     '''element : wire
-#                | instance '''
-#     p[0] = p[1]
-#
-#
+
+def p_connections_list_positional(p):
+    'connections : connections COMMA SIMPLE_IDENTIFIER'
+    if p.parser.instance_absolute:
+        p_error(p)
+    p[1].append(p[3])
+    p[0] = p[1]
+
+def p_connections_list_subset(p):
+    '''connections : connections COMMA DOT SIMPLE_IDENTIFIER LEFT_PAREN SIMPLE_IDENTIFIER  index RIGHT_PAREN
+                   | connections COMMA DOT SIMPLE_IDENTIFIER LEFT_PAREN SIMPLE_IDENTIFIER  range RIGHT_PAREN'''
+    if not p.parser.instance_absolute:
+        p_error(p)
+    p[1].append((p[4], p[6], p[7]))
+    p[0] = p[1]
+
+def p_connections_list_subset_positional(p):
+    '''connections : connections COMMA SIMPLE_IDENTIFIER index
+                   | connections COMMA SIMPLE_IDENTIFIER  range'''
+    if p.parser.instance_absolute:
+        p_error(p)
+    p[1].append((p[3], p[4]))
+    p[0] = p[1]
+
+
+def p_connections_first(p):
+    'connections : DOT SIMPLE_IDENTIFIER LEFT_PAREN SIMPLE_IDENTIFIER RIGHT_PAREN'
+    p.parser.instance_absolute = True
+    connections = list()
+    connections.append((p[2], p[4]))
+    p[0] = connections
+
+def p_connections_first_positional(p):
+    'connections : SIMPLE_IDENTIFIER'
+    p.parser.instance_absolute = False
+    connections = list()
+    connections.append(p[1])
+    p[0] = connections
+
+def p_connections_first_subset(p):
+    '''connections : DOT SIMPLE_IDENTIFIER LEFT_PAREN SIMPLE_IDENTIFIER index RIGHT_PAREN
+                   | DOT SIMPLE_IDENTIFIER LEFT_PAREN SIMPLE_IDENTIFIER range RIGHT_PAREN'''
+    p.parser.instance_absolute = True
+    connections = list()
+    connections.append((p[2], p[4], p[5]))
+    p[0] = connections
+
+def p_connections_first_subset_positional(p):
+    '''connections : SIMPLE_IDENTIFIER index
+                   | SIMPLE_IDENTIFIER range '''
+    p.parser.instance_absolute = False
+    connections = list()
+    connections.append((p[1], p[2]))
+    p[0] = connections
+
+
+def p_instance(p):
+    'instance : SIMPLE_IDENTIFIER SIMPLE_IDENTIFIER LEFT_PAREN connections RIGHT_PAREN SEMICOLON'
+    instance = sdn.Instance
+    # After getting all the info reset tracker
+    p.parser.instance_absolute = None
+    p[0] = instance
+
+
+def p_element(p):
+    '''element : wire
+               | instance '''
+    p[0] = p[1]
+
+
 def p_wire_with_range(p):
     'wire : WIRE range SIMPLE_IDENTIFIER SEMICOLON'
     cable = sdn.Cable()
@@ -166,7 +241,7 @@ def p_wire(p):
 
 
 def p_error(p):
-    print("Syntax error in input!")
+    print("Syntax error on line %d near " %(p.lexer.lineno))
     exit(-1)
 
 # def p_empty(p):
@@ -179,6 +254,7 @@ if __name__ == '__main__':
     f = open('test.v', 'r')
     s = f.read()
     parser.direction = sdn.UNDEFINED
+    parser.instance_absolute = None
     parser.lock = False
     result = parser.parse(s)
     print(result)
