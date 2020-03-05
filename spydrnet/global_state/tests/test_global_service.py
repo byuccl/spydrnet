@@ -4,14 +4,12 @@ import spydrnet as sdn
 class TestGlobalServiceWithoutPlugins(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        sdn.hierarchical_reference_manager.deregister_all_listeners()
         sdn.namespace_manager.deregister_all_listeners()
         cls.netlist = sdn.load_example_netlist_by_name("b13")
 
     @classmethod
     def tearDownClass(cls) -> None:
         sdn.namespace_manager.register_all_listeners()
-        sdn.hierarchical_reference_manager.register_all_listeners()
 
     def test_double_register_lookup(self):
         from spydrnet.global_state.global_service import register_lookup

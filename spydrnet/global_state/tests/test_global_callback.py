@@ -2,19 +2,16 @@ import unittest
 
 import spydrnet.global_state.global_callback as gc
 from spydrnet.plugins import namespace_manager
-from spydrnet.plugins import hierarchical_reference_manager
 
 
 class TestGlobalCallback(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         namespace_manager.deregister_all_listeners()
-        hierarchical_reference_manager.deregister_all_listeners()
 
     @classmethod
     def tearDownClass(cls) -> None:
         namespace_manager.register_all_listeners()
-        hierarchical_reference_manager.register_all_listeners()
 
     def setUp(self) -> None:
         self.arg1 = 1
