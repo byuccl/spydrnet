@@ -41,6 +41,10 @@ class Netlist(Element):
         from spydrnet.util import get_instances
         return get_instances(self, *args, **kwargs)
 
+    def get_hinstances(self, *args, **kwargs):
+        from spydrnet.util import get_hinstances
+        return get_hinstances(self, *args, **kwargs)
+
     @property
     def libraries(self):
         """get a list of all libraries included in the netlist"""

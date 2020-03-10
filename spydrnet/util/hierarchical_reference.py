@@ -49,6 +49,14 @@ class HRef:
             return True
         return False
 
+    def __repr__(self):
+        return "<{} {} '{}' at 0x{:016X}>".format(self.__class__.__name__, self.item.__class__.__name__, self.name,
+                                                 id(self))
+
+    def __str__(self):
+        name = self.name
+        return name
+
     @property
     def is_unique(self):
         """
@@ -165,5 +173,5 @@ class HRef:
             names.append(item_name)
             href = href.parent
         bus_index = "" if index is None else "[{}]".format(index)
-        hname = "{}{}".format(hseperator.join(reversed(names)), bus_index)
+        hname = "{}{}".format(hseperator.join(reversed(names[:-1])), bus_index)
         return hname

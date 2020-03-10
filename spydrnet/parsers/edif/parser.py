@@ -535,7 +535,7 @@ class EdifParser:
                         definition.add_cable(cable)
                     except ValueError as e:
                         # TODO: Add warning about merging nets together
-                        existing_cable = next(definition.get_cables(cable.name), None)
+                        existing_cable = next(definition.get_cables(cable.name, key="EDIF.identifier"), None)
                         if existing_cable is None:
                             existing_cable = next(definition.get_cables(cable['EDIF.identifier'], key="EDIF.identifier"))
                         for existing_wire, pending_wire in zip(existing_cable.wires, cable.wires):
