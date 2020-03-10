@@ -183,7 +183,7 @@ class TestHRefBase(unittest.TestCase):
         instance = sdn.Instance()
         instance.name = "MY_INST"
         href = HRef.from_parent_and_item(None, instance)
-        self.assertEqual("MY_INST", href.name)
+        self.assertEqual('', href.name)
 
     def test_href_wire_name(self):
         top = sdn.Instance()
@@ -196,7 +196,7 @@ class TestHRefBase(unittest.TestCase):
         cable.is_array = True
         wire = cable.wires[0]
         sequence = [top, cable, wire]
-        self.assertEqual("TOP/CABLE[0]", HRef.from_sequence(sequence).name)
+        self.assertEqual("CABLE[0]", HRef.from_sequence(sequence).name)
 
     def test_href_pin_name(self):
         top = sdn.Instance()
@@ -209,4 +209,22 @@ class TestHRefBase(unittest.TestCase):
         port.is_array = True
         wire = port.pins[0]
         sequence = [top, port, wire]
-        self.assertEqual("TOP/PORT[0]", HRef.from_sequence(sequence).name)
+        self.assertEqual("PORT[0]", HRef.from_sequence(sequence).name)
+
+    def test_href_str_and_repr(self):
+        netlist = sdn.Netlist()
+        library = netlist.create_library()
+        definition = library.create_definition()
+        instance = sdn.Instance()
+        instance.reference = definition
+        netlist.top_instance = instance
+
+        cable = definition.create_cable()
+        cable.name = "MY_CABLE"
+        cable.create_wires(8)
+        href = HRef.from_sequence([instance, cable])
+        href_str = str(href)
+        self.assertTrue(href_str == "MY_CABLE")
+        href_repr = repr(href)
+        self.assertTrue(HRef.__name__ in href_repr)
+        self.assertTrue(cable.__class__.__name__ in href_repr)
