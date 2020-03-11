@@ -105,8 +105,12 @@ class TestGetHWires(unittest.TestCase):
         definition = library.definitions[0]
         instance = definition.children[0]
         outerpin = next(iter(instance.pins))
-        hrefs = list(sdn.get_hwires(outerpin, selection=sdn.OUTSIDE))
+        hrefs = list(sdn.get_hwires(outerpin, selection="OUTSIDE"))
         self.assertTrue(len(hrefs) == 1)
+
+    def test_bad_selection_type(self):
+        self.assertRaises(TypeError, self.netlist.get_hwires, selection="NOT_AN_OPTION")
+        self.assertRaises(TypeError, self.netlist.get_hwires, selection=None)
 
     def test_of_bad_instance(self):
         hrefs = list(sdn.get_hwires(sdn.Instance()))
@@ -136,3 +140,94 @@ class TestGetHWires(unittest.TestCase):
 
         hrefs = list(sdn.get_hwires(middle_inst))
         self.assertTrue(len(hrefs) == 1)
+
+    def test_through_hierarchy_again(self):
+        netlist = sdn.Netlist()
+
+        library = netlist.create_library()
+        library.name = 'work'
+
+        leaf_def = library.create_definition()
+        leaf_def.name = 'leaf'
+        leaf_port = leaf_def.create_port()
+        leaf_port.name = 'I'
+        leaf_port.create_pins(1)
+
+        bottom_def = library.create_definition()
+        bottom_def.name = 'bottom'
+        bottom_port = bottom_def.create_port()
+        bottom_port.name = 'I'
+        bottom_port.create_pins(1)
+        leaf_inst = bottom_def.create_child()
+        leaf_inst.reference = leaf_def
+        bottom_cable = bottom_def.create_cable()
+        bottom_cable.name = 'bottom_cable'
+        bottom_wire = bottom_cable.create_wire()
+        bottom_wire.connect_pin(bottom_port.pins[0])
+        bottom_wire.connect_pin(leaf_inst.pins[leaf_port.pins[0]])
+
+        bottom_floating_wire = bottom_cable.create_wire()
+
+        middle_def = library.create_definition()
+        middle_def.name = 'middle'
+        middle_port = middle_def.create_port()
+        middle_port.name = "I"
+        middle_port.create_pin()
+        bottom_inst = middle_def.create_child()
+        bottom_inst.name = 'bottom'
+        bottom_inst.reference = bottom_def
+        middle_cable = middle_def.create_cable()
+        middle_cable.name = "middle_cable"
+        middle_wire = middle_cable.create_wire()
+        middle_wire.connect_pin(middle_port.pins[0])
+        middle_wire.connect_pin(bottom_inst.pins[bottom_port.pins[0]])
+
+        middle_floating_wire = middle_cable.create_wire()
+
+        top_def = library.create_definition()
+        top_def.name = 'top'
+        top_port = top_def.create_port()
+        top_port.name = "I"
+        top_port.create_pin()
+        middle_inst = top_def.create_child()
+        middle_inst.name = 'middle'
+        middle_inst.reference = middle_def
+        top_cable = top_def.create_cable()
+        top_cable.name = "top_cable"
+        top_wire = top_cable.create_wire()
+        top_wire.connect_pin(top_port.pins[0])
+        top_wire.connect_pin(middle_inst.pins[middle_port.pins[0]])
+
+        top_floating_wire = top_cable.create_wire()
+
+        top_instance = sdn.Instance()
+        top_instance.name = 'top'
+        top_instance.reference = top_def
+        netlist.top_instance = top_instance
+
+        href = next(sdn.get_hwires(top_floating_wire))
+        hrefs = set(sdn.get_hwires(netlist.top_instance))
+        self.assertTrue(href in hrefs)
+
+        #look at wire_name
+        href = next(sdn.get_hwires(middle_floating_wire))
+        self.assertTrue('middle/middle_cable[1]', href.name)
+        hrefs = set(sdn.get_hwires(netlist.top_instance, recursive=True))
+        self.assertTrue(href in hrefs)
+
+        hrefs = set(sdn.get_hwires(middle_cable, selection="OUTSIDE"))
+        href_top_wire = next(sdn.get_hwires(top_cable.wires[0]))
+        href_middle_wire = next(sdn.get_hwires(middle_cable.wires[0]))
+        href_bottom_wire = next(sdn.get_hwires(bottom_cable.wires[0]))
+        self.assertTrue(href_top_wire in hrefs and href_middle_wire not in hrefs and href_bottom_wire in hrefs)
+
+        hrefs = set(sdn.get_hwires(middle_cable, selection="ALL"))
+        href_middle_floating_wire = next(sdn.get_hwires(middle_floating_wire))
+        self.assertTrue(href_top_wire in hrefs and href_middle_wire in hrefs and href_bottom_wire in hrefs and
+                        href_middle_floating_wire in hrefs)
+
+        all_wires = set(netlist.get_hwires())
+        self.assertTrue(len(all_wires) == 2)
+
+        all_wires = set(netlist.get_hwires(recursive=True))
+        self.assertTrue(len(all_wires) == 6)

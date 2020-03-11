@@ -125,7 +125,6 @@ class TestGetHInstances(unittest.TestCase):
         hrefs = list(sdn.get_hinstances(leaf_inst))
         self.assertTrue(len(hrefs) == 1)
 
-
     @unittest.skip("Test takes too long at this time.")
     def test_recursive_memory_use(self):
         netlist = sdn.load_example_netlist_by_name('leon3mp_hierarchical')
