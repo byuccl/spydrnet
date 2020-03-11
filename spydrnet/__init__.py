@@ -25,6 +25,8 @@ IN = Port.Direction.IN
 INOUT = Port.Direction.INOUT
 UNDEFINED = Port.Direction.UNDEFINED
 
+from spydrnet.util.selection import INSIDE, OUTSIDE, BOTH, ALL
+
 from spydrnet.testing.test import run as test
 from spydrnet.parsers import parse
 from spydrnet.composers import compose
@@ -36,6 +38,7 @@ from spydrnet.util.get_ports import get_ports
 from spydrnet.util.get_cables import get_cables
 from spydrnet.util.get_instances import get_instances
 from spydrnet.util.get_hinstances import get_hinstances
+from spydrnet.util.get_hwires import get_hwires
 
 import os
 base_dir = os.path.dirname(os.path.abspath(__file__))

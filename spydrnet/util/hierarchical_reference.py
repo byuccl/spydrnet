@@ -6,13 +6,100 @@ flyweight = weakref.WeakKeyDictionary()
 
 class HRef:
     @staticmethod
-    def from_parent_and_item(parent, item):
-        href = HRef(item, parent)
-        if href in flyweight:
-            return flyweight[href]()
+    def get_all_hrefs_of_item(item):
+        if isinstance(item, ir.Instance):
+            return HRef.get_all_hrefs_of_instances(item)
+        elif isinstance(item, ir.Definition):
+            return HRef.get_all_hrefs_of_instances(item.references)
+        elif isinstance(item, ir.Port):
+            definition = item.definition
+            if definition:
+                for href in HRef.get_all_hrefs_of_instances(definition.references):
+                    yield HRef.from_parent_and_item(href, item)
+        elif isinstance(item, ir.InnerPin):
+            port = item.port
+            if port:
+                definition = port.definition
+                if definition:
+                    for href in HRef.get_all_hrefs_of_instances(definition.references):
+                        href_port = HRef.from_parent_and_item(href, port)
+                        yield HRef.from_parent_and_item(href_port, item)
+        elif isinstance(item, ir.OuterPin):
+            instance = item.instance
+            inner_pin = item.inner_pin
+            if instance and inner_pin:
+                port = inner_pin.port
+                if port:
+                    for href in HRef.get_all_hrefs_of_instances(instance):
+                        href_port = HRef.from_parent_and_item(href, port)
+                        yield HRef.from_parent_and_item(href_port, inner_pin)
+        elif isinstance(item, ir.Cable):
+            definition = item.definition
+            if definition:
+                for href in HRef.get_all_hrefs_of_instances(definition.references):
+                    yield HRef.from_parent_and_item(href, item)
+        elif isinstance(item, ir.Wire):
+            cable = item.cable
+            if cable:
+                definition = cable.definition
+                if definition:
+                    for href in HRef.get_all_hrefs_of_instances(definition.references):
+                        href_cable = HRef.from_parent_and_item(href, cable)
+                        yield HRef.from_parent_and_item(href_cable, item)
+
+    @staticmethod
+    def get_all_hrefs_of_instances(instances, netlist=None):
+        """
+        Assuming all instances are vaild (meaning their reference belongs in a proper library inside a netlist).
+        :param instances:
+        :param netlist:
+        :return:
+        """
+        if isinstance(instances, ir.Instance):
+            instances = {instances}
         else:
-            flyweight[href] = weakref.ref(href)
-            return href
+            instances = set(x for x in instances if isinstance(x, ir.Instance))
+
+        if netlist is None:
+            instance = next(iter(instances), None)
+            if instance:
+                reference = instance.reference
+                if reference:
+                    library = reference.library
+                    if library:
+                        netlist = library.netlist
+        if isinstance(netlist, ir.Netlist) is False:
+            return
+
+        top_instance = netlist.top_instance
+
+        bound = set()
+        search_stack = list(instances)
+        while search_stack:
+            instance = search_stack.pop()
+            parent_def = instance.parent
+            if parent_def:
+                for parent_inst in parent_def.references:
+                    if parent_inst not in bound:
+                        bound.add(parent_inst)
+                        search_stack.append(parent_inst)
+
+        href = HRef.from_parent_and_item(None, top_instance)
+        search_stack = [href]
+        while search_stack:
+            href = search_stack.pop()
+            item = href.item
+            if item in instances:
+                yield href
+            reference = item.reference
+            if reference:
+                for child in reference.children:
+                    if child in bound:
+                        href_child = HRef.from_parent_and_item(href, child)
+                        search_stack.append(href_child)
+                    elif child in instances:
+                        href_child = HRef.from_parent_and_item(href, child)
+                        yield href_child
 
     @staticmethod
     def from_sequence(sequence):
@@ -21,6 +108,15 @@ class HRef:
             href = HRef.from_parent_and_item(parent, item)
             parent = href
         return href
+
+    @staticmethod
+    def from_parent_and_item(parent, item):
+        href = HRef(item, parent)
+        if href in flyweight:
+            return flyweight[href]()
+        else:
+            flyweight[href] = weakref.ref(href)
+            return href
 
     __slots__ = ['_hashcode', 'parent', 'item', '__weakref__']
 

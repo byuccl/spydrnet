@@ -62,6 +62,7 @@ def get_hinstances(obj, *args, **kwargs):
 
     if isinstance(patterns, str):
         patterns = (patterns,)
+    assert isinstance(patterns, (Element, InnerPin, OuterPin, Wire)) is False
 
     return _get_instances(object_collection, patterns, recursive, is_case, is_re, filter_func)
 
@@ -129,7 +130,7 @@ def _get_instances_raw(object_collection, patterns, recursive, is_case, is_re):
                     object_collection.append(definition)
 
     if instance_search:
-        for href in _get_all_hrefs_of_instances(instance_search):
+        for href in HRef.get_all_hrefs_of_instances(instance_search):
             if href not in in_yield:
                 in_yield.add(href)
                 yield href
@@ -182,52 +183,3 @@ def _update_namemap(href, recursive, found, namemap):
                         if href_child not in found:
                             found.add(href_child)
                             search_stack.append((href_child, False))
-
-
-def _get_all_hrefs_of_instances(instances, netlist=None):
-    """
-    Assuming all instances are vaild (meaning their reference belongs in a proper library inside a netlist).
-    :param instances:
-    :param netlist:
-    :return:
-    """
-    if netlist is None:
-        instance = next(iter(instances), None)
-        if instance:
-            reference = instance.reference
-            if reference:
-                library = reference.library
-                if library:
-                    netlist = library.netlist
-    if netlist is None:
-        return
-
-    top_instance = netlist.top_instance
-
-    bound = set()
-    search_stack = list(instances)
-    while search_stack:
-        instance = search_stack.pop()
-        parent_def = instance.parent
-        if parent_def:
-            for parent_inst in parent_def.references:
-                if parent_inst not in bound:
-                    bound.add(parent_inst)
-                    search_stack.append(parent_inst)
-
-    href = HRef.from_parent_and_item(None, top_instance)
-    search_stack = [href]
-    while search_stack:
-        href = search_stack.pop()
-        item = href.item
-        if item in instances:
-            yield href
-        reference = item.reference
-        if reference:
-            for child in reference.children:
-                if child in bound:
-                    href_child = HRef.from_parent_and_item(href, child)
-                    search_stack.append(href_child)
-                elif child in instances:
-                    href_child = HRef.from_parent_and_item(href, child)
-                    yield href_child
