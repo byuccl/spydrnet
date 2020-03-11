@@ -52,9 +52,9 @@ def get_hwires(obj, *args, **kwargs):
     if isinstance(selection, str):
         if selection in Selection.__members__:
             selection = Selection[selection]
-        else:
-            raise TypeError("selection must be '{}'".format("', '".join(Selection.__members__.keys())))
-    assert isinstance(selection, Selection)
+    if isinstance(selection, Selection) is False:
+        raise TypeError("selection must be '{}'".format("', '".join(Selection.__members__.keys())))
+
     filter_func = kwargs.get('filter', lambda x: True)
     recursive = kwargs.get('recursive', False)
     is_case = kwargs.get('is_case', True)
@@ -108,21 +108,27 @@ def _get_hwires_raw(object_collection, selection, patterns, recursive, is_case, 
                     bypass_namesearch.discard(obj)
                     reference = item.reference
                     if reference:
-                        found_wires = set()
-                        for port in reference.ports:
-                            href_port = HRef.from_parent_and_item(obj, port)
-                            for pin in port.pins:
-                                wire = pin.wire
-                                if wire:
-                                    found_wires.add(wire)
-                                href_pin = HRef.from_parent_and_item(href_port, pin)
-                                hpin_search.add(href_pin)
-                        for cable in reference.cables:
-                            hcable = HRef.from_parent_and_item(obj, cable)
-                            for wire in cable.wires:
-                                if wire not in found_wires:
+                        if selection in {Selection.INSIDE, Selection.ALL}:
+                            # Get all cables inside a hierarchical instance
+                            for cable in reference.cables:
+                                hcable = HRef.from_parent_and_item(obj, cable)
+                                for wire in cable.wires:
                                     hwire = HRef.from_parent_and_item(hcable, wire)
-                                    object_collection.append(hwire)
+                                    if hwire not in in_yield:
+                                        in_yield.add(hwire)
+                                        yield(hwire)
+                            # get internal cables recursively
+                            if recursive or selection == Selection.ALL:
+                                for child in reference.children:
+                                    href_child = HRef.from_parent_and_item(obj, child)
+                                    bypass_namesearch.add(href_child)
+                                    object_collection.append(href_child)
+                        if selection in {Selection.OUTSIDE, Selection.BOTH, Selection.ALL}:
+                            for port in reference.ports:
+                                href_port = HRef.from_parent_and_item(obj, port)
+                                for pin in port.pins:
+                                    href_pin = HRef.from_parent_and_item(href_port, pin)
+                                    hpin_search.add(href_pin)
             elif isinstance(item, Port):
                 for pin in item.pins:
                     href_pin = HRef.from_parent_and_item(obj, pin)
@@ -151,21 +157,25 @@ def _get_hwires_raw(object_collection, selection, patterns, recursive, is_case, 
                                     in_yield.add(href_wire)
                                     yield href_wire
                         else:
-                            href_inst = obj.parent
-                            href_parent = href_inst.parent
+                            href_parent = href_parent_instance.parent
                             if href_parent:
-                                parent_instance = href_parent.item
-                                if pin in parent_instance.pins:
-                                    outer_pin = parent_instance.pins[pin]
+                                instance = href_parent_instance.item
+                                if pin in instance.pins:
+                                    outer_pin = instance.pins[pin]
                                     outer_wire = outer_pin.wire
                                     if outer_wire:
                                         outer_cable = outer_wire.cable
                                         href_cable = HRef.from_parent_and_item(href_parent, outer_cable)
-                                        href_wire = HRef.from_parent_and_item(href_cable, outer_pin)
+                                        href_wire = HRef.from_parent_and_item(href_cable, outer_wire)
                                         if href_wire not in in_yield:
                                             in_yield.add(href_wire)
                                             yield href_wire
                 else:
+                    if obj not in in_yield:
+                        in_yield.add(obj)
+                        yield obj
+                    href_cable = obj.parent
+                    href_inst = href_cable.parent
                     for pin in item.pins:
                         if isinstance(pin, OuterPin):
                             href_inst = HRef.from_parent_and_item(obj.parent, pin.instance)
@@ -175,7 +185,7 @@ def _get_hwires_raw(object_collection, selection, patterns, recursive, is_case, 
                             href_pin = HRef.from_parent_and_item(href_port, pin)
                         else:
                             port = pin.port
-                            href_port = HRef.from_parent_and_item(obj.parent, port)
+                            href_port = HRef.from_parent_and_item(href_inst, port)
                             href_pin = HRef.from_parent_and_item(href_port, pin)
                         object_collection.append(href_pin)
             elif isinstance(item, InnerPin):
@@ -222,7 +232,6 @@ def _get_hwires_raw(object_collection, selection, patterns, recursive, is_case, 
 
 
 def _update_hwire_namemap(href_instance, recursive, found, namemap):
-    currently_recursive = True
     search_stack = [(href_instance, False)]
     name_stack = list()
     while search_stack:
@@ -251,9 +260,7 @@ def _update_hwire_namemap(href_instance, recursive, found, namemap):
                                 namemap[hname] = list()
                             namemap[hname].append(hwire)
                     name_stack.pop()
-
-                if currently_recursive:
-                    currently_recursive = recursive
+                if recursive:
                     for child in reference.children:
                         if child.reference and child.reference.is_leaf() is False:
                             href_child = HRef.from_parent_and_item(href_instance, child)

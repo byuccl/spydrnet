@@ -8,9 +8,11 @@ class HRef:
     @staticmethod
     def get_all_hrefs_of_item(item):
         if isinstance(item, ir.Instance):
-            return HRef.get_all_hrefs_of_instances(item)
+            for href in HRef.get_all_hrefs_of_instances(item):
+                yield href
         elif isinstance(item, ir.Definition):
-            return HRef.get_all_hrefs_of_instances(item.references)
+            for href in HRef.get_all_hrefs_of_instances(item.references):
+                yield href
         elif isinstance(item, ir.Port):
             definition = item.definition
             if definition:

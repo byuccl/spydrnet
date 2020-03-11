@@ -228,3 +228,21 @@ class TestHRefBase(unittest.TestCase):
         href_repr = repr(href)
         self.assertTrue(HRef.__name__ in href_repr)
         self.assertTrue(cable.__class__.__name__ in href_repr)
+
+    def test_get_all_hrefs_of_item(self):
+        netlist = sdn.Netlist()
+        library = netlist.create_library()
+        definition = library.create_definition()
+        instance = sdn.Instance()
+        instance.reference = definition
+        netlist.top_instance = instance
+
+        href = next(HRef.get_all_hrefs_of_item(instance))
+        self.assertTrue(href.item is instance)
+
+        href = next(HRef.get_all_hrefs_of_item(definition))
+        self.assertTrue(href.item is instance)
+
+        port = definition.create_port()
+        href = next(HRef.get_all_hrefs_of_item(port))
+        self.assertTrue(href.is_valid and href.item is port)
