@@ -1,4 +1,4 @@
-from spydrnet import Element, InnerPin, OuterPin, Wire, Netlist, Library, Definition, Instance, Port, Cable
+from spydrnet import FirstClassElement, InnerPin, OuterPin, Wire, Netlist, Library, Definition, Instance, Port, Cable
 from spydrnet.util.hierarchical_reference import HRef
 from spydrnet.util.patterns import _is_pattern_absolute, _value_matches_pattern
 
@@ -49,20 +49,20 @@ def get_hinstances(obj, *args, **kwargs):
     is_re = kwargs.get('is_re', False)
     patterns = args[0] if len(args) == 1 else kwargs.get('patterns', ".*" if is_re else "*")
 
-    if isinstance(obj, (Element, InnerPin, OuterPin, Wire)) is False:
+    if isinstance(obj, (FirstClassElement, InnerPin, OuterPin, Wire)) is False:
         try:
             object_collection = list(iter(obj))
         except TypeError:
             object_collection = [obj]
     else:
         object_collection = [obj]
-    if all(isinstance(x, (HRef, Element, InnerPin, OuterPin, Wire)) for x in object_collection) is False:
+    if all(isinstance(x, (HRef, FirstClassElement, InnerPin, OuterPin, Wire)) for x in object_collection) is False:
         raise TypeError("get_hinstances() supports all netlist related objects and hierarchical references or a "
                         "collection of theses as the object searched, unsupported object provided")
 
     if isinstance(patterns, str):
         patterns = (patterns,)
-    assert isinstance(patterns, (Element, InnerPin, OuterPin, Wire)) is False
+    assert isinstance(patterns, (FirstClassElement, InnerPin, OuterPin, Wire)) is False
 
     return _get_instances(object_collection, patterns, recursive, is_case, is_re, filter_func)
 
@@ -142,11 +142,12 @@ def _get_instances_raw(object_collection, patterns, recursive, is_case, is_re):
         for pattern in patterns:
             pattern_is_absolute = _is_pattern_absolute(pattern, is_case, is_re)
             if pattern_is_absolute:
-                result = namemap[pattern]
-                for href in result:
-                    if href in in_namemap:
-                        in_namemap.remove(href)
-                        yield href
+                if pattern in namemap:
+                    result = namemap[pattern]
+                    for href in result:
+                        if href in in_namemap:
+                            in_namemap.remove(href)
+                            yield href
             else:
                 for name in namemap:
                     if _value_matches_pattern(name, pattern, is_case, is_re):

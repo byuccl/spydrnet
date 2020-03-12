@@ -32,13 +32,8 @@ from spydrnet.parsers import parse
 from spydrnet.composers import compose
 
 from spydrnet.plugins import namespace_manager
-from spydrnet.util.get_libraries import get_libraries
-from spydrnet.util.get_definitions import get_definitions
-from spydrnet.util.get_ports import get_ports
-from spydrnet.util.get_cables import get_cables
-from spydrnet.util.get_instances import get_instances
-from spydrnet.util.get_hinstances import get_hinstances
-from spydrnet.util.get_hwires import get_hwires
+from spydrnet.util import get_libraries, get_definitions, get_ports, get_cables, get_instances
+from spydrnet.util import get_hinstances, get_hports, get_hpins, get_hcables, get_hwires
 
 import os
 base_dir = os.path.dirname(os.path.abspath(__file__))

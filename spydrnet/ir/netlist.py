@@ -1,4 +1,4 @@
-from spydrnet.ir.element import Element
+from spydrnet.ir.first_class_element import FirstClassElement
 from spydrnet.ir.library import Library
 from spydrnet.ir.instance import Instance
 from spydrnet.ir.views.listview import ListView
@@ -7,7 +7,7 @@ from spydrnet.global_state.global_callback import _call_create_netlist
 from copy import deepcopy, copy, error
 
 
-class Netlist(Element):
+class Netlist(FirstClassElement):
     """
     Represents a netlist object.
 
@@ -40,14 +40,6 @@ class Netlist(Element):
     def get_instances(self, *args, **kwargs):
         from spydrnet.util import get_instances
         return get_instances(self, *args, **kwargs)
-
-    def get_hinstances(self, *args, **kwargs):
-        from spydrnet.util import get_hinstances
-        return get_hinstances(self, *args, **kwargs)
-
-    def get_hwires(self, *args, **kwargs):
-        from spydrnet.util import get_hwires
-        return get_hwires(self, *args, **kwargs)
 
     @property
     def libraries(self):
