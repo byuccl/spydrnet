@@ -1,10 +1,11 @@
+from spydrnet.ir.element import Element
 from spydrnet.ir.outerpin import OuterPin
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
 from copy import copy, deepcopy, error
 
 
-class Wire:
+class Wire(Element):
     __slots__ = ['_cable', '_pins', '__weakref__']
 
     def __init__(self):

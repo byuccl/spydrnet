@@ -1,7 +1,7 @@
 import unittest
 
 import spydrnet as sdn
-from spydrnet.ir.element import Element
+from spydrnet.ir.first_class_element import FirstClassElement
 
 
 class TestInstance(unittest.TestCase):
@@ -9,7 +9,7 @@ class TestInstance(unittest.TestCase):
         self.instance = sdn.Instance()
 
     def test_constructor(self):
-        self.assertIsInstance(self.instance, Element, "Instance should extend element")
+        self.assertIsInstance(self.instance, FirstClassElement, "Instance should extend element")
         instance2 = sdn.Instance()
         self.assertNotEqual(self.instance, instance2, "Unique objects are considered equal")
 

@@ -1,16 +1,16 @@
 import unittest
 
-from spydrnet.ir.element import Element
+from spydrnet.ir.first_class_element import FirstClassElement
 
 
 class TestElement(unittest.TestCase):
     def setUp(self) -> None:
-        self.element = Element()
+        self.element = FirstClassElement()
 
     def test_constructor(self):
-        element1 = Element()
+        element1 = FirstClassElement()
         self.assertTrue(element1, "Constructor return None type or empty collection")
-        element2 = Element()
+        element2 = FirstClassElement()
         self.assertNotEqual(element1, element2, "Unique objects are considered equal.")
 
     def test_dictionary(self):

@@ -1,4 +1,4 @@
-from spydrnet import Element, InnerPin, OuterPin, Wire, Netlist, Library, Definition, Cable
+from spydrnet import FirstClassElement, InnerPin, OuterPin, Wire, Netlist, Library, Definition, Cable
 from spydrnet.global_state.global_service import lookup
 from spydrnet.util.patterns import _is_pattern_absolute, _value_matches_pattern
 
@@ -49,7 +49,7 @@ def get_cables(obj, *args, **kwargs):
     patterns = args[0] if len(args) == 1 else kwargs.get('patterns', ".*" if is_re else "*")
     key = kwargs.get('key', ".NAME")
 
-    if isinstance(obj, (Element, InnerPin, OuterPin, Wire)) is False:
+    if isinstance(obj, (FirstClassElement, InnerPin, OuterPin, Wire)) is False:
         try:
             object_collection = list(iter(obj))
         except TypeError:

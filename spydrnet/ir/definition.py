@@ -1,4 +1,4 @@
-from spydrnet.ir.element import Element
+from spydrnet.ir.first_class_element import FirstClassElement
 from spydrnet.ir.port import Port
 from spydrnet.ir.cable import Cable
 from spydrnet.ir.instance import Instance
@@ -10,7 +10,7 @@ from spydrnet.global_state.global_callback import _call_create_definition
 from copy import deepcopy, copy, error
 
 
-class Definition(Element):
+class Definition(FirstClassElement):
     """
     Represents a definition of a cell, module, entity/architecture, or paralleled structure object.
 
