@@ -1,4 +1,7 @@
-from spydrnet import FirstClassElement, InnerPin, OuterPin, Wire, Netlist, Library, Definition
+from spydrnet.ir import FirstClassElement, InnerPin, OuterPin, Wire, Netlist, Library, Definition, Element, Instance,\
+    Port, Cable
+from spydrnet.util.hierarchical_reference import HRef
+from spydrnet.util.selection import Selection
 from spydrnet.global_state.global_service import lookup
 from spydrnet.util.patterns import _is_pattern_absolute, _value_matches_pattern
 
@@ -29,6 +32,15 @@ def get_definitions(obj, *args, **kwargs):
     is_re: bool - optional, named, default: False
         Specify if patterns are regular expressions. If `False`, a pattern can still contain `*` and `?` wildcards. A
         `*` matches zero or more characters. A `?` matches upto a single character.
+    recursive : bool - optional, default: False
+        Specify if search should be recursive or not meaning that sub hierarchical instances within an instance are
+        included or not.
+    selection : Selection.{INSIDE, OUTSIDE}, default: INSIDE
+        This parameter determines the instances that are returned based on the definition that is being searched. This
+        parameter only applies to objects that are definitions. If the selection is "INSIDE" (default), then the
+        function will return all of the instances that are inside the definition (i.e., the definition's children) that
+        match the remainder of the search criteria. If the selection is "OUTSIDE", then the function will return all of
+        the instances of the provided definition that match the remainder of the search criteria.
     filter : function
         This is a single input function that can be used to filter out unwanted virtual instances. If not specifed, all
         matching virtual instances are returned. Otherwise, virtual instances that cause the filter function to evaluate
@@ -39,61 +51,144 @@ def get_definitions(obj, *args, **kwargs):
     # Check argument list
     if len(args) == 1 and 'patterns' in kwargs:
         raise TypeError("get_definitions() got multiple values for argument 'patterns'")
-    if len(args) > 1 or any(x not in {'patterns', 'key', 'filter', 'is_case', 'is_re'} for x in kwargs):
+    if len(args) > 1 or any(x not in {'patterns', 'key', 'filter', 'is_case', 'is_re', 'selection', 'recursive'}
+                            for x in kwargs):
         raise TypeError("Unknown usage. Please see help for more information.")
 
     # Default values
+    selection = kwargs.get('selection', Selection.INSIDE)
+    if isinstance(selection, str):
+        if selection in Selection.__members__:
+            selection = Selection[selection]
+    if selection not in {Selection.INSIDE, Selection.OUTSIDE}:
+        raise TypeError("selection must be '{}'".format("', '".join([Selection.INSIDE.name, Selection.OUTSIDE.name])))
+
     filter_func = kwargs.get('filter', lambda x: True)
     is_case = kwargs.get('is_case', True)
     is_re = kwargs.get('is_re', False)
     patterns = args[0] if len(args) == 1 else kwargs.get('patterns', ".*" if is_re else "*")
     key = kwargs.get('key', ".NAME")
+    recursive = kwargs.get('recursive', False)
 
-    if isinstance(obj, (FirstClassElement, InnerPin, OuterPin, Wire)) is False:
+    if isinstance(obj, (Element, HRef)) is False:
         try:
             object_collection = list(iter(obj))
         except TypeError:
-            object_collection = (obj,)
+            object_collection = [obj]
     else:
-        object_collection = (obj,)
-    if all(isinstance(x, (Netlist, Library, Definition)) for x in object_collection) is False:
+        object_collection = [obj]
+    if all(isinstance(x, (Element, HRef)) for x in object_collection) is False:
         raise TypeError("get_definitions() only supports netlists and libraries or a collection of them as the object "
                         "searched")
 
     if isinstance(patterns, str):
         patterns = (patterns,)
 
-    return _get_definitions(object_collection, patterns, key, is_case, is_re, filter_func)
+    return _get_definitions(object_collection, patterns, key, is_case, is_re, selection, recursive, filter_func)
 
 
-def _get_definitions(object_collection, patterns, key, is_case, is_re, filter_func):
-    unique_results = set()
-    for result in filter(filter_func, _get_definitions_raw(object_collection, patterns, key, is_case, is_re)):
-        if result not in unique_results:
-            unique_results.add(result)
-            yield result
+def _get_definitions(object_collection, patterns, key, is_case, is_re, selection, recursive, filter_func):
+    for result in filter(filter_func, _get_definitions_raw(object_collection, patterns, key, is_case, is_re,
+                                                           selection, recursive)):
+        yield result
 
 
-def _get_definitions_raw(object_collection, patterns, key, is_case, is_re):
-    for pattern in patterns:
-        pattern_is_absolute = _is_pattern_absolute(pattern, is_case, is_re)
-        for parent in _get_definition_parents(object_collection):
-            if pattern_is_absolute:
-                result = lookup(parent, Definition, key, pattern)
-                if result is not None:
-                    yield result
-            else:
-                for definition in parent.definitions:
-                    if key in definition:
-                        value = definition[key]
-                        if _value_matches_pattern(value, pattern, is_case, is_re):
+def _get_definitions_raw(object_collection, patterns, key, is_case, is_re, selection, recursive):
+    found = set()
+    other_definitions = set()
+    while object_collection:
+        obj = object_collection.pop()
+        if isinstance(obj, Library):
+            for pattern in patterns:
+                pattern_is_absolute = _is_pattern_absolute(pattern, is_case, is_re)
+                if pattern_is_absolute:
+                    result = lookup(obj, Definition, key, pattern)
+                    if result is not None and result not in found:
+                        found.add(result)
+                        yield result
+                else:
+                    for definition in obj.definitions:
+                        value = definition[key] if key in definition else ''
+                        if definition not in found and _value_matches_pattern(value, pattern, is_case, is_re):
+                            found.add(definition)
                             yield definition
+        elif isinstance(obj, Netlist):
+            object_collection += obj.libraries
+        elif isinstance(obj, Definition):
+            if selection == Selection.INSIDE:
+                for child in obj.children:
+                    reference = child.reference
+                    if reference:
+                        if reference not in other_definitions:
+                            other_definitions.add(reference)
+                            if recursive:
+                                object_collection.append(reference)
+            else:
+                for instance in obj.references:
+                    parent = instance.parent
+                    if parent:
+                        if parent not in other_definitions:
+                            other_definitions.add(parent)
+                            if recursive:
+                                object_collection.append(parent)
+        elif isinstance(obj, Instance):
+            if selection == Selection.INSIDE:
+                reference = obj.reference
+                if reference:
+                    if reference not in other_definitions:
+                        other_definitions.add(reference)
+                        if recursive:
+                            object_collection += reference.children
+            else:
+                parent = obj.parent
+                if parent:
+                    if parent not in other_definitions:
+                        other_definitions.add(parent)
+                        if recursive:
+                            object_collection.append(parent)
+        elif isinstance(obj, (Port, Cable)):
+            definition = obj.definition
+            if definition:
+                if definition not in other_definitions:
+                    other_definitions.add(definition)
+        elif isinstance(obj, InnerPin):
+            port = obj.port
+            if port:
+                object_collection.append(port)
+        elif isinstance(obj, OuterPin):
+            instance = obj.instance
+            if instance:
+                object_collection.append(instance)
+        elif isinstance(obj, Wire):
+            cable = obj.cable
+            if cable:
+                object_collection.append(cable)
+        elif isinstance(obj, HRef):
+            if obj.is_valid:
+                object_collection.append(obj.item)
 
-
-def _get_definition_parents(object_collection):
-    for obj in object_collection:
-        if isinstance(obj, Netlist):
-            for library in obj.libraries:
-                yield library
-        else:
-            yield obj
+    if other_definitions:
+        namemap = dict()
+        for other_instance in other_definitions:
+            if other_instance in found:
+                continue
+            found.add(other_instance)
+            name = other_instance[key] if key in other_instance else ''
+            if name not in namemap:
+                namemap[name] = list()
+            namemap[name].append(other_instance)
+        for pattern in patterns:
+            pattern_is_absolute = _is_pattern_absolute(pattern, is_case, is_re)
+            if pattern_is_absolute:
+                if pattern in namemap:
+                    result = namemap[pattern]
+                    for instance in result:
+                        yield instance
+            else:
+                discard = set()
+                for instance in found:
+                    value = instance[key] if key in instance else ''
+                    if _value_matches_pattern(value, pattern, is_case, is_re):
+                        discard.add(instance)
+                        yield instance
+                found -= discard

@@ -19,9 +19,6 @@ def get_hinstances(obj, *args, **kwargs):
         The search patterns. Patterns can be a single string or an Iterable collection of strings. Patterns can be
         absolute or they can contain wildcards or regular expressions. If `patterns` is not provided, then it defaults
         to a wildcard.
-    recursive : bool - optional, default: False
-        Specify if search should be recursive or not meaning that sub hierarchical instances within an instance are
-        included or not.
     is_case : bool - optional, named, default: True
         Specify if patterns should be treated as case sensitive. Only applies to patterns. Does not alter fast lookup
         behavior (if namespace policy uses case insensitive indexing, this parameter will not prevent a fast lookup
@@ -29,6 +26,9 @@ def get_hinstances(obj, *args, **kwargs):
     is_re: bool - optional, named, default: False
         Specify if patterns are regular expressions. If `False`, a pattern can still contain `*` and `?` wildcards. A
         `*` matches zero or more characters. A `?` matches upto a single character.
+    recursive : bool - optional, default: False
+        Specify if search should be recursive or not meaning that sub hierarchical instances within an instance are
+        included or not.
     filter : function
         This is a single input function that can be used to filter out unwanted virtual instances. If not specifed, all
         matching virtual instances are returned. Otherwise, virtual instances that cause the filter function to evaluate
