@@ -125,15 +125,8 @@ def _get_wires_raw(object_collection, selection, recursive):
                                                 in_yield.add(outer_wire)
                                                 yield outer_wire
             else:
-                if obj not in in_yield:
-                    in_yield.add(obj)
-                    yield obj
                 for pin in obj.pins:
                     pin_search.add(pin)
-                    if isinstance(pin, OuterPin):
-                        pin_search.add(pin.inner_pin)
-                    else:
-                        pin_search.add(pin)
         elif isinstance(obj, (InnerPin, OuterPin)):
             pin_search.add(obj)
         elif isinstance(obj, HRef):
@@ -150,8 +143,7 @@ def _get_wires_raw(object_collection, selection, recursive):
                     yield wire
                     if selection == Selection.ALL:
                         for other_pin in wire.pins:
-                            if other_pin != pin:
-                                new_pin_search.add(other_pin)
+                            new_pin_search.add(other_pin)
                 if isinstance(pin, OuterPin):
                     inner_pin = pin.inner_pin
                     if inner_pin:
@@ -159,6 +151,9 @@ def _get_wires_raw(object_collection, selection, recursive):
                         if inner_wire and inner_wire not in in_yield:
                             in_yield.add(inner_wire)
                             yield inner_wire
+                            if selection == Selection.ALL:
+                                for other_pin in inner_wire.pins:
+                                    new_pin_search.add(other_pin)
                 else:
                     port = pin.port
                     if port:
@@ -170,6 +165,9 @@ def _get_wires_raw(object_collection, selection, recursive):
                                 if outer_wire and outer_wire not in in_yield:
                                     in_yield.add(outer_wire)
                                     yield outer_wire
+                                    if selection == Selection.ALL:
+                                        for other_pin in outer_wire.pins:
+                                            new_pin_search.add(other_pin)
             elif selection == Selection.INSIDE:
                 if isinstance(pin, OuterPin):
                     inner_pin = pin.inner_pin
