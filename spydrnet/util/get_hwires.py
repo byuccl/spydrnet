@@ -16,16 +16,10 @@ def get_hwires(obj, *args, **kwargs):
         The object or objects associated with this query. Queries return a collection of objects associated with the
         provided object or objects that match the query criteria. For example, `sdn.get_instances(netlist, ...) would
         return all of the instances *within* the provided definition that match the additional criteria.
-    selection : Selection.{INSIDE, OUTSIDE, BOTH, ALL}, default: INSIDE
-        This parameter determines the wires that are returned based on the instance associated with the object that is
-        being searched.
     patterns : str, Iterable - optional, positional or named, default: wildcard
         The search patterns. Patterns can be a single string or an Iterable collection of strings. Patterns can be
         absolute or they can contain wildcards or regular expressions. If `patterns` is not provided, then it defaults
         to a wildcard.
-    recursive : bool - optional, default: False
-        Specify if search should be recursive or not meaning that sub hierarchical instances within an instance are
-        included or not.
     is_case : bool - optional, named, default: True
         Specify if patterns should be treated as case sensitive. Only applies to patterns. Does not alter fast lookup
         behavior (if namespace policy uses case insensitive indexing, this parameter will not prevent a fast lookup
@@ -33,6 +27,12 @@ def get_hwires(obj, *args, **kwargs):
     is_re: bool - optional, named, default: False
         Specify if patterns are regular expressions. If `False`, a pattern can still contain `*` and `?` wildcards. A
         `*` matches zero or more characters. A `?` matches upto a single character.
+    recursive : bool - optional, default: False
+        Specify if search should be recursive or not meaning that sub hierarchical instances within an instance are
+        included or not.
+    selection : Selection.{INSIDE, OUTSIDE, BOTH, ALL}, default: INSIDE
+        This parameter determines the wires that are returned based on the instance associated with the object that is
+        being searched.
     filter : function
         This is a single input function that can be used to filter out unwanted virtual instances. If not specifed, all
         matching virtual instances are returned. Otherwise, virtual instances that cause the filter function to evaluate
@@ -178,10 +178,10 @@ def _get_hwires_raw(object_collection, selection, patterns, recursive, is_case, 
                     href_inst = href_cable.parent
                     for pin in item.pins:
                         if isinstance(pin, OuterPin):
-                            href_inst = HRef.from_parent_and_item(obj.parent, pin.instance)
+                            href_sub_inst = HRef.from_parent_and_item(obj.parent, pin.instance)
                             inner_pin = pin.inner_pin
                             port = inner_pin.port
-                            href_port = HRef.from_parent_and_item(href_inst, port)
+                            href_port = HRef.from_parent_and_item(href_sub_inst, port)
                             href_pin = HRef.from_parent_and_item(href_port, pin)
                         else:
                             port = pin.port
