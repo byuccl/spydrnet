@@ -45,7 +45,7 @@ class TestGetHCables(unittest.TestCase):
         self.assertIsInstance(hrefs[0].item, sdn.Cable)
 
     def test_get_hwire_of_invalid_reference(self):
-        from spydrnet.ir.hierarchical_reference import HRef
+        from spydrnet.util.hierarchical_reference import HRef
         invalid_href = HRef.from_parent_and_item(None, None)
         hrefs = list(sdn.get_hcables(invalid_href))
         self.assertTrue(len(hrefs) == 0)
@@ -57,7 +57,7 @@ class TestGetHCables(unittest.TestCase):
         wire = cable.wires[0]
         hrefs = list(sdn.get_hinstances(wire))
         href_top = hrefs[0]
-        from spydrnet.ir.hierarchical_reference import HRef
+        from spydrnet.util.hierarchical_reference import HRef
         cable_href = HRef.from_parent_and_item(href_top, cable)
         self.assertIsInstance(cable_href.item, sdn.Cable)
         wire_href = HRef.from_parent_and_item(cable_href, wire)
@@ -74,7 +74,7 @@ class TestGetHCables(unittest.TestCase):
         hrefs = list(sdn.get_hcables(pin))
         href = hrefs[0]
         self.assertIsInstance(href.item, sdn.Cable)
-        from spydrnet.ir.hierarchical_reference import HRef
+        from spydrnet.util.hierarchical_reference import HRef
         port_href = HRef.from_parent_and_item(href.parent, port)
         href_result = next(sdn.get_hcables(port_href), None)
         self.assertTrue(href_result is href)

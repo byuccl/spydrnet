@@ -53,7 +53,7 @@ class TestGetHPins(unittest.TestCase):
         self.assertIsInstance(hrefs[0].item, sdn.InnerPin)
 
     def test_get_hwire_of_invalid_reference(self):
-        from spydrnet.ir.hierarchical_reference import HRef
+        from spydrnet.util.hierarchical_reference import HRef
         invalid_href = HRef.from_parent_and_item(None, None)
         hrefs = list(sdn.get_hpins(invalid_href))
         self.assertTrue(len(hrefs) == 0)
@@ -85,7 +85,7 @@ class TestGetHPins(unittest.TestCase):
         pin = port.pins[0]
         hrefs = list(sdn.get_hinstances(pin))
         href = hrefs[0]
-        from spydrnet.ir.hierarchical_reference import HRef
+        from spydrnet.util.hierarchical_reference import HRef
         port_href = HRef.from_parent_and_item(href, port)
         pin_href = HRef.from_parent_and_item(port_href, pin)
         href_result = next(sdn.get_hpins(port_href), None)

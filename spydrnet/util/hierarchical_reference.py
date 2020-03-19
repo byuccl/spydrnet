@@ -1,10 +1,12 @@
 import spydrnet.ir as ir
 import weakref
 
+from spydrnet.shortcuts.getter import GetterShortcuts
+
 flyweight = weakref.WeakKeyDictionary()
 
 
-class HRef(ir.Element):
+class HRef(GetterShortcuts):
     @staticmethod
     def get_all_hrefs_of_item(item):
         if isinstance(item, ir.Instance):

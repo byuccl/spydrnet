@@ -1,6 +1,6 @@
 from spydrnet import InnerPin, OuterPin, Wire, Netlist, Library, Definition, Instance, Port, Cable,\
     Element
-from spydrnet.ir.hierarchical_reference import HRef
+from spydrnet.util.hierarchical_reference import HRef
 from spydrnet.util.selection import Selection
 
 

@@ -1,6 +1,6 @@
 import unittest
 import spydrnet as sdn
-from spydrnet.ir.hierarchical_reference import HRef
+from spydrnet.util.hierarchical_reference import HRef
 
 
 class TestHRefBase(unittest.TestCase):

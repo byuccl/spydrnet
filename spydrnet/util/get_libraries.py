@@ -1,6 +1,6 @@
 from spydrnet.ir import FirstClassElement, InnerPin, OuterPin, Wire, Netlist, Library, Element, Definition, Instance, \
     Port, Cable
-from spydrnet.ir.hierarchical_reference import HRef
+from spydrnet.util.hierarchical_reference import HRef
 from spydrnet.util.selection import Selection
 from spydrnet.global_state.global_service import lookup
 from spydrnet.util.patterns import _is_pattern_absolute, _value_matches_pattern
