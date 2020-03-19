@@ -110,7 +110,6 @@ class Wire(Element):
         self._pins = list()
         pass
 
-
     def _clone(self, memo):
         '''not api safe clone function
         clone leaving all references in tact.
@@ -121,7 +120,6 @@ class Wire(Element):
         c._cable = None
         c._pins = copy(self._pins) #shallow copy the list so that it retains its pin references
         return c
-        
 
     def clone(self):
         '''clone wire in an api safe way. The following properties can be expected from the returned element:

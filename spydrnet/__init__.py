@@ -32,7 +32,8 @@ from spydrnet.parsers import parse
 from spydrnet.composers import compose
 
 from spydrnet.plugins import namespace_manager
-from spydrnet.util import get_netlists, get_libraries, get_definitions, get_ports, get_cables, get_instances, get_wires
+from spydrnet.util import get_netlists, get_libraries, get_definitions, get_ports, get_cables, get_instances,\
+    get_wires, get_pins
 from spydrnet.util import get_hinstances, get_hports, get_hpins, get_hcables, get_hwires
 
 import os

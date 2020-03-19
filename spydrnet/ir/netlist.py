@@ -21,26 +21,6 @@ class Netlist(FirstClassElement):
         self._top_instance = None
         _call_create_netlist(self)
 
-    def get_libraries(self, *args, **kwargs):
-        from spydrnet.util import get_libraries
-        return get_libraries(self, *args, **kwargs)
-
-    def get_definitions(self, *args, **kwargs):
-        from spydrnet.util import get_definitions
-        return get_definitions(self, *args, **kwargs)
-
-    def get_ports(self, *args, **kwargs):
-        from spydrnet.util import get_ports
-        return get_ports(self, *args, **kwargs)
-
-    def get_cables(self, *args, **kwargs):
-        from spydrnet.util import get_cables
-        return get_cables(self, *args, **kwargs)
-
-    def get_instances(self, *args, **kwargs):
-        from spydrnet.util import get_instances
-        return get_instances(self, *args, **kwargs)
-
     @property
     def libraries(self):
         """get a list of all libraries included in the netlist"""

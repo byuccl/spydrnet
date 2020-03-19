@@ -46,7 +46,7 @@ class Bundle(FirstClassElement):
         """
         this function must be overridden in classes which extend this to return either a list of pins or wires
         """
-        return None
+        raise NotImplementedError
 
     @property
     def is_scalar(self):

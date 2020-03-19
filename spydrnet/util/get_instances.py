@@ -32,15 +32,15 @@ def get_instances(obj, *args, **kwargs):
     is_re: bool - optional, named, default: False
         Specify if patterns are regular expressions. If `False`, a pattern can still contain `*` and `?` wildcards. A
         `*` matches zero or more characters. A `?` matches upto a single character.
-    recursive : bool - optional, default: False
-        Specify if search should be recursive or not meaning that sub hierarchical instances within an instance are
-        included or not.
     selection : Selection.{INSIDE, OUTSIDE}, default: INSIDE
         This parameter determines the instances that are returned based on the definition or instance that is being
         searched. This parameter only applies to objects that are definitions. If the selection is "INSIDE" (default),
         then the function will return all of the instances that are inside the definition (i.e., the definition's
         children) that match the remainder of the search criteria. If the selection is "OUTSIDE", then the function will
         return all of the instances of the provided definition that match the remainder of the search criteria.
+    recursive : bool - optional, default: False
+        Specify if search should be recursive or not meaning that sub hierarchical instances within an instance are
+        included or not.
     filter : function
         This is a single input function that can be used to filter out unwanted virtual instances. If not specifed, all
         matching virtual instances are returned. Otherwise, virtual instances that cause the filter function to evaluate

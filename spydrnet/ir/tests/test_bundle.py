@@ -34,4 +34,4 @@ class TestBundle(unittest.TestCase):
         self.assertEqual(self.bundle.lower_index, 1)
 
     def test__item(self):
-        self.assertIsNone(self.bundle._items())
+        self.assertRaises(NotImplementedError, self.bundle._items)
