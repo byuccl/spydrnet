@@ -34,10 +34,6 @@ class Definition(FirstClassElement):
         """
         return self._library
 
-    def get_ports(self, *args, **kwargs):
-        from spydrnet.util import get_ports
-        return get_ports(self, *args, **kwargs)
-
     @property
     def ports(self):
         """
@@ -62,10 +58,6 @@ class Definition(FirstClassElement):
             "Set of values do not match, this function can only reorder values, values must be unique"
         self._ports = target
 
-    def get_cables(self, *args, **kwargs):
-        from spydrnet.util import get_cables
-        return get_cables(self, *args, **kwargs)
-
     @property
     def cables(self):
         """
@@ -89,10 +81,6 @@ class Definition(FirstClassElement):
         assert len(target) == len(target_set) and set(self._cables) == set(target), \
             "Set of values do not match, this function can only reorder values, values must be unique"
         self._cables = target
-
-    def get_instances(self, *args, **kwargs):
-        from spydrnet.util import get_instances
-        return get_instances(self, *args, **kwargs)
 
     @property
     def children(self):

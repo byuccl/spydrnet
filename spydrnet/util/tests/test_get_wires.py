@@ -89,7 +89,7 @@ class TestGetWires(unittest.TestCase):
         self.assertEqual(len(wires), 6)
 
     def test_inside(self):
-        wires = list(sdn.get_wires(self.middle_inst, selection="INSIDE", recursive=True))
+        wires = list(self.middle_inst.get_wires(selection="INSIDE", recursive=True))
         self.assertEqual(len(wires), 4)
 
     def test_both(self):

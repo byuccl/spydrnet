@@ -33,7 +33,7 @@ class TestGetNetlists(unittest.TestCase):
         instance.reference = definition
         netlist.top_instance = instance
 
-        netlist_lookup = next(sdn.get_netlists(wire), None)
+        netlist_lookup = next(wire.get_netlists(), None)
         self.assertIs(netlist, netlist_lookup)
 
         cable.remove_wire(wire)

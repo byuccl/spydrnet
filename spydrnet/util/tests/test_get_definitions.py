@@ -112,6 +112,22 @@ class TestGetDefinitions(unittest.TestCase):
         definition_query = list(sdn.get_definitions(self.netlist.libraries[1]))
         self.assertTrue(len(definition_query) == 3 and self.leaf_inst.reference not in definition_query)
 
+    def test_get_definition_of_library_outside(self):
+        definition_query = list(sdn.get_definitions(self.netlist.libraries[0], selection="OUTSIDE"))
+        self.assertTrue(len(definition_query) == 1 and self.leaf_inst.reference not in definition_query)
+
+    def test_get_definition_of_library_outside_recursive(self):
+        definition_query = list(sdn.get_definitions(self.netlist.libraries[0], selection="OUTSIDE", recursive=True))
+        self.assertTrue(len(definition_query) == 3 and self.leaf_inst.reference not in definition_query)
+
+    def test_get_definition_of_library_recursive(self):
+        definition_query = list(sdn.get_definitions(self.netlist.libraries[1], recursive=True))
+        self.assertTrue(len(definition_query) == 4 and self.leaf_inst.reference in definition_query)
+
+    def test_get_definition_of_library_recursive_absolute_pattern(self):
+        definition_query = list(sdn.get_definitions(self.netlist.libraries[1], "leaf", recursive=True))
+        self.assertTrue(len(definition_query) == 1 and self.leaf_inst.reference is definition_query[0])
+
     def test_get_definition_of_definition_inside(self):
         definition_query = list(sdn.get_definitions(self.netlist.libraries[1].definitions[0],
                                                     selection="INSIDE"))

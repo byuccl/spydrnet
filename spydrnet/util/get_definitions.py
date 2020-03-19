@@ -99,19 +99,24 @@ def _get_definitions_raw(object_collection, patterns, key, is_case, is_re, selec
     while object_collection:
         obj = object_collection.pop()
         if isinstance(obj, Library):
-            for pattern in patterns:
-                pattern_is_absolute = _is_pattern_absolute(pattern, is_case, is_re)
-                if pattern_is_absolute:
-                    result = lookup(obj, Definition, key, pattern)
-                    if result is not None and result not in found:
-                        found.add(result)
-                        yield result
-                else:
-                    for definition in obj.definitions:
-                        value = definition[key] if key in definition else ''
-                        if definition not in found and _value_matches_pattern(value, pattern, is_case, is_re):
-                            found.add(definition)
-                            yield definition
+            if selection == Selection.INSIDE:
+                for pattern in patterns:
+                    pattern_is_absolute = _is_pattern_absolute(pattern, is_case, is_re)
+                    if pattern_is_absolute:
+                        result = lookup(obj, Definition, key, pattern)
+                        if result is not None and result not in found:
+                            found.add(result)
+                            yield result
+                    else:
+                        for definition in obj.definitions:
+                            value = definition[key] if key in definition else ''
+                            if definition not in found and _value_matches_pattern(value, pattern, is_case, is_re):
+                                found.add(definition)
+                                yield definition
+                if recursive:
+                    object_collection += obj.definitions
+            else:
+                object_collection += obj.definitions
         elif isinstance(obj, Netlist):
             object_collection += obj.libraries
         elif isinstance(obj, Definition):
@@ -124,8 +129,8 @@ def _get_definitions_raw(object_collection, patterns, key, is_case, is_re, selec
                             if recursive:
                                 object_collection.append(reference)
             else:
-                for instance in obj.references:
-                    parent = instance.parent
+                for definition in obj.references:
+                    parent = definition.parent
                     if parent:
                         if parent not in other_definitions:
                             other_definitions.add(parent)
@@ -152,13 +157,13 @@ def _get_definitions_raw(object_collection, patterns, key, is_case, is_re, selec
                 if definition not in other_definitions:
                     other_definitions.add(definition)
         elif isinstance(obj, InnerPin):
-            port = obj.port
-            if port:
-                object_collection.append(port)
+            definition = obj.port
+            if definition:
+                object_collection.append(definition)
         elif isinstance(obj, OuterPin):
-            instance = obj.instance
-            if instance:
-                object_collection.append(instance)
+            definition = obj.instance
+            if definition:
+                object_collection.append(definition)
         elif isinstance(obj, Wire):
             cable = obj.cable
             if cable:
@@ -169,26 +174,28 @@ def _get_definitions_raw(object_collection, patterns, key, is_case, is_re, selec
 
     if other_definitions:
         namemap = dict()
-        for other_instance in other_definitions:
-            if other_instance in found:
+        for other_definition in other_definitions:
+            if other_definition in found:
                 continue
-            found.add(other_instance)
-            name = other_instance[key] if key in other_instance else ''
+            found.add(other_definition)
+            name = other_definition[key] if key in other_definition else ''
             if name not in namemap:
                 namemap[name] = list()
-            namemap[name].append(other_instance)
+            namemap[name].append(other_definition)
         for pattern in patterns:
             pattern_is_absolute = _is_pattern_absolute(pattern, is_case, is_re)
             if pattern_is_absolute:
                 if pattern in namemap:
                     result = namemap[pattern]
-                    for instance in result:
-                        yield instance
+                    for definition in result:
+                        yield definition
             else:
-                discard = set()
-                for instance in found:
-                    value = instance[key] if key in instance else ''
-                    if _value_matches_pattern(value, pattern, is_case, is_re):
-                        discard.add(instance)
-                        yield instance
-                found -= discard
+                names_to_remove = list()
+                for name in namemap:
+                    if _value_matches_pattern(name, pattern, is_case, is_re):
+                        result = namemap[name]
+                        names_to_remove.append(name)
+                        for definition in result:
+                            yield definition
+                for name in names_to_remove:
+                    del namemap[name]
