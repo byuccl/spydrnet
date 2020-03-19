@@ -1,4 +1,3 @@
-from spydrnet.ir.netlist import Netlist
 import spydrnet.ir as ir
 import weakref
 
@@ -71,7 +70,7 @@ class HRef(ir.Element):
                     library = reference.library
                     if library:
                         netlist = library.netlist
-        if isinstance(netlist, Netlist) is False:
+        if isinstance(netlist, ir.Netlist) is False:
             return
 
         top_instance = netlist.top_instance
