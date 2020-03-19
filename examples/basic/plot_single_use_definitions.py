@@ -175,4 +175,4 @@ import tempfile
 import os
 with tempfile.TemporaryDirectory() as td:
     file_name = example_name + '_unique.edf'
-    sdn.compose(os.path.join(td, file_name), ir)
+    sdn.compose(ir, os.path.join(td, file_name))
