@@ -56,3 +56,12 @@ Pins and Wires
 --------------
 Pins and wires will be cloned but disconnected from all other pins and wires. outer pins connections
 to inner pins will also be disconnected.
+
+Other notes
+-----------
+First class elements can contain other information in the form of dictionary entries. In the python
+implementation of SpyDrNet, these elements are cloned by calling python's built in deep copy on them.
+Officially we support string, and other primative type entries in these dictionaries. However if you
+feel like aiming a gun at your feet (or you are trying to figure out how to add support for new 
+constructs that you need), the clone function should probably work if you implement the deep copy 
+function on your entry object.
