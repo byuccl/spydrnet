@@ -11,3 +11,6 @@ from spydrnet.ir.innerpin import InnerPin
 from spydrnet.ir.outerpin import OuterPin
 from spydrnet.ir.bundle import Bundle
 from spydrnet.ir.pin import Pin
+from spydrnet.ir.hierarchical_reference import HRef
+
+

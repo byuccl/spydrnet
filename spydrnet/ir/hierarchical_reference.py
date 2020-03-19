@@ -1,10 +1,11 @@
+from spydrnet.ir.netlist import Netlist
 import spydrnet.ir as ir
 import weakref
 
 flyweight = weakref.WeakKeyDictionary()
 
 
-class HRef:
+class HRef(ir.Element):
     @staticmethod
     def get_all_hrefs_of_item(item):
         if isinstance(item, ir.Instance):
@@ -70,7 +71,7 @@ class HRef:
                     library = reference.library
                     if library:
                         netlist = library.netlist
-        if isinstance(netlist, ir.Netlist) is False:
+        if isinstance(netlist, Netlist) is False:
             return
 
         top_instance = netlist.top_instance

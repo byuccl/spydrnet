@@ -42,7 +42,7 @@ class TestGetHWires(unittest.TestCase):
         self.assertTrue(len(hrefs) == 1)
 
     def test_get_hwire_of_invalid_reference(self):
-        from spydrnet.util.hierarchical_reference import HRef
+        from spydrnet.ir.hierarchical_reference import HRef
         invalid_href = HRef.from_parent_and_item(None, None)
         hrefs = list(sdn.get_hwires(invalid_href))
         self.assertTrue(len(hrefs) == 0)
@@ -54,7 +54,7 @@ class TestGetHWires(unittest.TestCase):
         wire = cable.wires[0]
         hrefs = list(sdn.get_hinstances(wire))
         href_top = hrefs[0]
-        from spydrnet.util.hierarchical_reference import HRef
+        from spydrnet.ir.hierarchical_reference import HRef
         cable_href = HRef.from_parent_and_item(href_top, cable)
         wire_href = HRef.from_parent_and_item(cable_href, wire)
         href_result = next(sdn.get_hwires(cable_href), None)
@@ -69,7 +69,7 @@ class TestGetHWires(unittest.TestCase):
         pin = port.pins[0]
         hrefs = list(sdn.get_hwires(pin))
         href = hrefs[0]
-        from spydrnet.util.hierarchical_reference import HRef
+        from spydrnet.ir.hierarchical_reference import HRef
         port_href = HRef.from_parent_and_item(href.parent.parent, port)
         href_result = next(sdn.get_hwires(port_href), None)
         self.assertTrue(href_result is href)

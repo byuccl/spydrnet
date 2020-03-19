@@ -1,10 +1,8 @@
 from spydrnet.ir import Element, FirstClassElement, InnerPin, OuterPin, Wire, Netlist, Library, Definition, Instance,\
     Port, Cable
-from spydrnet.util.hierarchical_reference import HRef
+from spydrnet.ir.hierarchical_reference import HRef
 from spydrnet.global_state.global_service import lookup
 from spydrnet.util.patterns import _is_pattern_absolute, _value_matches_pattern
-
-import abc
 
 
 def get_ports(obj, *args, **kwargs):
