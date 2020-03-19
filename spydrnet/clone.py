@@ -6,6 +6,8 @@ from copy import deepcopy, copy, error
 def clone(element):
     '''
     Clone any netlist objects
-    see the individaul class .clone methods for more information on what happens when you clone
+    
+    This function provides access to the various intermediate
+    representation clone functions that are defined in their classes.
     '''
     return element.clone()
