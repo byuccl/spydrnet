@@ -1,4 +1,6 @@
-from spydrnet import FirstClassElement, InnerPin, OuterPin, Wire, Netlist, Library, Definition, Instance, Port
+from spydrnet.ir import Element, FirstClassElement, InnerPin, OuterPin, Wire, Netlist, Library, Definition, Instance,\
+    Port, Cable
+from spydrnet.util.hierarchical_reference import HRef
 from spydrnet.global_state.global_service import lookup
 from spydrnet.util.patterns import _is_pattern_absolute, _value_matches_pattern
 
@@ -55,11 +57,11 @@ def get_ports(obj, *args, **kwargs):
         try:
             object_collection = list(iter(obj))
         except TypeError:
-            object_collection = (obj,)
+            object_collection = [obj]
     else:
-        object_collection = (obj,)
-    if all(isinstance(x, (Netlist, Library, Definition, Instance)) for x in object_collection) is False:
-        raise TypeError("get_ports() only supports netlists, libraries, definitions, and instances, or a collection of "
+        object_collection = [obj]
+    if all(isinstance(x, (Element, HRef)) for x in object_collection) is False:
+        raise TypeError("get_ports() supports netlist elements and hierarchical references, or a collection of "
                         "these as the object searched")
 
     if isinstance(patterns, str):
@@ -69,41 +71,82 @@ def get_ports(obj, *args, **kwargs):
 
 
 def _get_ports(object_collection, patterns, key, is_case, is_re, filter_func):
-    unique_results = set()
     for result in filter(filter_func, _get_ports_raw(object_collection, patterns, key, is_case, is_re)):
-        if result not in unique_results:
-            unique_results.add(result)
-            yield result
+        yield result
 
 
 def _get_ports_raw(object_collection, patterns, key, is_case, is_re):
-    for pattern in patterns:
-        pattern_is_absolute = _is_pattern_absolute(pattern, is_case, is_re)
-        for parent in _get_port_parents(object_collection):
-            if pattern_is_absolute:
-                result = lookup(parent, Port, key, pattern)
-                if result is not None:
-                    yield result
-            else:
-                for port in parent.ports:
-                    if key in port:
-                        value = port[key]
-                        if _value_matches_pattern(value, pattern, is_case, is_re):
+    found = set()
+    other_ports = set()
+    while object_collection:
+        obj = object_collection.pop()
+        if isinstance(obj, Definition):
+            for pattern in patterns:
+                pattern_is_absolute = _is_pattern_absolute(pattern, is_case, is_re)
+                if pattern_is_absolute:
+                    result = lookup(obj, Port, key, pattern)
+                    if result is not None and result not in found:
+                        found.add(result)
+                        yield result
+                else:
+                    for port in obj.ports:
+                        value = port[key] if key in port else ''
+                        if port not in found and _value_matches_pattern(value, pattern, is_case, is_re):
+                            found.add(port)
                             yield port
-
-
-def _get_port_parents(object_collection):
-    for obj in object_collection:
-        if isinstance(obj, Netlist):
+        elif isinstance(obj, Netlist):
             for library in obj.libraries:
                 for definition in library.definitions:
-                    yield definition
+                    object_collection.append(definition)
         elif isinstance(obj, Library):
-            for definition in obj.definitions:
-                yield definition
+            object_collection += obj.definitions
         elif isinstance(obj, Instance):
             reference = obj.reference
-            if reference is not None:
-                yield reference
-        else:
-            yield obj
+            if reference:
+                object_collection.append(reference)
+        elif isinstance(obj, Port):
+            other_ports.add(obj)
+        elif isinstance(obj, InnerPin):
+            port = obj.port
+            if port:
+                other_ports.add(port)
+        elif isinstance(obj, OuterPin):
+            inner_pin = obj.inner_pin
+            if inner_pin:
+                object_collection.append(inner_pin)
+        elif isinstance(obj, Wire):
+            object_collection += obj.pins
+        elif isinstance(obj, Cable):
+            object_collection += obj.wires
+        elif isinstance(obj, HRef):
+            if obj.is_valid:
+                object_collection.append(obj.item)
+
+    if other_ports:
+        namemap = dict()
+        for other_port in other_ports:
+            if other_port in found:
+                continue
+            found.add(other_port)
+            name = other_port[key] if key in other_port else ''
+            if name not in namemap:
+                namemap[name] = list()
+            namemap[name].append(other_port)
+        for pattern in patterns:
+            pattern_is_absolute = _is_pattern_absolute(pattern, is_case, is_re)
+            if pattern_is_absolute:
+                if pattern in namemap:
+                    result = namemap[pattern]
+                    del namemap[pattern]
+                    for port in result:
+                        yield port
+            else:
+                names_to_remove = list()
+                for name in namemap:
+                    if _value_matches_pattern(name, pattern, is_case, is_re):
+                        result = namemap[name]
+                        names_to_remove.append(name)
+                        for port in result:
+                            yield port
+                for name in names_to_remove:
+                    del namemap[name]
