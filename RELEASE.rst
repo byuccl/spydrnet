@@ -1,3 +1,13 @@
+Version 1.3.0
+-------------
+March 19, 2020
+This is a major functionality wise release.
+* Added Hierarchical references
+* Added clone functionality
+* Added whole netlist uniquify ability
+* Updated/Fixed the composer and parser to use the new element[".NAME"] feature
+* Updated/Fixed the namespace manager to allow for multiple netlists in a session
+
 Version 1.2.0
 -------------
 February 7, 2020
