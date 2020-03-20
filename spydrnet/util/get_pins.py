@@ -1,11 +1,7 @@
-from spydrnet.ir import Element, FirstClassElement, InnerPin, OuterPin, Wire, Netlist, Library, Definition, Instance,\
+from spydrnet.ir import Element, InnerPin, OuterPin, Wire, Netlist, Library, Definition, Instance,\
     Port, Cable
 from spydrnet.util.hierarchical_reference import HRef
 from spydrnet.util.selection import Selection
-from spydrnet.global_state.global_service import lookup
-from spydrnet.util.patterns import _is_pattern_absolute, _value_matches_pattern
-
-import abc
 
 
 def get_pins(obj, *args, **kwargs):

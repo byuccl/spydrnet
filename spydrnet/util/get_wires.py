@@ -1,8 +1,7 @@
-from spydrnet import FirstClassElement, InnerPin, OuterPin, Wire, Netlist, Library, Definition, Instance, Port, Cable,\
+from spydrnet import InnerPin, OuterPin, Wire, Netlist, Library, Definition, Instance, Port, Cable,\
     Element
 from spydrnet.util.hierarchical_reference import HRef
 from spydrnet.util.selection import Selection
-from spydrnet.util.patterns import _is_pattern_absolute, _value_matches_pattern
 
 
 def get_wires(obj, *args, **kwargs):
