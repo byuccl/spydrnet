@@ -1,5 +1,15 @@
 SpyDrNet
 ========
+
+.. image:: https://img.shields.io/pypi/v/spydrnet.svg
+   :target: https://pypi.org/project/spydrnet/
+   
+.. image:: https://img.shields.io/pypi/pyversions/spydrnet.svg
+   :target: https://pypi.org/project/spydrnet/
+
+.. image:: https://travis-ci.com/byuccl/spydrnet.svg?branch=master
+   :target: https://travis-ci.com/byuccl/spydrnet
+
 A flexible framework for analyzing and transforming `netlists <https://en.wikipedia.org/wiki/Netlist>`_. Built to fill an important gap in FPGA research and reliability. Currently available as a pure Python package.
 
 - **Website and Documentation:** https://byuccl.github.io/spydrnet
@@ -34,13 +44,13 @@ Several example netlists are included with the package to introduce the framewor
 .. code:: python
 
    >>> netlist.data
-   {'EDIF.identifier': 'Z4bitadder', 'EDIF.original_identifier': 'adder', ... }
+   {'.NAME': 'adder', 'EDIF.identifier': 'Z4bitadder', ... }
 
 **List Libraries in a Netlist**
 
 .. code:: python
 
-    >>> list(x['EDIF.identifier'] for x in netlist.libraries)
+    >>> list(library.name for library in netlist.libraries)
     ['VIRTEX', 'UNILIB', 'work']
 
 **List Definitions in a Library**
@@ -48,18 +58,19 @@ Several example netlists are included with the package to introduce the framewor
 .. code:: python
 
     >>> library = netlist.libraries[2]
-    >>> list(x['EDIF.identifier'] for x in library.definitions)
+    >>> list(definition.name for definition in library.definitions)
+    ['adder']
 
 **List Ports, Cables, and Instances in a Definition**
 
 .. code:: python
 
     >>> definition = library.definitions[0]
-    >>> list(x['EDIF.identifier'] for x in definitions.ports)
-    ['data1', 'data2', 'answer', 'clk', 'reset', 'enable']
-    >>> list(x['EDIF.identifier'] for x in definitions.cables)
-    ['answer_1_0', 'answer_1_1', 'answer_1_2', 'answer_1_3', ... ]
-    >>> list(x['EDIF.identifier'] for x in definitions.children)
+    >>> list(port.name for port in definition.ports)
+    ['data1(3:0)', 'data2(3:0)', 'answer(3:0)', 'clk', 'reset', 'enable']
+    >>> list(cable.name for cable in definition.cables)
+    ['answer_1(0)', 'answer_1(1)', 'answer_1_(2)', 'answer_1(3)', ... ]
+    >>> list(instance.name for instance in definition.children)
     ['un3_answer1_axbxc3', 'un2_answer2_axbxc3', 'reset_c_i', ... ]
 
 **Compose a Netlist**
@@ -68,7 +79,13 @@ This example exports a netlist into an EDIF formatted netlist file by the given 
 
 .. code:: python
 
-   >>> sdn.compose('<filename>.edf', netlist)
+    >>> sdn.compose(netlist, '<filename>.edf')
+   
+The following equivalent code may also be used.
+
+.. code:: python
+   
+    >>> netlist.compose('<filename>.edf')
 
 **Additional Examples**
 
@@ -87,11 +104,11 @@ To install from PyPI with all optional dependicies use::
 
 SpyDrNet can also be installed from a source archive::
 
-    > pip install spydrnet-1.0.0.tar.gz
+    > pip install spydrnet-<version>.tar.gz
 
 Or a built distribution::
 
-    > pip install spydrnet-1.0.0-py3-none-any.whl
+    > pip install spydrnet-<version>-py3-none-any.whl
 
 If a development environment is desired, the project can be installed in editable mode from the project directory::
 

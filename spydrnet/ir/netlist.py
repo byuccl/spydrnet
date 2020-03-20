@@ -21,6 +21,10 @@ class Netlist(FirstClassElement):
         self._top_instance = None
         _call_create_netlist(self)
 
+    def compose(self, *args, **kwargs):
+        from spydrnet.composers import compose
+        compose(self, *args, **kwargs)
+
     @property
     def libraries(self):
         """get a list of all libraries included in the netlist"""

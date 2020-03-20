@@ -168,7 +168,7 @@ import tempfile
 import os
 with tempfile.TemporaryDirectory() as td:
     file_name = example_name + '_flat.edf'
-    sdn.compose(os.path.join(td, file_name), ir)
+    sdn.compose(ir, os.path.join(td, file_name))
 
 # sdn.composers.compose("test.edf", ir)
 print()

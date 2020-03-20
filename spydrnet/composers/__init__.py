@@ -1,6 +1,7 @@
 import os
 
-def compose(filename, netlist):
+
+def compose(netlist, filename):
     extension = os.path.splitext(filename)[1]
     extension_lower = extension.lower()
     if extension_lower in {".edf", ".edif"}:
