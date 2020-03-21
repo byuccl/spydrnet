@@ -2,7 +2,7 @@ import unittest
 
 import spydrnet as sdn
 from spydrnet.ir.bundle import Bundle
-from spydrnet.ir.element import Element
+from spydrnet.ir.first_class_element import FirstClassElement
 
 
 class TestBundle(unittest.TestCase):
@@ -10,7 +10,7 @@ class TestBundle(unittest.TestCase):
         self.bundle = Bundle()
 
     def test_constructor(self):
-        self.assertIsInstance(self.bundle, Element, "Bundle is not an element.")
+        self.assertIsInstance(self.bundle, FirstClassElement, "Bundle is not an element.")
         self.assertTrue(self.bundle, "Constructor returns None type or empty collection.")
         bundle2 = Bundle()
         self.assertNotEqual(self.bundle, bundle2, "Unique objects are considered equal.")
@@ -34,4 +34,4 @@ class TestBundle(unittest.TestCase):
         self.assertEqual(self.bundle.lower_index, 1)
 
     def test__item(self):
-        self.assertIsNone(self.bundle._items())
+        self.assertRaises(NotImplementedError, self.bundle._items)

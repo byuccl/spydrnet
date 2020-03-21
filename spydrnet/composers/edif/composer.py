@@ -151,17 +151,16 @@ class ComposeEdif:
         self._new_line_()
 
     def _output_name_of_object_(self, obj):
-        if 'EDIF.original_identifier' in obj:
+        if '.NAME' not in obj or (obj['.NAME'] == obj['EDIF.identifier'] and obj.get('EDIF.rename', False)):
+            self._output_.write(obj['EDIF.identifier'])
+        else:
+            identifier = obj['EDIF.identifier']
+            rename_name = obj.get('.NAME', identifier)
             self._lisp_increment_()
             self._output_.write("rename ")
-            self._output_.write(obj["EDIF.identifier"])
-            self._output_.write(" \"" + obj['EDIF.original_identifier'] + "\"")
+            self._output_.write(identifier)
+            self._output_.write(' "' + rename_name + '"')
             self._lisp_decrement_()
-        else:
-            # print(obj)
-            # print(vars(obj))
-            # self._output_.write(obj.name)
-            self._output_.write(obj["EDIF.identifier"])
 
     def _output_definition_(self, definition):
         self._lisp_increment_()
@@ -212,30 +211,21 @@ class ComposeEdif:
             # TODO Clean up code in this if statement
             self._lisp_increment_()
             self._output_.write("array ")
-            # self._lisp_increment_()
-            # self._output_.write("rename ")
             self._output_name_of_object_(port)
-            # self._output_.write(' "')
-            # self._output_.write(port["EDIF.original_identifier"])
-            # self._output_.write('"')
-            # self._lisp_decrement_()
             self._output_.write(" ")
             self._output_.write(str(len(port.pins)))
             self._lisp_decrement_()
             self._output_.write(" ")
             self._lisp_increment_()
             self._output_.write("direction ")
-            # self._output_.write(port.direction)
             self._output_.write(self._direction_to_string_(port.direction))  # str(port.direction))
             self._lisp_decrement_()
             self._lisp_decrement_()
             self._new_line_()
             return
-        # self._output_.write(port.name)
         self._output_name_of_object_(port)
         self._lisp_increment_()
         self._output_.write("direction ")
-        # self._output_.write(port.direction)
         self._output_.write(self._direction_to_string_(port.direction))  # str(port.direction))
         self._lisp_decrement_()
         self._lisp_decrement_()
@@ -282,16 +272,7 @@ class ComposeEdif:
     def _output_cable_(self, cable):
         self._lisp_increment_()
         self._output_.write("net ")
-        if "EDIF.original_identifier" in cable:
-            self._lisp_increment_()
-            self._output_.write("rename ")
-            self._output_.write(self._get_edif_name_(cable))
-            self._output_.write(' "')
-            self._output_.write(cable['EDIF.original_identifier'])
-            self._output_.write('"')
-            self._lisp_decrement_()
-        else:
-            self._output_.write(self._get_edif_name_(cable))
+        self._output_name_of_object_(cable)
         self._output_.write(" ")
         self._lisp_increment_()
         self._output_.write("joined")
@@ -356,16 +337,11 @@ class ComposeEdif:
             self._lisp_decrement_()
         else:
             self._output_.write(self._get_edif_name_(port_ref))
-        # self._output_.write(" ")
-        # self._lisp_increment_()
-        # self._output_.write("instanceref ")
-        # self._lisp_decrement_()
         self._lisp_decrement_()
         self._new_line_()
 
     def _get_edif_name_(self, netlistObj):
         name = netlistObj["EDIF.identifier"]
-        # print(vars(netlistObj))
         if not ("oldName" in netlistObj):
             return name
         else:

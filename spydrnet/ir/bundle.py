@@ -1,6 +1,7 @@
-from spydrnet.ir.element import Element
+from spydrnet.ir.first_class_element import FirstClassElement
 
-class Bundle(Element):
+
+class Bundle(FirstClassElement):
     """
     parent class of ports and cables. Since both of these objects represent arrays of objects they both inherit from
     this parent class.
@@ -45,7 +46,7 @@ class Bundle(Element):
         """
         this function must be overridden in classes which extend this to return either a list of pins or wires
         """
-        return None
+        raise NotImplementedError
 
     @property
     def is_scalar(self):

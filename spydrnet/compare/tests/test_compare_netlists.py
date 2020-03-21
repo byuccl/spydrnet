@@ -28,22 +28,28 @@ class TestCompareNetlists(unittest.TestCase):
             self.compare_parser_and_composer_on(filename, ii)
 
     def compare_parser_and_composer_on(self, filename, ii):
-            with self.subTest(i=ii):
-                if os.path.exists("temp"):
-                    shutil.rmtree("temp")
-                print(filename)
-                orig_netlist = sdn.parse(filename)
-                with tempfile.TemporaryDirectory() as tempdirname:
-                    try:
-                        basename_without_final_ext = os.path.splitext(os.path.basename(filename))[0]
-                        composer_filename = os.path.join(tempdirname, basename_without_final_ext)
-                        sdn.compose(composer_filename, orig_netlist)
-                        composer_netlist = sdn.parse(composer_filename)
-                    except Exception as e:
-                        shutil.copytree(tempdirname, "temp")
-                        raise e
-                comparer = Comparer(orig_netlist, composer_netlist)
-                comparer.run()
+        with self.subTest(i=ii):
+            if os.path.exists("temp"):
+                shutil.rmtree("temp")
+            print(filename)
+            orig_netlist = sdn.parse(filename)
+            with tempfile.TemporaryDirectory() as tempdirname:
+                try:
+                    basename_without_final_ext = os.path.splitext(os.path.basename(filename))[0]
+                    composer_filename = os.path.join(tempdirname, basename_without_final_ext)
+                    orig_netlist.compose(composer_filename)
+                    composer_netlist = sdn.parse(composer_filename)
+                except Exception as e:
+                    shutil.copytree(tempdirname, "temp")
+                    raise e
+            comparer = Comparer(orig_netlist, composer_netlist)
+            comparer.run()
+    
+    def test_empty_netlists(self):
+        nl1 = sdn.ir.Netlist()
+        nl2 = sdn.ir.Netlist()
+        comp = Comparer(nl1, nl2)
+        comp.compare()
 
 
 if __name__ == '__main__':

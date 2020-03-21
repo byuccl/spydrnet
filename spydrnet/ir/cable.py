@@ -2,6 +2,8 @@ from spydrnet.ir.bundle import Bundle
 from spydrnet.ir.wire import Wire
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
+from spydrnet.global_state.global_callback import _call_create_cable
+from copy import deepcopy, copy, error
 
 
 class Cable(Bundle):
@@ -13,6 +15,7 @@ class Cable(Bundle):
         '''create a cable with no wires and default values for a bundle.'''
         super().__init__()
         self._wires = list()
+        _call_create_cable(self)
 
     def _items(self):
         '''overrides the bundle _items function to return wires'''
@@ -98,3 +101,47 @@ class Cable(Bundle):
         '''internal wire removal call. dissociates the wire from the cable'''
         global_callback._call_cable_remove_wire(self, wire)
         wire._cable = None
+
+    def _clone_rip_and_replace(self, memo):
+        '''remove from its current environment and place it into the new cloned environment with references held in the memo dictionary'''
+        for w in self._wires:
+            w._clone_rip_and_replace(memo)
+
+    def _clone_rip(self):
+        '''remove from its current environmnet. This will remove all pin pointers and create a floating stand alone instance.'''   
+        for w in self._wires:
+            w._clone_rip()
+            w._cable = self
+
+
+    def _clone(self, memo):
+        '''not api safe clone function
+        clone leaving all references in tact.
+        the element can then either be ripped or ripped and replaced'''
+        assert self not in memo, "the object should not have been copied twice in this pass"
+        c = Cable()
+        memo[self] = c
+        new_wires = list()
+        for w in self._wires:
+            new_wires.append(w._clone(memo))
+        c._wires = new_wires
+        for w in c._wires:
+            w._cable = c
+        c._definition = None
+        c._is_downto = deepcopy(self._is_downto)
+        c._is_scalar = deepcopy(self._is_scalar)
+        c._lower_index = deepcopy(self._lower_index)
+        c._data = deepcopy(self._data)
+        return c
+
+    def clone(self):
+        ''' Clone the Cable and all of its wires in an api safe way
+        the following will be true of the returned cable
+         * The cable will be orphaned from any definitions
+         * the wires in the cable will not be connected to any pins
+         * is_downto, is_scalar, lower_index will be maintained
+         * the wires in the cable will all have the cable set as the parent
+         '''
+        c = self._clone(dict())
+        c._clone_rip()
+        return c

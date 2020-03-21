@@ -1,10 +1,12 @@
-from spydrnet.ir.element import Element
+from spydrnet.ir.first_class_element import FirstClassElement
 from spydrnet.ir.definition import Definition
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
+from spydrnet.global_state.global_callback import _call_create_library
+from copy import deepcopy, copy, error
 
 
-class Library(Element):
+class Library(FirstClassElement):
     """
     Represents a library object.
 
@@ -16,6 +18,7 @@ class Library(Element):
         super().__init__()
         self._netlist = None
         self._definitions = list()
+        _call_create_library(self)
 
     @property
     def netlist(self):
@@ -119,3 +122,58 @@ class Library(Element):
         """
         global_callback._call_library_remove_definition(self, definition)
         definition._library = None
+
+
+    def _clone_rip_and_replace(self, memo):
+        '''remove from its current environment and place it into the new cloned environment with references held in the memo dictionary'''
+        pass #this function will need to call rip and replace in library on each of the definitions when called from the netlist.
+        for definition in self._definitions:
+            definition._clone_rip_and_replace(memo)
+
+    def _clone_rip(self, memo):
+        '''remove from its current environmnet. This will remove all pin pointers and create a floating stand alone instance.'''   
+        # references lists of definitions need to be vacated except those that were cloned.
+        for definition in self._definitions:
+            new_references = set()
+            for ref in definition._references:
+                if ref in memo.values():
+                    new_references.add(ref)
+            for instance in definition._children:
+                instance._reference._references.add(instance)
+                
+            definition._references = new_references
+
+
+    def _clone(self, memo):
+        '''not api safe clone function
+        clone leaving all references in tact.
+        the element can then either be ripped or ripped and replaced'''
+        assert self not in memo, "the object should not have been copied twice in this pass"
+        c = Library()
+        memo[self] = c
+        c._netlist = None
+        c._data = deepcopy(self._data)
+        
+        new_definitions = list()
+        for definition in self._definitions:
+            new_definitions.append(definition._clone(memo))
+        c._definitions = new_definitions
+
+        for definition in c._definitions:
+            definition._library = c
+            definition._clone_rip_and_replace(memo)
+        return c
+
+    def clone(self):
+        '''
+        Clone the library in an api safe manner.
+        The following describes the structure of the returned object:
+         * the instances that pointed to reference definitions within the library will have updated references
+         * the instances that pointed to reference definitions outside the library will maintain their definitions
+         * the references lists (of definitions) both inside and outsde the library will be updated to reflect the change
+         * all definitions are cloned within the library.
+         '''
+        memo = dict()
+        c = self._clone(memo)
+        c._clone_rip(memo)
+        return c

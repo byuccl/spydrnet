@@ -3,6 +3,8 @@ from spydrnet.ir.innerpin import InnerPin
 from spydrnet.ir.outerpin import OuterPin
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
+from spydrnet.global_state.global_callback import _call_create_port
+from copy import deepcopy, copy, error
 
 from enum import Enum
 
@@ -33,6 +35,8 @@ class Port(Bundle):
         super().__init__()
         self._direction = self.Direction.UNDEFINED
         self._pins = list()
+        _call_create_port(self)
+
 
     def _items(self):
         '''overrides the _items function in the bundles class. For ports, pins are returned'''
@@ -181,3 +185,47 @@ class Port(Bundle):
                 outer_pin._instance = None
                 outer_pin._inner_pin = None
         pin._port = None
+
+    def _clone_rip_and_replace(self, memo):
+        '''remove from its current environment and place it into the new cloned environment with references held in the memo dictionary'''
+        for p in self._pins:
+            p._clone_rip_and_replace(memo)
+
+    def _clone_rip(self):
+        '''remove from its current environmnet. This will remove all pin pointers and create a floating stand alone instance.'''   
+        for p in self._pins:
+            p._clone_rip()
+
+    def _clone(self, memo):
+        '''not api safe clone function
+        clone leaving all references in tact.
+        the element can then either be ripped or ripped and replaced'''
+        assert self not in memo, "the object should not have been copied twice in this pass"
+        c = Port()
+        memo[self] = c
+        c._direction = deepcopy(self._direction)
+        new_pins = list()
+        for p in self._pins:
+            new_pins.append(p._clone(memo))
+        c._pins = new_pins
+        c._definition = None
+        c._is_downto = deepcopy(self._is_downto)
+        c._is_scalar = deepcopy(self._is_scalar)
+        c._lower_index = deepcopy(self._lower_index)
+        for p in c._pins:
+            p._port = c
+        c._data = deepcopy(self.data)
+        return c
+
+    def clone(self):
+        '''
+        Clone the port in an api safe way.
+        The following rules will be observed:
+         * all the pins will be disconnected from wires
+         * the port will be orphaned
+         * all pins will belong to the returned port
+         * direction, downto, is_scalar, lower_index will all be maintained
+         '''
+        c = self._clone(dict())
+        c._clone_rip()
+        return c

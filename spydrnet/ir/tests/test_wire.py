@@ -1,7 +1,7 @@
 import unittest
 
 import spydrnet as sdn
-from spydrnet.ir.element import Element
+from spydrnet.ir.first_class_element import FirstClassElement
 
 
 class TestWire(unittest.TestCase):
@@ -19,7 +19,7 @@ class TestWire(unittest.TestCase):
         self.instance.reference = self.definition_leaf
 
     def test_constructor(self):
-        self.assertFalse(isinstance(self.wire, Element), "Wire should not extend element")
+        self.assertFalse(isinstance(self.wire, FirstClassElement), "Wire should not extend element")
         wire2 = sdn.Wire()
         self.assertNotEqual(self.wire, wire2, "Unique items are considered equal")
 

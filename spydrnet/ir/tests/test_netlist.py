@@ -1,7 +1,7 @@
 import unittest
 
 import spydrnet as sdn
-from spydrnet.ir.element import Element
+from spydrnet.ir.first_class_element import FirstClassElement
 
 
 class TestNetlist(unittest.TestCase):
@@ -9,7 +9,7 @@ class TestNetlist(unittest.TestCase):
         self.netlist = sdn.Netlist()
 
     def test_constructor(self):
-        self.assertIsInstance(self.netlist, Element, "Netlist is not an element.")
+        self.assertIsInstance(self.netlist, FirstClassElement, "Netlist is not an element.")
         self.assertTrue(self.netlist, "Constructor return None type or empty collection")
         netlist2 = sdn.Netlist()
         self.assertNotEqual(self.netlist, netlist2, "Unique objects are considered equal.")

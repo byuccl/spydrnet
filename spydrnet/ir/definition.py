@@ -1,4 +1,4 @@
-from spydrnet.ir.element import Element
+from spydrnet.ir.first_class_element import FirstClassElement
 from spydrnet.ir.port import Port
 from spydrnet.ir.cable import Cable
 from spydrnet.ir.instance import Instance
@@ -6,9 +6,11 @@ from spydrnet.ir.outerpin import OuterPin
 from spydrnet.ir.views.listview import ListView
 from spydrnet.ir.views.setview import SetView
 from spydrnet.global_state import global_callback
+from spydrnet.global_state.global_callback import _call_create_definition
+from copy import deepcopy, copy, error
 
 
-class Definition(Element):
+class Definition(FirstClassElement):
     """
     Represents a definition of a cell, module, entity/architecture, or paralleled structure object.
 
@@ -23,6 +25,7 @@ class Definition(Element):
         self._cables = list()
         self._children = list()
         self._references = set()
+        _call_create_definition(self)
 
     @property
     def library(self):
@@ -342,3 +345,82 @@ class Definition(Element):
         """
         global_callback._call_definition_remove_cable(self, cable)
         cable._definition = None
+
+    def _clone_rip_and_replace(self, memo):
+        '''if an instance that is a reference of this definition was cloned then update the list of references of the definition.
+        for each of the children instances, we should also update the reference to refer to any cloned dictionaries
+        inner pins now also need to be updated with new inner pins for each of the definitions that was cloned.'''
+        new_references = set()
+        for instance in self._references:
+            #if the instance was cloned then replace it in our references also update its reference
+            if instance in memo:
+                new_instance = memo[instance]
+                new_references.add(new_instance)
+            else:
+                new_references.add(instance)
+        self._references = new_references
+        
+        for instance in self._children:
+            if instance.reference in memo:
+                instance._reference = memo[instance.reference]
+                instance._clone_rip_and_replace_in_library(memo)
+
+    def _clone_rip(self):
+        '''remove from its current environmnet. add all instances to their appropriate reference lists.'''   
+        for instance in self._children:
+            instance._reference._references.add(instance)
+        self._references = set()
+
+
+    def _clone(self, memo):
+        '''not api safe clone function
+        clone leaving all references in tact.
+        the element can then either be ripped or ripped and replaced'''
+        assert self not in memo, "the object should not have been copied twice in this pass"
+        c = Definition()
+        memo[self] = c
+        c._data = deepcopy(self._data)
+        c._library = None
+        
+        new_ports = list()
+        for p in self.ports:
+            new_ports.append(p._clone(memo))
+        c._ports = new_ports
+        
+        new_cables = list()
+        for ca in self.cables:
+            new_cables.append(ca._clone(memo))
+        c._cables = new_cables
+
+        new_children = list()
+        for ch in self.children:
+            new_children.append(ch._clone(memo))
+        c._children = new_children
+        
+        c._references = copy(self._references)
+        
+        for port in c._ports:
+            port._definition = c
+            port._clone_rip_and_replace(memo)
+        
+        for cable in c._cables:
+            cable._definition = c
+            cable._clone_rip_and_replace(memo)
+
+        for instance in c._children:
+            instance._parent = c
+            instance._clone_rip_and_replace_in_definition(memo)
+
+        return c
+
+    def clone(self):
+        '''
+        Clone the definition in an api safe way.
+        The cloned object will have the following properties
+         * the definition will be orphaned and will not belong to any library
+         * each of the sub elements of the definition will also be cloned and the connection structure between them will be updated.
+         * the cloned instances will still point to the reference to which the pointed before. They will also be members of the references list of those definitions.
+         '''
+        c = self._clone(dict())
+        c._clone_rip()
+        return c
