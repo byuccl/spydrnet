@@ -2,9 +2,9 @@
 SpyDrNet
 ========
 
-SpyDrNet is an EDA tool for netlist analysis and transformation.
+SpyDrNet is an EDA tool for analyzing and transforming netlists.
 
-See documentation for more details.
+See https://byuccl.github.io/spydrnet for more details.
 """
 
 # Release data
@@ -17,6 +17,7 @@ __license__ = release.license
 
 __date__ = release.date
 __version__ = release.version
+__release__ = release.release
 
 from spydrnet.ir import *
 

@@ -65,8 +65,8 @@ def copy_metadata(original, copy, copy_num=None):
                 copy_num += 1
             definition_count[copy['EDIF.identifier'] + '_UNIQUE_' + str(copy_num)] = 1
             copy['EDIF.identifier'] = copy['EDIF.identifier'] + '_UNIQUE_' + str(copy_num)
-        if 'EDIF.original_identifier' in copy.data:
-            copy['EDIF.original_identifier'] = copy['EDIF.original_identifier'] + '_UNIQUE_' + str(copy_num)
+        if '.NAME' in copy.data:
+            copy['.NAME'] = copy['.NAME'] + '_UNIQUE_' + str(copy_num)
 
 
 def copy_ports(original, copy):

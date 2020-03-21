@@ -26,10 +26,10 @@ project = 'SpyDrNet'
 copyright = '2019, Brigham Young Universitiy'
 author = 'BYU Configurable Computing Lab'
 
-# The full version, including alpha/beta/rc tags
-release = sdn.__version__
 # The short X.Y version
-version = release[:release.rindex('.')]
+version = sdn.__version__
+# The full version, including alpha/beta/rc tags
+release = sdn.__release__
 
 numfig = True
 
@@ -152,10 +152,11 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'SpyDrNet.tex', 'SpyDrNet Documentation',
+    ('reference/index', 'spydrnet_reference.tex', 'SpyDrNet Reference',
      'BYU Configurable Computing Lab', 'manual'),
 ]
 
+latex_appendices = ['tutorial']
 
 # -- Options for manual page output ------------------------------------------
 

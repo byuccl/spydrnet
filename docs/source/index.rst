@@ -1,7 +1,7 @@
-Welcome to SpyDrNet!
-====================
-
 .. figure:: figures/spydrnet_logo.*
+    :align: center
+
+.. include:: ../../README.rst
 
 .. only:: html
 
@@ -9,18 +9,18 @@ Welcome to SpyDrNet!
     :Date: |today|
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
-   introduction
-   element_data
-   api_specification
+   install
+   tutorial
+   reference/index
    developer/index
    license
    credits
    auto_examples/index
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
