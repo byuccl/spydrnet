@@ -1,0 +1,272 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Examples &mdash; SpyDrNet 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Traversal and Statistics of a Netlist" href="basic/plot_stat.html" />
+    <link rel="prev" title="Credits" href="../credits.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> SpyDrNet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#basic">Basic</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="basic/plot_stat.html">Traversal and Statistics of a Netlist</a></li>
+<li class="toctree-l3"><a class="reference internal" href="basic/plot_single_use_definitions.html">Make Instances unique</a></li>
+<li class="toctree-l3"><a class="reference internal" href="basic/plot_four_to_five_bit_counter.html">Four Bit Counter To Five Bit Counter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="basic/plot_flatten.html">Flattens a netlist</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#special">Special</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="special/plot_connectivity_graph.html">Connectivity Graph</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SpyDrNet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Examples</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/auto_examples/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="examples">
+<span id="sec-examples"></span><span id="sphx-glr-auto-examples"></span><h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
+<p>A collection of examples to introduce the functionality, features, and uses of SpyDrNet.</p>
+<div class="sphx-glr-clear"></div><div class="section" id="basic">
+<span id="sphx-glr-auto-examples-basic"></span><h2>Basic<a class="headerlink" href="#basic" title="Permalink to this headline">¶</a></h2>
+<div class="sphx-glr-thumbcontainer" tooltip="Traverse a netlist and collect statistics on the netlist."><div class="figure align-default" id="id1">
+<img alt="../_images/sphx_glr_plot_stat_thumb.png" src="../_images/sphx_glr_plot_stat_thumb.png" />
+<p class="caption"><span class="caption-number">Fig. 4 </span><span class="caption-text"><a class="reference internal" href="basic/plot_stat.html#sphx-glr-auto-examples-basic-plot-stat-py"><span class="std std-ref">Traversal and Statistics of a Netlist</span></a></span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="Creates definitions for none-leaf instances so each instance has its own definition"><div class="figure align-default" id="id2">
+<img alt="../_images/sphx_glr_plot_single_use_definitions_thumb.png" src="../_images/sphx_glr_plot_single_use_definitions_thumb.png" />
+<p class="caption"><span class="caption-number">Fig. 5 </span><span class="caption-text"><a class="reference internal" href="basic/plot_single_use_definitions.html#sphx-glr-auto-examples-basic-plot-single-use-definitions-py"><span class="std std-ref">Make Instances unique</span></a></span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="Extend a four bit counter to a 5 bit counter."><div class="figure align-default" id="id3">
+<img alt="../_images/sphx_glr_plot_four_to_five_bit_counter_thumb.png" src="../_images/sphx_glr_plot_four_to_five_bit_counter_thumb.png" />
+<p class="caption"><span class="caption-number">Fig. 6 </span><span class="caption-text"><a class="reference internal" href="basic/plot_four_to_five_bit_counter.html#sphx-glr-auto-examples-basic-plot-four-to-five-bit-counter-py"><span class="std std-ref">Four Bit Counter To Five Bit Counter</span></a></span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="Remove hierarchy from a netlist."><div class="figure align-default" id="id4">
+<img alt="../_images/sphx_glr_plot_flatten_thumb.png" src="../_images/sphx_glr_plot_flatten_thumb.png" />
+<p class="caption"><span class="caption-number">Fig. 7 </span><span class="caption-text"><a class="reference internal" href="basic/plot_flatten.html#sphx-glr-auto-examples-basic-plot-flatten-py"><span class="std std-ref">Flattens a netlist</span></a></span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-clear"></div></div>
+<div class="section" id="special">
+<span id="sphx-glr-auto-examples-special"></span><h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
+<div class="sphx-glr-thumbcontainer" tooltip="A connectivity graph is a mathmatical view of the connections between components in a netlist. ..."><div class="figure align-default" id="id5">
+<img alt="../_images/sphx_glr_plot_connectivity_graph_thumb.png" src="../_images/sphx_glr_plot_connectivity_graph_thumb.png" />
+<p class="caption"><span class="caption-number">Fig. 8 </span><span class="caption-text"><a class="reference internal" href="special/plot_connectivity_graph.html#sphx-glr-auto-examples-special-plot-connectivity-graph-py"><span class="std std-ref">Connectivity Graph</span></a></span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-clear"></div><div class="sphx-glr-footer class sphx-glr-footer-gallery docutils container">
+<div class="sphx-glr-download docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/9ee0273eca9b5ff0928fc35afccbe51e/auto_examples_python.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">all</span> <span class="pre">examples</span> <span class="pre">in</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">auto_examples_python.zip</span></code></a></p>
+</div>
+<div class="sphx-glr-download docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/91624b77f9733b61f10592ca935d2978/auto_examples_jupyter.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">all</span> <span class="pre">examples</span> <span class="pre">in</span> <span class="pre">Jupyter</span> <span class="pre">notebooks:</span> <span class="pre">auto_examples_jupyter.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="basic/plot_stat.html" class="btn btn-neutral float-right" title="Traversal and Statistics of a Netlist" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../credits.html" class="btn btn-neutral float-left" title="Credits" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Brigham Young Universitiy
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
