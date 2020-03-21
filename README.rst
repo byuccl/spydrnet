@@ -1,5 +1,5 @@
-SpyDrNet
-========
+Welcome to SpyDrNet!
+====================
 
 .. image:: https://img.shields.io/pypi/v/spydrnet.svg
    :target: https://pypi.org/project/spydrnet/
@@ -20,7 +20,7 @@ A flexible framework for analyzing and transforming `netlists <https://en.wikipe
 Simple Examples
 ---------------
 
-SpyDrNet can be used to create netlists from scratch. Because it is a low-level framework, manual netlist creation can be tedious (much like writting a high level application in assembly). To assist in rapid productivity, parsers and composers are provided for common netlist formats. Currently only `EDIF <https://en.wikipedia.org/wiki/EDIF>`_ is supported, but the roadmap includes structural Verilog, structural VHDL, Verilog Quartus Mapping Files `Intel's VQM <https://www.intel.com/content/www/us/en/programmable/quartushelp/17.0/mapIdTopics/mwh1465406414431.htm>`_ and JSON.
+SpyDrNet can be used to create netlists from scratch. Because it is a low-level framework, manual netlist creation can be tedious (much like writting a high level application in assembly). To assist in rapid productivity, parsers and composers are provided for common netlist formats. Currently only `EDIF <https://en.wikipedia.org/wiki/EDIF>`_ is supported, but the roadmap includes structural Verilog, structural VHDL, Verilog Quartus Mapping Files (`Intel's VQM <https://www.intel.com/content/www/us/en/programmable/quartushelp/17.0/mapIdTopics/mwh1465406414431.htm>`_), and JSON.
 
 **Loading Example Netlists**
 
@@ -91,8 +91,8 @@ The following equivalent code may also be used.
 
 Additional examples are available in the documentation for netlist creation, analysis, and transformation.
 
-How to install
---------------
+Install
+-------
 
 The stable release of SpyDrNet can be installed using ``pip``::
 
@@ -102,17 +102,7 @@ To install from PyPI with all optional dependicies use::
 
     > pip install spydrnet[all]
 
-SpyDrNet can also be installed from a source archive::
-
-    > pip install spydrnet-<version>.tar.gz
-
-Or a built distribution::
-
-    > pip install spydrnet-<version>-py3-none-any.whl
-
-If a development environment is desired, the project can be installed in editable mode from the project directory::
-
-    > pip install -e .
+For more installation instruction, see :ref:`INSTALL.rst`.
 
 Bugs
 ----
@@ -131,7 +121,7 @@ We have tried to build this tool around the principles of expandability and modu
 
 How to contribute
 -----------------
-If this tool has been useful to you, or have new feature ideas that you would like to implement, feel free to make a pull request, or take a look at the issues to see how to contribute. New ideas, bug fixes and suggestions are also welcome (See `CONTRIBUTING.rst`).
+If this tool has been useful to you, or have new feature ideas that you would like to implement, feel free to make a pull request, or take a look at the issues to see how to contribute. New ideas, bug fixes and suggestions are also welcome (See :ref:`CONTRIBUTING.rst`).
 
 Special Thanks
 --------------
@@ -141,7 +131,7 @@ Special thanks is given to `NetworkX <https://networkx.github.io/>`_ - "a python
 License
 -------
 
-Released under the BSD 3-Clause License (see `LICENSE`)::
+Released under the BSD 3-Clause License (see :ref:`LICENSE`)::
 
    Copyright (C) 2019, Brigham Young University
    All rights reserved.

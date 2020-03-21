@@ -88,7 +88,7 @@ class NamespaceManager(CallbackListener, ABC):
 
     def dictionary_set(self, element, key, value):
         if key == ".NS":
-            if self.ignore_ns_change is False:
+            if self.ignore_ns_change is False and (key not in element or element[key] != value):
                 if self.get_parent(element) is not None:
                     raise ValueError("Cannot change the namespace of a object already belonging to a parent")
                 if value not in self.policies:

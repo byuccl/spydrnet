@@ -151,16 +151,16 @@ class ComposeEdif:
         self._new_line_()
 
     def _output_name_of_object_(self, obj):
-        if obj['.NAME'] != obj['EDIF.identifier'] or ('EDIF.rename' in obj and obj['EDIF.rename'] == True):
+        if '.NAME' not in obj or (obj['.NAME'] == obj['EDIF.identifier'] and obj.get('EDIF.rename', False)):
+            self._output_.write(obj['EDIF.identifier'])
+        else:
+            identifier = obj['EDIF.identifier']
+            rename_name = obj.get('.NAME', identifier)
             self._lisp_increment_()
             self._output_.write("rename ")
-            self._output_.write(obj['EDIF.identifier'])
-            self._output_.write(' "' + obj['.NAME'] + '"')
+            self._output_.write(identifier)
+            self._output_.write(' "' + rename_name + '"')
             self._lisp_decrement_()
-            return
-        else:
-            self._output_.write(obj['EDIF.identifier'])
-
 
     def _output_definition_(self, definition):
         self._lisp_increment_()

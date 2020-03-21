@@ -7,6 +7,80 @@ flyweight = weakref.WeakKeyDictionary()
 
 
 class HRef(GetterShortcuts):
+    """A hierarchical reference to a specific element in a netlist.
+
+    Definitions can be instanced more than once (i.e., multiple instances can reference the same definition).
+    When a definition is instanced more than once, it causes the contents of the definition to be shared. Therefore, any
+    changes to a multi-instanced definition will be reflected in all instances of that definition. Similarly, any
+    references to the contents of a multi-instanced definition refer to the contents of all of the instances and not to
+    the contents of a specific instance. This sharing creates challenges for analyzing and transforming the netlist.
+
+    Hierarchical references refer to a netlist element by hierarchical sequence. A hierarchical sequence begins with the
+    the top-instance of netlist (see Netlist.top_instance). The sequence continues with children instances (parent to
+    child) until the instance of interest is reached. The instance of interest is the final instance in the sequence.
+    When the referenced element is an instance, the sequence terminates. When the referenced element is a port, pin,
+    cable, or wire, the sequence continues with those elements until the desired element is specified (e.g., port;
+    port, pin; cable; or cable, wire. In this way, hierarhical elements are uniquely referenced even though the contents
+    of a definition may be shared.
+
+    **Hierarchical Sequence Examples:**
+
+    Here are some examples of hierarchical sequences:
+
+    * Top Instance:
+        * ``[top_instance]``
+    * Top Instance Port
+        * ``[top_instance, port]``
+    * Top Instance Pin
+        * ``[top_instance, port, pin]``
+    * Shared Sub-Instance Cable)
+        * ``[top_instance, sub_instance_A, sub_instance_C, cable]``
+        * ``[top_instance, sub_instance_B, sub_instance_C, cable]``
+        * ``sub_instance_A`` and ``sub_instance_B`` are instances (or children) with the definition referenced by
+          ``top_instance``.
+        * ``sub_instance_A`` and ``sub_instance_B`` reference the same definition, which contains ``sub_instance_C``.
+        * Even though ``cable`` is the same element in both sequences, each sequence uniquely references the cable
+          inside ``sub_instance_A`` and ``sub_instance_B`` respectively.
+
+    **Netlist Analysis and Transformation:**
+
+    Hierarchical references provide unique handles on hierarchical elements. A unique handle allows for such elements to
+    be considered individually even though two hierarchical may point to some of the same elements. This makes it
+    possible, for example, to consider pin connectivity across hierarchy even though the actual pins may be the same.
+
+    In some netlist tranformations, it may be desirable to modify the contents of a specific instance without modifying
+    the contents of another instance that refers to the same definition. Hierarchical references make it possible to
+    refer to an instance that should be changed. Once the definition is made unique (see spydrnet.uniquify), then any
+    alterations will only affect the originally specified instance. Hierarchical instances also allow for uniqueness
+    checking (see HRef.is_unique).
+
+    **Hierarchical Reference Representation:**
+
+    HRefs represent hierarchy as nodes in a hierarchical tree. The root node is an HRef to the top_instance of a netlist
+    with no parent node. Each HRef contains a pointer to its parent HRef (``None`` in the case of the root HRef), a
+    pointer to the element in the netlist that it references, and a hashcode generated from each referenced object.
+
+    Storing the hashcode with the object saves on re-computation and allows for quick operations in containers that
+    require Hashable objects. If the hashcode were not stored with the object, it would have to be recalculated for
+    each hash-dependent operation, which could consume a large amount of computational resources depending on the
+    hierarchical depth of the node. Parent and item pointers are immutable. The hashcode of a referenced item is also
+    immutable. Therefore, the hashcode of a HRef should not change during its existence (even if a netlist
+    transformation renders it invalid).
+
+    **Use of a Flyweight Pattern:**
+
+    Due the the nature of hierarchical references, parent nodes can be referenced more than once. Rather than having
+    multiple hierarchical nodes in memory that point to the same hierarchical parent, a flyweight can be used to save
+    on memory. A flyweight pattern is used here to share hierarchical parent nodes. See `Flyweight pattern
+    <https://en.wikipedia.org/wiki/Flyweight_pattern>`_.
+
+    **Lack of Parent to Child Pointers:**
+
+    A parent to child pointer requires a lookup diction from each child item to each child hierarchical node. This
+    approach could be taken, but it recreates much of the same information that is available in the original netlist. It
+    was therefore decided to leverage the flyweight pattern rather than explicitly manage all of the necessary
+    child-item to child-node relationships.
+    """
     @staticmethod
     def get_all_hrefs_of_item(item):
         if isinstance(item, ir.Instance):

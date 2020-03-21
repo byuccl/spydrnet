@@ -31,22 +31,22 @@ def copy_instance(parent_instance, instance, new_instance):
         new_instance[key] = value
     # Change new_instance EDIF.identifier to represent its hierarchical name
     new_instance['EDIF.identifier'] = parent_instance['EDIF.identifier'] + '_' + new_instance['EDIF.identifier']
-    # Determine if parent_instance and instance have EDIF.original_identifier in it data
-    # Uses EDIF.original_identifier if available, else used EDIF.identifier to generate
-    # EDIF.original_identifier for new_instance
-    if 'EDIF.original_identifier' in parent_instance:
-        if 'EDIF.original_identifier' in instance:
-            new_instance['EDIF.original_identifier'] = parent_instance['EDIF.original_identifier'] + '/' \
-                                                       + instance['EDIF.original_identifier']
+    # Determine if parent_instance and instance have .NAME in it data
+    # Uses .NAME if available, else used EDIF.identifier to generate
+    # .NAME for new_instance
+    if '.NAME' in parent_instance:
+        if '.NAME' in instance:
+            new_instance['.NAME'] = parent_instance['.NAME'] + '/' \
+                                                       + instance['.NAME']
         else:
-            new_instance['EDIF.original_identifier'] = parent_instance['EDIF.original_identifier'] + '/' \
+            new_instance['.NAME'] = parent_instance['.NAME'] + '/' \
                                                        + instance['EDIF.identifier']
     else:
-        if 'EDIF.original_identifier' in instance:
-            new_instance['EDIF.original_identifier'] = parent_instance['EDIF.identifier'] + '/' \
-                                                       + instance['EDIF.original_identifier']
+        if '.NAME' in instance:
+            new_instance['.NAME'] = parent_instance['EDIF.identifier'] + '/' \
+                                                       + instance['.NAME']
         else:
-            new_instance['EDIF.original_identifier'] = parent_instance['EDIF.identifier'] + '/' \
+            new_instance['.NAME'] = parent_instance['EDIF.identifier'] + '/' \
                                                        + instance['EDIF.identifier']
     # Have new_instance reference the same definition as instance
     new_instance.reference = instance.reference
