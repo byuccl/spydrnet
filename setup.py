@@ -22,7 +22,7 @@ version = release.update_versionfile()
 sys.path.pop(0)
 
 with open("README.rst", "r") as fh:
-    long_description = fh.read()
+    long_description = fh.read().replace(':ref:','')
 
 example_edif_files = list()
 folder_path = os.path.normpath(os.path.join(os.path.dirname(__file__), "spydrnet", "support_files"))
