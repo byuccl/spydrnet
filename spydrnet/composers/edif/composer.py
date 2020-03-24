@@ -296,7 +296,7 @@ class ComposeEdif:
         inner_pin = pin.inner_pin
         self._lisp_increment_()
         self._output_.write("portref ")
-        if hasattr(pin.inner_pin.port, "is_array"):
+        if pin.inner_pin.port.is_array:
             self._lisp_increment_()
             self._output_.write("member ")
             self._output_.write(self._get_edif_name_(inner_pin.port))
@@ -318,7 +318,7 @@ class ComposeEdif:
     def _output_port_ref_(self, port_ref, cable_name, pin):
         self._lisp_increment_()
         self._output_.write("portref ")
-        if hasattr(port_ref, "is_array"):
+        if port_ref.is_array:
             for x in range(len(port_ref.pins)):
                 # print(self.test)
                 if port_ref.pins[x].wire is None:
