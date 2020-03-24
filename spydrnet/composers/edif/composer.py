@@ -151,7 +151,7 @@ class ComposeEdif:
         self._new_line_()
 
     def _output_name_of_object_(self, obj):
-        if '.NAME' not in obj or (obj['.NAME'] == obj['EDIF.identifier'] and obj.get('EDIF.rename', False)):
+        if '.NAME' not in obj or (obj['.NAME'] == obj['EDIF.identifier'] and obj.get('EDIF.rename', False) is False):
             self._output_.write(obj['EDIF.identifier'])
         else:
             identifier = obj['EDIF.identifier']
