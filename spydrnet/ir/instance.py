@@ -114,11 +114,7 @@ class Instance(FirstClassElement):
         c = Instance()
         memo[self] = c
         c._parent = None
-        for inner_pin, outer_pin in self._pins.items():
-            new_outer_pin = outer_pin._clone(memo)
-            new_outer_pin._instance = c
-            c._pins[inner_pin] = new_outer_pin
-        c._reference = self._reference
+        c.reference = self._reference
         c._data = deepcopy(self._data)
         return c
 

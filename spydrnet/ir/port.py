@@ -214,7 +214,7 @@ class Port(Bundle):
         c._lower_index = deepcopy(self._lower_index)
         for p in c._pins:
             p._port = c
-        c._data = deepcopy(self.data)
+        c._data = deepcopy(self._data)
         return c
 
     def clone(self):
