@@ -278,14 +278,16 @@ def _get_hwires_from_hpins(hpin_search, selection):
             if hwire_inside and hwire_inside not in found_hwires:
                 found_hwires.add(hwire_inside)
                 yield hwire_inside
-                search_stack += (x for x in _get_hpins_from_hwire(hwire_inside) if x != hpin)
+                if selection is Selection.ALL:
+                    search_stack += (x for x in _get_hpins_from_hwire(hwire_inside) if x != hpin)
 
         if selection in {Selection.OUTSIDE, Selection.BOTH, Selection.ALL}:
             hwire_outside = _get_outer_hwire_from_hpin(hpin)
             if hwire_outside and hwire_outside not in found_hwires:
                 found_hwires.add(hwire_outside)
                 yield hwire_outside
-                search_stack += (x for x in _get_hpins_from_hwire(hwire_outside) if x != hpin)
+                if selection is Selection.ALL:
+                    search_stack += (x for x in _get_hpins_from_hwire(hwire_outside) if x != hpin)
 
 
 def _get_inner_hwire_from_hpin(hpin):

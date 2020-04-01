@@ -107,4 +107,14 @@ def _get_ports_raw(object_collection, selection):
             object_collection += obj.wires
         elif isinstance(obj, HRef):
             if obj.is_valid:
-                object_collection.append(obj.item)
+                item = obj.item
+                if isinstance(item, InnerPin) and selection == Selection.OUTSIDE:
+                    hport = obj.parent
+                    hinstance = hport.parent
+                    instance = hinstance.item
+                    outer_pin = instance.pins[item]
+                    if outer_pin not in found:
+                        found.add(outer_pin)
+                        yield outer_pin
+                else:
+                    object_collection.append(obj.item)
