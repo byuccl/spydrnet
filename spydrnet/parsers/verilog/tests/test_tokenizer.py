@@ -1,10 +1,6 @@
 import unittest
-import os
-import io
-import zipfile
 
 from spydrnet.parsers.verilog.tokenizer import *
-from spydrnet import base_dir
 
 
 class TestVerilogTokenizer(unittest.TestCase):

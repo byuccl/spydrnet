@@ -39,11 +39,13 @@ tokens = (
     # 'EQUALS',
     # 'NUMBER',
     # 'PORT_NAME',
+    'COMMA_PORT',
 )
 
 
 states = (
     ('blockComment', 'exclusive'),
+    ('port', 'inclusive'),
 #     ('modulename', 'inclusive'),
 #     ('portname', 'inclusive'),
 #
@@ -53,7 +55,8 @@ t_SIMPLE_IDENTIFIER = r'[a-zA-Z_][a-zA-Z0-9_$]*'
 t_LEFT_PAREN = r'\('
 t_RIGHT_PAREN = r'\)'
 t_SEMICOLON = r';'
-t_COMMA = r','
+t_INITIAL_COMMA = r','
+t_port_COMMA_PORT = r','
 t_POUND = r'\#'
 t_DOT = r'\.'
 t_COLON = r':'
