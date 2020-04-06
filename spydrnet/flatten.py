@@ -2,12 +2,14 @@
 
 from spydrnet.ir import *
 from collections import deque
+from spydrnet.uniquify import uniquify
 
-'''code to make definitions unique throughout a netlist. 
-expected parameters,
-uniqify -- makes all definitions unique below the top instance. definitions that are not referenced below the top instance will not be unique.
+'''How to flatten (brainstorm):
+start at the top and take all of the subelements out and add them to the top definition
+Naming will be dificult but I will just skip that for now to get it working.
 '''
 
+unique_number = 0
 
 mod_name_uid = 0
 def _get_unique_name_modifier():
@@ -16,54 +18,79 @@ def _get_unique_name_modifier():
     mod_name_uid += 1
     return str_out
 
-def _make_instance_unique(instance):
-    '''clone the definition and point the reference to the new definition'''
-    lib = instance.reference.library
-    new_def = instance.reference.clone()
-    if instance.reference.name != None:
-        name = instance.reference.name
-        new_def.name = name + _get_unique_name_modifier()
-    lib.add_definition(new_def)
-    instance.reference = new_def
+def _rename_element(e):
+    global unique_number
+    e.name = e.name + "_flat_" + str(unique_number)
+    unique_number += 1
 
-def _is_unique(instance):
-    '''return if the instance is the only one of its kind in the definition'''
-    return len(instance.reference.references) == 1 or instance.reference.is_leaf()
+def _redo_connections(port):
+    pass
 
-def uniquify(netlist):
-    '''make the instances in the netlist unique
-    uniqification is done in place. Each instance will correspond to exactly one definition and each definition will correspond to exactly one instance with the exception of leaf cells.
-    Leaf cells are can be instanced unlimited numbers of times. Any netlist elements that are not instantiated by the top instance will not be modified and may retain duplicate instances
-    Currently there is no guarantee that the original definition names will be maintained, but it is guaranteed that they will be unique within the scope of all hardware that is below the top instance.
+def _bring_to_top_cable(c,top_definition):
+    '''move the cable that is internal to the top level.'''
+    d = c.definition
+    d.remove_cable(c)
+    _rename_element(c)
+    top_definition.add_child(c)
 
-    Renameing is predictable. the string: _sdn_unique_# will be added to the end of the definition names.
+def _bring_to_top_inst(i, top_definition):
+    '''move the instance that is internal to the top level.'''
+    #just remove the instance/cable from the definition to which it belongs then add it to the top definition
+    d = i.parent
+    d.remove_child(i)
+    _rename_element(i)
+    top_definition.add_child(i)
     
-    parameter - netlist, the netlist that will be uniquified
+def simple_recursive_netlist_visualizer(netlist):
+    #TODO put this code somewhere where people can use it to visualize simple netlists
+    top_instance = netlist.top_instance
+    #should look something like this:
+    #top
+    #   child1
+    #       child1.child
+    #   child2
+    #       child2.child
+    def recurse(instance, depth):
+        s = depth * "\t"
+        print(s, instance.name, "(", instance.reference.name, ")")
+        for c in instance.reference.children:  
+            recurse(c, depth + 1)
+    
+    recurse(top_instance, 0)
 
-    returns - no returns
-
+def flatten(netlist):
+    '''
+    starts at the top instance and brings all the different subelements to the top level.
+    and port boundries are redone into one net.
     '''
 
-    #import pdb; pdb.set_trace()
-    #starting with top.
-    #top must be unique below top. otherwise we have infinite harware recursion which is does not make much sense.    
+    #get all the sub instances of the top instance
     instance_queue = deque()
-
     top_instance = netlist.top_instance
-
     top_definition = top_instance.reference
-
     #put all of tops children on a stack
     for chld in top_definition.children:
         instance_queue.append(chld)
 
+    to_remove = []
     #for each of the children on the stack
     while len(instance_queue) > 0:
         inst = instance_queue.popleft()
-        #if they are not unique
-        if not _is_unique(inst):
-            #uniquify
-            _make_instance_unique(inst)
+        simple_recursive_netlist_visualizer(netlist)
+        print("just sent ", inst.name)
+        _bring_to_top_inst(inst, top_definition)
+        if inst.reference.is_leaf():
+            continue
         #put their children on the stack
-        for chld in inst.reference.children:
-            instance_queue.append(chld)
+        for child in inst.reference.children:
+            instance_queue.append(child)
+        temp_cables = []
+        for cable in inst.reference.cables:
+            temp_cables.append(cable)
+        for cable in temp_cables:
+            _bring_to_top_cable(cable, top_definition)
+        for port in inst.reference.ports:
+            _redo_connections(port)
+        to_remove.append(inst)
+    for i in to_remove:
+        top_definition.remove_child(i)
