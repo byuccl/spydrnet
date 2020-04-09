@@ -18,12 +18,17 @@ def _get_unique_name_modifier():
 
 def _make_instance_unique(instance):
     '''clone the definition and point the reference to the new definition'''
+    reference = instance.reference
     lib = instance.reference.library
+    index = lib.definitions.index(reference)
     new_def = instance.reference.clone()
     if instance.reference.name != None:
         name = instance.reference.name
-        new_def.name = name + _get_unique_name_modifier()
-    lib.add_definition(new_def)
+        unique_suffix = _get_unique_name_modifier()
+        new_def.name = name + unique_suffix
+        if 'EDIF.identifier' in new_def:
+            new_def['EDIF.identifier'] = new_def['EDIF.identifier'] + unique_suffix
+    lib.add_definition(new_def, index + 1)
     instance.reference = new_def
 
 def _is_unique(instance):

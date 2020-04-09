@@ -20,6 +20,7 @@ __version__ = release.version
 __release__ = release.release
 
 from spydrnet.ir import *
+from spydrnet.util.hierarchical_reference import HRef
 
 OUT = Port.Direction.OUT
 IN = Port.Direction.IN
