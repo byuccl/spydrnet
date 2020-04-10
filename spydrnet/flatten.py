@@ -23,22 +23,38 @@ def _rename_element(e):
     e.name = e.name + "_flat_" + str(unique_number)
     unique_number += 1
 
-def _redo_connections(port):
-    pass
+def _redo_connections(inst):
+    for pin in inst.pins:
+        out_wire = pin.wire
+        in_pin = pin.inner_pin
+        in_wire = in_pin.wire
+        in_wire = Wire()
+        pins_to_move = []
+        for p in in_wire.pins:
+            if p != pin:
+                pins_to_move.append(p)
+        for p in pins_to_move:
+            in_wire.disconnect_pin(p)
+            out_wire.connect_pin(p)
+        out_wire.disconnect_pin(pin)
 
 def _bring_to_top_cable(c,top_definition):
     '''move the cable that is internal to the top level.'''
     d = c.definition
+    add_to_name = d.name
     d.remove_cable(c)
-    _rename_element(c)
+    #_rename_element(c)
+    c.name = add_to_name + "/" + c.name
     top_definition.add_child(c)
 
 def _bring_to_top_inst(i, top_definition):
     '''move the instance that is internal to the top level.'''
     #just remove the instance/cable from the definition to which it belongs then add it to the top definition
     d = i.parent
+    add_to_name = d.name
     d.remove_child(i)
-    _rename_element(i)
+    #_rename_element(i)
+    i.name = add_to_name + "/" + i.name
     top_definition.add_child(i)
     
 def simple_recursive_netlist_visualizer(netlist):
@@ -76,8 +92,7 @@ def flatten(netlist):
     #for each of the children on the stack
     while len(instance_queue) > 0:
         inst = instance_queue.popleft()
-        simple_recursive_netlist_visualizer(netlist)
-        print("just sent ", inst.name)
+        # simple_recursive_netlist_visualizer(netlist)
         _bring_to_top_inst(inst, top_definition)
         if inst.reference.is_leaf():
             continue
@@ -89,8 +104,14 @@ def flatten(netlist):
             temp_cables.append(cable)
         for cable in temp_cables:
             _bring_to_top_cable(cable, top_definition)
-        for port in inst.reference.ports:
-            _redo_connections(port)
+        
+        _redo_connections(inst)
         to_remove.append(inst)
     for i in to_remove:
         top_definition.remove_child(i)
+
+
+#mkdir export
+#cd export
+#write_edif
+#write_xdc -constraints all leon3mp.xdc
