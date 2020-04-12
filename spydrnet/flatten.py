@@ -14,7 +14,7 @@ unique_number = 0
 mod_name_uid = 0
 def _get_unique_name_modifier():
     global mod_name_uid
-    str_out = "_sdn_unique_" + str(mod_name_uid)
+    str_out = "sdn_flat_" + str(mod_name_uid)
     mod_name_uid += 1
     return str_out
 
@@ -30,6 +30,13 @@ def _redo_connections(instance, port):
         in_pin = pin
         in_wire = in_pin.wire
         pins_to_move = []
+        if out_wire == None:
+            if in_wire == None:
+                return
+            else:
+                in_wire.disconnect_pin(in_pin)
+        if in_wire == None:
+            out_wire.disconnect_pin(out_pin)
         for p in in_wire.pins:
             if p != pin:
                 pins_to_move.append(p)
@@ -39,30 +46,39 @@ def _redo_connections(instance, port):
         out_wire.disconnect_pin(out_pin)
         in_wire.disconnect_pin(in_pin)
 
-def _bring_to_top_cable(c,inst,top_definition):
+def _bring_to_top(e, add_to_name, top_definition):
     '''move the cable that is internal to the top level.'''
-    d = c.definition
-    add_to_name = inst
-    d.remove_cable(c)
+    if "EDIF.identifier" in e:
+        global mod_name_uid
+        good = False
+        if mod_name_uid == 45773:
+            print(e["EDIF.identifier"])
+            print(e)
+            import pdb; pdb.set_trace()
+            good = True
+        if isinstance(e, Cable):
+            e["EDIF.identifier"] = "cable_" + _get_unique_name_modifier()
+        else:
+            e["EDIF.identifier"] = "instance_" + _get_unique_name_modifier()
+        
+        if good:
+            print(e["EDIF.identifier"])
+    if isinstance(e, Cable):
+        d = e.definition
+        d.remove_cable(e)
+    else:
+        d = e.parent
+        d.remove_child(e)
     #_rename_element(c)
     if(add_to_name != ''):
-        c.name = add_to_name + "/" + c.name
+        e.name = add_to_name + "/" + e.name
     else:
-        c.name = c.name
-    top_definition.add_cable(c)
+        e.name = e.name
+    if isinstance(e, Cable):
+        top_definition.add_cable(e)
+    else:
+        top_definition.add_child(e)
 
-def _bring_to_top_inst(i,inst,top_definition):
-    '''move the instance that is internal to the top level.'''
-    #just remove the instance/cable from the definition to which it belongs then add it to the top definition
-    d = i.parent
-    add_to_name = inst
-    d.remove_child(i)
-    #_rename_element(i)
-    if(add_to_name != ''):
-        i.name = add_to_name + "/" + i.name
-    else:
-        i.name = i.name
-    top_definition.add_child(i)
     
 # def simple_recursive_netlist_visualizer(netlist):
 #     #TODO put this code somewhere where people can use it to visualize simple netlists
@@ -103,7 +119,7 @@ def flatten(netlist):
         inst = instance_queue.popleft()
         parent_name = name_queue.popleft()
         # simple_recursive_netlist_visualizer(netlist)
-        _bring_to_top_inst(inst, parent_name, top_definition)
+        _bring_to_top(inst, parent_name, top_definition)
         if inst.reference.is_leaf():
             continue
         #put their children on the stack
@@ -114,7 +130,7 @@ def flatten(netlist):
         for cable in inst.reference.cables:
             temp_cables.append(cable)
         for cable in temp_cables:
-            _bring_to_top_cable(cable, inst.name, top_definition)
+            _bring_to_top(cable, inst.name, top_definition)
         for port in inst.reference.ports:
             _redo_connections(inst, port)
         to_remove.append(inst)
