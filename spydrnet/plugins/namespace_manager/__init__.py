@@ -200,28 +200,41 @@ class NamespaceManager(CallbackListener, ABC):
                     return False
         return True
 
-    def apply_namespace(self, value, target_namespace, element):
+    def apply_namespace(self, value, target_namespace, original_element):
         self.ignore_ns_change = True
-        search_stack = [(element, False)]
+        search_stack = [original_element]
         while search_stack:
-            element, visited = search_stack.pop()
-            if not visited:
-                search_stack.append((element, True))
-                if isinstance(element, Netlist):
-                    search_stack += ((x, False) for x in element.libraries)
-                elif isinstance(element, Library):
-                    search_stack += ((x, False) for x in element.definitions)
-                elif isinstance(element, Definition):
-                    search_stack += ((x, True) for x in element.ports)
-                    search_stack += ((x, True) for x in element.cables)
-                    search_stack += ((x, True) for x in element.children)
-            else:
-                if ".NS" in element and element in self.namespaces:
-                    del self.namespaces[element]
-                element[".NS"] = value
-                if target_namespace.needs_namespace(element):
-                    self.namespaces[element] = target_namespace()
+            element = search_stack.pop()
+            if ".NS" in element and element in self.namespaces:
+                del self.namespaces[element]
+            element[".NS"] = value
+            new_namespace = None
+            if target_namespace.needs_namespace(element):
+                new_namespace = target_namespace()
+                self.namespaces[element] = new_namespace
+
+            if isinstance(element, Netlist):
+                self._update_new_namespace(element.libraries, new_namespace)
+                search_stack += element.libraries
+            elif isinstance(element, Library):
+                self._update_new_namespace(element.definitions, new_namespace)
+                search_stack += element.definitions
+            elif isinstance(element, Definition):
+                self._update_new_namespace(element.ports, new_namespace)
+                self._update_new_namespace(element.cables, new_namespace)
+                self._update_new_namespace(element.children, new_namespace)
+                search_stack += element.ports
+                search_stack += element.cables
+                search_stack += element.children
         self.ignore_ns_change = False
+
+    def _update_new_namespace(self, elements, namespace):
+        if namespace:
+            for element in elements:
+                if element.name:
+                    namespace.update(element, ".NAME", element.name)
+                if 'EDIF.identifier' in element:
+                    namespace.update(element, "EDIF.identifier", element['EDIF.identifier'])
 
     def drop_namespace(self, original_element):
         self.ignore_ns_change = True
