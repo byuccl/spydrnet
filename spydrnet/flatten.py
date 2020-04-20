@@ -29,22 +29,24 @@ def _redo_connections(instance, port):
         out_wire = out_pin.wire
         in_pin = pin
         in_wire = in_pin.wire
-        pins_to_move = []
-        if out_wire == None:
-            if in_wire == None:
-                return
-            else:
-                in_wire.disconnect_pin(in_pin)
-        if in_wire == None:
+        
+        if in_wire:
+            in_wire.disconnect_pin(in_pin)
+        if out_wire:
             out_wire.disconnect_pin(out_pin)
-        for p in in_wire.pins:
-            if p != pin:
+
+        pins_to_move = []
+        if in_wire:
+            for p in in_wire.pins:
+                # if p != in_pin:
                 pins_to_move.append(p)
-        for p in pins_to_move:
-            in_wire.disconnect_pin(p)
-            out_wire.connect_pin(p)
-        out_wire.disconnect_pin(out_pin)
-        in_wire.disconnect_pin(in_pin)
+                
+        if out_wire:
+            for p in pins_to_move:
+                in_wire.disconnect_pin(p)
+                out_wire.connect_pin(p)
+
+        
 
 def _bring_to_top(e, add_to_name, top_definition):
     '''move the cable that is internal to the top level.'''
