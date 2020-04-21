@@ -1,3 +1,10 @@
+SpyDrNet 1.4.0
+--------------
+April 21, 2020
+
+* Flattening functionality
+* Bug fixes
+
 SpyDrNet 1.3.0
 --------------
 March 19, 2020
