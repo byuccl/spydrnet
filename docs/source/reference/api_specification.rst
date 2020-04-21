@@ -92,6 +92,9 @@ documenataion and can be used if needed. if the above types will suffice it may 
 .. automodule:: spydrnet.uniquify
    :members:
    
+.. automodule:: spydrnet.flatten
+   :members:
+   
 .. automodule:: spydrnet.util.get_netlists
    :members:
 
