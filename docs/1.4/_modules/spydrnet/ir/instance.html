@@ -1,0 +1,333 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>spydrnet.ir.instance &mdash; SpyDrNet 1.4.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> SpyDrNet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/index.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../credits.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SpyDrNet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>spydrnet.ir.instance</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for spydrnet.ir.instance</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">spydrnet.ir.first_class_element</span> <span class="k">import</span> <span class="n">FirstClassElement</span>
+<span class="kn">from</span> <span class="nn">spydrnet.ir.outerpin</span> <span class="k">import</span> <span class="n">OuterPin</span>
+<span class="kn">from</span> <span class="nn">spydrnet.ir.views.outerpinsview</span> <span class="k">import</span> <span class="n">OuterPinsView</span>
+<span class="kn">from</span> <span class="nn">spydrnet.global_state</span> <span class="k">import</span> <span class="n">global_callback</span>
+<span class="kn">from</span> <span class="nn">spydrnet.global_state.global_callback</span> <span class="k">import</span> <span class="n">_call_create_instance</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span><span class="p">,</span> <span class="n">copy</span><span class="p">,</span> <span class="n">error</span>
+
+
+<div class="viewcode-block" id="Instance"><a class="viewcode-back" href="../../../reference/api_specification.html#spydrnet.ir.Instance">[docs]</a><span class="k">class</span> <span class="nc">Instance</span><span class="p">(</span><span class="n">FirstClassElement</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    netlist instance of a netlist definition. Instances are literally instances of definitions and they reside inside definitions.</span>
+<span class="sd">    Function names have been set to adjust for the potential confusion that could arise because instances both have a parent definition and have definitions which they reference.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_parent&#39;</span><span class="p">,</span> <span class="s1">&#39;_reference&#39;</span><span class="p">,</span> <span class="s1">&#39;_pins&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        creates an empty object of type instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reference</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pins</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">_call_create_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Get the definition that contains this instance&#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">reference</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;get the definition that this instance is instantiating&#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reference</span>
+
+    <span class="nd">@reference</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">reference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;change the definition that represents this instance.</span>
+<span class="sd">        Port positioning and size must be taken into account when a new definition is being used.</span>
+<span class="sd">        if they are different the connections cannot be done automatically with this function.</span>
+
+<span class="sd">        parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        value - (Definition) the definition that this instance should be an instance of&#39;&#39;&#39;</span>
+        <span class="n">global_callback</span><span class="o">.</span><span class="n">_call_instance_reference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">pin</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pins</span><span class="p">:</span>
+                <span class="n">wire</span> <span class="o">=</span> <span class="n">pin</span><span class="o">.</span><span class="n">wire</span>
+                <span class="k">if</span> <span class="n">wire</span><span class="p">:</span>
+                    <span class="n">wire</span><span class="o">.</span><span class="n">disconnect_pin</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pin</span><span class="p">,</span> <span class="n">OuterPin</span><span class="p">):</span>
+                    <span class="n">pin</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="n">pin</span><span class="o">.</span><span class="n">_inner_pin</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pins</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reference</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reference</span><span class="o">.</span><span class="n">_references</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reference</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reference</span><span class="o">.</span><span class="n">ports</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">ports</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">pins</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">pins</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span>
+                                                                             <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reference</span><span class="o">.</span><span class="n">ports</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">ports</span><span class="p">)),</span> \
+                    <span class="s2">&quot;Reference reassignment only supported for definitions with matching port positions&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reference</span><span class="o">.</span><span class="n">_references</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">cur_port</span><span class="p">,</span> <span class="n">new_port</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reference</span><span class="o">.</span><span class="n">ports</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">ports</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">cur_pin</span><span class="p">,</span> <span class="n">new_pin</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cur_port</span><span class="o">.</span><span class="n">pins</span><span class="p">,</span> <span class="n">new_port</span><span class="o">.</span><span class="n">pins</span><span class="p">):</span>
+                        <span class="n">outer_pin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pins</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">cur_pin</span><span class="p">)</span>
+                        <span class="n">outer_pin</span><span class="o">.</span><span class="n">_inner_pin</span> <span class="o">=</span> <span class="n">new_pin</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_pins</span><span class="p">[</span><span class="n">new_pin</span><span class="p">]</span> <span class="o">=</span> <span class="n">outer_pin</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">ports</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">pin</span> <span class="ow">in</span> <span class="n">port</span><span class="o">.</span><span class="n">pins</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_pins</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span> <span class="o">=</span> <span class="n">OuterPin</span><span class="o">.</span><span class="n">from_instance_and_inner_pin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pin</span><span class="p">)</span>
+            <span class="n">value</span><span class="o">.</span><span class="n">_references</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reference</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@reference</span><span class="o">.</span><span class="n">deleter</span>
+    <span class="k">def</span> <span class="nf">reference</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reference</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Instance.get_ports"><a class="viewcode-back" href="../../../reference/api_specification.html#spydrnet.ir.Instance.get_ports">[docs]</a>    <span class="k">def</span> <span class="nf">get_ports</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">spydrnet.util.get_ports</span> <span class="k">import</span> <span class="n">get_ports</span>
+        <span class="k">return</span> <span class="n">get_ports</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;get the pins on this instance.&#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">OuterPinsView</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pins</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">_clone_rip_and_replace_in_definition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;slide the outerpins references into a new context. the instance still references something outside of what has been cloned.&#39;&#39;&#39;</span>
+        <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pins</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">op</span><span class="o">.</span><span class="n">_clone_rip_and_replace</span><span class="p">(</span><span class="n">memo</span><span class="p">)</span>
+            
+
+    <span class="k">def</span> <span class="nf">_clone_rip_and_replace_in_library</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;move the instance into a new library/netlist. this will replace the reference if affected and replace the inner pins that will be affected as well. The instance should not be in the references list of the reference definition&#39;&#39;&#39;</span>
+        <span class="n">new_pins</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">ip</span><span class="p">,</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pins</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">new_pins</span><span class="p">[</span><span class="n">memo</span><span class="p">[</span><span class="n">ip</span><span class="p">]]</span> <span class="o">=</span> <span class="n">op</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pins</span> <span class="o">=</span> <span class="n">new_pins</span>
+
+    <span class="k">def</span> <span class="nf">_clone_rip</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;remove the instance from its current environmnet. This will remove the instance from any wires but it will add it in to the references set on the definition which it instantiates.&#39;&#39;&#39;</span>   
+        <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pins</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">op</span><span class="o">.</span><span class="n">_wire</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reference</span><span class="o">.</span><span class="n">_references</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_clone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;not api safe clone function</span>
+<span class="sd">        clone the instance leaving all references in tact.</span>
+<span class="sd">        the instance can then either be ripped or ripped and replaced&#39;&#39;&#39;</span>
+        <span class="k">assert</span> <span class="bp">self</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">memo</span><span class="p">,</span> <span class="s2">&quot;the object should not have been copied twice in this pass&quot;</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">()</span>
+        <span class="n">memo</span><span class="p">[</span><span class="bp">self</span><span class="p">]</span> <span class="o">=</span> <span class="n">c</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">inner_pin</span><span class="p">,</span> <span class="n">outer_pin</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pins</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">new_outer_pin</span> <span class="o">=</span> <span class="n">outer_pin</span><span class="o">.</span><span class="n">_clone</span><span class="p">(</span><span class="n">memo</span><span class="p">)</span>
+            <span class="n">new_outer_pin</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="n">c</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">_pins</span><span class="p">[</span><span class="n">inner_pin</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_outer_pin</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">_reference</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reference</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">c</span>
+
+<div class="viewcode-block" id="Instance.clone"><a class="viewcode-back" href="../../../reference/api_specification.html#spydrnet.ir.Instance.clone">[docs]</a>    <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;clone the instance in an api safe way.</span>
+<span class="sd">        This call will return a cloned instance that has the following properties:</span>
+<span class="sd">         * the pins in the instance will all be disconnected from wires but they will maintain their references to inner pins</span>
+<span class="sd">         * the instance references is the same as the cloned object</span>
+<span class="sd">         * the reference&#39;s references list contains this instance</span>
+<span class="sd">         * the instance is orphaned (no longer a child of the definition to which the cloned definition belonged</span>
+<span class="sd">         &#39;&#39;&#39;</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clone</span><span class="p">(</span><span class="nb">dict</span><span class="p">())</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">_clone_rip</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">c</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Brigham Young Universitiy
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
