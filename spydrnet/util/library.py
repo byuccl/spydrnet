@@ -15,7 +15,6 @@ class Library(FirstClassElement):
     __slots__ = ['_netlist', '_definitions']
 
     def __init__(self, name = None, properties = None):
-
         """
         creates an empty object of type Library
 
@@ -25,14 +24,12 @@ class Library(FirstClassElement):
         name - (str) the name of this instance
         properties - (dict) the dictionary which holds the properties
         """
-
         super().__init__()
         self._netlist = None
         self._definitions = list()
         _call_create_library(self)
 
         self.name = name
-
         if properties != None:
             assert isinstance(properties, dict), "properties must be a dictionary"
             for key in properties:

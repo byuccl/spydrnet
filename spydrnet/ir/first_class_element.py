@@ -29,16 +29,21 @@ class FirstClassElement(Element):
     """
     __slots__ = ['_data', '__weakref__']
 
-    def __init__(self):
+    def __init__(self, name = None):
         """
         Initialize an element with an empty data dictionary.
+
+        parameter
+        ---------
+
+        name - (str) the name of the instance
         """
         self._data = dict()
 
     @property
     def data(self):
         return DictView(self._data)
-        
+
     @property
     def name(self):
         return self._data.get(".NAME", None)

@@ -18,7 +18,16 @@ class Definition(FirstClassElement):
     """
     __slots__ = ['_library', '_ports', '_cables', '_children', '_references']
 
-    def __init__(self):
+    def __init__(self, name = None, properties = None):
+        """
+        creates an empty object of type definition
+
+        parameters
+        ----------
+
+        name - (str) the name of this instance
+        properties - (dict) the dictionary which holds the properties
+        """
         super().__init__()
         self._library = None
         self._ports = list()
@@ -26,6 +35,13 @@ class Definition(FirstClassElement):
         self._children = list()
         self._references = set()
         _call_create_definition(self)
+
+        self.name = name
+
+        if properties != None:
+            assert isinstance(properties, dict), "properties must be a dictionary"
+            for key in properties:
+                self[key] = properties[key]
 
     @property
     def library(self):
