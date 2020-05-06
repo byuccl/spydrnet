@@ -31,7 +31,8 @@ class Netlist(FirstClassElement):
         self._top_instance = None
         _call_create_netlist(self)
 
-        self.name = name
+        if name!= None:
+            self.name = name
         if properties != None:
             assert isinstance(properties, dict), "properties must be a dictionary"
             for key in properties:

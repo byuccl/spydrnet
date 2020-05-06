@@ -30,8 +30,8 @@ class Library(FirstClassElement):
         self._netlist = None
         self._definitions = list()
         _call_create_library(self)
-
-        self.name = name
+        if name!= None:
+            self.name = name
 
         if properties != None:
             assert isinstance(properties, dict), "properties must be a dictionary"

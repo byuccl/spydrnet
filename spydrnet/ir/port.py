@@ -46,7 +46,8 @@ class Port(Bundle):
         self._direction = self.Direction.UNDEFINED
         self._pins = list()
         _call_create_port(self)
-        self.name = name
+        if name!= None:
+            self.name = name
 
         if is_downto is not None:
             self.is_downto = is_downto

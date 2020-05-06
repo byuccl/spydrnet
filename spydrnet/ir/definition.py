@@ -36,7 +36,8 @@ class Definition(FirstClassElement):
         self._references = set()
         _call_create_definition(self)
 
-        self.name = name
+        if name!= None:
+            self.name = name
 
         if properties != None:
             assert isinstance(properties, dict), "properties must be a dictionary"

@@ -28,7 +28,8 @@ class Cable(Bundle):
         super().__init__()
         self._wires = list()
         _call_create_cable(self)
-        self.name = name
+        if name!= None:
+            self.name = name
 
         if is_downto is not None:
             self.is_downto = is_downto

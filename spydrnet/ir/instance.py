@@ -28,8 +28,8 @@ class Instance(FirstClassElement):
         self._reference = None
         self._pins = dict()
         _call_create_instance(self)
-
-        self.name = name
+        if name!= None:
+            self.name = name
         if properties != None:
             assert isinstance(properties, dict), "properties must be a dictionary"
             for key in properties:

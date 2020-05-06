@@ -29,14 +29,9 @@ class FirstClassElement(Element):
     """
     __slots__ = ['_data', '__weakref__']
 
-    def __init__(self, name = None):
+    def __init__(self):
         """
         Initialize an element with an empty data dictionary.
-
-        parameter
-        ---------
-
-        name - (str) the name of the instance
         """
         self._data = dict()
 
