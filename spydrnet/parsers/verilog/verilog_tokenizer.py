@@ -182,6 +182,7 @@ class VerilogTokenizer:
             raise RuntimeError("Parse error: Expecting Verilog identifier on line {}, recieved {}".format(self.line_number, self.token))
 
     def is_valid_identifier(self):
+        #TODO deal with \ identifiers
         if re.match(r"[a-zA-Z]|&\a*", self.token) and len(self.token) <= 256:
             return True
         return False
