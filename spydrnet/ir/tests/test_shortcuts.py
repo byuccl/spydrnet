@@ -113,4 +113,56 @@ class TestShortcuts(unittest.TestCase):
         p = Port('p_name',{'key1':'value1', 'key2':'value2' })
         self.assertEqual(p['key1'], 'value1', 'Port properties init shorcut error')
 
+    def test_library_child_instance_creation(self):
+        l = Library('l_name',{'key1':'value1', 'key2':'value2' })
+        self.assertEqual(l['key1'], 'value1', 'Library properties init shorcut error')
+
+        l.create_definition("l_d_name", {'key1': 50, 'key2':'value2' })
+        self.assertEqual('l_d_name', l.definitions[0].name, 'library\'s definition cretion shorcut error')
+        self.assertEqual(l.definitions[0]['key1'], 50, 'library\'s definition cretion shorcut error')
+
+        l2 = Library()
+        l2.create_definition(properties = {'key1': 50, 'key2':'value2' })
+        self.assertEqual(l2.definitions[0]['key1'], 50, 'library\'s definition cretion shorcut error')
+
+    def test_definition_child_instance_creation(self):
+        d = Definition('d_name',{'key1':1, 'key2':'value2' })
+        self.assertEqual(d['key1'], 1, 'Definition properties init shorcut error')
+
+        d.create_port('p_name')
+        self.assertEqual(d.ports[0].name, 'p_name', 'Port name init shorcut error')
+        d.create_port(properties = {'key1':'value1', 'key2':'value2' })
+        self.assertEqual(d.ports[1]['key1'], 'value1', 'Port properties init shorcut error')
+
+        d.create_port(properties = {'key1':'value1', 'key2':'value2' })
+        self.assertEqual(d.ports[1]['key1'], 'value1', 'Port properties init shorcut error')
+
+        d.create_child('d_c_name', {'key1':1, 'key2':'value2' })
+        self.assertEqual(d.children[0]['key1'], 1, 'Definition properties init shorcut error')
+        self.assertEqual(d['key1'], 1, 'Definition properties init shorcut error')
+
+        d.create_cable('c_name', None,  False, True, 2)
+        self.assertEqual(d.cables[0].name, 'c_name', 'Cable name init shorcut error')
+        self.assertEqual(d.cables[0].is_downto, False, 'Cable is_downto init shorcut error')
+        self.assertEqual(d.cables[0].is_scalar, True, 'Cable is_scalar init shorcut error')
+        self.assertEqual(d.cables[0].lower_index, 2, 'Cable lower_index init shorcut error')
+
+        d.create_cable(is_scalar =  False)
+        self.assertEqual(d.cables[1].name, None, 'Cable name init shorcut error')
+        self.assertEqual(d.cables[1].is_downto, True, 'Cable is_downto init shorcut error')
+        self.assertEqual(d.cables[1].is_scalar, False, 'Cable is_scalar init shorcut error')
+        self.assertEqual(d.cables[1].lower_index, 0, 'Cable lower_index init shorcut error')
+
+    def test_netlist_child_instance_creation(self):
+        n = Netlist('n_name')
+        self.assertEqual(n.name, 'n_name', 'Netlist name init shorcut error')
+        n.create_library('l_name',{'key1':'value1', 'key2':'value2' })
+        self.assertEqual(n.libraries[0]['key1'], 'value1', 'Library properties init shorcut error')
+
+
+
+
+
+
+
 

@@ -139,11 +139,21 @@ class Definition(FirstClassElement):
             return False
         return True
 
-    def create_port(self):
+    def create_port(self, name = None, properties = None , is_downto = None, is_scalar = None, lower_index = None):
         """
-        create a port, add it to the definition, and return that port
+        create a port, add it to the definition, and return that portv
+
+        parameters
+        ----------
+
+        name - (str) the name of this instance
+        properties - (dict) the dictionary which holds the properties
+        id_downto - (bool) set the downto status. Downto is False if the right index is higher than the left one, True otherwise
+        is_scalar - (bool) set the scalar status. Return True if the item is a scalar False otherwise.
+        lower_index - (int) get the value of the lower index of the array.
+        
         """
-        port = Port()
+        port = Port(name, properties, is_downto, is_scalar, lower_index)
         self.add_port(port)
         return port
 
@@ -223,11 +233,17 @@ class Definition(FirstClassElement):
                 outer_pin._inner_pin = None
         port._definition = None
 
-    def create_child(self):
+    def create_child(self, name = None, properties = None):
         """
         create an instance to add to the definition, add it, and return the instance.
+
+        parameters
+        ----------
+
+        name - (str) the name of this instance
+        properties - (dict) the dictionary which holds the properties
         """
-        instance = Instance()
+        instance = Instance(name, properties)
         self.add_child(instance)
         return instance
 
@@ -293,15 +309,24 @@ class Definition(FirstClassElement):
         global_callback._call_definition_remove_child(self, child)
         child._parent = None
 
-    def create_cable(self):
+    def create_cable(self, name = None, properties = None, is_downto = None, is_scalar = None, lower_index = None):
         """
         create a cable, add it to the definition, and return the cable.
+
+        parameters
+        ----------
+
+        name - (str) the name of this instance
+        properties - (dict) the dictionary which holds the properties
+        id_downto - (bool) set the downto status. Downto is False if the right index is higher than the left one, True otherwise
+        is_scalar - (bool) set the scalar status. Return True if the item is a scalar False otherwise.
+        lower_index - (int) get the value of the lower index of the array.
         """
-        cable = Cable()
+        cable = Cable(name, properties, is_downto, is_scalar, lower_index)
         self.add_cable(cable)
         return cable
 
-    def add_cable(self, cable, position=None):
+    def add_cable(self, cable, position = None):
         """
         add a cable to the definition. The cable must not already be a member of another definition.
 

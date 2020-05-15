@@ -99,13 +99,21 @@ class Netlist(FirstClassElement):
         else:
             self._top_instance = instance
 
-    def create_library(self):
-        '''create a library and add it to the netlist and return that library'''
-        library = Library()
+    def create_library(self, name = None, properties = None):
+        '''create a library and add it to the netlist and return that library
+        
+        parameters
+        ----------
+
+        name - (str) the name of the library
+        properties - (dict) the dictionary which holds the properties of the library
+        '''
+        
+        library = Library(name, properties)
         self.add_library(library)
         return library
 
-    def add_library(self, library, position=None):
+    def add_library(self, library, position = None):
         """
         add an already existing library to the netlist. This library should not belong to another netlist. Use
         remove_library from other netlists before adding

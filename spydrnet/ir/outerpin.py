@@ -20,7 +20,7 @@ class OuterPin(Pin):
         inner_pin - (InnerPin) the inner pin with which to associate this outer pin'''
         return OuterPin(instance, inner_pin)
 
-    def __init__(self, instance=None, inner_pin=None):
+    def __init__(self, instance = None, inner_pin = None):
         '''create an OuterPin.
 
         parameters

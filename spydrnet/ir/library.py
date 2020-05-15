@@ -69,15 +69,21 @@ class Library(FirstClassElement):
             "Set of values do not match, this function can only reorder values, values must be unique"
         self._definitions = value_list
 
-    def create_definition(self):
+    def create_definition(self, name = None, properties = None):
         """
         create a definition, add it to the library, and return the definition
+
+        parameters
+        ----------
+
+        name - (str) the name of this instance
+        properties - (dict) the dictionary which holds the properties
         """
-        definition = Definition()
+        definition = Definition(name, properties)
         self.add_definition(definition)
         return definition
 
-    def add_definition(self, definition, position=None):
+    def add_definition(self, definition, position = None):
         """
         add an existing definition to the library. The definition must not belong to a library including this one.
 
