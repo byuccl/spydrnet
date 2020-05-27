@@ -91,9 +91,7 @@ class Library(FirstClassElement):
         ----------
 
         definition - (Definition) the defintion to add to the library
-
         position - (int, default None) the index in the library list at which to add the definition
-
         """
         assert definition.library is not self, "Definition already included in library"
         assert definition.library is None, "Definition already belongs to a different library"
