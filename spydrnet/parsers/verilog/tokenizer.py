@@ -59,6 +59,7 @@ class VerilogTokenizer:
             return False
 
     def next(self):
+        #lets skip the comments
         if self.next_token:
             self.token = self.next_token
             self.next_token = None
@@ -177,6 +178,26 @@ class VerilogTokenizer:
                 return True
         return False
 
+    def is_comment(self, token):
+        if token[0:2] == "//" or token[0:2] == "/*":
+            return True
+        return False
+
+    # def is_timescale_directive(self, token):
+    #     if token[0:10] == '`timescale':
+    #         return True
+    #     return False
+    
+    # def is_celldefine_directive(self, token):
+    #     if token[0:11] == '`celldefine':
+    #         return True
+    #     return False
+
+    def is_module(self, token):
+        if token == 'module':
+            return True
+        return False
+
     def expect_valid_identifier(self):
         if self.is_valid_identifier() is False:
             raise RuntimeError("Parse error: Expecting Verilog identifier on line {}, recieved {}".format(self.line_number, self.token))
@@ -209,12 +230,13 @@ if __name__ == "__main__":
     # filename = r"C:\Users\keller\workplace\SpyDrNet\data\large_edif\osfbm.edf"
     import cProfile
     def run():
-        filename = r"C:\Users\akeller9\workspace\SpyDrNet\data\large_edif\osfbm.edf"
+        filename = r"/home/dallin/Documents/byuccl/SpyDrNet/spydrnet/support_files/verilog_netlists/4bitadder.v"
         tokenizer = VerilogTokenizer.from_filename(filename)
         count = 0
         for token in tokenizer.generator:
             if count < 100:
-                print(token)
+                if not tokenizer.is_comment(token):
+                    print(token)
             count += 1
         print(count)
     cProfile.run("run()")
