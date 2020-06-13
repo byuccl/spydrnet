@@ -59,8 +59,7 @@ an instantiation looks like
 '''
 
 from spydrnet.parsers.verilog.tokenizer import VerilogTokenizer
-from spydrnet.parsers.verilog.verilog_tokens import *
-from spydrnet.ir import Netlist, Library, Definition, Port, Cable, Instance
+from spydrnet.ir import Netlist, Library, Definition, Port, Cable, Instance, OuterPin
 from spydrnet.plugins import namespace_manager
 
 from functools import reduce
@@ -114,31 +113,54 @@ class VerilogParser:
             self.tokenizer = VerilogTokenizer.from_stream(self.file_handle)
 
     def parse_verilog(self):
-        #tokenizer will skip the comments, this can be changed in the future to improve the results.
-        library = Library()
-        definition = Definition()
+        params = dict()
         token = self.tokenizer.next()
         while token:
             if token == '`':
-                #backtick directive
                 k,v = self.parse_back_tick()
-                definition[k] = v #this line can overwrite because in verilog they override.
-                #TODO fix this so it has it's own backtick namespace
-
-            if token == "(":
+                k = "VERILOG.backtick." + k
+                params[k] = v
+            
+            if token === "(":
                 token = self.tokenizer.next()
-                assert token == "*", "unexpected ( without a * character"
+                assert token == "*", "unexpected ( with out a *
                 k,v = self.parse_star_parameters()
-                definition[k] = v #TODO make this somehow different than above to more easily compose.
-
+                k = "VERILOG.star." + k
+                params[k] = v
+            
             if token == "module":
-                self.parse_module(definition, library)
-                #TODO lookup to see if the definition already exists, if so modify the existing one to match instead
-                library.add_definition(definition)
-                definition = Definition()
-            token = self.tokenizer.next()
-        netlist = Netlist()
-        netlist.add_library(library)
+                definition = self.parse_module(params, params)
+                
+
+    # def parse_verilog(self):
+    #     #tokenizer will skip the comments, this can be changed in the future to improve the results.
+    #     library = Library()
+    #     params = dict()
+    #     token = self.tokenizer.next()
+    #     while token:
+    #         if token == '`':
+    #             #backtick directive
+    #             k,v = self.parse_back_tick()
+    #             k = "VERILOG.backtick." + k
+    #             params[k] = v #this line can overwrite because in verilog they override.
+    #             #TODO fix this so it has it's own backtick namespace
+
+    #         if token == "(":
+    #             token = self.tokenizer.next()
+    #             assert token == "*", "unexpected ( without a * character"
+    #             k,v = self.parse_star_parameters()
+    #             k = "VERILOG.star." + k
+    #             params[k] = v #TODO make this somehow different than above to more easily compose.
+
+    #         if token == "module":
+    #             definition = self.parse_module(params, params)
+    #             #TODO lookup to see if the definition already exists, if so modify the existing one to match instead
+    #             library.add_definition(definition)
+    #             definition = Definition()
+    #         token = self.tokenizer.next()
+    #     netlist = Netlist()
+    #     netlist.add_library(library)
+    #     return
 
     def parse_back_tick(self):
         start_line = self.tokenizer.line_number
@@ -155,6 +177,7 @@ class VerilogParser:
         return key, value
 
     def parse_module(self, definition, library):
+        definition = Definition()
         self.parse_module_header(definition)
         self.parse_module_body(definition, library)
 
@@ -278,3 +301,120 @@ class VerilogParser:
         #extract the cable that will connect to the pins in the port
         cable = Cable()
         #put the port, cable, and instance into a definition to be attached later.
+
+    def _get_create_library(self, netlist, library_name = None):
+        if library_name:
+            lib = netlist.get_library(library_name)
+            if not lib:
+                lib = netlist.create_library()
+                lib.name = library_name
+        else:
+            lib = netlist.get_library("spydrnet_temporary")
+            if not lib:
+                lib = netlist.create_library()
+                lib.name = "spydrnet_temporary"
+        return lib
+
+    def _get_create_definition(self, netlist, definition_name, library = None):
+        if library is not None:
+            d = library.get_definition(definition_name)
+            if d is None:
+                d = library.create_definition()
+                d.name = definition_name
+            return d
+        else:
+            self._get_create_library(self)
+            
+
+    def _update_instance(self, netlist, definition, name, reference = None, properties = dict()):
+        #pass in a definition in which to contain the instance as a child
+        #pass in the name of the instance to create/find
+        #pass in the reference of the instance to create/find
+        #can also pass in a dictionary of properties to add to the instance.
+        #return the instance that was created or found
+        inst = definition.get_children(name)
+        if not inst:
+            inst = definition.create_child()
+            inst.name = name
+        if reference is not None:
+            ref = netlist.get_definition(reference)
+            if not ref:
+                lib = self._get_create_library(netlist)
+                ref = lib.create_definition()
+                ref.name = reference
+            inst.reference = ref
+        for k,v in properties.items():
+            inst[k] = v
+        return inst
+
+    def _update_definition(self, netlist, name, library = None, properties = dict()):
+        lib = self._get_create_library(netlist, library)
+        d = netlist.get_definition(name)
+        if not d:
+            d = lib.create_definition()
+            d.name = name
+
+        if library is not None:
+            if d.library.name != library:
+                d.library.remove_definition(d)
+                lib.add_definition(d)
+        
+        for k,v in properties.items():
+            d[k] = v
+
+        return d
+            
+
+    def _update_port(self, definition, name, width = None,
+                direction = None, lower_index = None, is_downto = None, properties = dict()):
+        port = definition.get_port(name)
+        cable = definition.get_cable(name)
+        if not port:
+            port = definition.create_port()
+            port.name = name
+            cable = definition.create_cable()
+            cable.name = name
+            
+
+        
+        if width is not None:
+            port.width = width
+            cable.width = width
+        if direction is not None:
+            port.direction = direction
+            cable.direction = direction
+        if lower_index is not None:
+            port.lower_index = lower_index
+            cable.lower_index = lower_index
+        if is_downto is not None:
+            port.is_downto = is_downto
+            cable.is_downto = is_downto
+
+        for k,v in properties.items():
+            port[k] = v
+            cable[k] = v
+
+        for i in range(len(port.pins)):
+            cable.wires[i].connect_pin(port.pins[i])
+
+        return port
+
+    def _get_create_cable(self, definition, name, width = 0):
+        cable = definition.get_cable(name)
+        if not cable:
+            cable = definition.create_cable()
+            cable.name = name
+        cable.width = width
+
+
+    def _connect_ports(self, parent, instance,
+                        port_name, cable_name, range_index_low = 0, range_index_high = 0):
+        #this method will conenct and wire up all the ports.
+        #make sure the definition has all apropriate ports. create them if not
+        port_width = range_index_high - range_index_low + 1
+        port = self._update_port(instance.reference, port_name, width = port_width)
+        cable = parent._get_create_cable(parent, cable_name)
+        #for i_pin in port.pins:
+        #    o_pin = OuterPin.from_instance_and_inner_pin(instance, i_pin)
+        for i in range(max(port_width)):
+            cable.wires[i + range_index_low] = port.pins[i] 
