@@ -28,6 +28,7 @@ class VerilogTokenizer:
         self.token = None
         self.next_token = None
         self.line_number = 0
+        self.to_next_whitespace = False
 
         if isinstance(input_source, str):
             if zipfile.is_zipfile(input_source):
@@ -60,14 +61,40 @@ class VerilogTokenizer:
 
     def next(self):
         #lets skip the comments
-        if self.next_token:
-            self.token = self.next_token
-            self.next_token = None
-        else:
-            self.token = next(self.generator)
+        run = True
+        celldef = False
+        while run:
+            if self.next_token:
+                self.token = self.next_token
+                self.next_token = None
+                #print("Tokenizer: next already here")
+            else:
+                self.token = next(self.generator)
+                #print("Tokenizer: next not here")
+            if self.token[:2] == "//":
+                continue
+            if not celldef:
+                run = False
+            if self.token == "`ifdef":
+                run = True
+                celldef = True
+            if celldef and self.token == "`endif":
+                celldef = False
+            #print("looping", self.token)
         return self.token
 
+    # def next_to_whitespace_depricated(self):
+    #     if self.next_token:
+    #         print("CAN'T PEEK BEFORE GETTING NEXT WHITESPACE")
+    #     self.to_next_whitespace = True
+    #     self.next()
+    #     self.to_next_whitespace = False
+    #     print("whitespace: ", self.token)
+    #     return self.token
+
+
     def peek(self):
+        #print("Tokenizer: peeked")
         if self.next_token:
             return self.next_token
         else:
@@ -82,6 +109,7 @@ class VerilogTokenizer:
             in_sl_comment = False
             comment_start = False
             comment_end = False
+            escaped = False
             
             token_buffer = list()
             for buffer in iter(partial(self.input_stream.read, 32768), ""):
@@ -124,6 +152,16 @@ class VerilogTokenizer:
                             yield token
                         else:
                             token_buffer.append(ch)
+                    elif ch == "\\" or escaped:
+                        escaped = True
+                        if ch not in {'\r', '\n', '\t', ' '}:
+                            token_buffer.append(ch)
+                            #print('appended ', ch)
+                        else:
+                            escaped = False
+                            token = ''.join(token_buffer)
+                            token_buffer.clear()
+                            yield token
                     elif ch == '"':
                         in_quote = True
                         token_buffer.append(ch)
@@ -141,6 +179,7 @@ class VerilogTokenizer:
                             token = ''.join(token_buffer)
                             token_buffer.clear()
                             yield token
+                        #if ch == '\n': self.line_number += 1
                     else:
                         token_buffer.append(ch)
 

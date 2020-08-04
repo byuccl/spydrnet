@@ -1,6 +1,6 @@
 import unittest
 
-from spydrnet.parsers.verilog.verilog_tokenizer import *
+from spydrnet.parsers.verilog.tokenizer import *
 
 
 class TestVerilogTokenizer(unittest.TestCase):
@@ -80,16 +80,19 @@ class TestVerilogTokenizer(unittest.TestCase):
     #     self.assertRaises(UnsupportedTokenException, tokenizer.next)
     def test_against_4bit_adder(self):
         tokenizer = VerilogTokenizer.from_filename("./spydrnet/support_files/verilog_netlists/4bitadder.v")
-        while(tokenizer.has_next):
-            print(tokenizer.next())
+        while(tokenizer.has_next()):
+            #print(tokenizer.next())
+            tokenizer.next()
 
     def test_spaces(self):
         tokenizer = VerilogTokenizer.from_string("wire temp = 1'b1; if something == some2")
-        while(tokenizer.has_next):
-            print(tokenizer.next())
+        while(tokenizer.has_next()):
+            #print(tokenizer.next())
+            tokenizer.next()
         tokenizer = VerilogTokenizer.from_string("wire temp=1'b1 ;if something==some2")
-        while(tokenizer.has_next):
-            print(tokenizer.next())
+        while(tokenizer.has_next()):
+            #print(tokenizer.next())
+            tokenizer.next()
 
 if __name__ == '__main__':
     unittest.main()

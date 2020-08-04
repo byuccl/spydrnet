@@ -1,63 +1,4 @@
 
-#parser strategy
-#we will use the namespace manager to figure out if the object already exists. if it does we will just add to it/modify it
-#on first mention we will create all objects mentioned and put them in the corresponding objects.
-#on any future mention we will look up the object and change it to match the specifications of the mention
-
-#throw away comments
-#3 basic components definition, instance, nets,
-#there are also ports and whatnot.
-
-#so here is the idea. Where we ge to the first definition create a definition and a library named work
-#we will also need a primative library
-#primatives only have ports on the definition
-
-'''
-basic verilog file structure from vivado:
-
-    (optional) Comments
-    (optional) `timescale 1 ps / 1 ps
-    (optional) `celldefine
-    (optional) (* words *)
-    module header
-    module body
-
-    repeat the above
-
-the module header consists of:
-
-    module module_name
-    (optional) #(parameters)
-    (input/output list);
-
-the input/output list:
-
-    
-
-the module body:
-
-    consists of the wire/register/parameter list
-    intermixed with instantiations
-
-The wire/register/parameter list
-    
-    localparam statments
-    input statements
-    output statements
-    inout statements
-    wire statements
-    register statements
-    assign statements
-    
-an instantiation looks like
-
-    any number of (* ... *) comments
-    name of the module
-    #(parameters)
-    instance_name (can contain [])
-    port mapping
-'''
-
 from spydrnet.parsers.verilog.tokenizer import VerilogTokenizer
 from spydrnet.ir import Netlist, Library, Definition, Port, Cable, Instance, OuterPin
 from spydrnet.plugins import namespace_manager
@@ -87,24 +28,18 @@ class VerilogParser:
         self.elements = list()
         self.tokenizer = None
         self.netlist = None
+        self.primitive_cell = False
 
 
     def parse(self):
         self.initialize_tokenizer()
         ns_default = namespace_manager.default
-        namespace_manager.default = "VERILOG"
+        namespace_manager.default = "DEFAULT"
         self.netlist = self.parse_verilog()
         namespace_manager.default = ns_default
         self.tokenizer.__del__()
+        return self.netlist
 
-
-    # def parse(self):
-    #     self.initialize_tokenizer()
-    #     ns_default = namespace_manager.default
-    #     namespace_manager.default = "VERILOG"
-    #     self.netlist = self.parse_construct(self.parse_edif)
-    #     namespace_manager.default = ns_default
-    #     self.tokenizer.__del__()
 
     def initialize_tokenizer(self):
         if self.filename:
@@ -112,142 +47,156 @@ class VerilogParser:
         elif self.file_handle:
             self.tokenizer = VerilogTokenizer.from_stream(self.file_handle)
 
+
     def parse_verilog(self):
         params = dict()
+        
         token = self.tokenizer.next()
+        line_num = self.tokenizer.line_number
+        netlist = Netlist()
+        self.primitive_cell = False
         while token:
-            if token == '`':
-                k,v = self.parse_back_tick()
-                k = "VERILOG.backtick." + k
-                params[k] = v
+
+            if token == '`celldefine':
+                self.primitive_cell = True
+            elif self.primitive_cell and token == "`endcelldefine":
+                self.primitive_cell = False
+                
             
-            if token === "(":
+            elif token == "(":
                 token = self.tokenizer.next()
-                assert token == "*", "unexpected ( with out a *
+                assert token == "*", "unexpected ( with out a *" + " " + str(self.tokenizer.line_number)
                 k,v = self.parse_star_parameters()
                 k = "VERILOG.star." + k
                 params[k] = v
             
-            if token == "module":
-                definition = self.parse_module(params, params)
+            elif token == "module":
+                definition = self.parse_module(params, netlist)
+                if netlist.top_instance is None:
+                    instance = Instance()
+                    instance.name = definition.name
+                    instance.reference = definition
+                    netlist.top_instance = instance
+            
+            elif token[:2] == "//":
+                pass #comment
+
+            elif token == "primitive":
+                while token != "endprimitive":
+                    token = self.tokenizer.next() 
+
+            else:
+                pass #unsorted token
+
+            if self.tokenizer.has_next():
+                token = self.tokenizer.next()
+                line_num = self.tokenizer.line_number
+            else:
+                token = None
+        return netlist
                 
 
-    # def parse_verilog(self):
-    #     #tokenizer will skip the comments, this can be changed in the future to improve the results.
-    #     library = Library()
-    #     params = dict()
-    #     token = self.tokenizer.next()
-    #     while token:
-    #         if token == '`':
-    #             #backtick directive
-    #             k,v = self.parse_back_tick()
-    #             k = "VERILOG.backtick." + k
-    #             params[k] = v #this line can overwrite because in verilog they override.
-    #             #TODO fix this so it has it's own backtick namespace
-
-    #         if token == "(":
-    #             token = self.tokenizer.next()
-    #             assert token == "*", "unexpected ( without a * character"
-    #             k,v = self.parse_star_parameters()
-    #             k = "VERILOG.star." + k
-    #             params[k] = v #TODO make this somehow different than above to more easily compose.
-
-    #         if token == "module":
-    #             definition = self.parse_module(params, params)
-    #             #TODO lookup to see if the definition already exists, if so modify the existing one to match instead
-    #             library.add_definition(definition)
-    #             definition = Definition()
-    #         token = self.tokenizer.next()
-    #     netlist = Netlist()
-    #     netlist.add_library(library)
-    #     return
-
-    def parse_back_tick(self):
-        start_line = self.tokenizer.line_number
-        key = self.tokenizer.next()
-        value = ""
-        while self.tokenizer.line_number == start_line:
-            value += self.tokenizer.next()
-        return key, value
 
     def parse_star_parameters(self):
         key = self.tokenizer.next()
-        assert self.tokenizer.next() == "=", "expected a = character in the key value directive"
+        assert self.tokenizer.next() == "=", "expected a = character in the key value directive"+ " " + str(self.tokenizer.line_number)
         value = self.tokenizer.next()
+        assert self.tokenizer.next() == "*", "expected * to end star params"+ " " + str(self.tokenizer.line_number)
+        assert self.tokenizer.next() == ")", "expected ) to end the star params"+ " " + str(self.tokenizer.line_number)
         return key, value
 
-    def parse_module(self, definition, library):
-        definition = Definition()
-        self.parse_module_header(definition)
-        self.parse_module_body(definition, library)
+    def parse_module(self, params, netlist):
+        
+        definition = self.parse_module_header(netlist)
+        for k,v in params.items():
+            definition[k] = v
+        if self.primitive_cell:
+            self.parse_primitive_cell_body(definition)
+        else:
+            self.parse_module_body(definition, netlist)
+        return definition
 
+    def parse_primitive_cell_body(self, definition):
+        token = self.tokenizer.next()
+        keywords = set(["input", "output", "inout"])
+        while token != "endmodule" and token != "endprimative":
+            if token in keywords:
+                name, left, right = self.parse_wire()
+                port = self._update_port(definition, name, (max(left,right) - min(left,right)), None, min(left,right), left > right)
+            elif token == "function":
+                while token != "endfunction":
+                    token = self.tokenizer.next()
+            token = self.tokenizer.next()
+            
+        pass
 
-    def parse_module_header(self, definition):
-        definition.name = self.tokenizer.next()
+    def parse_module_header(self, netlist):
+        name = self.tokenizer.next()
+        definition = self._get_create_definition(netlist, name)
         token = self.tokenizer.next()
         if token == "#":
             self.parse_parameter_list(definition)
-        elif token == "(":
             token = self.tokenizer.next()
-            while token != ")":
-                port = Port()
+        if token == "(":
+            token = self.tokenizer.next()
+            while True:
+                d = None
                 if token == "input" or token == "output" or token == "inout":
-                    port.direction = token
+                    d = token
                     token = self.tokenizer.next()
-                port.name = token
+                name = token
+                self._update_port(definition, name, direction=d)
                 token = self.tokenizer.next()
-                definition.add_port(port)
+                if token == ")":
+                    break
+                assert token == ",", "expected a , separater in the port list"+ " " + str(self.tokenizer.line_number)
+                token = self.tokenizer.next()
         token = self.tokenizer.next()
-        assert token == ";", "expected ; to finish the port list"
-        # port = Port()
-        # while token != ")":
-        #     port.name = token = self.tokenizer.next()
-        #     token = self.tokenizer.next()
+        assert token == ";", "expected ; to finish the port list"+ " " + str(self.tokenizer.line_number)
+        return definition
+
 
     def parse_parameter_list(self, definition):
         token = self.tokenizer.next()
-        assert token == "(", "expected a ( following the # for the parameter definitions"
+        assert token == "(", "expected a ( following the # for the parameter definitions"+ " " + str(self.tokenizer.line_number)
         while token != ")":
             token = self.tokenizer.next()
-            assert token == "parameter", "expected a parameter in the parameter list"
-            key = self.tokenizer.next()
+            assert token == "parameter", "expected a parameter in the parameter list"+ " " + str(self.tokenizer.line_number)
             token = self.tokenizer.next()
-            assert token == "=", "expected a = in the key value pair for the parameter"
+            if token == "[":
+                key = ""
+                while token != "=":
+                    key += token
+                    token = self.tokenizer.next()
+            else:
+                key = token
+                token = self.tokenizer.next()
+                assert token == "=", "expected a = in the key value pair for the parameter"+ " " + str(self.tokenizer.line_number)
             value = self.tokenizer.next()
             if key not in definition:
                 definition[key] = value
-            #else the key has been set by the instantiation perhaps.
             token = self.tokenizer.next()
 
-    def parse_module_body(self, definition):
+    def parse_module_body(self, definition, netlist):
         self.parse_wire_list(definition)
-        self.parse_instantiations(definition, library)
+        self.parse_instantiations(definition, netlist)
 
     def parse_wire_list(self, definition):
         keywords = set(["input", "output", "inout", "wire", "reg"]) #this is the list of words that could begin a wire list line
         portwords =set(["input", "output", "inout"])
-        token = self.tokenizer.peek()
-        while token in keywords:
-            self.tokenizer.next()
+        while True:
+            token = self.tokenizer.peek()
+            if token not in keywords:
+                break
+            token = self.tokenizer.next()
             name, left, right = self.parse_wire()
             #check and see what a name lookup on the name yeids for the ports
             #go ahead and modify it if it exists.
-            port = definition.get_ports(name)
-            if port: #name lookup yields results on ports 
-                port.is_downto = left > right
-                port.lower_index = min(left, right)
-                port.is_scalar = (left == right and right == 0)
-                if token in portwords:
-                    port.direction = token
+            if token in portwords:
+                port = self._update_port(definition, name, width = (max(left,right) - min(left,right)), direction = token, lower_index = min(left,right), is_downto = left > right)
             else:
-                cable = Cable()
-                cable.name = name
-                cable.is_downto = left > right
-                cable.lower_index = min(left, right)
-                cable.is_scalar = (left == right and right == 0)
-                definition.add_cable(cable)
-            assert self.tokenizer.next() == ";"
-            token = self.tokenizer.peek()
+                cable = self._update_cable(definition, name, width = (max(left,right) - min(left,right)), lower_index = min(left,right), is_downto = left > right)
+            
 
     def parse_wire(self):
         #the next token will be either [ or a letter
@@ -258,73 +207,135 @@ class VerilogParser:
         right = 0
         if token == "[":
             right = int(self.tokenizer.next())
-            assert self.tokenizer.next() == ":", "expected a colon"
+            assert self.tokenizer.next() == ":", "expected a colon"+ " " + str(self.tokenizer.line_number)
             left = int(self.tokenizer.next())
-            assert self.tokenizer.next() == "]", "expected an end bracket"
-        name = self.parse_name()
+            assert self.tokenizer.next() == "]", "expected an end bracket"+ " " + str(self.tokenizer.line_number)
+            token = self.tokenizer.next()
+        name = token
+        token = self.tokenizer.next()
+        assert token == ";", "expected ;" + " " + str(self.tokenizer.line_number)
         return name, left, right
 
-    def parse_name(self):
-        name = ""
+    def parse_instantiations(self, definition, netlist):
         token = self.tokenizer.next()
-        if token == "\\":
-            name = token + self.tokenizer.next()
-        name += self.tokenizer.next()
-        return name
-
-    def parse_instantiations(self, definition, library):
-        token = self.tokenizer.next()
+        params = dict()
         while token != "endmodule":
             def_name = token
-            instance = Instance()
-            lib_def = library.get_definition(def_name)
-            if lib_def: #the definition exists
-                ref_def = lib_def
-            else:
-                ref_def = Definition()
-                ref_def.name = def_name
-                library.add_definition(definition)
-            instance.reference = ref_def
-            token = self.tokenizer.next()
-            if token == "#":
+            if token == ";":
+                pass
+            elif token == "(":
                 token = self.tokenizer.next()
-                pass # we have a parameter list parse it
+                assert token == "*", "unexpected ( with out a *"+ " " + str(self.tokenizer.line_number)
+                k,v = self.parse_star_parameters()
+                params[k] = v
+            else:
+                instance = self.parse_single_instance(netlist, definition, def_name)
+                params = dict()
+            token = self.tokenizer.next()
             
-            inst_name = self.parse_name()
-            instance.name = inst_name
-            self.parse_port_map(definition, instance)
-            
-    def parse_port_map(self, definition, instance):
-        ref_def = instance.reference
+
+    def parse_single_instance(self, netlist, parent, reference_name):
+        
+        ref_def = self._get_create_definition(netlist, reference_name)
+        instance = parent.create_child()
+        token = self.tokenizer.next()
+        
+        if token == "#":
+            param = self.parse_instance_parameter_list()
+            token = self.tokenizer.next()
+
+        name = token
+        instance.name = name
+
+        instance.reference = ref_def
+
+        self.parse_port_map(instance)
+
+        return instance
+        
+
+    def parse_instance_parameter_list(self):
+        params = dict()
+        token = self.tokenizer.next()
+        assert token == "(", "expected list of attributes to map after #"+ " " + str(self.tokenizer.line_number)
+        token = self.tokenizer.next()
+        while True:
+            if token == ".":
+                pass
+            elif token == ",":
+                pass
+            elif token == "*":
+                print(".* mapping is unsupported")
+            elif token == ")":
+                break
+            else:
+                key = token
+                token = self.tokenizer.next()
+                assert token == "(", "expected a ( in parameter mapping " + str(self.tokenizer.line_number)
+                value = ""
+                token = self.tokenizer.next()
+                while token != ")":
+                    value += token
+                    token = self.tokenizer.next()
+                params[key] = value
+            token = self.tokenizer.next()    
+        return params
+    
+    def parse_port_map(self, instance):
         #extract/create the port that will be wired up to I guess assume the width is the same as the wire?
-        port = Port()
-        #extract the cable that will connect to the pins in the port
-        cable = Cable()
-        #put the port, cable, and instance into a definition to be attached later.
+        token = self.tokenizer.next()
+        assert token == "(", "expected ( for port mapping " + str(self.tokenizer.line_number)
+        token = self.tokenizer.next()
+        port_map = dict()
+        while True:
+            if token == ")":
+                break
+            elif token == "." or token == ",":
+                pass
+            else:
+                port_name = token
+                assert self.tokenizer.next() == "(", "port needs to be followed by (cable) " + str(self.tokenizer.line_number)
+                cable_name = self.tokenizer.next()
+                token = self.tokenizer.next()
+                if token == "[": #this will be a slice. for now just put it in the value
+                    cable_name += token
+                    while token != "]":
+                        token = self.tokenizer.next()
+                        cable_name += token
+                    token = self.tokenizer.next()
+                assert token == ")", "port list needs to be ended with a ) " + str(self.tokenizer.line_number)
+                port_map[port_name] = cable_name
+            token = self.tokenizer.next()
 
     def _get_create_library(self, netlist, library_name = None):
         if library_name:
-            lib = netlist.get_library(library_name)
+            lib_list = netlist.get_libraries(library_name)
+            lib = next(lib_list, None)
             if not lib:
                 lib = netlist.create_library()
                 lib.name = library_name
         else:
-            lib = netlist.get_library("spydrnet_temporary")
+            lib_list = netlist.get_libraries("work")
+            lib = next(lib_list, None)
             if not lib:
                 lib = netlist.create_library()
-                lib.name = "spydrnet_temporary"
+                lib.name = "work"
         return lib
 
     def _get_create_definition(self, netlist, definition_name, library = None):
         if library is not None:
-            d = library.get_definition(definition_name)
+            d = next(library.get_definitions(definition_name),None)
             if d is None:
                 d = library.create_definition()
                 d.name = definition_name
             return d
         else:
-            self._get_create_library(self)
-            
+            library = self._get_create_library(netlist)
+            d = next(library.get_definitions(definition_name),None)
+            if d is None:
+                d = library.create_definition()
+                d.name = definition_name
+            return d
 
     def _update_instance(self, netlist, definition, name, reference = None, properties = dict()):
         #pass in a definition in which to contain the instance as a child
@@ -337,7 +348,7 @@ class VerilogParser:
             inst = definition.create_child()
             inst.name = name
         if reference is not None:
-            ref = netlist.get_definition(reference)
+            ref = netlist.get_definitions(reference)
             if not ref:
                 lib = self._get_create_library(netlist)
                 ref = lib.create_definition()
@@ -349,7 +360,8 @@ class VerilogParser:
 
     def _update_definition(self, netlist, name, library = None, properties = dict()):
         lib = self._get_create_library(netlist, library)
-        d = netlist.get_definition(name)
+        d_list = netlist.get_definitions(name)
+        d = next(d_list, None)
         if not d:
             d = lib.create_definition()
             d.name = name
@@ -367,22 +379,35 @@ class VerilogParser:
 
     def _update_port(self, definition, name, width = None,
                 direction = None, lower_index = None, is_downto = None, properties = dict()):
-        port = definition.get_port(name)
-        cable = definition.get_cable(name)
-        if not port:
+        port_list = definition.get_ports(name)
+        cable_list = definition.get_cables(name)
+        
+        port = next(port_list, None)
+        cable = next(cable_list, None)
+
+        if port is None:
             port = definition.create_port()
             port.name = name
+
+        if cable is None:
             cable = definition.create_cable()
             cable.name = name
             
-
-        
         if width is not None:
-            port.width = width
-            cable.width = width
+            current_p_width = len(port.pins)
+            current_c_width = len(cable.wires)
+
+            if width < current_p_width or width < current_c_width:
+                print("updating port width does not support reducing size. a port or wire might be declared twice?")
+                raise NotImplementedError
+            wp = width - current_p_width
+            wc = width - current_c_width
+
+            port.create_pins(wp)
+            cable.create_wires(wc)
+
         if direction is not None:
             port.direction = direction
-            cable.direction = direction
         if lower_index is not None:
             port.lower_index = lower_index
             cable.lower_index = lower_index
@@ -399,22 +424,29 @@ class VerilogParser:
 
         return port
 
-    def _get_create_cable(self, definition, name, width = 0):
-        cable = definition.get_cable(name)
-        if not cable:
+    def _update_cable(self, definition, name, width = None,
+                direction = None, lower_index = None, is_downto = None, properties = dict()):
+        cable_list = definition.get_cables(name)
+        
+        cable = next(cable_list, None)
+        
+        if cable is None:
             cable = definition.create_cable()
             cable.name = name
-        cable.width = width
+            
+        if width is not None:
+            current_width = len(cable.wires)
+            cable.create_wires(width)
+            if width < current_width:
+                print("updating port width does not support reducing size. a port or wire might be declared twice with different lengths?")
+                raise NotImplementedError
+    
+        if lower_index is not None:
+            cable.lower_index = lower_index
+        if is_downto is not None:
+            cable.is_downto = is_downto
 
+        for k,v in properties.items():
+            cable[k] = v
 
-    def _connect_ports(self, parent, instance,
-                        port_name, cable_name, range_index_low = 0, range_index_high = 0):
-        #this method will conenct and wire up all the ports.
-        #make sure the definition has all apropriate ports. create them if not
-        port_width = range_index_high - range_index_low + 1
-        port = self._update_port(instance.reference, port_name, width = port_width)
-        cable = parent._get_create_cable(parent, cable_name)
-        #for i_pin in port.pins:
-        #    o_pin = OuterPin.from_instance_and_inner_pin(instance, i_pin)
-        for i in range(max(port_width)):
-            cable.wires[i + range_index_low] = port.pins[i] 
+        return cable
