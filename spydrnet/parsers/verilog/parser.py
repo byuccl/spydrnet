@@ -109,42 +109,47 @@ class VerilogParser:
                 port_pin_map[pin.inner_pin.port].append(pin)
             definition = instance.parent
             
-            for port_name, cable_name in port_map.items():
-                low = None
-                high = None    
-                if cable_name[len(cable_name)-1] == "]":
-                    index = "]"
-                    i = len(cable_name)-1
-                    while index[0] != "[":
-                        i -= 1
-                        index = cable_name[i] + index
-                    cable_name_real = cable_name[:i]
-                    indicies = index[1:len(index)-1].split(":")
-                    if len(indicies) == 1:
-                        low = int(indicies[0])
-                        high = None
+            for port_name, cable_list in port_map.items():
+
+                index_offset = 0
+                for cable_name in cable_list:
+                    low = None
+                    high = None
+                    index_offset_initial = index_offset
+                    if cable_name[len(cable_name)-1] == "]" and (cable_name[0] != "\\" or len(cable_name.split(" ")) > 1):
+                        cable_name_real, index = cable_name.split(" ")
+                        indicies = index[1:len(index)-1].split(":")
+                        if len(indicies) == 1:
+                            low = int(indicies[0])
+                            high = None
+                        else:
+                            low = min(int(indicies[0]), int(indicies[1]))
+                            high = max(int(indicies[0]), int(indicies[1]))
                     else:
-                        low = min(int(indicies[0]), int(indicies[1]))
-                        high = max(int(indicies[0]), int(indicies[1]))
-                else:
-                    cable_name_real = cable_name
-                cable_list = definition.get_cables(cable_name_real)
-                cable = next(cable_list)
-                port_list = instance.reference.get_ports(port_name)
-                port = next(port_list)
-                if low == None and high == None:
-                    if len(cable.wires) == len(port_pin_map[port]):
-                        for i in range(len(port_pin_map[port])):
-                            cable.wires[i].connect_pin(port_pin_map[port][i])
+                        cable_name_real = cable_name
+                    cable_def_list = definition.get_cables(cable_name_real)
+                    cable = next(cable_def_list)
+                    port_list = instance.reference.get_ports(port_name)
+                    port = next(port_list)
+                    # if len(cable_list) > 1:
+                    #     import pdb; pdb.set_trace()
+                    if low == None and high == None:
+                        if len(cable.wires) == len(port_pin_map[port]):
+                            for i in range(len(cable.wires)):
+                                cable.wires[i].connect_pin(port_pin_map[port][i+index_offset_initial])
+                                index_offset += 1
+                        else:
+                            for i in range(min(len(port_pin_map[port]), len(cable.wires))):
+                                cable.wires[i].connect_pin(port_pin_map[port][i + index_offset_initial])
+                                index_offset += 1
                     else:
-                        for i in range(min(len(port_pin_map[port]), len(cable.wires))):
-                            cable.wires[i].connect_pin(port_pin_map[port][i])
-                else:
-                    if high == None:
-                        cable.wires[low].connect_pin(port_pin_map[port][0])
-                    else:
-                        for i in range(low, high):
-                            cable.wires[i].connect_pin(port_pin_map[port][i])
+                        if high == None:
+                            cable.wires[low-cable.lower_index].connect_pin(port_pin_map[port][0 + index_offset_initial])
+                            index_offset += 1
+                        else:
+                            for i in range(low,high):
+                                cable.wires[i-cable.lower_index].connect_pin(port_pin_map[port][i-low + index_offset_initial])
+                                index_offset += 1
         return netlist
                 
 
@@ -190,19 +195,30 @@ class VerilogParser:
             self.parse_parameter_list(definition)
             token = self.tokenizer.next()
         if token == "(":
-            token = self.tokenizer.next()
+            
             while True:
+                token = self.tokenizer.next()
                 d = None
                 if token == "input" or token == "output" or token == "inout":
                     d = token
                     token = self.tokenizer.next()
+                left = 0
+                right = 0
+                if token == "[":
+                    left = int(self.tokenizer.next())
+                    token = self.tokenizer.next()
+                    assert token == ":", "expected a : to separate the numbers in a port width  got " + str(token) + " line " + self.tokenizer.line_number
+                    right = int(self.tokenizer.next())
+                    token = self.tokenizer.next()
+                    assert token == "]", "expected ] to end the port length definition got " + str(token) + " line " + self.tokenizer.line_number
+                    token = self.tokenizer.next()
                 name = token
-                self._update_port(definition, name, direction=d)
+                self._update_port(definition, name, width = (max(left,right) - min(left,right)), direction=d, lower_index = min(left,right), is_downto = left > right)
                 token = self.tokenizer.next()
                 if token == ")":
                     break
-                assert token == ",", "expected a , separater in the port list"+ " " + str(self.tokenizer.line_number)
-                token = self.tokenizer.next()
+                assert token == ",", "expected a , separater in the port list got "+ token+ " line " + str(self.tokenizer.line_number)
+                # token = self.tokenizer.next()
         token = self.tokenizer.next()
         assert token == ";", "expected ; to finish the port list"+ " " + str(self.tokenizer.line_number)
         return definition
@@ -230,10 +246,11 @@ class VerilogParser:
             token = self.tokenizer.next()
 
     def parse_module_body(self, definition, netlist):
-        keywords = set(["input", "output", "inout", "wire", "reg"]) #this is the list of words that could begin a wire list line
+        keywords = set(["input", "output", "inout", "wire", "reg", "assign"]) #this is the list of words that could begin a wire list line
         portwords =set(["input", "output", "inout"])
         token = self.tokenizer.peek()
         params = dict()
+        assignment_info = dict()
         while token != "endmodule":
             if token not in keywords:
                 token = self.tokenizer.next()
@@ -248,7 +265,17 @@ class VerilogParser:
                 else:
                     instance = self.parse_single_instance(netlist, definition, def_name, params)
                     params = dict()
+            elif token == "assign":
+                _ = self.tokenizer.next()
+                name_left, left_left, right_left = self.parse_wire_in_instance()
+                token = self.tokenizer.next()
+                assert token == "=", "expected = but got " + token
+                name_right, left_right, right_right = self.parse_wire_in_instance()
 
+                assignment_info[(name_left, left_left, right_left)] = (name_right, left_right, right_right)
+
+                #print("left side of the assign", name_left + "["+str(left_left) + ":" + str(right_left) + "]", "right side of the assignment", name_right + "["+str(left_right) + ":" + str(right_right) + "]")
+                
             else:
                 token = self.tokenizer.next()
                 name, left, right = self.parse_wire()
@@ -260,6 +287,43 @@ class VerilogParser:
                     cable = self._update_cable(definition, name, width = (max(left,right) - min(left,right)), lower_index = min(left,right), is_downto = left > right)
             token = self.tokenizer.peek()
 
+        for k,v in assignment_info.items():
+            cable_list = definition.get_cables(k[0])
+            cable_left = next(cable_list)
+            # cable_list = definition.get_cables(v[0])
+            # cable_right = next(cable_list)
+            k_str = k[0]
+            if k[1] != None:
+                k_str += "[" + str(k[1])
+                if k[2] != None:
+                    k_str += ":" + str(k[2])
+                k_str = "]"
+            v_str = v[0]
+            if v[1] != None:
+                v_str += "[" + str(v[1])
+                if k[2] != None:
+                    v_str += ":" + str(v[2])
+                v_str = "]"
+            cable_left["VERILOG.assignment." + k_str + "=" + v_str] = "true"  
+
+        #put in assignment information
+
+    def parse_wire_in_instance(self):
+        token = self.tokenizer.next()
+        name = token
+        left = None
+        right = None
+        token = self.tokenizer.peek()
+        if token == "[":
+            token = self.tokenizer.next()
+            left = int(self.tokenizer.next())
+            token = self.tokenizer.next()
+            if token == ":":
+                right = int(self.tokenizer.next())
+                token = self.tokenizer.next()
+            assert token == "]", "expected an end bracket got "+ token + " line " + str(self.tokenizer.line_number)
+            #token = self.tokenizer.next()
+        return name, left, right
 
     def parse_wire(self):
         #the next token will be either [ or a letter
@@ -268,15 +332,28 @@ class VerilogParser:
         token = self.tokenizer.next()
         left = 0
         right = 0
+        verilog_types = ["reg", "wire", "integer"]
+        v_type = "wire"
+        if token in verilog_types:
+            v_type = token #TODO use this
+            token = self.tokenizer.next()
         if token == "[":
             left = int(self.tokenizer.next())
             assert self.tokenizer.next() == ":", "expected a colon"+ " " + str(self.tokenizer.line_number)
             right = int(self.tokenizer.next())
             assert self.tokenizer.next() == "]", "expected an end bracket"+ " " + str(self.tokenizer.line_number)
             token = self.tokenizer.next()
-        name = token
-        token = self.tokenizer.next()
-        assert token == ";", "expected ;" + " " + str(self.tokenizer.line_number)
+        while True:
+            name = token
+            #name, left, right = self.parse_wire_name(self)
+            token = self.tokenizer.next()
+            #assert token == ";", "expected ; got " + token + " line " + str(self.tokenizer.line_number)
+            if token == ";":
+                break
+            elif token == ",":
+                token = self.tokenizer.next()
+            else:
+                print("unexpected token in cable or port list " + token + " line " + str(self.tokenizer.line_number))
         return name, left, right
             
 
@@ -337,9 +414,13 @@ class VerilogParser:
     def parse_port_map(self, instance):
         #extract/create the port that will be wired up to I guess assume the width is the same as the wire?
         token = self.tokenizer.next()
-        assert token == "(", "expected ( for port mapping " + str(self.tokenizer.line_number)
+        assert token == "(", "expected ( for port mapping but got " + token + " line " + str(self.tokenizer.line_number)
         token = self.tokenizer.next()
+        # if token == "{":
+        #     #we have a combinational port map going on... each pin on the port will be mapped individually
+        #     pass
         port_map = dict()
+        #import pdb; pdb.set_trace()
         while True:
             if token == ")":
                 break
@@ -347,19 +428,44 @@ class VerilogParser:
                 pass
             else:
                 port_name = token
-                print(port_name)
-                assert self.tokenizer.next() == "(", "port needs to be followed by (cable) " + str(self.tokenizer.line_number)
-                cable_name = self.tokenizer.next()
                 token = self.tokenizer.next()
-                if token == "[": #this will be a slice. for now just put it in the value
-                    cable_name += token
-                    while token != "]":
-                        token = self.tokenizer.next()
-                        cable_name += token
+                assert token == "(", "port needs to be followed by (cable) but got " + token + " line " + str(self.tokenizer.line_number)
+                token = self.tokenizer.next()
+                multi_cable = False
+                if token == "{":
+                    multi_cable = True
                     token = self.tokenizer.next()
-                assert token == ")", "port list needs to be ended with a ) " + str(self.tokenizer.line_number)
-                port_map[port_name] = cable_name
+
+                while True:
+                    cable_name = token
+                    token = self.tokenizer.next()
+                    if token == "[": #this will be a slice. for now just put it in the value
+                        cable_name += " " + token
+                        while token != "]":
+                            token = self.tokenizer.next()
+                            cable_name += token
+                        token = self.tokenizer.next()
+                    if port_name not in port_map:
+                        port_map[port_name] = []
+                    port_map[port_name].append(cable_name)
+                    #token = self.tokenizer.next()
+                    if multi_cable and token == "}":
+                        token = self.tokenizer.next()
+                        break
+                    elif multi_cable and token == ",":
+                        token = self.tokenizer.next()
+                    elif token == ")":
+                        break
+                    else:
+                        print("unknown token in port mapping", token)
+                assert token == ")", "cable list should end with ) but ends with " + token + " line " + str(self.tokenizer.line_number)
+                #token = self.tokenizer.next()
             token = self.tokenizer.next()
+        
+        assert token == ")", "port list needs to be ended with a ) but ends with " + token + " line " + str(self.tokenizer.line_number)
+
+
+        
         return port_map
 
     def _get_create_library(self, netlist, library_name = None):
