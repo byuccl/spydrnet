@@ -1,11 +1,12 @@
 import unittest
 import spydrnet as sdn
 from spydrnet.parsers.verilog.parser import VerilogParser
-
+import os
 
 class TestVerilogParser(unittest.TestCase):
     def test_simple_parse(self):
-        parser = VerilogParser.from_filename("/home/dallin/Documents/byuccl/SpyDrNet/spydrnet/support_files/verilog_netlists/4bitadder.v.zip")
+        directory = os.path.join(sdn.base_dir, "support_files", "verilog_netlists", "4bitadder.v.zip")
+        parser = VerilogParser.from_filename(directory)
         netlist = parser.parse()
         print("hierarchy")
         self.simple_recursive_netlist_visualizer(netlist)
