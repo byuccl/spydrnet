@@ -7,7 +7,7 @@ class TestVerilogTokenizer(unittest.TestCase):
 
 
     def test_against_4bit_adder(self):
-        tokenizer = VerilogTokenizer.from_filename("./spydrnet/support_files/verilog_netlists/4bitadder.v")
+        tokenizer = VerilogTokenizer.from_filename("./spydrnet/support_files/verilog_netlists/4bitadder.v.zip")
         while(tokenizer.has_next()):
             #print(tokenizer.next())
             tokenizer.next()
