@@ -1,13 +1,15 @@
 import unittest
 
 from spydrnet.parsers.verilog.tokenizer import *
+import spydrnet as sdn
 
 
 class TestVerilogTokenizer(unittest.TestCase):
 
 
     def test_against_4bit_adder(self):
-        tokenizer = VerilogTokenizer.from_filename("./spydrnet/support_files/verilog_netlists/4bitadder.v.zip")
+        directory = os.path.join(sdn.base_dir, "support_files", "verilog_netlists", "4bitadder.v.zip")
+        tokenizer = VerilogTokenizer.from_filename(directory)
         while(tokenizer.has_next()):
             #print(tokenizer.next())
             tokenizer.next()
