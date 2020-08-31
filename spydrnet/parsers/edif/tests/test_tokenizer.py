@@ -2,12 +2,12 @@ import unittest
 import os
 import io
 import zipfile
+import tempfile
 
 from spydrnet.parsers.edif.tokenizer import EdifTokenizer
 from spydrnet import base_dir
 
 class TestEdifTokenizer(unittest.TestCase):
-
     def test_no_constructor_of_zero_argument(self):
         self.assertRaises(TypeError, EdifTokenizer)
 
@@ -35,16 +35,14 @@ class TestEdifTokenizer(unittest.TestCase):
         test_file = os.path.join(dir_of_edif_netlists, "n_bit_counter.edf.zip")
         file_name = os.path.basename(test_file)
         file_name = file_name[:file_name.rindex(".")]
-        extract_path = os.path.join(dir_of_edif_netlists, file_name)
-        if os.path.exists(extract_path):
-            os.remove(extract_path)
         zip = zipfile.ZipFile(test_file)
-        zip.extract(file_name, dir_of_edif_netlists)
-        tokenizer = EdifTokenizer.from_filename(extract_path)
-        next_token = tokenizer.next()
-        self.assertEqual("(", next_token)
-        tokenizer.close()
-        os.remove(extract_path)
+        with tempfile.TemporaryDirectory() as tempdir:
+            zip.extract(file_name, tempdir)
+            extract_path = os.path.join(tempdir, file_name)
+            tokenizer = EdifTokenizer.from_filename(extract_path)
+            next_token = tokenizer.next()
+            self.assertEqual("(", next_token)
+            tokenizer.close()
 
     def test_empty_string(self):
         tokenizer = EdifTokenizer.from_string("")
@@ -111,7 +109,3 @@ class TestTokenTypes(unittest.TestCase):
             self.assertFalse(tokenizer.is_valid_identifier(), tokenizer.token)
 
         #TODO Special characters are weird. We should check them out.
-
-
-if __name__ == '__main__':
-    unittest.main()

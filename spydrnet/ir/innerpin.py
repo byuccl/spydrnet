@@ -14,9 +14,8 @@ class InnerPin(Pin):
 
     @property
     def port(self):
-        '''return the port that the inner pin is a part of. This object cannot be modified directly by the end user.'''
+        """return the port that the inner pin is a part of. This object cannot be modified directly by the end user."""
         return self._port
-
 
     def _clone_rip_and_replace(self, memo):
         '''remove from its current environment and place it into the new cloned environment with references held in the memo dictionary'''
@@ -27,7 +26,6 @@ class InnerPin(Pin):
     def _clone_rip(self):
         '''remove from its current environmnet. This will remove all pin pointers and create a floating stand alone instance.'''   
         self._wire = None
-
 
     def _clone(self, memo):
         '''not api safe clone function

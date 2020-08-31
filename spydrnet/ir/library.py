@@ -1,4 +1,4 @@
-from spydrnet.ir.element import Element
+from spydrnet.ir.first_class_element import FirstClassElement
 from spydrnet.ir.definition import Definition
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
@@ -6,7 +6,7 @@ from spydrnet.global_state.global_callback import _call_create_library
 from copy import deepcopy, copy, error
 
 
-class Library(Element):
+class Library(FirstClassElement):
     """
     Represents a library object.
 
@@ -26,22 +26,6 @@ class Library(Element):
         get the netlist that contains this library
         """
         return self._netlist
-
-    def get_definitions(self, *args, **kwargs):
-        from spydrnet.util import get_definitions
-        return get_definitions(self, *args, **kwargs)
-
-    def get_ports(self, *args, **kwargs):
-        from spydrnet.util import get_ports
-        return get_ports(self, *args, **kwargs)
-
-    def get_cables(self, *args, **kwargs):
-        from spydrnet.util import get_cables
-        return get_cables(self, *args, **kwargs)
-
-    def get_instances(self, *args, **kwargs):
-        from spydrnet.util import get_instances
-        return get_instances(self, *args, **kwargs)
 
     @property
     def definitions(self):

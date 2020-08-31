@@ -186,7 +186,6 @@ class Port(Bundle):
                 outer_pin._inner_pin = None
         pin._port = None
 
-
     def _clone_rip_and_replace(self, memo):
         '''remove from its current environment and place it into the new cloned environment with references held in the memo dictionary'''
         for p in self._pins:
@@ -196,7 +195,6 @@ class Port(Bundle):
         '''remove from its current environmnet. This will remove all pin pointers and create a floating stand alone instance.'''   
         for p in self._pins:
             p._clone_rip()
-
 
     def _clone(self, memo):
         '''not api safe clone function
@@ -216,10 +214,8 @@ class Port(Bundle):
         c._lower_index = deepcopy(self._lower_index)
         for p in c._pins:
             p._port = c
-        c._data = deepcopy(self.data)
+        c._data = deepcopy(self._data)
         return c
-
-
 
     def clone(self):
         '''

@@ -187,12 +187,12 @@ class EdifNamespace:
                     if old_name in namespace:
                         del namespace[old_name]
         elif key == "EDIF.identifier":
-            if element_type in self.namespaces:
+            if element_type in self.edif_namespaces:
                 namespace = self.edif_namespaces[element_type]
                 if "EDIF.identifier" in element:
                     old_name = element["EDIF.identifier"]
                     if old_name in namespace:
-                        del namespace[old_name]
+                        del namespace[old_name.lower()]
 
     def lookup(self, element_type, key, value):
         if key == ".NAME":

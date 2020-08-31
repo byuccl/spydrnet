@@ -2,9 +2,9 @@
 SpyDrNet
 ========
 
-SpyDrNet is an EDA tool for netlist analysis and transformation.
+SpyDrNet is an EDA tool for analyzing and transforming netlists.
 
-See documentation for more details.
+See https://byuccl.github.io/spydrnet for more details.
 """
 
 # Release data
@@ -17,22 +17,26 @@ __license__ = release.license
 
 __date__ = release.date
 __version__ = release.version
+__release__ = release.release
 
 from spydrnet.ir import *
+from spydrnet.util.hierarchical_reference import HRef
 
 OUT = Port.Direction.OUT
 IN = Port.Direction.IN
 INOUT = Port.Direction.INOUT
 UNDEFINED = Port.Direction.UNDEFINED
 
+from spydrnet.util.selection import INSIDE, OUTSIDE, BOTH, ALL
+
 from spydrnet.testing.test import run as test
 from spydrnet.parsers import parse
 from spydrnet.composers import compose
 
 from spydrnet.plugins import namespace_manager
-from spydrnet.plugins import hierarchical_reference_manager
-from spydrnet.util.get_libraries import get_libraries
-from spydrnet.util.get_definitions import get_definitions
+from spydrnet.util import get_netlists, get_libraries, get_definitions, get_ports, get_cables, get_instances,\
+    get_wires, get_pins
+from spydrnet.util import get_hinstances, get_hports, get_hpins, get_hcables, get_hwires
 
 import os
 base_dir = os.path.dirname(os.path.abspath(__file__))

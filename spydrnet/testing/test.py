@@ -1,9 +1,11 @@
 def run(verbosity=1, doctest=False):
     """Run SpyDrNet tests.
+    
     Parameters
     ----------
     verbosity: integer, optional
       Level of detail in test reports.  Higher numbers provide more detail.
+    
     doctest: bool, optional
       True to run doctests in code modules
     """

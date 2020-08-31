@@ -1,6 +1,6 @@
 import unittest
 
-from spydrnet.ir.element import Element
+from spydrnet.ir.first_class_element import FirstClassElement
 from spydrnet.ir.pin import Pin
 
 
@@ -9,7 +9,7 @@ class TestPin(unittest.TestCase):
         self.pin = Pin()
 
     def test_constructor(self):
-        self.assertFalse(isinstance(self.pin, Element))
+        self.assertFalse(isinstance(self.pin, FirstClassElement))
         self.assertTrue(self.pin)
         pin2 = Pin()
         self.assertNotEqual(self.pin, pin2)

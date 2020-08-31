@@ -17,7 +17,3 @@ class TestNamespaceManager(unittest.TestCase):
         except ValueError:
             caught_conflict = True
         self.assertTrue(caught_conflict)
-
-
-if __name__ == '__main__':
-    unittest.main()

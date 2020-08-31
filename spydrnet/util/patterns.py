@@ -16,8 +16,11 @@ def _value_matches_pattern(value, pattern, is_case, is_re):
     if value is None:
         value = ""
     if is_re:
-        if re.fullmatch(pattern, value, flags=0 if is_case else re.IGNORECASE):
-            return True
+        try:
+            if re.fullmatch(pattern, value, flags=0 if is_case else re.IGNORECASE):
+                return True
+        except re.error:
+            return False
     elif is_case:
         return fnmatch.fnmatchcase(value, pattern)
     else:

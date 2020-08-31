@@ -22,5 +22,6 @@ def clone(element):
      * in the same case as the above point the references of the definition will be updated accordingly
      * when a library is cloned some of the instances may be defined in another library these instances will follow the premises above
      * instances defined and referenced in the cloned library will point to the cloned definition
+
     '''
     return element.clone()

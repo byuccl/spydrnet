@@ -1,4 +1,4 @@
-from spydrnet.ir.element import Element
+from spydrnet.ir.first_class_element import FirstClassElement
 from spydrnet.ir.library import Library
 from spydrnet.ir.instance import Instance
 from spydrnet.ir.views.listview import ListView
@@ -7,7 +7,7 @@ from spydrnet.global_state.global_callback import _call_create_netlist
 from copy import deepcopy, copy, error
 
 
-class Netlist(Element):
+class Netlist(FirstClassElement):
     """
     Represents a netlist object.
 
@@ -21,25 +21,9 @@ class Netlist(Element):
         self._top_instance = None
         _call_create_netlist(self)
 
-    def get_libraries(self, *args, **kwargs):
-        from spydrnet.util import get_libraries
-        return get_libraries(self, *args, **kwargs)
-
-    def get_definitions(self, *args, **kwargs):
-        from spydrnet.util import get_definitions
-        return get_definitions(self, *args, **kwargs)
-
-    def get_ports(self, *args, **kwargs):
-        from spydrnet.util import get_ports
-        return get_ports(self, *args, **kwargs)
-
-    def get_cables(self, *args, **kwargs):
-        from spydrnet.util import get_cables
-        return get_cables(self, *args, **kwargs)
-
-    def get_instances(self, *args, **kwargs):
-        from spydrnet.util import get_instances
-        return get_instances(self, *args, **kwargs)
+    def compose(self, *args, **kwargs):
+        from spydrnet.composers import compose
+        compose(self, *args, **kwargs)
 
     @property
     def libraries(self):

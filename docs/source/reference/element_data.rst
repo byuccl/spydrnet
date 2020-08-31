@@ -9,7 +9,7 @@ Keys
 ----
 
 Keys are ought to be strings with ``.`` seperated namespaces. Element properties from the originating netlist format
-belong in the root namespace (without any ``.``). The NULL namespace (keys with a leading ``.`` is reserved for use by
+belong in the root namespace (without any ``.``). The NULL namespace (keys with a leading ``.``) is reserved for use by
 SpyDrNet. For example::
 
     >>> element['.NAME'] = "name_of_element"

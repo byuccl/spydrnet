@@ -1,4 +1,4 @@
-from spydrnet.ir.element import Element
+from spydrnet.ir.first_class_element import FirstClassElement
 from spydrnet.ir.outerpin import OuterPin
 from spydrnet.ir.views.outerpinsview import OuterPinsView
 from spydrnet.global_state import global_callback
@@ -6,7 +6,7 @@ from spydrnet.global_state.global_callback import _call_create_instance
 from copy import deepcopy, copy, error
 
 
-class Instance(Element):
+class Instance(FirstClassElement):
     """
     netlist instance of a netlist definition. Instances are literally instances of definitions and they reside inside definitions.
     Function names have been set to adjust for the potential confusion that could arise because instances both have a parent definition and have definitions which they reference.
@@ -79,7 +79,7 @@ class Instance(Element):
 
     def get_ports(self, *args, **kwargs):
         from spydrnet.util.get_ports import get_ports
-        get_ports(self, *args, **kwargs)
+        return get_ports(self, *args, **kwargs)
 
     @property
     def pins(self):

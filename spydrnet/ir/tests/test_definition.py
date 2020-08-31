@@ -1,7 +1,7 @@
 import unittest
 
 import spydrnet as sdn
-from spydrnet.ir.element import Element
+from spydrnet.ir.first_class_element import FirstClassElement
 
 
 class TestDefinition(unittest.TestCase):
@@ -9,7 +9,7 @@ class TestDefinition(unittest.TestCase):
         self.definition = sdn.Definition()
 
     def test_constructor(self):
-        self.assertIsInstance(self.definition, Element, "Definition is not an element.")
+        self.assertIsInstance(self.definition, FirstClassElement, "Definition is not an element.")
         self.assertTrue(self.definition, "Constructor returns None type or empty collection.")
         definition2 = sdn.Definition()
         self.assertNotEqual(self.definition, definition2, "Unique objects are considered equal.")

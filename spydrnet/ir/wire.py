@@ -1,10 +1,11 @@
+from spydrnet.ir.element import Element
 from spydrnet.ir.outerpin import OuterPin
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
 from copy import copy, deepcopy, error
 
 
-class Wire:
+class Wire(Element):
     __slots__ = ['_cable', '_pins', '__weakref__']
 
     def __init__(self):
@@ -109,7 +110,6 @@ class Wire:
         self._pins = list()
         pass
 
-
     def _clone(self, memo):
         '''not api safe clone function
         clone leaving all references in tact.
@@ -120,7 +120,6 @@ class Wire:
         c._cable = None
         c._pins = copy(self._pins) #shallow copy the list so that it retains its pin references
         return c
-        
 
     def clone(self):
         '''clone wire in an api safe way. The following properties can be expected from the returned element:

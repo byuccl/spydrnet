@@ -3,6 +3,7 @@ import os
 # Version information
 name = 'spydrnet'
 version = "UNSPECIFIED"
+release = "UNSPECIFIED"
 date = "UNSPECIFIED"
 
 # Declare current release as a development release.
@@ -51,13 +52,26 @@ directory = os.path.dirname(os.path.abspath(__file__))
 version_filename = os.path.join(directory, "VERSION")
 
 def load_versionfile():
+    global release
     global version
     global date
     if os.path.isfile(version_filename):
         with open(version_filename) as fi:
-            version = fi.readline().strip()[1:]
+            release = fi.readline().strip()[1:]
+            second_period_index = _get_second_period_index(release)
+            version = release[:second_period_index]
             date = fi.readline().strip()
             
+
+def _get_second_period_index(string_value):
+    period_count = 0
+    for index, char in enumerate(string_value):
+        if string_value[index] == '.':
+            period_count += 1
+        if period_count == 2:
+            return index
+    return len(string_value)
+
 load_versionfile()
 
 def update_versionfile():

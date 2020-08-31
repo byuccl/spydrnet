@@ -1,4 +1,4 @@
-from spydrnet.ir.element import Element
+from spydrnet.ir.first_class_element import FirstClassElement
 from spydrnet.ir.port import Port
 from spydrnet.ir.cable import Cable
 from spydrnet.ir.instance import Instance
@@ -10,7 +10,7 @@ from spydrnet.global_state.global_callback import _call_create_definition
 from copy import deepcopy, copy, error
 
 
-class Definition(Element):
+class Definition(FirstClassElement):
     """
     Represents a definition of a cell, module, entity/architecture, or paralleled structure object.
 
@@ -33,10 +33,6 @@ class Definition(Element):
         Get the library that contains this definition
         """
         return self._library
-
-    def get_ports(self, *args, **kwargs):
-        from spydrnet.util import get_ports
-        return get_ports(self, *args, **kwargs)
 
     @property
     def ports(self):
@@ -62,10 +58,6 @@ class Definition(Element):
             "Set of values do not match, this function can only reorder values, values must be unique"
         self._ports = target
 
-    def get_cables(self, *args, **kwargs):
-        from spydrnet.util import get_cables
-        return get_cables(self, *args, **kwargs)
-
     @property
     def cables(self):
         """
@@ -89,10 +81,6 @@ class Definition(Element):
         assert len(target) == len(target_set) and set(self._cables) == set(target), \
             "Set of values do not match, this function can only reorder values, values must be unique"
         self._cables = target
-
-    def get_instances(self, *args, **kwargs):
-        from spydrnet.util import get_instances
-        return get_instances(self, *args, **kwargs)
 
     @property
     def children(self):
