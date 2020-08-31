@@ -62,6 +62,7 @@ class VerilogParser:
         line_num = self.tokenizer.line_number
         netlist = Netlist()
         self.primitive_cell = False
+        top_next = False
         while token:
 
             if token == '`celldefine':
@@ -74,16 +75,20 @@ class VerilogParser:
                 token = self.tokenizer.next()
                 assert token == "*", "unexpected ( with out a *" + " " + str(self.tokenizer.line_number)
                 k,v = self.parse_star_parameters()
+                if k == "STRUCTURAL_NETLIST":
+                    top_next = True
                 k = "VERILOG.star." + k
                 params[k] = v
             
             elif token == "module":
                 definition = self.parse_module(params, netlist)
-                if netlist.top_instance is None:
+                #if netlist.top_instance is None:
+                if top_next == True:
                     instance = Instance()
                     instance.name = definition.name
                     instance.reference = definition
                     netlist.top_instance = instance
+                    top_next = False
             
             elif token[:2] == "//":
                 pass #comment
@@ -93,6 +98,7 @@ class VerilogParser:
                     token = self.tokenizer.next() 
 
             else:
+                #print("unsorted token", token)
                 pass #unsorted token
 
             if self.tokenizer.has_next():
@@ -130,6 +136,7 @@ class VerilogParser:
                     cable_def_list = definition.get_cables(cable_name_real)
                     cable = next(cable_def_list)
                     port_list = instance.reference.get_ports(port_name)
+                    # print(port_name)
                     port = next(port_list)
                     # if len(cable_list) > 1:
                     #     import pdb; pdb.set_trace()
@@ -156,7 +163,11 @@ class VerilogParser:
 
     def parse_star_parameters(self):
         key = self.tokenizer.next()
-        assert self.tokenizer.next() == "=", "expected a = character in the key value directive"+ " " + str(self.tokenizer.line_number)
+        token = self.tokenizer.next()
+        if token == "*":
+            assert self.tokenizer.next() == ")", "expected ) to end the star params"+ " " + str(self.tokenizer.line_number)    
+            return key, None
+        assert token == "=", "expected a = character in the key value directive got: "+token+ " line " + str(self.tokenizer.line_number)
         value = self.tokenizer.next()
         assert self.tokenizer.next() == "*", "expected * to end star params"+ " " + str(self.tokenizer.line_number)
         assert self.tokenizer.next() == ")", "expected ) to end the star params"+ " " + str(self.tokenizer.line_number)
@@ -197,7 +208,30 @@ class VerilogParser:
         if token == "(":
             
             while True:
+                verilog_rename = None
+                name_list = []
                 token = self.tokenizer.next()
+                if token == ")":
+                    break
+                if token == ".":
+                    verilog_rename = self.tokenizer.next()
+                    token = self.tokenizer.next()
+                    assert token == "(", "expected ( to create a port alias got " + token + " line " + str(self.tokenizer.line_number)
+                    token = self.tokenizer.next()
+                    if token == "{":
+                        while token != "}":
+                            name = self.tokenizer.next()
+                            token = self.tokenizer.next()
+                            if token == "[":
+                                name += " "
+                                while token != "," and token != "}":
+                                    name += token
+                                    token = self.tokenizer.next()
+                            name_list.append(name)
+                            assert token == "," or token == "}", "syntax error expect , or } got " + token + " line " + str(self.tokenizer.line_number)
+                            
+                    temp = self.tokenizer.next()
+                    assert temp == ")", "expected ) to finish alias got " + temp + " line " + str(self.tokenizer.line_number)
                 d = None
                 if token == "input" or token == "output" or token == "inout":
                     d = token
@@ -212,13 +246,33 @@ class VerilogParser:
                     token = self.tokenizer.next()
                     assert token == "]", "expected ] to end the port length definition got " + str(token) + " line " + self.tokenizer.line_number
                     token = self.tokenizer.next()
-                name = token
-                self._update_port(definition, name, width = (max(left,right) - min(left,right)), direction=d, lower_index = min(left,right), is_downto = left > right)
+                if verilog_rename is None:
+                    name = token
+                    port = self._update_port(definition, name, width = (max(left,right) - min(left,right)), direction=d, lower_index = min(left,right), is_downto = left > right)
+                else:
+                    i = 0
+                    outer_port = self._update_port(definition, verilog_rename, width = i, direction=d, lower_index = 0, is_downto = True)
+                    for name in name_list:
+                        name_split = name.split(" ")
+                        name = name_split[0]
+                        index = None
+                        if len(name_split) > 1:
+                            index = name_split[1]
+                        port = self._update_port(definition, name, width = (max(left,right) - min(left,right)), direction=d, lower_index = min(left,right), is_downto = left > right)
+                        port["VERILOG.port_rename_member"] = "true"
+                        if index is not None:
+                            outer_port["VERILOG.port_rename."+str(i)] = name + " " + index
+                        else:
+                            outer_port["VERILOG.port_rename."+str(i)] = name
+                        i += 1
+                    outer_port = self._update_port(definition, verilog_rename, width = i, direction=d, lower_index = 0, is_downto = True)
+                    
                 token = self.tokenizer.next()
                 if token == ")":
                     break
                 assert token == ",", "expected a , separater in the port list got "+ token+ " line " + str(self.tokenizer.line_number)
-                # token = self.tokenizer.next()
+                    
+
         token = self.tokenizer.next()
         assert token == ";", "expected ; to finish the port list"+ " " + str(self.tokenizer.line_number)
         return definition
@@ -231,8 +285,11 @@ class VerilogParser:
             token = self.tokenizer.next()
             assert token == "parameter", "expected a parameter in the parameter list"+ " " + str(self.tokenizer.line_number)
             token = self.tokenizer.next()
+            key = ""
+            if token == "integer":
+                key += "integer "
+                token = self.tokenizer.next()
             if token == "[":
-                key = ""
                 while token != "=":
                     key += token
                     token = self.tokenizer.next()
@@ -294,17 +351,17 @@ class VerilogParser:
             # cable_right = next(cable_list)
             k_str = k[0]
             if k[1] != None:
-                k_str += "[" + str(k[1])
+                k_str += " [" + str(k[1])
                 if k[2] != None:
                     k_str += ":" + str(k[2])
-                k_str = "]"
+                k_str += "]"
             v_str = v[0]
             if v[1] != None:
-                v_str += "[" + str(v[1])
+                v_str += " [" + str(v[1])
                 if k[2] != None:
                     v_str += ":" + str(v[2])
-                v_str = "]"
-            cable_left["VERILOG.assignment." + k_str + "=" + v_str] = "true"  
+                v_str += "]"
+            cable_left["VERILOG.assignment." + k_str + " = " + v_str] = "true"  
 
         #put in assignment information
 
