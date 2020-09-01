@@ -1,3 +1,10 @@
+SpyDrNet 1.5.0
+--------------
+September 1, 2020
+
+* Verilog Parser
+* Verilog Composer
+
 SpyDrNet 1.4.0
 --------------
 April 21, 2020
