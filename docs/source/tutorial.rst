@@ -1,6 +1,39 @@
 Tutorial
 ============
 
+SpyDrNet is a tool for the analysis and transformation of structural netlists. A structural netlist is a static 
+representation of an electronic circuit. A circuit consists of a number of electrical components and their connections. 
+Figure :numref:`fig:hierarchical_netlist` shows a graphical representation of a netlist.
+
+.. _fig:hierarchical_netlist:
+.. figure:: figures/hierarchical_netlist.*
+   :align: center
+
+   Hierarchical representation of a Netlist 
+
+Figure :numref:`fig:hierarchical_netlist` represents a netlist hierarchically. This representation is commonly found in
+many schematic views of electronic design automation (EDA) or computer aided design (CAD) tools. It presents a top level
+instance of a definition that in turn instances other definitions. Instances are connected accordingly and connections 
+carry through hierarchical boundaries.
+
+Most hardware description languages and netlist representations are capable of representing a structural netlist 
+hierarchically. 
+
+The most basic element of a netlist is a definition. Verilog and System Verilog refer to a definition as
+a module. VHDL refers to a definition as an entity. EDIF refers to a definition as a cell. While each language and 
+framework has a different name, the functioning role of a definition is virtually the same. A definition defines the 
+interface and contents of a component within a netlist.
+
+provide include the concept of an instance. An instance
+is an instantiation of a definition. Oh I am having such a hard time helping people understand what it is I am trying to
+say. I am having a hard time
+
+Hierarchcy organizes larger netlists into 
+a collection of higher-level and lower-level definitions of smaller netlists. Higher-level definitions instance 
+lower-level definitions.
+
+This view is most likely familiar The top level instance is 
+
 Installation
 ------------
 
