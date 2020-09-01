@@ -14,7 +14,7 @@ def get_pins(obj, *args, **kwargs):
     -----------
     obj : object, Iterable - required
         The object or objects associated with this query. Queries return a collection objects associated with the
-        provided object or objects that match the query criteria. For example, `sdn.get_ports(definition, ...) would
+        provided object or objects that match the query criteria. For example, `sdn.get_ports(definition, ...)` would
         return all of the ports associated with the provided definition that match the additional criteria.
     selection : Selection.{INSIDE, OUTSIDE}, default: INSIDE
         Controls the type of pin returned. Setting this parameter to "OUTSIDE" will return the outer pins of the objects
@@ -23,6 +23,7 @@ def get_pins(obj, *args, **kwargs):
         This is a single input function that can be used to filter out unwanted virtual instances. If not specifed, all
         matching virtual instances are returned. Otherwise, virtual instances that cause the filter function to evaluate
         to true are the only items returned.
+    
     Returns the pins associated with a particular object or collection of objects.
     :return:
     """

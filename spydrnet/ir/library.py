@@ -165,14 +165,16 @@ class Library(FirstClassElement):
         return c
 
     def clone(self):
-        '''
+        """
         Clone the library in an api safe manner.
         The following describes the structure of the returned object:
+        
          * the instances that pointed to reference definitions within the library will have updated references
          * the instances that pointed to reference definitions outside the library will maintain their definitions
          * the references lists (of definitions) both inside and outsde the library will be updated to reflect the change
          * all definitions are cloned within the library.
-         '''
+         
+         """
         memo = dict()
         c = self._clone(memo)
         c._clone_rip(memo)

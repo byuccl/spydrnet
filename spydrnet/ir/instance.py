@@ -123,13 +123,17 @@ class Instance(FirstClassElement):
         return c
 
     def clone(self):
-        '''clone the instance in an api safe way.
+        """
+        
+        Clone the instance in an api safe way.
         This call will return a cloned instance that has the following properties:
+        
          * the pins in the instance will all be disconnected from wires but they will maintain their references to inner pins
          * the instance references is the same as the cloned object
          * the reference's references list contains this instance
          * the instance is orphaned (no longer a child of the definition to which the cloned definition belonged
-         '''
+         
+        """
         c = self._clone(dict())
         c._clone_rip()
         return c

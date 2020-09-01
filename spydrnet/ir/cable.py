@@ -135,13 +135,15 @@ class Cable(Bundle):
         return c
 
     def clone(self):
-        ''' Clone the Cable and all of its wires in an api safe way
+        """
+        Clone the Cable and all of its wires in an api safe way
         the following will be true of the returned cable
+        
          * The cable will be orphaned from any definitions
          * the wires in the cable will not be connected to any pins
          * is_downto, is_scalar, lower_index will be maintained
          * the wires in the cable will all have the cable set as the parent
-         '''
+        """
         c = self._clone(dict())
         c._clone_rip()
         return c

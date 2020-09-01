@@ -414,13 +414,15 @@ class Definition(FirstClassElement):
         return c
 
     def clone(self):
-        '''
+        """
         Clone the definition in an api safe way.
         The cloned object will have the following properties
+        
          * the definition will be orphaned and will not belong to any library
          * each of the sub elements of the definition will also be cloned and the connection structure between them will be updated.
          * the cloned instances will still point to the reference to which the pointed before. They will also be members of the references list of those definitions.
-         '''
+         
+        """
         c = self._clone(dict())
         c._clone_rip()
         return c
