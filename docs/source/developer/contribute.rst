@@ -1,27 +1,123 @@
 .. include:: ../../../CONTRIBUTING.rst
 
-Update History
-Version 1.4 Dallin Skouson
 
-contributing
-============
+Creating a Release
+==================
 
-We want to thank you for your interest in contributing to SpyDrNet, and we wish you a rewarding experience as you contribute to this open source project. 
+So you have code that works and improves SpyDrNet. Now you want to make it 
+publically available. This section aims to help you do just that. The steps
+are listed in what appears to us at this time to be the best order of
+operations. Steps which need more explanation are highlighted below.
 
-Get your environment setup
+1. run `git merge master` while the pre-release branch is checked out.
+2. Create a pull request with the updated code in the pre-release branch.
+3. Update the release notes
+4. Update the documentation and ensure it can build properly
+5. Commit those changes to the pull request
+6. Update the tag
+7. Build the python package (this will update the documentation’s version number)
+8. Build the documentation
+9. Create the release on Github
+9. Publish the packages
+10. Publish the documentation
+
+Updating the documentation
 --------------------------
 
-*Operating system*
+The documentation pulls from doc strings as well as .rst files in the build so
+this step is important. The documentation is built using a makefile in the docs
+folder.
 
-SpyDrNet is written in pure python 3 and we welcome contributers using any operating system as a development platform. As of the release of version 1.4 all of the contributors have used Windows (10) or Linux (Ubuntu) for their contributions. However we have no reason to believe any other opterating system that supports python 3.5 and greater would present a problem. If it does maybe you could help us solve it!
+Before building the documentation run a `make clean` to clear away files that 
+may mask warnings and errors and ensure the process is smooth.
 
-*The Python Interpreter*
+For the release ensure that both:
 
-SpyDrNet is tested on Python 3.5 and up. We suggest that one of the tested version of Python 3 be used to develop with SpyDrNet, perferably the latest stable release. These are the supported platforms for release and it makes the most sense for the developers to run the release platforms.
+`make html` and `make latexpdf`
 
-Pip is a useful tool for installing python packages. It is useful to help install needed packages for the tests and building the documentation. Not all developers have experience with python. Useful information about installing and using pyhton as well as language documentation can be found at https://docs.python.org/3/ . This, is a great reference for getting aquainted with pyhton.
+build the documentation without error as the html version will be put online at 
+the time of release and the pdf should be included in the releases files on
+Github
 
-*Code Editing*
+The output in the build folder can be examined to ensure that everything looks
+good.
 
-There are some great code editors. Do a google search, find one you like and use it. It doesn't much matter what you use as long as it gets the job done.
+Updating the Release Notes
+--------------------------
 
+The release notes file called RELEASE.rst should be updated to outline what has
+been acomplished. The date and version number should be included and other 
+information as needed can be entered as well.
+
+SpyDrNet uses a Major.Minor.Bug versioning scheme where minor 
+version updates do not break the existing API and major version updates may
+break it. Bug fixes do not add substantial new functionality, but rather fix 
+broken functionality.
+
+Creating and updating the tag
+-----------------------------
+
+Tags are used to put a label on the release, the tag is used when building the
+documentation. If a new commit is pushed to the branch the tag will be left
+on the previous commit. In these cases the tag can be updated.
+
+In the examples below, replace 1.5.0 with the version number you want to release
+
+**To see the current version number**
+
+`git describe`
+
+**Creation**
+
+`git tag -a v1.5.0 -m “SpyDrNet 1.5.0”`
+
+**Push your changes to the tags**
+
+`git push --tags`
+
+**Updating**
+
+`git tag -a v1.5.0 -m “SpyDrNet 1.5.0” -f`
+
+`git push --tags -f`
+
+Building the python package
+---------------------------
+
+
+
+Building the documentation
+--------------------------
+
+in the docs directory
+
+run: `make clean`
+run: `make latexpdf`
+run: `make html`
+
+Make sure that each one executes and doesn't have errors. It's also nice if 
+the warnings are minimized as well, of course the most important thing is that the
+documentation looks the way you want.
+
+Creating a Github Release
+-------------------------
+
+Releases can be created on github. On the releases tab you can draft a new
+release. You can then select the existing tag with the release number you want
+to release.
+
+The release should be named `SpyDrNet 1.5.0` where 1.5.0 is replaced with the
+proper release number.
+
+A description should be entered as well. It could just be a reiteration of the
+release notes or other relevant information.
+
+Publishing the packages to Pypi
+-------------------------------
+
+The packages need to be published to Pypi to be installable via pip. On pypi.org
+there is a guide on uploading packages. Follow the instructions there to upload
+to the test pip server then the production server.
+
+Publishing the documentation
+----------------------------

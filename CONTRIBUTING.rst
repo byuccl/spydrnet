@@ -43,7 +43,11 @@ you are a student working on the project in the BYU CCL
 upon request to the admins who can give write privlages.
 
 If you don't know who the admins are and you feel that you qualify you can 
-create an issue to get our attention
+create an issue to request permissions.
+
+Of course the admin's have the final say in granting permissions and reserve the
+right to deny privileges for any reason or no reason at all even if the above 
+criteria are met.
 
 Testing
 -------
@@ -57,11 +61,5 @@ declare your class and have it inherit from the `unittest.TestCase` like this
 is called something that starts with `test_` like
 `def test_some_functionality(self):`.
 
-exceptions and other features can be tested as well.
-
-How to create a release
------------------------
-
-
-
+Exceptions and other features can be tested as well within the pytest framework.
 
