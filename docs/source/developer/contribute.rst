@@ -18,8 +18,8 @@ operations. Steps which need more explanation are highlighted below.
 7. Build the python package (this will update the documentation’s version number)
 8. Build the documentation
 9. Create the release on Github
-9. Publish the packages
-10. Publish the documentation
+10. Publish the packages
+11. Publish the documentation
 
 Updating the documentation
 --------------------------
