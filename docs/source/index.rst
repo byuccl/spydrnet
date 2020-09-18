@@ -9,10 +9,11 @@
     :Date: |today|
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    install
    tutorial
+   Intermediate_Representation
    reference/index
    developer/index
    license
