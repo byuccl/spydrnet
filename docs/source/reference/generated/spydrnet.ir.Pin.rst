@@ -1,0 +1,41 @@
+﻿spydrnet.ir.Pin
+===============
+
+.. currentmodule:: spydrnet.ir
+
+.. autoclass:: Pin
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Pin.__init__
+      ~Pin.get_cables
+      ~Pin.get_definitions
+      ~Pin.get_hcables
+      ~Pin.get_hinstances
+      ~Pin.get_hpins
+      ~Pin.get_hports
+      ~Pin.get_hwires
+      ~Pin.get_instances
+      ~Pin.get_libraries
+      ~Pin.get_netlists
+      ~Pin.get_pins
+      ~Pin.get_ports
+      ~Pin.get_wires
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Pin.wire
+   
+   

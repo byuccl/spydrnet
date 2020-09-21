@@ -11,4 +11,5 @@ Reference
 
    introduction
    element_data
+   api_summary
    api_specification
