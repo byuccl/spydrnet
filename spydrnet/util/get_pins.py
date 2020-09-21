@@ -10,8 +10,8 @@ def get_pins(obj, *args, **kwargs):
 
     Get pins *within* an object.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     obj : object, Iterable - required
         The object or objects associated with this query. Queries return a collection objects associated with the
         provided object or objects that match the query criteria. For example, `sdn.get_ports(definition, ...)` would
@@ -24,8 +24,11 @@ def get_pins(obj, *args, **kwargs):
         matching virtual instances are returned. Otherwise, virtual instances that cause the filter function to evaluate
         to true are the only items returned.
     
-    Returns the pins associated with a particular object or collection of objects.
-    :return:
+    Returns
+    -------
+    pins : generator
+       The pins associated with a particular object or collection of objects.
+    
     """
     # Check argument list
     if len(args) > 0 or any(x not in {'filter', 'selection'} for x in kwargs):

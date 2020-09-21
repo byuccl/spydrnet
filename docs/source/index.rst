@@ -13,7 +13,6 @@
 
    install
    tutorial
-   Intermediate_Representation
    reference/index
    developer/index
    license
