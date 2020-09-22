@@ -1,5 +1,5 @@
-API Summary
-===========
+API
+===
 .. automodule:: spydrnet
 
 The SpyDrNet API can be used to create, analyze, and transform a netlist. Netlist are represented in memory in an Intermediate Representation. :numref:`fig:ExampleIR` show the representation of a simple circuit in the SpyDrNet Intermediate Representation.
