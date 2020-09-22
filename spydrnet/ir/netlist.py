@@ -22,18 +22,20 @@ class Netlist(FirstClassElement):
         _call_create_netlist(self)
 
     def compose(self, *args, **kwargs):
+        """To compose a file into a netlit format"""
         from spydrnet.composers import compose
         compose(self, *args, **kwargs)
 
     @property
     def libraries(self):
-        """get a list of all libraries included in the netlist"""
+        """Get a list of all libraries included in the netlist"""
         return ListView(self._libraries)
 
     @libraries.setter
     def libraries(self, value):
-        """
-        set the libraries. This function can only be used to reorder the libraries. Use the remove_library and
+        """Set the libraries.
+
+        This function can only be used to reorder the libraries. Use the remove_library and
         add_library functions to add and remove libraries.
 
         parameters
@@ -49,8 +51,7 @@ class Netlist(FirstClassElement):
 
     @property
     def top_instance(self):
-        """
-        Get the top instance in the netlist.
+        """Get the top instance in the netlist.
 
         Returns
         -------
@@ -61,29 +62,33 @@ class Netlist(FirstClassElement):
 
     @top_instance.setter
     def top_instance(self, instance):
-        """
-        sets the top instance of the design. The instance must not be null and should probably come from this netlist
+        """Sets the top instance of the design.
+
+        The instance must not be null and should probably come from this netlist
 
         parameters
         ----------
 
         instance - (Instance) the instance to set as the top instance.
         """
-        assert instance is None or isinstance(instance, Instance), "Must specify an instance"
+        assert instance is None or isinstance(
+            instance, Instance), "Must specify an instance"
         global_callback._call_netlist_top_instance(self, instance)
         # TODO: should We have a DRC that makes sure the instance is of a definition contained in netlist? I think no
         #  but I am open to hear other points of veiw.
         self._top_instance = instance
 
     def create_library(self):
-        '''create a library and add it to the netlist and return that library'''
+        """Create a library and add it to the netlist and return that library"""
+
         library = Library()
         self.add_library(library)
         return library
 
     def add_library(self, library, position=None):
-        """
-        add an already existing library to the netlist. This library should not belong to another netlist. Use
+        """Add an already existing library to the netlist.
+
+        This library should not belong to another netlist. Use
         remove_library from other netlists before adding
 
         parameters
@@ -104,8 +109,7 @@ class Netlist(FirstClassElement):
         library._netlist = self
 
     def remove_library(self, library):
-        """
-        removes the given library if it is in the netlist
+        """Removes the given library if it is in the netlist
 
         parameters
         ----------
@@ -117,13 +121,13 @@ class Netlist(FirstClassElement):
         self._libraries.remove(library)
 
     def remove_libraries_from(self, libraries):
-        '''removes all the given libraries from the netlist. All libraries must be in the netlist
+        """Removes all the given libraries from the netlist. All libraries must be in the netlist
 
         parameters
         ----------
 
         libraries - (Set) libraries to be removed
-        '''
+        """
         if isinstance(libraries, set):
             excluded_libraries = libraries
         else:
@@ -139,12 +143,9 @@ class Netlist(FirstClassElement):
         self._libraries = included_libraries
 
     def _remove_library(self, library):
-        """
-        internal function which will separate a particular libraries binding from the netlist
-        """
+        """Internal function which will separate a particular libraries binding from the netlist"""
         global_callback._call_netlist_remove_library(self, library)
         library._netlist = None
-
 
     def _clone_rip(self, memo):
         '''need to remove any extraneous references to floating, no parent instances'''
@@ -157,13 +158,14 @@ class Netlist(FirstClassElement):
                 defin._references = new_ref
 
     def _clone(self, memo):
-        '''clone leaving all references in tact.
-        the element can then either be ripped or ripped and replaced'''
+        """clone leaving all references in tact.
+
+        the element can then either be ripped or ripped and replaced"""
         assert self not in memo, "the object should not have been copied twice in this pass"
         c = Netlist()
         memo[self] = c
         c._data = deepcopy(self._data)
-        
+
         new_libraries = list()
         for library in self._libraries:
             new_libraries.append(library._clone(memo))
@@ -186,11 +188,11 @@ class Netlist(FirstClassElement):
         return c
 
     def clone(self):
-        '''
-        Api safe clone on a netlist
+        """Api safe clone on a netlist.
+
         This clone function should act just the way you would expect
         All references are internal to the netlist that has been cloned.
-         '''
+        """
         memo = dict()
         c = self._clone(memo)
         c._clone_rip(memo)
