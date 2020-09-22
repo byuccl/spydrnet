@@ -84,7 +84,23 @@ In the examples below, replace 1.5.0 with the version number you want to release
 Building the python package
 ---------------------------
 
+Refer to pypi.org They have a tutorial called “uploading packages”
 
+Upgrade pip if needed.
+
+`Python3 -m pip install --upgrade pip`
+
+Make sure everything is up to date
+
+`Python3 -m pip install --user --upgrade setuptools wheel`
+
+Make the python archive package:
+
+`Python3 setup.py sdist bdist_wheel`
+
+The build files will be stored in the following directories 
+
+spydrnet/build and spydrnet/dist
 
 Building the documentation
 --------------------------
@@ -121,3 +137,29 @@ to the test pip server then the production server.
 
 Publishing the documentation
 ----------------------------
+
+This is easiest on Linux (or at least not Windows, I'm not sure how MacOS works)
+
+Checkout the gh-pages branch create a new folder with the release number as the
+name. Copy the `docs/build/html` folder into the newly created folder.
+
+The documentation is built from the stable link so the stable link will need to
+be updated to point to the newly updated documentation.
+
+Check which version of the documentation the stable link points to
+
+`ls -lha`
+
+to update the stable link remove it first (watch syntax here very carefully, a
+terminating \ could make the command delete the folder's contents instead of the
+link)
+
+`rm stable`
+
+then create a link to the new folder
+
+`ln -s version.number stable`
+
+run git add to add the newly created folder and the stable link
+
+push your changes to the git repository, just to the ghpages branch.
