@@ -1,12 +1,12 @@
+===========
 API Summary
 ===========
-.. automodule:: spydrnet
 
 The SpyDrNet API can be used to create, analyze, and transform a netlist. Netlist are represented in memory in an Intermediate Representation. :numref:`fig:ExampleIR` show the representation of a simple circuit in the SpyDrNet Intermediate Representation.
 
 
 .. _fig:ExampleIR:
-.. figure:: ../figures/ExampleCircuit.png
+.. figure:: ../../figures/ExampleCircuit.png
  :align: center
  :alt: Example Netlist in a SpyDrNet Intermediate Representation
 
@@ -29,56 +29,85 @@ Similarly if the parser is used the calls can be made in the same way:
 >>> library = netlist.create_library
 >>>
 
-spydrnet.ir
------------
+Basic object types
+------------------
+
+.. toctree::
+   :maxdepth: 2
+
+   netlist
+   library
+   definition
+   instance
+   port
+   innerpin
+   outerpin
+   cable
+   wire
+
+The following three classes are the classes from which the above elements inherit. They are included here for completeness of
+documentation and can be used if needed. if the above types will suffice it may be simpler to use them.
 
 
+.. autosummary::
+   :toctree: generated/
 
+   Pin
+   Bundle
+   Element
+   FirstClassElement
+   
+Getter Functions
+----------------
+
+.. currentmodule:: spydrnet
 .. autosummary::
    :toctree: generated/
    
+   get_netlists
+   get_libraries
+   get_definitions
+   get_ports
+   get_pins
+   get_cables
+   get_wires
+   get_instances
+   get_hinstances
+   get_hports
+   get_hpins
+   get_hcables
+   get_hwires
 
-   ir.Netlist
-   ir.Library
-   ir.Definition
-   ir.Instance
-   ir.Port
-   ir.InnerPin
-   ir.OuterPin
-   ir.Cable
-   ir.Wire
 
-The following three classes are the classes from which the above elements inherit. They are included here for completeness of
-documenataion and can be used if needed. if the above types will suffice it may be simpler to use them.
+Shortcuts
+---------
 
-
-.. autosummary::
-   :toctree: generated/
-
-   ir.Pin
-   ir.Bundle
-   ir.Element
+.. toctree::
+   :maxdepth: 2
+   
+   getter_shortcuts
 
 spydrnet.util
 -------------
 
+.. automodule:: spydrnet.util
 .. autosummary::
    :toctree: generated/
 
-   util.hierarchical_reference.HRef
+   HRef
    clone.clone
    uniquify.uniquify
    flatten.flatten
-   util.get_netlists.get_netlists
-   util.get_libraries.get_libraries
-   util.get_definitions.get_definitions
-   util.get_instances.get_instances
-   util.get_ports.get_ports
-   util.get_pins.get_pins
-   util.get_cables.get_cables
-   util.get_wires.get_wires
-   util.get_hinstances.get_hinstances
-   util.get_hports.get_hports
-   util.get_hpins.get_hpins
-   util.get_hcables.get_hcables
-   util.get_hwires.get_hwires
+   get_netlists
+   get_libraries
+   get_definitions
+   get_instances
+   get_ports
+   get_pins
+   get_cables
+   get_wires
+   get_hinstances
+   get_hports
+   get_hpins
+   get_hcables
+   get_hwires
