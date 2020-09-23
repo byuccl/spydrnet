@@ -82,7 +82,7 @@ class HRef(GetterShortcuts):
     child-item to child-node relationships.
 
     .. attribute:: item: the item of the object
-    .. attribute:: parent: the item of the object
+    .. attribute:: parent: the parent of the object
     """
     @staticmethod
     def get_all_hrefs_of_item(item):
@@ -208,6 +208,15 @@ class HRef(GetterShortcuts):
 
     @staticmethod
     def from_parent_and_item(parent, item):
+        """Return the href with given parent and item
+
+        parameters
+        ----------
+
+        parent - the parent obejct of this href
+        item - the item that the href is reference to
+
+        """
         href = HRef(item, parent)
         if href in flyweight:
             return flyweight[href]()
