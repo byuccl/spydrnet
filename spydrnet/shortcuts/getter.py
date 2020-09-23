@@ -2,7 +2,8 @@ class GetterShortcuts:
     __slots__ = tuple()
 
     def get_netlists(self, *args, **kwargs):
-        """get_netlists(...)
+        """
+        get_netlists(...)
 
         Shortcut to :func:`~spydrnet.util.get_netlists`.
         """

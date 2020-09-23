@@ -9,8 +9,8 @@ def get_hpins(obj, *args, **kwargs):
 
     Get hierarchical references to wires *within* an object.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     obj : object, Iterable - required
         The object or objects associated with this query. Queries return a collection of objects associated with the
         provided object or objects that match the query criteria. For example, `sdn.get_instances(netlist, ...)` would
@@ -34,8 +34,11 @@ def get_hpins(obj, *args, **kwargs):
         matching virtual instances are returned. Otherwise, virtual instances that cause the filter function to evaluate
         to true are the only items returned.
     
-    Returns hierarchical references to instances associated with a particular object or collection of objects.
-    :return:
+    Returns
+    -------
+    href_pins : generator
+        The hierarchical references to pins associated with a particular object or collection of objects.
+    
     """
     # Check argument list
     if len(args) == 1 and 'patterns' in kwargs:

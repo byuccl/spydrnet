@@ -12,3 +12,5 @@ from spydrnet.util.get_hports import get_hports
 from spydrnet.util.get_hpins import get_hpins
 from spydrnet.util.get_hcables import get_hcables
 from spydrnet.util.get_hwires import get_hwires
+
+from spydrnet.util.hierarchical_reference import HRef

@@ -11,8 +11,8 @@ def get_ports(obj, *args, **kwargs):
 
     Get ports *within* an object.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     obj : object, Iterable - required
         The object or objects associated with this query. Queries return a collection objects associated with the
         provided object or objects that match the query criteria. For example, `sdn.get_ports(definition, ...)` would
@@ -36,8 +36,11 @@ def get_ports(obj, *args, **kwargs):
         matching virtual instances are returned. Otherwise, virtual instances that cause the filter function to evaluate
         to true are the only items returned.
     
-    Returns the ports associated with a particular object or collection of objects.
-    :return:
+    Returns
+    -------
+    ports : generator
+        The ports associated with a particular object or collection of objects.
+    
     """
     # Check argument list
     if len(args) == 1 and 'patterns' in kwargs:
