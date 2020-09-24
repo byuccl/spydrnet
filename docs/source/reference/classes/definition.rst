@@ -43,7 +43,7 @@ Getter Functions
    Definition.create_cable
    Definition.add_cable
    Definition.remove_cable
-   Definition.remove_cable_from
+   Definition.remove_cables_from
    Definition.clone
    Definition.get_netlists
    Definition.get_libraries
