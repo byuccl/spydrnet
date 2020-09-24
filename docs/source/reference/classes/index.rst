@@ -1,3 +1,5 @@
+.. _api_summary:
+
 ===========
 API Summary
 ===========
@@ -78,13 +80,17 @@ Getter Functions
    get_hcables
    get_hwires
 
-Other classes
--------------
+Other Functions
+---------------
+.. currentmodule:: spydrnet
+.. autosummary::
+   :toctree: generated/
+
+   compose
 
 .. currentmodule:: spydrnet.flatten
 .. autosummary::
    :toctree: generated/
-
    
    flatten
 

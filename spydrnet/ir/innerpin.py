@@ -46,6 +46,7 @@ class InnerPin(Pin):
          * the inner pin will be orphaned from any ports
          * the pin will not be connected to any wires
          * the pin will not be referenced to by any wires or outer pins
+
         """
         c = self._clone(dict())
         c._clone_rip()

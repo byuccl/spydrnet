@@ -16,10 +16,8 @@ Methods
    :toctree: generated/
    
    InnerPin.__init__
-   InnerPin.parent
-   InnerPin.reference
-   InnerPin.get_ports
-   InnerPin.pins
+   InnerPin.port
+   InnerPin.wire
    InnerPin.clone
    InnerPin.get_netlists
    InnerPin.get_libraries

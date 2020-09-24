@@ -6,7 +6,7 @@ from spydrnet.util.patterns import _is_pattern_absolute, _value_matches_pattern
 
 def get_hwires(obj, *args, **kwargs):
     """
-    get_hinstances(obj, ...)
+    get_hwires(obj, ...)
 
     Get hierarchical references to wires *within* an object.
 
