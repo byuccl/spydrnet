@@ -1,4 +1,4 @@
-.. _port:
+.. _wire:
 
 ====
 Wire
