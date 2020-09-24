@@ -130,7 +130,7 @@ SpyDrNet's intermediate representation of netlists (IR) is what sets it apart fo
     Wires are grouped inside cables and are elements that help hold connection information between single pins on instances within a definition and within it's ports.
 
    
-More detail on the IR is provided in :ref:`sec:api_spec`.
+More detail on the IR is provided in :ref:`api_summary`.
 
 .. SpyDrNet is currently in active development. Functionality is limited but growing, contributions are welcome. please browse the github wiki and projects to get an idea of what is coming in the future. Some of the things that the SpyDrNet team would like to accomplish are listed here:
 

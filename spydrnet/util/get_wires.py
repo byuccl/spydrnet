@@ -10,8 +10,8 @@ def get_wires(obj, *args, **kwargs):
 
     Get wires *within* an object.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     obj : object, Iterable - required
         The object or objects associated with this query. Queries return a collection of objects associated with the
         provided object or objects that match the query criteria. For example, `sdn.get_instances(netlist, ...)` would
@@ -27,8 +27,11 @@ def get_wires(obj, *args, **kwargs):
         matching virtual instances are returned. Otherwise, virtual instances that cause the filter function to evaluate
         to true are the only items returned.
     
-    Returns hierarchical references to instances associated with a particular object or collection of objects.
-    :return:
+    Returns
+    -------
+    wires : generator
+        The wires associated with a particular object or collection of objects.
+    
     """
     # Check argument list
     if len(args) > 0 or any(x not in {'selection', 'recursive', 'filter'} for x in

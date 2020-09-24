@@ -12,8 +12,8 @@ def get_instances(obj, *args, **kwargs):
 
     Get instances *within* an object.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     obj : object, Iterable - required
         The object or objects associated with this query. Queries return a collection objects associated with the
         provided object or objects that match the query criteria. For example, `sdn.get_instances(definition, ...)` would
@@ -46,8 +46,11 @@ def get_instances(obj, *args, **kwargs):
         matching virtual instances are returned. Otherwise, virtual instances that cause the filter function to evaluate
         to true are the only items returned.
     
-    Returns the cables associated with a particular object or collection of objects.
-    :return:
+    Returns
+    -------
+    cables : generator
+        The cables associated with a particular object or collection of objects.
+    
     """
     # Check argument list
     if len(args) == 1 and 'patterns' in kwargs:

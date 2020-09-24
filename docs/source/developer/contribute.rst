@@ -33,7 +33,11 @@ may mask warnings and errors and ensure the process is smooth.
 
 For the release ensure that both:
 
-`make html` and `make latexpdf`
+`make html`
+
+and
+
+`make latexpdf`
 
 build the documentation without error as the html version will be put online at 
 the time of release and the pdf should be included in the releases files on
@@ -108,7 +112,9 @@ Building the documentation
 in the docs directory
 
 run: `make clean`
+
 run: `make latexpdf`
+
 run: `make html`
 
 Make sure that each one executes and doesn't have errors. It's also nice if 

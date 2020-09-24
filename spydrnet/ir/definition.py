@@ -115,7 +115,9 @@ class Definition(FirstClassElement):
 
     def is_leaf(self):
         """
-        check to see if this definition represents a leaf cell. Leaf cells are cells with no children instances or no
+        Check to see if this definition represents a leaf cell.
+
+        Leaf cells are cells with no children instances or no
         children cables. Blackbox cells are considered leaf cells as well as direct pass through cells with cables only
         """
         if len(self._children) > 0 or len(self._cables) > 0:

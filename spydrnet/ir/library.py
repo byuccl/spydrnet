@@ -23,27 +23,29 @@ class Library(FirstClassElement):
     @property
     def netlist(self):
         """
-        get the netlist that contains this library
+        Get the netlist that contains this library
         """
         return self._netlist
 
     @property
     def definitions(self):
         """
-        return a list of all the definitions that are included in this library
+        Return a list of all the definitions that are included in this library
         """
         return ListView(self._definitions)
 
     @definitions.setter
     def definitions(self, value):
         """
-        set the definitions to a new reordered set of definitions. This function cannot be used to add or remove
-        definitions
+        Set the definitions to a new reordered set of definitions.
+
+        This function cannot be used to add or remove definitions.
 
         Parameters
         ----------
+        value - List containing Definition type objects
+            The reordered list.
 
-        value - (List containing Definition type objects) The reordered list
         """
         value_list = list(value)
         value_set = set(value_list)
@@ -53,7 +55,7 @@ class Library(FirstClassElement):
 
     def create_definition(self):
         """
-        create a definition, add it to the library, and return the definition
+        Create a definition, add it to the library, and return the definition.
         """
         definition = Definition()
         self.add_definition(definition)
@@ -61,14 +63,16 @@ class Library(FirstClassElement):
 
     def add_definition(self, definition, position=None):
         """
-        add an existing definition to the library. The definition must not belong to a library including this one.
+        Add an existing definition to the library.
 
-        parameters
+        The definition must not belong to a library including this one.
+
+        Parameters
         ----------
-
-        definition - (Definition) the defintion to add to the library
-
-        position - (int, default None) the index in the library list at which to add the definition
+        definition - Definition
+            The definition to add to the library.
+        position - int, (default None)
+            The index in the library list at which to add the definition
 
         """
         assert definition.library is not self, "Definition already included in library"
@@ -82,12 +86,13 @@ class Library(FirstClassElement):
 
     def remove_definition(self, definition):
         """
-        remove the given definition from the library
+        Remove the given definition from the library.
 
-        parameters
+        Parameters
         ----------
+        definition - Definition
+            The definition to be removed.
 
-        definition - (Definition) the definition to be removed
         """
         assert definition.library == self, "definition is not included in library"
         self._remove_definition(definition)
@@ -95,12 +100,13 @@ class Library(FirstClassElement):
 
     def remove_definitions_from(self, definitions):
         """
-        remove a set of definitions from the library. all definitions provided must be in the library
+        Remove a set of definitions from the library. All definitions provided must be in the library.
 
-        parameters
+        Parameters
         ----------
+        Definitions - Set of Definition type objects
+            The definitions to be removed
 
-        definitions - (Set of Definition type objects) the definitions to be removed
         """
         if isinstance(definitions, set):
             excluded_definitions = definitions
@@ -125,13 +131,13 @@ class Library(FirstClassElement):
 
 
     def _clone_rip_and_replace(self, memo):
-        '''remove from its current environment and place it into the new cloned environment with references held in the memo dictionary'''
+        """Remove from its current environment and place it into the new cloned environment with references held in the memo dictionary"""
         pass #this function will need to call rip and replace in library on each of the definitions when called from the netlist.
         for definition in self._definitions:
             definition._clone_rip_and_replace(memo)
 
     def _clone_rip(self, memo):
-        '''remove from its current environmnet. This will remove all pin pointers and create a floating stand alone instance.'''   
+        """remove from its current environmnet. This will remove all pin pointers and create a floating stand alone instance."""
         # references lists of definitions need to be vacated except those that were cloned.
         for definition in self._definitions:
             new_references = set()
@@ -145,9 +151,11 @@ class Library(FirstClassElement):
 
 
     def _clone(self, memo):
-        '''not api safe clone function
+        """
+        Not api safe clone function
         clone leaving all references in tact.
-        the element can then either be ripped or ripped and replaced'''
+        the element can then either be ripped or ripped and replaced
+        """
         assert self not in memo, "the object should not have been copied twice in this pass"
         c = Library()
         memo[self] = c
@@ -166,7 +174,8 @@ class Library(FirstClassElement):
 
     def clone(self):
         """
-        Clone the library in an api safe manner.
+        Clone the library in an API safe manner.
+
         The following describes the structure of the returned object:
         
          * the instances that pointed to reference definitions within the library will have updated references

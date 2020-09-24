@@ -37,14 +37,26 @@ class FirstClassElement(Element):
 
     @property
     def data(self):
+        """data stores information about the element
+        """
         return DictView(self._data)
-        
+
     @property
     def name(self):
+        """The name of this element
+        """
         return self._data.get(".NAME", None)
-        
+
     @name.setter
     def name(self, value):
+        """Set the name of the element
+
+        parameters
+        ----------
+
+        value - the new name of the element
+
+        """
         if value is None and ".NAME" in self:
             del self[".NAME"]
         else:
@@ -52,6 +64,7 @@ class FirstClassElement(Element):
 
     @name.deleter
     def name(self):
+        """Delete the name of the element"""
         if ".NAME" in self:
             del self[".NAME"]
 
@@ -64,6 +77,9 @@ class FirstClassElement(Element):
         self._data.__setitem__(sys.intern(key), value)
 
     def __delitem__(self, key):
+        """ delete the item from the data structure
+
+        """
         global_callback._call_dictionary_delete(self, key)
         self._data.__delitem__(key)
 
@@ -77,8 +93,10 @@ class FirstClassElement(Element):
         return self._data.__iter__()
 
     def pop(self, item):
+        """pop the object from the data structure"""
         global_callback._call_dictionary_pop(self, item)
         return self._data.pop(item)
 
     def get(self, *args, **kwargs):
+        """get the item from the data structure"""
         return self._data.get(*args, **kwargs)

@@ -85,7 +85,15 @@ language = None
 exclude_patterns = []
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = None
+pygments_style = "sphinx"
+
+# A list of prefixs that are ignored when creating the module index. (new in Sphinx 0.6)
+modindex_common_prefix = ["spydrnet."]
+
+doctest_global_setup = "import spydrnet as sdn"
+
+# treat ``x, y : type`` as vars x and y instead of default ``y(x,) : type``
+napoleon_use_param = False
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -121,7 +129,7 @@ html_theme = 'sphinx_rtd_theme'
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'SpyDrNetdoc'
+htmlhelp_basename = 'SpyDrNet'
 
 
 # -- Options for LaTeX output ------------------------------------------------
