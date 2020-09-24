@@ -1,0 +1,291 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>spydrnet.get_hcables &mdash; SpyDrNet 1.6.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery-dataframe.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="spydrnet.get_hwires" href="spydrnet.get_hwires.html" />
+    <link rel="prev" title="spydrnet.get_hpins" href="spydrnet.get_hpins.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> SpyDrNet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../element_data.html">Element Data</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">API Summary</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../index.html#basic-object-types">Basic object types</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#getter-functions">Getter Functions</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="spydrnet.get_netlists.html">spydrnet.get_netlists</a></li>
+<li class="toctree-l4"><a class="reference internal" href="spydrnet.get_libraries.html">spydrnet.get_libraries</a></li>
+<li class="toctree-l4"><a class="reference internal" href="spydrnet.get_definitions.html">spydrnet.get_definitions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="spydrnet.get_ports.html">spydrnet.get_ports</a></li>
+<li class="toctree-l4"><a class="reference internal" href="spydrnet.get_pins.html">spydrnet.get_pins</a></li>
+<li class="toctree-l4"><a class="reference internal" href="spydrnet.get_cables.html">spydrnet.get_cables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="spydrnet.get_wires.html">spydrnet.get_wires</a></li>
+<li class="toctree-l4"><a class="reference internal" href="spydrnet.get_instances.html">spydrnet.get_instances</a></li>
+<li class="toctree-l4"><a class="reference internal" href="spydrnet.get_hinstances.html">spydrnet.get_hinstances</a></li>
+<li class="toctree-l4"><a class="reference internal" href="spydrnet.get_hports.html">spydrnet.get_hports</a></li>
+<li class="toctree-l4"><a class="reference internal" href="spydrnet.get_hpins.html">spydrnet.get_hpins</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">spydrnet.get_hcables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="spydrnet.get_hwires.html">spydrnet.get_hwires</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#other-functions">Other Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#shortcuts">Shortcuts</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../credits.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SpyDrNet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Reference</a> &raquo;</li>
+        
+          <li><a href="../index.html">API Summary</a> &raquo;</li>
+        
+      <li>spydrnet.get_hcables</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../../_sources/reference/classes/generated/spydrnet.get_hcables.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="spydrnet-get-hcables">
+<h1>spydrnet.get_hcables<a class="headerlink" href="#spydrnet-get-hcables" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="spydrnet.get_hcables">
+<code class="sig-prename descclassname">spydrnet.</code><code class="sig-name descname">get_hcables</code><span class="sig-paren">(</span><em class="sig-param">obj</em>, <em class="sig-param">...</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/spydrnet/util/get_hcables.html#get_hcables"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.get_hcables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get hierarchical references to cables <em>within</em> an object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> (<em>object, Iterable - required</em>) – The object or objects associated with this query. Queries return a collection of objects associated with the
+provided object or objects that match the query criteria. For example, <cite>sdn.get_instances(netlist, …)</cite> would
+return all of the instances <em>within</em> the provided definition that match the additional criteria.</p></li>
+<li><p><strong>patterns</strong> (<em>str, Iterable - optional, positional or named, default: wildcard</em>) – The search patterns. Patterns can be a single string or an Iterable collection of strings. Patterns can be
+absolute or they can contain wildcards or regular expressions. If <cite>patterns</cite> is not provided, then it defaults
+to a wildcard.</p></li>
+<li><p><strong>is_case</strong> (<em>bool - optional, named, default: True</em>) – Specify if patterns should be treated as case sensitive. Only applies to patterns. Does not alter fast lookup
+behavior (if namespace policy uses case insensitive indexing, this parameter will not prevent a fast lookup
+from returning a matching object even if the case is not an exact match).</p></li>
+<li><p><strong>is_re</strong> (<em>bool - optional, named, default: False</em>) – Specify if patterns are regular expressions. If <cite>False</cite>, a pattern can still contain <cite>*</cite> and <cite>?</cite> wildcards. A
+<cite>*</cite> matches zero or more characters. A <cite>?</cite> matches upto a single character.</p></li>
+<li><p><strong>selection</strong> (<em>Selection.{INSIDE, OUTSIDE, BOTH, ALL}, default: INSIDE</em>) – This parameter determines the wires that are returned based on the instance associated with the object that is
+being searched.</p></li>
+<li><p><strong>recursive</strong> (<em>bool - optional, default: False</em>) – Specify if search should be recursive or not meaning that sub hierarchical instances within an instance are
+included or not.</p></li>
+<li><p><strong>filter</strong> (<em>function</em>) – This is a single input function that can be used to filter out unwanted virtual instances. If not specifed, all
+matching virtual instances are returned. Otherwise, virtual instances that cause the filter function to evaluate
+to true are the only items returned.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>href_cables</strong> – The hierarchical references to cables associated with a particular object or collection of objects.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>generator</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="spydrnet.get_hwires.html" class="btn btn-neutral float-right" title="spydrnet.get_hwires" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="spydrnet.get_hpins.html" class="btn btn-neutral float-left" title="spydrnet.get_hpins" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Brigham Young Universitiy
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,502 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Connectivity Graph &mdash; SpyDrNet 1.6.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="prev" title="Flattens a netlist" href="../basic/plot_flatten.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> SpyDrNet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../credits.html">Credits</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../index.html#basic">Basic</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#special">Special</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Connectivity Graph</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SpyDrNet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Examples</a> &raquo;</li>
+        
+      <li>Connectivity Graph</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/auto_examples/special/plot_connectivity_graph.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-special-plot-connectivity-graph-py"><span class="std std-ref">here</span></a>     to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="connectivity-graph">
+<span id="sphx-glr-auto-examples-special-plot-connectivity-graph-py"></span><h1>Connectivity Graph<a class="headerlink" href="#connectivity-graph" title="Permalink to this headline">¶</a></h1>
+<p>A connectivity graph is a mathmatical view of the connections between components in a netlist. This kind of
+representation enables the use of graph theory algorithms to better understand relations between components. There are
+many different schemes (or configurations) that could be used to generate a connectivity graph. In general, nodes in a
+connectivity graph represent components in the netlist and edges represent connections between components.</p>
+<p>The connectivity graph generated in this example represents leaf instances (and optionally top level ports) as nodes
+and connections between nodes as directed edges (from sources to sinks). It is assumed that input and output pins within
+a leaf instance node are fully connected meaning that all input pins are connected to all output pins. This approach
+likely suggests greater connectivity than actually exists, but it maintains plausible paths found in the original
+netlist.</p>
+<p>A connectivity graph is generated by traversing all of paths between components in the netlist. This includes
+connectionsthat cross hierarchical boundaries (e.g., connectivity of two leaf instances through ports on several
+non-leaf instances). This can be an expensive operation; but once the graph is generated, it can be used to quickly
+identify connectivity between components.</p>
+<p>A mechanism of uniquely identifying a component in the netlist is provided in this example. It is possible in a netlist
+for a non-leaf definition, (i.e. a definition that instances other definitions), to be instanced more than once. In this
+senarario, instances within the non-leaf definition are not unique. Uniqueness can be guarenteed by including the
+hierarchical path when referencing the desired instance. Accordingly, a lightweight object is created to preserve the
+full hierarchical path when referencing the instances.</p>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Total nodes in connectivity_graph with top_level_ports 114
+Total edges in connectivity_graph with top_level_ports 498
+Total nodes in connectivity_graph without top_level_ports 102
+Total edges in connectivity_graph without top_level_ports 362
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">spydrnet</span> <span class="k">as</span> <span class="nn">sdn</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+
+<span class="n">netlist</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">connectivity_graph</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="k">def</span> <span class="nf">run</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This example loads a netlist and then generates two connectivity graphs: one with top level ports and one without.</span>
+<span class="sd">    The connectivity graph without top level ports could be generated more quickly by copying the graph containing the</span>
+<span class="sd">    ports and then removing the nodes that represent top level ports. These connectivity graphs can also be used to</span>
+<span class="sd">    generate sequential connectivity graphs by removing nodes that represent combinational logic and propagating their</span>
+<span class="sd">    created connections (add an edge from all predecessors to all successors).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">netlist</span>
+    <span class="k">global</span> <span class="n">connectivity_graph</span>
+    <span class="n">netlist</span> <span class="o">=</span> <span class="n">sdn</span><span class="o">.</span><span class="n">load_example_netlist_by_name</span><span class="p">(</span><span class="s1">&#39;b13&#39;</span><span class="p">)</span>
+
+    <span class="n">connectivity_graph_with_top_level_ports</span> <span class="o">=</span> <span class="n">get_connectivity_graph</span><span class="p">(</span><span class="n">include_top_ports</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total nodes in connectivity_graph with top_level_ports&quot;</span><span class="p">,</span>
+        <span class="n">connectivity_graph_with_top_level_ports</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total edges in connectivity_graph with top_level_ports&quot;</span><span class="p">,</span>
+        <span class="n">connectivity_graph_with_top_level_ports</span><span class="o">.</span><span class="n">number_of_edges</span><span class="p">())</span>
+
+    <span class="n">connectivity_graph_without_top_level_ports</span> <span class="o">=</span> <span class="n">get_connectivity_graph</span><span class="p">(</span><span class="n">include_top_ports</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total nodes in connectivity_graph without top_level_ports&quot;</span><span class="p">,</span>
+        <span class="n">connectivity_graph_without_top_level_ports</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total edges in connectivity_graph without top_level_ports&quot;</span><span class="p">,</span>
+        <span class="n">connectivity_graph_without_top_level_ports</span><span class="o">.</span><span class="n">number_of_edges</span><span class="p">())</span>
+
+<span class="k">def</span> <span class="nf">get_connectivity_graph</span><span class="p">(</span><span class="n">include_top_ports</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function generates the connectivity graph of the netlist.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">connectivity_graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+    <span class="n">top_instance_node</span> <span class="o">=</span> <span class="n">generate_nodes</span><span class="p">()</span>
+
+    <span class="n">leaf_instance_nodes</span> <span class="o">=</span> <span class="n">get_leaf_instance_nodes</span><span class="p">(</span><span class="n">top_instance_node</span><span class="p">)</span>
+    <span class="n">connectivity_graph</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">(</span><span class="n">leaf_instance_nodes</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">include_top_ports</span><span class="p">:</span>
+        <span class="n">top_port_nodes</span> <span class="o">=</span> <span class="n">get_top_port_nodes</span><span class="p">(</span><span class="n">top_instance_node</span><span class="p">)</span>
+        <span class="n">connectivity_graph</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">(</span><span class="n">top_port_nodes</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">connectivity_graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">):</span>
+        <span class="n">downstream_nodes</span> <span class="o">=</span> <span class="n">get_downstream_nodes</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">include_top_ports</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">downstream_node</span> <span class="ow">in</span> <span class="n">downstream_nodes</span><span class="p">:</span>
+            <span class="n">connectivity_graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">downstream_node</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">connectivity_graph</span>
+
+<span class="k">def</span> <span class="nf">generate_nodes</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function generates a unique node for all instances of elements in a netlist.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">top_node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">netlist</span><span class="o">.</span><span class="n">top_instance</span><span class="p">)</span>
+    <span class="n">search_stack</span> <span class="o">=</span> <span class="p">[</span><span class="n">top_node</span><span class="p">]</span>
+    <span class="k">while</span> <span class="n">search_stack</span><span class="p">:</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="n">search_stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">item</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">sdn</span><span class="o">.</span><span class="n">Instance</span><span class="p">):</span>
+            <span class="n">ref</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">reference</span>
+            <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="n">ref</span><span class="o">.</span><span class="n">ports</span><span class="p">:</span>
+                <span class="n">new_node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">port</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_node</span>
+                <span class="n">search_stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_node</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">cable</span> <span class="ow">in</span> <span class="n">ref</span><span class="o">.</span><span class="n">cables</span><span class="p">:</span>
+                <span class="n">new_node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">cable</span><span class="p">)</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">cable</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_node</span>
+                <span class="n">search_stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_node</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">instance</span> <span class="ow">in</span> <span class="n">ref</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+                <span class="n">new_node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">instance</span><span class="p">)</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">instance</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_node</span>
+                <span class="n">search_stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_node</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">sdn</span><span class="o">.</span><span class="n">Port</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">pin</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">pins</span><span class="p">:</span>
+                <span class="n">new_node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">pin</span><span class="p">)</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_node</span>
+                <span class="n">search_stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_node</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">sdn</span><span class="o">.</span><span class="n">Cable</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">wire</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">wires</span><span class="p">:</span>
+                <span class="n">new_node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">wire</span><span class="p">)</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">wire</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_node</span>
+                <span class="n">search_stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_node</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">top_node</span>
+
+<span class="k">def</span> <span class="nf">get_leaf_instance_nodes</span><span class="p">(</span><span class="n">top_instance_node</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function returns all leaf instance nodes in a netlist.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">leaf_instance_nodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">search_stack</span> <span class="o">=</span> <span class="p">[</span><span class="n">top_instance_node</span><span class="p">]</span>
+    <span class="k">while</span> <span class="n">search_stack</span><span class="p">:</span>
+        <span class="n">current_node</span> <span class="o">=</span> <span class="n">search_stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">current_node</span><span class="o">.</span><span class="n">item</span><span class="p">,</span> <span class="n">sdn</span><span class="o">.</span><span class="n">Instance</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">current_node</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">reference</span><span class="o">.</span><span class="n">is_leaf</span><span class="p">():</span>
+                <span class="n">leaf_instance_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_node</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">search_stack</span> <span class="o">+=</span> <span class="n">current_node</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">leaf_instance_nodes</span>
+
+<span class="k">def</span> <span class="nf">get_top_port_nodes</span><span class="p">(</span><span class="n">top_instance_node</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function returns top_level_ports in a netlist, (i.e., ports that belong to the top_instance if the netlist).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">top_port_nodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">top_instance_node</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">top_instance_node</span><span class="o">.</span><span class="n">children</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sdn</span><span class="o">.</span><span class="n">Port</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">top_port_nodes</span>
+
+<span class="k">def</span> <span class="nf">get_downstream_nodes</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">include_top_ports</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function finds downstream nodes (leaf instance and optionally top_level ports) from a given node. There are</span>
+<span class="sd">    some involved traversals included in this function (going from an InnerPin to and OuterPin and visa-versa).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">downstream_nodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">found_pin_nodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">search_stack</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="c1"># Find starting wires if provided node is a leaf instance.</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">item</span><span class="p">,</span> <span class="n">sdn</span><span class="o">.</span><span class="n">Instance</span><span class="p">):</span>
+        <span class="n">instance</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">item</span>
+        <span class="n">parent_instance</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">parent</span>
+
+        <span class="k">for</span> <span class="n">pin</span> <span class="ow">in</span> <span class="n">instance</span><span class="o">.</span><span class="n">pins</span><span class="p">:</span>
+            <span class="n">inner_pin</span> <span class="o">=</span> <span class="n">pin</span><span class="o">.</span><span class="n">inner_pin</span>
+            <span class="n">wire</span> <span class="o">=</span> <span class="n">pin</span><span class="o">.</span><span class="n">wire</span>
+            <span class="k">if</span> <span class="n">inner_pin</span><span class="o">.</span><span class="n">port</span><span class="o">.</span><span class="n">direction</span> <span class="ow">in</span> <span class="p">{</span><span class="n">sdn</span><span class="o">.</span><span class="n">OUT</span><span class="p">,</span> <span class="n">sdn</span><span class="o">.</span><span class="n">INOUT</span><span class="p">}</span> <span class="ow">and</span> <span class="n">wire</span><span class="p">:</span>
+                <span class="n">port_node</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">inner_pin</span><span class="o">.</span><span class="n">port</span><span class="p">]</span>
+                <span class="n">pin_node</span> <span class="o">=</span> <span class="n">port_node</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">inner_pin</span><span class="p">]</span>
+                <span class="n">found_pin_nodes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">pin_node</span><span class="p">)</span>
+
+                <span class="n">cable</span> <span class="o">=</span> <span class="n">wire</span><span class="o">.</span><span class="n">cable</span>
+                <span class="n">cable_node</span> <span class="o">=</span> <span class="n">parent_instance</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">cable</span><span class="p">]</span>
+                <span class="n">wire_node</span> <span class="o">=</span> <span class="n">cable_node</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">wire</span><span class="p">]</span>
+                <span class="n">search_stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wire_node</span><span class="p">)</span>
+    <span class="c1"># Find starting wires if provided node is a top_level_port and include_top_ports is asserted.</span>
+    <span class="k">elif</span> <span class="n">include_top_ports</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">item</span><span class="p">,</span> <span class="n">sdn</span><span class="o">.</span><span class="n">Port</span><span class="p">):</span>
+        <span class="n">port</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">item</span>
+        <span class="n">parent_instance</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">parent</span>
+
+        <span class="k">if</span> <span class="n">port</span><span class="o">.</span><span class="n">direction</span> <span class="ow">in</span> <span class="p">{</span><span class="n">sdn</span><span class="o">.</span><span class="n">IN</span><span class="p">,</span> <span class="n">sdn</span><span class="o">.</span><span class="n">INOUT</span><span class="p">}:</span>
+            <span class="k">for</span> <span class="n">pin</span> <span class="ow">in</span> <span class="n">port</span><span class="o">.</span><span class="n">pins</span><span class="p">:</span>
+                <span class="n">wire</span> <span class="o">=</span> <span class="n">pin</span><span class="o">.</span><span class="n">wire</span>
+                <span class="k">if</span> <span class="n">wire</span><span class="p">:</span>
+                    <span class="n">pin_node</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span>
+                    <span class="n">found_pin_nodes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">pin_node</span><span class="p">)</span>
+
+                    <span class="n">cable</span> <span class="o">=</span> <span class="n">wire</span><span class="o">.</span><span class="n">cable</span>
+                    <span class="n">cable_node</span> <span class="o">=</span> <span class="n">parent_instance</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">cable</span><span class="p">]</span>
+                    <span class="n">wire_node</span> <span class="o">=</span> <span class="n">cable_node</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">wire</span><span class="p">]</span>
+                    <span class="n">search_stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wire_node</span><span class="p">)</span>
+
+    <span class="c1"># Perform a non-recursive traversal of identified wires until all leaf instances (and optionally top_level_ports)</span>
+    <span class="c1"># are found.</span>
+    <span class="k">while</span> <span class="n">search_stack</span><span class="p">:</span>
+        <span class="n">current_wire_node</span> <span class="o">=</span> <span class="n">search_stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="n">current_cable_node</span> <span class="o">=</span> <span class="n">current_wire_node</span><span class="o">.</span><span class="n">parent</span>
+        <span class="n">current_instance_node</span> <span class="o">=</span> <span class="n">current_cable_node</span><span class="o">.</span><span class="n">parent</span>
+
+        <span class="n">current_wire</span> <span class="o">=</span> <span class="n">current_wire_node</span><span class="o">.</span><span class="n">item</span>
+        <span class="k">for</span> <span class="n">pin</span> <span class="ow">in</span> <span class="n">current_wire</span><span class="o">.</span><span class="n">pins</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pin</span><span class="p">,</span> <span class="n">sdn</span><span class="o">.</span><span class="n">InnerPin</span><span class="p">):</span>
+                <span class="n">port</span> <span class="o">=</span> <span class="n">pin</span><span class="o">.</span><span class="n">port</span>
+                <span class="n">port_node</span> <span class="o">=</span> <span class="n">current_instance_node</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">port</span><span class="p">]</span>
+                <span class="n">pin_node</span> <span class="o">=</span> <span class="n">port_node</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">pin_node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">found_pin_nodes</span><span class="p">:</span>
+                    <span class="n">found_pin_nodes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">pin_node</span><span class="p">)</span>
+                    <span class="n">current_instance_parent_node</span> <span class="o">=</span> <span class="n">current_instance_node</span><span class="o">.</span><span class="n">parent</span>
+                    <span class="k">if</span> <span class="n">current_instance_parent_node</span><span class="p">:</span>
+                        <span class="n">outer_pin</span> <span class="o">=</span> <span class="n">current_instance_node</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">pins</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span>
+                        <span class="n">wire</span> <span class="o">=</span> <span class="n">outer_pin</span><span class="o">.</span><span class="n">wire</span>
+                        <span class="k">if</span> <span class="n">wire</span><span class="p">:</span>
+                            <span class="n">cable</span> <span class="o">=</span> <span class="n">wire</span><span class="o">.</span><span class="n">cable</span>
+                            <span class="n">cable_node</span> <span class="o">=</span> <span class="n">current_instance_parent_node</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">cable</span><span class="p">]</span>
+                            <span class="n">wire_node</span> <span class="o">=</span> <span class="n">cable_node</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">wire</span><span class="p">]</span>
+                            <span class="n">search_stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wire_node</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">include_top_ports</span><span class="p">:</span>
+                        <span class="n">downstream_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">port_node</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pin</span><span class="p">,</span> <span class="n">sdn</span><span class="o">.</span><span class="n">OuterPin</span><span class="p">):</span>
+                <span class="n">instance</span> <span class="o">=</span> <span class="n">pin</span><span class="o">.</span><span class="n">instance</span>
+                <span class="n">instance_node</span> <span class="o">=</span> <span class="n">current_instance_node</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">instance</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">instance</span><span class="o">.</span><span class="n">reference</span><span class="o">.</span><span class="n">is_leaf</span><span class="p">():</span>
+                    <span class="n">downstream_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">instance_node</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">inner_pin</span> <span class="o">=</span> <span class="n">pin</span><span class="o">.</span><span class="n">inner_pin</span>
+                    <span class="n">port</span> <span class="o">=</span> <span class="n">inner_pin</span><span class="o">.</span><span class="n">port</span>
+                    <span class="n">port_node</span> <span class="o">=</span> <span class="n">instance_node</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">port</span><span class="p">]</span>
+                    <span class="n">pin_node</span> <span class="o">=</span> <span class="n">port_node</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">inner_pin</span><span class="p">]</span>
+                    <span class="n">found_pin_nodes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">pin_node</span><span class="p">)</span>
+
+                    <span class="n">wire</span> <span class="o">=</span> <span class="n">inner_pin</span><span class="o">.</span><span class="n">wire</span>
+                    <span class="k">if</span> <span class="n">wire</span><span class="p">:</span>
+                        <span class="n">cable</span> <span class="o">=</span> <span class="n">wire</span><span class="o">.</span><span class="n">cable</span>
+                        <span class="n">cable_node</span> <span class="o">=</span> <span class="n">instance_node</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">cable</span><span class="p">]</span>
+                        <span class="n">wire_node</span> <span class="o">=</span> <span class="n">cable_node</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">wire</span><span class="p">]</span>
+                        <span class="n">search_stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wire_node</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">downstream_nodes</span>
+
+<span class="k">class</span> <span class="nc">Node</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">item</span> <span class="o">=</span> <span class="n">item</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">children</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">get_hiearchical_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">parents</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span>
+        <span class="k">while</span> <span class="n">parent</span><span class="p">:</span>
+            <span class="n">parents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+            <span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">parent</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">parents</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="p">,</span> <span class="n">sdn</span><span class="o">.</span><span class="n">Wire</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">[</span><span class="si">{}</span><span class="s2">]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">cable</span><span class="o">.</span><span class="n">wires</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="p">,</span> <span class="n">sdn</span><span class="o">.</span><span class="n">Pin</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">[</span><span class="si">{}</span><span class="s2">]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">port</span><span class="o">.</span><span class="n">pins</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">prefix</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_name</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s1">&#39;EDIF.original_identifier&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;EDIF.original_identifier&#39;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="s1">&#39;EDIF.identifier&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span>
+
+<span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.994 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-special-plot-connectivity-graph-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/1922568139b28184679ab5f511e71cbb/plot_connectivity_graph.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_connectivity_graph.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/e87e1bc9481e48cc6e43ca96a57eb2fb/plot_connectivity_graph.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_connectivity_graph.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="../basic/plot_flatten.html" class="btn btn-neutral float-left" title="Flattens a netlist" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Brigham Young Universitiy
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

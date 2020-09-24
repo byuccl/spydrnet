@@ -1,0 +1,427 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>HRef &mdash; SpyDrNet 1.6.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="spydrnet.util.HRef.__init__" href="generated/spydrnet.util.HRef.__init__.html" />
+    <link rel="prev" title="spydrnet.Wire.get_hwires" href="generated/spydrnet.Wire.get_hwires.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> SpyDrNet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../element_data.html">Element Data</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">API Summary</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#basic-object-types">Basic object types</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="netlist.html">Netlist</a></li>
+<li class="toctree-l4"><a class="reference internal" href="library.html">Library</a></li>
+<li class="toctree-l4"><a class="reference internal" href="definition.html">Definition</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instance.html">Instance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="port.html">Port</a></li>
+<li class="toctree-l4"><a class="reference internal" href="innerpin.html">InnerPin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="outerpin.html">OuterPin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cable.html">Cable</a></li>
+<li class="toctree-l4"><a class="reference internal" href="wire.html">Wire</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">HRef</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/spydrnet.ir.Pin.html">spydrnet.ir.Pin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/spydrnet.ir.Bundle.html">spydrnet.ir.Bundle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/spydrnet.ir.Element.html">spydrnet.ir.Element</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/spydrnet.ir.FirstClassElement.html">spydrnet.ir.FirstClassElement</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#getter-functions">Getter Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#other-functions">Other Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#shortcuts">Shortcuts</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../credits.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../auto_examples/index.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SpyDrNet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Reference</a> &raquo;</li>
+        
+          <li><a href="index.html">API Summary</a> &raquo;</li>
+        
+      <li>HRef</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/reference/classes/href.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="href">
+<span id="id1"></span><h1>HRef<a class="headerlink" href="#href" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="spydrnet.util.HRef">
+<em class="property">class </em><code class="sig-prename descclassname">spydrnet.util.</code><code class="sig-name descname">HRef</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">item</span></em>, <em class="sig-param"><span class="n">parent</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/spydrnet/util/hierarchical_reference.html#HRef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.util.HRef" title="Permalink to this definition">¶</a></dt>
+<dd><p>A hierarchical reference to a specific element in a netlist.</p>
+<p>Definitions can be instanced more than once (i.e., multiple instances can reference the same definition).
+When a definition is instanced more than once, it causes the contents of the definition to be shared. Therefore, any
+changes to a multi-instanced definition will be reflected in all instances of that definition. Similarly, any
+references to the contents of a multi-instanced definition refer to the contents of all of the instances and not to
+the contents of a specific instance. This sharing creates challenges for analyzing and transforming the netlist.</p>
+<p>Hierarchical references refer to a netlist element by hierarchical sequence. A hierarchical sequence begins with the
+the top-instance of netlist (see Netlist.top_instance). The sequence continues with children instances (parent to
+child) until the instance of interest is reached. The instance of interest is the final instance in the sequence.
+When the referenced element is an instance, the sequence terminates. When the referenced element is a port, pin,
+cable, or wire, the sequence continues with those elements until the desired element is specified (e.g., port;
+port, pin; cable; or cable, wire. In this way, hierarhical elements are uniquely referenced even though the contents
+of a definition may be shared.</p>
+<p><strong>Hierarchical Sequence Examples:</strong></p>
+<p>Here are some examples of hierarchical sequences:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Top Instance:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">[top_instance]</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Top Instance Port</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">[top_instance,</span> <span class="pre">port]</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Top Instance Pin</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">[top_instance,</span> <span class="pre">port,</span> <span class="pre">pin]</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Shared Sub-Instance Cable)</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">[top_instance,</span> <span class="pre">sub_instance_A,</span> <span class="pre">sub_instance_C,</span> <span class="pre">cable]</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[top_instance,</span> <span class="pre">sub_instance_B,</span> <span class="pre">sub_instance_C,</span> <span class="pre">cable]</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sub_instance_A</span></code> and <code class="docutils literal notranslate"><span class="pre">sub_instance_B</span></code> are instances (or children) with the definition referenced by
+<code class="docutils literal notranslate"><span class="pre">top_instance</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sub_instance_A</span></code> and <code class="docutils literal notranslate"><span class="pre">sub_instance_B</span></code> reference the same definition, which contains <code class="docutils literal notranslate"><span class="pre">sub_instance_C</span></code>.</p></li>
+<li><p>Even though <code class="docutils literal notranslate"><span class="pre">cable</span></code> is the same element in both sequences, each sequence uniquely references the cable
+inside <code class="docutils literal notranslate"><span class="pre">sub_instance_A</span></code> and <code class="docutils literal notranslate"><span class="pre">sub_instance_B</span></code> respectively.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p><strong>Netlist Analysis and Transformation:</strong></p>
+<p>Hierarchical references provide unique handles on hierarchical elements. A unique handle allows for such elements to
+be considered individually even though two hierarchical may point to some of the same elements. This makes it
+possible, for example, to consider pin connectivity across hierarchy even though the actual pins may be the same.</p>
+<p>In some netlist tranformations, it may be desirable to modify the contents of a specific instance without modifying
+the contents of another instance that refers to the same definition. Hierarchical references make it possible to
+refer to an instance that should be changed. Once the definition is made unique (see spydrnet.uniquify), then any
+alterations will only affect the originally specified instance. Hierarchical instances also allow for uniqueness
+checking (see HRef.is_unique).</p>
+<p><strong>Hierarchical Reference Representation:</strong></p>
+<p>HRefs represent hierarchy as nodes in a hierarchical tree. The root node is an HRef to the top_instance of a netlist
+with no parent node. Each HRef contains a pointer to its parent HRef (<code class="docutils literal notranslate"><span class="pre">None</span></code> in the case of the root HRef), a
+pointer to the element in the netlist that it references, and a hashcode generated from each referenced object.</p>
+<p>Storing the hashcode with the object saves on re-computation and allows for quick operations in containers that
+require Hashable objects. If the hashcode were not stored with the object, it would have to be recalculated for
+each hash-dependent operation, which could consume a large amount of computational resources depending on the
+hierarchical depth of the node. Parent and item pointers are immutable. The hashcode of a referenced item is also
+immutable. Therefore, the hashcode of a HRef should not change during its existence (even if a netlist
+transformation renders it invalid).</p>
+<p><strong>Use of a Flyweight Pattern:</strong></p>
+<p>Due the the nature of hierarchical references, parent nodes can be referenced more than once. Rather than having
+multiple hierarchical nodes in memory that point to the same hierarchical parent, a flyweight can be used to save
+on memory. A flyweight pattern is used here to share hierarchical parent nodes. See <a class="reference external" href="https://en.wikipedia.org/wiki/Flyweight_pattern">Flyweight pattern</a>.</p>
+<p><strong>Lack of Parent to Child Pointers:</strong></p>
+<p>A parent to child pointer requires a lookup diction from each child item to each child hierarchical node. This
+approach could be taken, but it recreates much of the same information that is available in the original netlist. It
+was therefore decided to leverage the flyweight pattern rather than explicitly manage all of the necessary
+child-item to child-node relationships.</p>
+<dl class="py attribute">
+<dt>
+<code class="sig-name descname">item: the item of the object</code></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt>
+<code class="sig-name descname">parent: the parent of the object</code></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.util.HRef.__init__.html#spydrnet.util.HRef.__init__" title="spydrnet.util.HRef.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HRef.__init__</span></code></a>(item[, parent])</p></td>
+<td><p>initialize the href</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.util.HRef.get_all_hrefs_of_item.html#spydrnet.util.HRef.get_all_hrefs_of_item" title="spydrnet.util.HRef.get_all_hrefs_of_item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HRef.get_all_hrefs_of_item</span></code></a>(item)</p></td>
+<td><p>Get all the href of the itsm</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.util.HRef.get_all_hrefs_of_instances.html#spydrnet.util.HRef.get_all_hrefs_of_instances" title="spydrnet.util.HRef.get_all_hrefs_of_instances"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HRef.get_all_hrefs_of_instances</span></code></a>(instances[, …])</p></td>
+<td><p>Assuming all instances are vaild (meaning their reference belongs in a proper library inside a netlist).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.util.HRef.from_sequence.html#spydrnet.util.HRef.from_sequence" title="spydrnet.util.HRef.from_sequence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HRef.from_sequence</span></code></a>(sequence)</p></td>
+<td><p>Return the href of the sequence</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.util.HRef.from_parent_and_item.html#spydrnet.util.HRef.from_parent_and_item" title="spydrnet.util.HRef.from_parent_and_item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HRef.from_parent_and_item</span></code></a>(parent, item)</p></td>
+<td><p>Return the href with given parent and item</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.util.HRef.is_unique.html#spydrnet.util.HRef.is_unique" title="spydrnet.util.HRef.is_unique"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HRef.is_unique</span></code></a></p></td>
+<td><p>A hierarchical reference must be valid to be unique.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.util.HRef.is_valid.html#spydrnet.util.HRef.is_valid" title="spydrnet.util.HRef.is_valid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HRef.is_valid</span></code></a></p></td>
+<td><p>Checks if the href is valid</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.util.HRef.name.html#spydrnet.util.HRef.name" title="spydrnet.util.HRef.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HRef.name</span></code></a></p></td>
+<td><p>stores the name of the href</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.util.HRef.get_netlists.html#spydrnet.util.HRef.get_netlists" title="spydrnet.util.HRef.get_netlists"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HRef.get_netlists</span></code></a>(…)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_netlists.html#spydrnet.get_netlists" title="spydrnet.get_netlists"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_netlists()</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.util.HRef.get_libraries.html#spydrnet.util.HRef.get_libraries" title="spydrnet.util.HRef.get_libraries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HRef.get_libraries</span></code></a>(…)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_libraries.html#spydrnet.get_libraries" title="spydrnet.get_libraries"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_libraries()</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.util.HRef.get_definitions.html#spydrnet.util.HRef.get_definitions" title="spydrnet.util.HRef.get_definitions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HRef.get_definitions</span></code></a>(…)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_definitions.html#spydrnet.get_definitions" title="spydrnet.get_definitions"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_definitions()</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.util.HRef.get_instances.html#spydrnet.util.HRef.get_instances" title="spydrnet.util.HRef.get_instances"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HRef.get_instances</span></code></a>(…)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_instances.html#spydrnet.get_instances" title="spydrnet.get_instances"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_instances()</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.util.HRef.get_ports.html#spydrnet.util.HRef.get_ports" title="spydrnet.util.HRef.get_ports"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HRef.get_ports</span></code></a>(…)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_ports.html#spydrnet.get_ports" title="spydrnet.get_ports"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_ports()</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.util.HRef.get_pins.html#spydrnet.util.HRef.get_pins" title="spydrnet.util.HRef.get_pins"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HRef.get_pins</span></code></a>(…)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_pins.html#spydrnet.get_pins" title="spydrnet.get_pins"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_pins()</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.util.HRef.get_cables.html#spydrnet.util.HRef.get_cables" title="spydrnet.util.HRef.get_cables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HRef.get_cables</span></code></a>(…)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_cables.html#spydrnet.get_cables" title="spydrnet.get_cables"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_cables()</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.util.HRef.get_wires.html#spydrnet.util.HRef.get_wires" title="spydrnet.util.HRef.get_wires"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HRef.get_wires</span></code></a>(…)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_wires.html#spydrnet.get_wires" title="spydrnet.get_wires"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_wires()</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.util.HRef.get_hinstances.html#spydrnet.util.HRef.get_hinstances" title="spydrnet.util.HRef.get_hinstances"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HRef.get_hinstances</span></code></a>(…)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_hinstances.html#spydrnet.get_hinstances" title="spydrnet.get_hinstances"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_hinstances()</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.util.HRef.get_hports.html#spydrnet.util.HRef.get_hports" title="spydrnet.util.HRef.get_hports"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HRef.get_hports</span></code></a>(…)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_hports.html#spydrnet.get_hports" title="spydrnet.get_hports"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_hports()</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.util.HRef.get_hpins.html#spydrnet.util.HRef.get_hpins" title="spydrnet.util.HRef.get_hpins"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HRef.get_hpins</span></code></a>(…)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_hpins.html#spydrnet.get_hpins" title="spydrnet.get_hpins"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_hpins()</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.util.HRef.get_hcables.html#spydrnet.util.HRef.get_hcables" title="spydrnet.util.HRef.get_hcables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HRef.get_hcables</span></code></a>(…)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_hcables.html#spydrnet.get_hcables" title="spydrnet.get_hcables"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_hcables()</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.util.HRef.get_hwires.html#spydrnet.util.HRef.get_hwires" title="spydrnet.util.HRef.get_hwires"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HRef.get_hwires</span></code></a>(…)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_hwires.html#spydrnet.get_hwires" title="spydrnet.get_hwires"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_hwires()</span></code></a>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="generated/spydrnet.util.HRef.__init__.html" class="btn btn-neutral float-right" title="spydrnet.util.HRef.__init__" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="generated/spydrnet.Wire.get_hwires.html" class="btn btn-neutral float-left" title="spydrnet.Wire.get_hwires" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Brigham Young Universitiy
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

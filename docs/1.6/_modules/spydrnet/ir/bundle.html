@@ -1,0 +1,337 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>spydrnet.ir.bundle &mdash; SpyDrNet 1.6.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery-dataframe.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> SpyDrNet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/index.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../credits.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SpyDrNet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>spydrnet.ir.bundle</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for spydrnet.ir.bundle</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">spydrnet.ir.first_class_element</span> <span class="k">import</span> <span class="n">FirstClassElement</span>
+
+
+<div class="viewcode-block" id="Bundle"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.ir.Bundle.html#spydrnet.ir.Bundle">[docs]</a><span class="k">class</span> <span class="nc">Bundle</span><span class="p">(</span><span class="n">FirstClassElement</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    parent class of ports and cables. Since both of these objects represent arrays of objects they both inherit from</span>
+<span class="sd">    this parent class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_definition&#39;</span><span class="p">,</span> <span class="s1">&#39;_is_downto&#39;</span><span class="p">,</span> <span class="s1">&#39;_is_scalar&#39;</span><span class="p">,</span> <span class="s1">&#39;_lower_index&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Bundle.__init__"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.ir.Bundle.html#spydrnet.ir.Bundle.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_definition</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_downto</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_scalar</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lower_index</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">definition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the definition that this bundle belongs to. The definition is responsible for changing this value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_definition</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_downto</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        get the downto status of the bundle. Downto is False if the right index is higher than the left one. True</span>
+<span class="sd">        otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_downto</span>
+
+    <span class="nd">@is_downto</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">is_downto</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        change the downto value Downto is False if the right index is higher than the left index. True otherwise.</span>
+
+<span class="sd">        parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        value - (boolean) True if the value is downto False if the value is to.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_downto</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">_items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        this function must be overridden in classes which extend this to return either a list of pins or wires</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_scalar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return True if the item is a scalar False otherwise. the item is not a scalar if it has more than one pin or</span>
+<span class="sd">        wire in it. if it has one pin or wire in it it may be a scalar. This mimics vhdl&#39;s downto usage which can</span>
+<span class="sd">        represent single pin arrays ie. std_logic_vector(0 downto 0) which would have a single pin but not be a scalar.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">_items</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">_items</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_scalar</span>
+
+    <span class="nd">@is_scalar</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">is_scalar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        set the scalar status of single item bundles.</span>
+<span class="sd">        The item is not a scalar if it has more than one pin or wire in it. if it has one or zero pins this function</span>
+<span class="sd">        can be used to set the value or wire in it it may be a scalar. This mimics vhdl&#39;s downto usage which can</span>
+<span class="sd">        represent single pin arrays ie. std_logic_vector(0 downto 0) which would have a single pin but not be a scalar.</span>
+
+<span class="sd">        parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        value - (boolean) True if the item is to be a scalar False if it is not. Multi element bundles cannot set</span>
+<span class="sd">        is_scalar to True</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">_items</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">_items</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Cannot set is_scalar to True on a multi-item bundle&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_scalar</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_array</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        this is the logical inverse of is_scalar. see the is_scalar documentation for more insight into the properties</span>
+<span class="sd">        of this value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_scalar</span>
+
+    <span class="nd">@is_array</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">is_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        this is the logical inverse of is_scalar. see the is_scalar documentation for more insight into the properties</span>
+<span class="sd">        of this value</span>
+
+<span class="sd">        parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        value - (boolean) True if the object is an array. False otherwise. Multi element bundles cannot set is_array to</span>
+<span class="sd">        false.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">_items</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">_items</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Cannot set is_array to False on a multi-item bundle&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_scalar</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lower_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        get the value of the lower index of the array. this would be the right index in the case of downto and the left</span>
+<span class="sd">        in the case of to</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lower_index</span>
+
+    <span class="nd">@lower_index</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">lower_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        set the lower index of the array. in the case of to this is the left index and the right in the case of downto</span>
+
+<span class="sd">        parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        value - (int) the lower index value for the bundle.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lower_index</span> <span class="o">=</span> <span class="n">value</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Brigham Young Universitiy
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
