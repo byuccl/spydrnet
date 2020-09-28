@@ -7,7 +7,7 @@ from copy import copy, deepcopy, error
 
 class Wire(Element):
     """
-        Represents a wire object
+    Represents a wire object
     """
     __slots__ = ['_cable', '_pins', '__weakref__']
 
@@ -17,14 +17,12 @@ class Wire(Element):
 
     @property
     def cable(self):
-        """The cable that the wire contains
-        """
+        """The cable that the wire contains"""
         return self._cable
 
     @property
     def pins(self):
-        """The a list of pins that the wire is connected to
-        """
+        """The a list of pins that the wire is connected to"""
         return ListView(self._pins)
 
     @pins.setter
@@ -125,7 +123,7 @@ class Wire(Element):
         pin._wire = None
 
     def _clone_rip_and_replace(self, memo):
-        '''remove from its current environment and place it into the new cloned environment with references held in the memo dictionary'''
+        """Remove from its current environment and place it into the new cloned environment with references held in the memo dictionary"""
         new_pins = list()
         for p in self._pins:
             assert p in memo, "the pin must be cloned"
@@ -134,14 +132,17 @@ class Wire(Element):
         pass
 
     def _clone_rip(self):
-        '''remove from its current environmnet. This will remove all pin pointers and create a floating stand alone instance.'''
+        """Remove from its current environmnet.
+
+        This will remove all pin pointers and create a floating stand alone instance."""
         self._pins = list()
         pass
 
     def _clone(self, memo):
-        '''not api safe clone function
+        """Not api safe clone function
+
         clone leaving all references in tact.
-        the element can then either be ripped or ripped and replaced'''
+        the element can then either be ripped or ripped and replaced"""
         assert self not in memo, "the object should not have been copied twice in this pass"
         c = Wire()
         memo[self] = c
@@ -151,11 +152,13 @@ class Wire(Element):
         return c
 
     def clone(self):
-        '''clone wire in an api safe way. The following properties can be expected from the returned element:
+        """clone wire in an api safe way. 
+
+        The following properties can be expected from the returned element:
          * The wire is not connected to any pins.
          * The wire is orphaned from any cable.
          * No pins are connected to the wire
-         '''
+         """
         c = self._clone(dict())
         c._clone_rip()
         return c

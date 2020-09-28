@@ -37,14 +37,15 @@ class Definition(FirstClassElement):
     @property
     def ports(self):
         """
-        get the ports that are instanced in this definition
+        Get the ports that are instanced in this definition
         """
         return ListView(self._ports)
 
     @ports.setter
     def ports(self, value):
-        """
-        Reorder ports that are instanced in this definition. Use remove_port and add_port to remove and add ports
+        """Reorder ports that are instanced in this definition. 
+
+        Use remove_port and add_port to remove and add ports
         respectively
 
         parameters
@@ -61,7 +62,7 @@ class Definition(FirstClassElement):
     @property
     def cables(self):
         """
-        get the cables that are instanced in this definition
+        Get the cables that are instanced in this definition.
         """
         return ListView(self._cables)
 
@@ -85,14 +86,14 @@ class Definition(FirstClassElement):
     @property
     def children(self):
         """
-        return a list of all instances instantiated in this definition
+        Return a list of all instances instantiated in this definition
         """
         return ListView(self._children)
 
     @children.setter
     def children(self, value):
         """
-        reorder the list of instances instantiated in this definition use add_child and remove_child to add or remove
+        Reorder the list of instances instantiated in this definition use add_child and remove_child to add or remove
         instances to or from the definition
 
         parameters
@@ -109,7 +110,7 @@ class Definition(FirstClassElement):
     @property
     def references(self):
         """
-        get a list of all the instances of this definition
+        Get a list of all the instances of this definition
         """
         return SetView(self._references)
 
@@ -126,15 +127,16 @@ class Definition(FirstClassElement):
 
     def create_port(self):
         """
-        create a port, add it to the definition, and return that port
+        Create a port, add it to the definition, and return that port
         """
         port = Port()
         self.add_port(port)
         return port
 
     def add_port(self, port, position=None):
-        """
-        add a preexisting port to the definition. this port must not be a member of any definition
+        """Add a preexisting port to the definition. 
+
+        This port must not be a member of any definition
 
         parameters
         ----------
@@ -156,8 +158,9 @@ class Definition(FirstClassElement):
                 reference._pins[pin] = OuterPin(reference, pin)
 
     def remove_port(self, port):
-        """
-        remove a port from the definition. This port must be a member of the definition in order to be removed
+        """Remove a port from the definition. 
+
+        his port must be a member of the definition in order to be removed
 
         parameters
         ----------
@@ -169,8 +172,9 @@ class Definition(FirstClassElement):
         self._ports.remove(port)
 
     def remove_ports_from(self, ports):
-        """
-        remove a set of ports from the definition. All these ports must be included in the definition
+        """Remove a set of ports from the definition.
+
+        All these ports must be included in the definition
 
         parameters
         ----------
@@ -189,7 +193,7 @@ class Definition(FirstClassElement):
 
     def _remove_port(self, port):
         """
-        internal function to dissociate the port from the definition
+        Internal function to dissociate the port from the definition
 
         Parameters
         ----------
@@ -210,15 +214,16 @@ class Definition(FirstClassElement):
 
     def create_child(self):
         """
-        create an instance to add to the definition, add it, and return the instance.
+        Create an instance to add to the definition, add it, and return the instance.
         """
         instance = Instance()
         self.add_child(instance)
         return instance
 
     def add_child(self, instance, position=None):
-        """
-        Add an existing instance to the definition. This instance must not already be included in a definition
+        """Add an existing instance to the definition. 
+
+        This instance must not already be included in a definition
 
         parameters
         ----------
@@ -237,8 +242,9 @@ class Definition(FirstClassElement):
         instance._parent = self
 
     def remove_child(self, child):
-        """
-        remove an instance from the definition. The instance must be a member of the definition already
+        """Remove an instance from the definition. 
+
+        The instance must be a member of the definition already
 
         parameters
         ----------
@@ -250,8 +256,9 @@ class Definition(FirstClassElement):
         self._children.remove(child)
 
     def remove_children_from(self, children):
-        """
-        remove a set of instances from the definition. All instances must be members of the definition
+        """Remove a set of instances from the definition. 
+
+        All instances must be members of the definition
 
         parameters
         ----------
@@ -262,7 +269,8 @@ class Definition(FirstClassElement):
             excluded_children = children
         else:
             excluded_children = set(children)
-        assert all(x.parent == self for x in excluded_children), "Some children are not parented by the definition"
+        assert all(
+            x.parent == self for x in excluded_children), "Some children are not parented by the definition"
         included_children = list()
         for child in self._children:
             if child not in excluded_children:
@@ -273,22 +281,21 @@ class Definition(FirstClassElement):
 
     def _remove_child(self, child):
         """
-        internal function for dissociating a child instance from the definition.
+        Internal function for dissociating a child instance from the definition.
         """
         global_callback._call_definition_remove_child(self, child)
         child._parent = None
 
     def create_cable(self):
-        """
-        create a cable, add it to the definition, and return the cable.
-        """
+        """Create a cable, add it to the definition, and return the cable."""
         cable = Cable()
         self.add_cable(cable)
         return cable
 
     def add_cable(self, cable, position=None):
-        """
-        add a cable to the definition. The cable must not already be a member of another definition.
+        """Add a cable to the definition. 
+
+        The cable must not already be a member of another definition.
 
         parameters
         ----------
@@ -307,8 +314,9 @@ class Definition(FirstClassElement):
         cable._definition = self
 
     def remove_cable(self, cable):
-        """
-        remove a cable from the definition. The cable must be a member of the definition.
+        """Remove a cable from the definition. 
+
+        The cable must be a member of the definition.
 
         parameters
         ----------
@@ -320,8 +328,9 @@ class Definition(FirstClassElement):
         self._cables.remove(cable)
 
     def remove_cables_from(self, cables):
-        """
-        remove a set of cables from the definition. The cables must be members of the definition
+        """Remove a set of cables from the definition.
+
+        The cables must be members of the definition
 
         parameters
         ----------
@@ -332,7 +341,8 @@ class Definition(FirstClassElement):
             excluded_cables = cables
         else:
             excluded_cables = set(cables)
-        assert all(x.definition == self for x in excluded_cables), "Some cables are not included in the definition"
+        assert all(
+            x.definition == self for x in excluded_cables), "Some cables are not included in the definition"
         included_cables = list()
         for cable in self._cables:
             if cable not in excluded_cables:
@@ -342,53 +352,58 @@ class Definition(FirstClassElement):
         self._cables = included_cables
 
     def _remove_cable(self, cable):
-        """
-        dissociate the cable from this definition. This function is internal and should not be called.
+        """Dissociate the cable from this definition. 
+
+        This function is internal and should not be called.
         """
         global_callback._call_definition_remove_cable(self, cable)
         cable._definition = None
 
     def _clone_rip_and_replace(self, memo):
-        '''if an instance that is a reference of this definition was cloned then update the list of references of the definition.
-        for each of the children instances, we should also update the reference to refer to any cloned dictionaries
-        inner pins now also need to be updated with new inner pins for each of the definitions that was cloned.'''
+        """Ff an instance that is a reference of this definition was cloned then update the list of references of the definition.
+
+        For each of the children instances, we should also update the reference to refer to any cloned dictionaries
+        inner pins now also need to be updated with new inner pins for each of the definitions that was cloned."""
         new_references = set()
         for instance in self._references:
-            #if the instance was cloned then replace it in our references also update its reference
+            # if the instance was cloned then replace it in our references also update its reference
             if instance in memo:
                 new_instance = memo[instance]
                 new_references.add(new_instance)
             else:
                 new_references.add(instance)
         self._references = new_references
-        
+
         for instance in self._children:
             if instance.reference in memo:
                 instance._reference = memo[instance.reference]
                 instance._clone_rip_and_replace_in_library(memo)
 
     def _clone_rip(self):
-        '''remove from its current environmnet. add all instances to their appropriate reference lists.'''   
+        """Remove from its current environmnet. 
+
+        add all instances to their appropriate reference lists.
+        """
         for instance in self._children:
             instance._reference._references.add(instance)
         self._references = set()
 
-
     def _clone(self, memo):
-        '''not api safe clone function
+        """Not api safe clone function
+
         clone leaving all references in tact.
-        the element can then either be ripped or ripped and replaced'''
+        the element can then either be ripped or ripped and replaced"""
         assert self not in memo, "the object should not have been copied twice in this pass"
         c = Definition()
         memo[self] = c
         c._data = deepcopy(self._data)
         c._library = None
-        
+
         new_ports = list()
         for p in self.ports:
             new_ports.append(p._clone(memo))
         c._ports = new_ports
-        
+
         new_cables = list()
         for ca in self.cables:
             new_cables.append(ca._clone(memo))
@@ -398,13 +413,13 @@ class Definition(FirstClassElement):
         for ch in self.children:
             new_children.append(ch._clone(memo))
         c._children = new_children
-        
+
         c._references = copy(self._references)
-        
+
         for port in c._ports:
             port._definition = c
             port._clone_rip_and_replace(memo)
-        
+
         for cable in c._cables:
             cable._definition = c
             cable._clone_rip_and_replace(memo)
@@ -416,14 +431,15 @@ class Definition(FirstClassElement):
         return c
 
     def clone(self):
-        """
-        Clone the definition in an api safe way.
+        """Clone the definition in an api safe way.
+
+
         The cloned object will have the following properties
-        
+
          * the definition will be orphaned and will not belong to any library
          * each of the sub elements of the definition will also be cloned and the connection structure between them will be updated.
          * the cloned instances will still point to the reference to which the pointed before. They will also be members of the references list of those definitions.
-         
+
         """
         c = self._clone(dict())
         c._clone_rip()

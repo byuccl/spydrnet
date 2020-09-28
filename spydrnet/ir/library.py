@@ -36,8 +36,7 @@ class Library(FirstClassElement):
 
     @definitions.setter
     def definitions(self, value):
-        """
-        Set the definitions to a new reordered set of definitions.
+        """Set the definitions to a new reordered set of definitions.
 
         This function cannot be used to add or remove definitions.
 
@@ -54,16 +53,13 @@ class Library(FirstClassElement):
         self._definitions = value_list
 
     def create_definition(self):
-        """
-        Create a definition, add it to the library, and return the definition.
-        """
+        """Create a definition, add it to the library, and return the definition."""
         definition = Definition()
         self.add_definition(definition)
         return definition
 
     def add_definition(self, definition, position=None):
-        """
-        Add an existing definition to the library.
+        """Add an existing definition to the library.
 
         The definition must not belong to a library including this one.
 
@@ -85,8 +81,7 @@ class Library(FirstClassElement):
         definition._library = self
 
     def remove_definition(self, definition):
-        """
-        Remove the given definition from the library.
+        """Remove the given definition from the library.
 
         Parameters
         ----------
@@ -99,8 +94,9 @@ class Library(FirstClassElement):
         self._definitions.remove(definition)
 
     def remove_definitions_from(self, definitions):
-        """
-        Remove a set of definitions from the library. All definitions provided must be in the library.
+        """Remove a set of definitions from the library.
+
+        All definitions provided must be in the library.
 
         Parameters
         ----------
@@ -123,21 +119,20 @@ class Library(FirstClassElement):
         self._definitions = included_definitions
 
     def _remove_definition(self, definition):
-        """
-        internal function to dissociate a definition from the library
-        """
+        """Internal function to dissociate a definition from the library"""
         global_callback._call_library_remove_definition(self, definition)
         definition._library = None
 
-
     def _clone_rip_and_replace(self, memo):
         """Remove from its current environment and place it into the new cloned environment with references held in the memo dictionary"""
-        pass #this function will need to call rip and replace in library on each of the definitions when called from the netlist.
+        pass  # this function will need to call rip and replace in library on each of the definitions when called from the netlist.
         for definition in self._definitions:
             definition._clone_rip_and_replace(memo)
 
     def _clone_rip(self, memo):
-        """remove from its current environmnet. This will remove all pin pointers and create a floating stand alone instance."""
+        """Remove from its current environmnet. 
+
+        This will remove all pin pointers and create a floating stand alone instance."""
         # references lists of definitions need to be vacated except those that were cloned.
         for definition in self._definitions:
             new_references = set()
@@ -146,22 +141,21 @@ class Library(FirstClassElement):
                     new_references.add(ref)
             for instance in definition._children:
                 instance._reference._references.add(instance)
-                
+
             definition._references = new_references
 
-
     def _clone(self, memo):
-        """
-        Not api safe clone function
+        """Not api safe clone function.
+
         clone leaving all references in tact.
-        the element can then either be ripped or ripped and replaced
+        The element can then either be ripped or ripped and replaced
         """
         assert self not in memo, "the object should not have been copied twice in this pass"
         c = Library()
         memo[self] = c
         c._netlist = None
         c._data = deepcopy(self._data)
-        
+
         new_definitions = list()
         for definition in self._definitions:
             new_definitions.append(definition._clone(memo))
@@ -173,16 +167,15 @@ class Library(FirstClassElement):
         return c
 
     def clone(self):
-        """
-        Clone the library in an API safe manner.
+        """Clone the library in an API safe manner.
 
         The following describes the structure of the returned object:
-        
+
          * the instances that pointed to reference definitions within the library will have updated references
          * the instances that pointed to reference definitions outside the library will maintain their definitions
          * the references lists (of definitions) both inside and outsde the library will be updated to reflect the change
          * all definitions are cloned within the library.
-         
+
          """
         memo = dict()
         c = self._clone(memo)

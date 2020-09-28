@@ -8,8 +8,7 @@ from copy import deepcopy, copy, error
 
 
 class Netlist(FirstClassElement):
-    """
-    Represents a netlist object.
+    """Represents a netlist object.
 
     Contains a top level instance and libraries
     """
@@ -22,11 +21,9 @@ class Netlist(FirstClassElement):
         _call_create_netlist(self)
 
     def compose(self, *args, **kwargs):
-        """
-        compose(filename)
+        """Compose a netlist into a file format.
 
-        Compose a netlist into a file format.
-
+        Compose(filename).
         Shortcut to :func:`~spydrnet.compose`.
         """
         from spydrnet.composers import compose
@@ -34,15 +31,12 @@ class Netlist(FirstClassElement):
 
     @property
     def libraries(self):
-        """
-        Get a list of all libraries included in the netlist.
-        """
+        """Get a list of all libraries included in the netlist."""
         return ListView(self._libraries)
 
     @libraries.setter
     def libraries(self, value):
-        """
-        Set the libraries.
+        """Set the libraries.
 
         This function can only be used to reorder the libraries. Use the remove_library and
         add_library functions to add and remove libraries.
@@ -60,8 +54,7 @@ class Netlist(FirstClassElement):
 
     @property
     def top_instance(self):
-        """
-        Get the top instance in the netlist.
+        """Get the top instance in the netlist.
 
         Returns
         -------
@@ -73,8 +66,7 @@ class Netlist(FirstClassElement):
 
     @top_instance.setter
     def top_instance(self, instance):
-        """
-        Sets the top instance of the design.
+        """Sets the top instance of the design.
 
         The instance must not be null and should probably come from this netlist
 
@@ -91,17 +83,14 @@ class Netlist(FirstClassElement):
         self._top_instance = instance
 
     def create_library(self):
-        """
-        Create a library and add it to the netlist and return that library.
-        """
+        """Create a library and add it to the netlist and return that library."""
 
         library = Library()
         self.add_library(library)
         return library
 
     def add_library(self, library, position=None):
-        """
-        Add an already existing library to the netlist.
+        """Add an already existing library to the netlist.
 
         This library should not belong to another netlist. Use
         remove_library from other netlists before adding
@@ -124,8 +113,7 @@ class Netlist(FirstClassElement):
         library._netlist = self
 
     def remove_library(self, library):
-        """
-        Removes the given library if it is in the netlist
+        """Removes the given library if it is in the netlist
 
         Parameters
         ----------
@@ -138,8 +126,7 @@ class Netlist(FirstClassElement):
         self._libraries.remove(library)
 
     def remove_libraries_from(self, libraries):
-        """
-        Removes all the given libraries from the netlist.
+        """Removes all the given libraries from the netlist.
 
         All libraries must be in the netlist.
 
@@ -164,16 +151,12 @@ class Netlist(FirstClassElement):
         self._libraries = included_libraries
 
     def _remove_library(self, library):
-        """
-        Internal function which will separate a particular libraries binding from the netlist.
-        """
+        """Internal function which will separate a particular libraries binding from the netlist."""
         global_callback._call_netlist_remove_library(self, library)
         library._netlist = None
 
     def _clone_rip(self, memo):
-        """
-        Need to remove any extraneous references to floating, no parent instances
-        """
+        """Need to remove any extraneous references to floating, no parent instances"""
         for lib in self._libraries:
             for defin in lib._definitions:
                 new_ref = set()
@@ -183,8 +166,7 @@ class Netlist(FirstClassElement):
                 defin._references = new_ref
 
     def _clone(self, memo):
-        """
-        Clone leaving all references in tact.
+        """Clone leaving all references in tact.
 
         The element can then either be ripped or ripped and replaced.
         """
@@ -215,8 +197,7 @@ class Netlist(FirstClassElement):
         return c
 
     def clone(self):
-        """
-        API safe clone on a netlist.
+        """API safe clone on a netlist.
 
         This clone function should act just the way you would expect
         All references are internal to the netlist that has been cloned.
