@@ -218,14 +218,16 @@ class Port(Bundle):
         return c
 
     def clone(self):
-        '''
+        """
         Clone the port in an api safe way.
         The following rules will be observed:
+        
          * all the pins will be disconnected from wires
          * the port will be orphaned
          * all pins will belong to the returned port
          * direction, downto, is_scalar, lower_index will all be maintained
-         '''
+         
+        """
         c = self._clone(dict())
         c._clone_rip()
         return c

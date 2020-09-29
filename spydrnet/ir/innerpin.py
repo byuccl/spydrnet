@@ -39,12 +39,15 @@ class InnerPin(Pin):
         return c
 
     def clone(self):
-        ''' clone the inner pin in an api safe way
+        """
+        Clone the inner pin in an api safe way
         the following conditions will be met:
+        
          * the inner pin will be orphaned from any ports
          * the pin will not be connected to any wires
          * the pin will not be referenced to by any wires or outer pins
-         '''
+
+        """
         c = self._clone(dict())
         c._clone_rip()
         return c

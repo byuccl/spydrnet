@@ -77,12 +77,14 @@ class OuterPin(Pin):
         return c
 
     def clone(self):
-        '''clone the pin in an api safe way
+        """
+        Clone the pin in an api safe way
         the following conditions will be met with the returned outer pin:
+        
          * the pin will not be connected to any wires
          * the pin will be orphaned from any instance
          * the pin will not be connected to any inner pins
-         '''
+        """
         c = self._clone(dict())
         c._clone_rip()
         return c

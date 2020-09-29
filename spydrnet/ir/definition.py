@@ -115,7 +115,9 @@ class Definition(FirstClassElement):
 
     def is_leaf(self):
         """
-        check to see if this definition represents a leaf cell. Leaf cells are cells with no children instances or no
+        Check to see if this definition represents a leaf cell.
+
+        Leaf cells are cells with no children instances or no
         children cables. Blackbox cells are considered leaf cells as well as direct pass through cells with cables only
         """
         if len(self._children) > 0 or len(self._cables) > 0:
@@ -414,13 +416,15 @@ class Definition(FirstClassElement):
         return c
 
     def clone(self):
-        '''
+        """
         Clone the definition in an api safe way.
         The cloned object will have the following properties
+        
          * the definition will be orphaned and will not belong to any library
          * each of the sub elements of the definition will also be cloned and the connection structure between them will be updated.
          * the cloned instances will still point to the reference to which the pointed before. They will also be members of the references list of those definitions.
-         '''
+         
+        """
         c = self._clone(dict())
         c._clone_rip()
         return c

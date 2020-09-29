@@ -25,6 +25,9 @@ def _parse(filename):
     if extension in [".edf", ".edif"]:
         from spydrnet.parsers.edif.parser import EdifParser
         parser = EdifParser.from_filename(filename)
+    elif extension in [".v", ".vh"]:
+        from spydrnet.parsers.verilog.parser import VerilogParser
+        parser = VerilogParser.from_filename(filename)
     else:
         raise RuntimeError("Extension {} not recognized.".format(extension))
     parser.parse()
