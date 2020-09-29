@@ -1,3 +1,10 @@
+SpyDrNet 1.6.0
+--------------
+September 24, 2020
+
+* Fixed minor issue with verilog parser composer access
+* Update Documentation and its organization
+
 SpyDrNet 1.5.0
 --------------
 September 1, 2020
