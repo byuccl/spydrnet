@@ -24,15 +24,11 @@ a module. VHDL refers to a definition as an entity. EDIF refers to a definition 
 framework has a different name, the functioning role of a definition is virtually the same. A definition defines the 
 interface and contents of a component within a netlist.
 
-provide include the concept of an instance. An instance
-is an instantiation of a definition. Oh I am having such a hard time helping people understand what it is I am trying to
-say. I am having a hard time
+An instance is an instantiation of a definition.
 
-Hierarchcy organizes larger netlists into 
+Hierarchy organizes larger netlists into 
 a collection of higher-level and lower-level definitions of smaller netlists. Higher-level definitions instance 
 lower-level definitions.
-
-This view is most likely familiar The top level instance is 
 
 Installation
 ------------
