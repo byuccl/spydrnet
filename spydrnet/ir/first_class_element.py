@@ -30,21 +30,17 @@ class FirstClassElement(Element):
     __slots__ = ['_data', '__weakref__']
 
     def __init__(self):
-        """
-        Initialize an element with an empty data dictionary.
-        """
+        """Initialize an element with an empty data dictionary."""
         self._data = dict()
 
     @property
     def data(self):
-        """data stores information about the element
-        """
+        """Data stores information about the element"""
         return DictView(self._data)
 
     @property
     def name(self):
-        """The name of this element
-        """
+        """The name of this element"""
         return self._data.get(".NAME", None)
 
     @name.setter
@@ -77,9 +73,7 @@ class FirstClassElement(Element):
         self._data.__setitem__(sys.intern(key), value)
 
     def __delitem__(self, key):
-        """ delete the item from the data structure
-
-        """
+        """ delete the item from the data structure"""
         global_callback._call_dictionary_delete(self, key)
         self._data.__delitem__(key)
 

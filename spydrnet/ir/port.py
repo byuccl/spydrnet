@@ -10,14 +10,15 @@ from enum import Enum
 
 
 class Port(Bundle):
-    '''
-    Located on the inside of a definition. Ports contain information about the quantity and directon of pins that go into and out of the defined struture when instanced.
-    '''
+    """
+    Located on the inside of a definition.
+
+    Ports contain information about the quantity and directon of pins that go into and out of the defined struture when instanced.
+    """
     __slots__ = ['_direction', '_pins']
 
     class Direction(Enum):
-        """
-        Define the possible directions for a given port
+        """Define the possible directions for a given port.
 
         Possible Directions are:
 
@@ -29,33 +30,33 @@ class Port(Bundle):
         OUT = 3
 
     def __init__(self):
-        """
-        setup an empty port
-        """
+        """Setup an empty port"""
         super().__init__()
         self._direction = self.Direction.UNDEFINED
         self._pins = list()
         _call_create_port(self)
 
-
     def _items(self):
-        '''overrides the _items function in the bundles class. For ports, pins are returned'''
+        """Overrides the _items function in the bundles class. For ports, pins are returned"""
         return self._pins
 
     @property
     def direction(self):
-        '''get the direction of the port. This will be a variable of type Port.Direction'''
+        """Gets the direction of the port.
+
+        This will be a variable of type Port.Direction
+        """
         return self._direction
 
     @direction.setter
     def direction(self, value):
-        '''set the direction of the port.
+        """Set the direction of the port.
 
         parameters
         ----------
 
         value - (Port.Direction or int or str) when a Port.Direction is passed in it will set the port accordingly. when an int is passed in it will be 0: UNDEFINED, 1: INOUT, 2: IN, 3: OUT. if a string is passed in it is case insensitively compared with the names and assigned accordingly
-        '''
+        """
         if isinstance(value, self.Direction):
             self._direction = value
         elif isinstance(value, int):
@@ -70,22 +71,25 @@ class Port(Bundle):
                     self._direction = direction
                     break
         else:
-            raise TypeError("Type {} cannot be assigned to direction".format(type(value)))
+            raise TypeError(
+                "Type {} cannot be assigned to direction".format(type(value)))
 
     @property
     def pins(self):
-        '''get a list of the pins that are in the port'''
+        """Get a list of the pins that are in the port"""
         return ListView(self._pins)
 
     @pins.setter
     def pins(self, value):
-        '''this function can set the pins for the port, but it can only be used to reorder the pins in the port.
+        """This function can set the pins for the port, but it can only be used to reorder the pins in the port.
         It cannot be used to add or remove pins from the port. to do this use the add_pin or remove_pin functions instead
 
         parameters
         ----------
 
-        value - (List of InnerPin objects) the reordered pins'''
+        value - (List of InnerPin objects) the reordered pins
+
+        """
         value_list = list(value)
         value_set = set(value_list)
         assert len(value_set) == len(value_list) and set(self._pins) == value_set, \
@@ -93,8 +97,7 @@ class Port(Bundle):
         self._pins = value_list
 
     def create_pins(self, pin_count):
-        """
-        create pin_count pins in the given port a downto style syntax is assumed
+        """Create pin_count pins in the given port a downto style syntax is assumed.
 
         Parameters
         ----------
@@ -106,8 +109,8 @@ class Port(Bundle):
         return self.pins[-pin_count:]
 
     def create_pin(self):
-        """
-        create a pin and add it to the port.
+        """Create a pin and add it to the port.
+
         return:
         the inner_pin created
         """
@@ -119,8 +122,7 @@ class Port(Bundle):
         return pin
 
     def add_pin(self, pin, position=None):
-        """
-        add a pin to the port at the given position.
+        """Add a pin to the port at the given position.
 
         parameters
         ----------
@@ -140,28 +142,30 @@ class Port(Bundle):
         pin._port = self
 
     def remove_pin(self, pin):
-        '''
-        remove the given pin from the port. The pin must belong to the port in order to be removed. Wires are disconnected from the pin that is removed.
+        """Remove the given pin from the port.
+
+        The pin must belong to the port in order to be removed. Wires are disconnected from the pin that is removed.
 
         parameters
         ----------
 
         pin - (Pin) a pin to be removed from the port.
-        '''
+        """
         assert pin.port == self, "Pin does not belong to this port."
         self._remove_pin(pin)
         self._pins.remove(pin)
 
     def remove_pins_from(self, pins):
-        '''
-        remove several pins from the port at once. The wires are disconnected from the pins that are removed.
+        """Remove several pins from the port at once. 
+
+        The wires are disconnected from the pins that are removed.
 
         parameters
         ----------
 
         pins - (List of Pin objects) a list of all pins to be removed from the port.
 
-        '''
+        """
         if isinstance(pins, set):
             exclude_pins = pins
         else:
@@ -173,7 +177,8 @@ class Port(Bundle):
         self._pins = list(x for x in self._pins if x not in exclude_pins)
 
     def _remove_pin(self, pin):
-        '''internal pin removal function. disconnects the wires from the pin and remvoes all the pins reference to other pins.'''
+        """Internal pin removal function. 
+        Disconnects the wires from the pin and remvoes all the pins reference to other pins."""
         global_callback._call_port_remove_pin(self, pin)
         if self.definition:
             for reference in self.definition.references:
@@ -187,19 +192,23 @@ class Port(Bundle):
         pin._port = None
 
     def _clone_rip_and_replace(self, memo):
-        '''remove from its current environment and place it into the new cloned environment with references held in the memo dictionary'''
+        """Remove from its current environment and place it into the new cloned environment with references held in the memo dictionary"""
         for p in self._pins:
             p._clone_rip_and_replace(memo)
 
     def _clone_rip(self):
-        '''remove from its current environmnet. This will remove all pin pointers and create a floating stand alone instance.'''   
+        """Remove from its current environmnet.
+
+        This will remove all pin pointers and create a floating stand alone instance."""
         for p in self._pins:
             p._clone_rip()
 
     def _clone(self, memo):
-        '''not api safe clone function
-        clone leaving all references in tact.
-        the element can then either be ripped or ripped and replaced'''
+        """Not api safe clone function.
+
+        Clone leaving all references in tact.
+        The element can then either be ripped or ripped and replaced.
+        """
         assert self not in memo, "the object should not have been copied twice in this pass"
         c = Port()
         memo[self] = c
@@ -218,15 +227,15 @@ class Port(Bundle):
         return c
 
     def clone(self):
-        """
-        Clone the port in an api safe way.
+        """Clone the port in an api safe way.
+
         The following rules will be observed:
-        
+
          * all the pins will be disconnected from wires
          * the port will be orphaned
          * all pins will belong to the returned port
          * direction, downto, is_scalar, lower_index will all be maintained
-         
+
         """
         c = self._clone(dict())
         c._clone_rip()

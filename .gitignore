@@ -115,4 +115,7 @@ temp/
 
 # auto_examples_folder
 docs/source/auto_examples/
+
+# macOS Files
 **/.DS_Store
+
