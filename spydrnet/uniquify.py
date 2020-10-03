@@ -42,7 +42,7 @@ def _is_unique(instance):
 
 
 def uniquify(netlist):
-    """make the instances in the netlist unique
+    """Make the instances in the netlist unique
     uniqification is done in place. Each instance will correspond to exactly one definition and each definition will correspond to exactly one instance with the exception of leaf cells.
     Leaf cells are can be instanced unlimited numbers of times. Any netlist elements that are not instantiated by the top instance will not be modified and may retain duplicate instances
     Currently there is no guarantee that the original definition names will be maintained, but it is guaranteed that they will be unique within the scope of all hardware that is below the top instance.
