@@ -59,7 +59,7 @@ Nelist is an intermediate representation (IR). We are able to modify the netlist
 
     >>> netlist.top_instance.name
 
-This creates a new library and the library is added to the nestlist. For the entire documentation of SpyDrNet, please refer :ref:`sec:api_spec`
+This creates a new library and the library is added to the nestlist. For the entire documentation of SpyDrNet, please refer :ref:`api_summary`
 
     >>> netlist.create_library()
 
@@ -85,7 +85,7 @@ Creating from scratch
 
 We can also create the hardware design from scratch
 
-    >>>nelist = sdn.Netlist('myNetlist')
+    >>> nelist = sdn.Netlist('myNetlist')
 
 Below is a list of all the intermediate representations (IR) used by SpyDrNet. See :ref:`sec:api_spec` for API specification.
 
@@ -134,4 +134,4 @@ SpyDrNet's intermediate representation of netlists (IR) is what sets it apart fo
     Wires are grouped inside cables and are elements that help hold connection information between single pins on instances within a definition and within it's ports.
 
    
-More detail on the IR is provided in :ref:`sec:api_spec`.
+More detail on the IR is provided in :ref:`api_summary`.
