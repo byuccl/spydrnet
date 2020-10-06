@@ -48,12 +48,15 @@ In this tutorial, we will use 'sdn' as a shorcut for SpyDrNet to manipulate all 
 Parsing
 -------
 
-SpyDrNet currently only supports the parsing and composing for EDIF file
+SpyDrNet currently supports the parsing and composing for EDIF file and Verilog file
 
-To parse a file, enter the following command
+To parse a file, enter the following command for EDIF file
 
     >>> netlist = sdn.parse('<netlist_filename>.edf')
 
+Or the following for Verilog file
+
+    >>> netlist = sdn.parse('<netlist_filename>.v')
 
 Nelist is an intermediate representation (IR). We are able to modify the netlist and add new elements. The following code returns the name of the top isntance of the netlist:
 
