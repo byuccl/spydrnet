@@ -8,9 +8,28 @@ from copy import deepcopy, copy, error
 
 
 class Netlist(FirstClassElement):
+    # TODO: have to update this documentation once the shortcuts are in place
     """Represents a netlist object.
 
     Contains a top level instance and libraries
+
+    Examples
+    --------
+    After importing the spydrnet package, we can initialize the netlist from scratch
+
+    >>> import spydrnet as sdn
+    >>> netlist = sdn.Netlist()
+
+    We can also initalize an top instance for the netlist. For more info: :ref:`Instance`
+
+    >>> top_instance = sdn.Instance()
+    >>> netlist.top_instance = top_instance
+
+    This is the way to set up a top level definition for the netlist
+
+    >>> top_definition = sdn.Definition()
+    >>> top_instance.reference = top_definition
+    >>> netlist.top_instance = top_instance
     """
     __slots__ = ['_libraries', '_top_instance']
 

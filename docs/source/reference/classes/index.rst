@@ -47,6 +47,12 @@ Basic object types
    wire
    href
 
+.. currentmodule:: spydrnet
+.. autosummary::
+   :toctree: generated/
+
+   parse
+
 The following three classes are the classes from which the above elements inherit. They are included here for completeness of
 documentation and can be used if needed. if the above types will suffice it may be simpler to use them.
 
