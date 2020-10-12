@@ -162,3 +162,10 @@ class Wire(Element):
         c = self._clone(dict())
         c._clone_rip()
         return c
+
+    def index(self):
+        """if this wire is in a cable, returns the index number of the wire in the parent cable"""
+
+        assert self.cable is not None, "the wire does not belong to a cable"
+
+        return self.cable.wires.index(self)

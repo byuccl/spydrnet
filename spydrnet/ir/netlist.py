@@ -5,6 +5,7 @@ from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
 from spydrnet.global_state.global_callback import _call_create_netlist
 from copy import deepcopy, copy, error
+from spydrnet.ir.definition import Definition
 
 
 class Netlist(FirstClassElement):
@@ -33,11 +34,28 @@ class Netlist(FirstClassElement):
     """
     __slots__ = ['_libraries', '_top_instance']
 
-    def __init__(self):
+    def __init__(self, name=None, properties=None):
+        """
+        creates an empty object of type netlist
+
+        parameters
+        ----------
+
+        name - (str) the name of this instance
+        properties - (dict) the dictionary which holds the properties
+        """
         super().__init__()
         self._libraries = list()
         self._top_instance = None
         _call_create_netlist(self)
+
+        if name != None:
+            self.name = name
+        if properties != None:
+            assert isinstance(
+                properties, dict), "properties must be a dictionary"
+            for key in properties:
+                self[key] = properties[key]
 
     def compose(self, *args, **kwargs):
         """Compose a netlist into a file format.
@@ -91,25 +109,38 @@ class Netlist(FirstClassElement):
 
         Parameters
         ----------
-        instance - (Instance) the instance to set as the top instance.
-
+        instance - (Instance or Definition) the instance to set as the top instance. If a definition is passed into the funciton,
+        creates a new instance with that definition and set it as the top instance.
         """
-        assert instance is None or isinstance(
-            instance, Instance), "Must specify an instance"
+        assert instance is None or isinstance(instance, Instance) or isinstance(
+            instance, Definition), "Must specify an instance"
         global_callback._call_netlist_top_instance(self, instance)
         # TODO: should We have a DRC that makes sure the instance is of a definition contained in netlist? I think no
         #  but I am open to hear other points of veiw.
-        self._top_instance = instance
 
-    def create_library(self):
-        """Create a library and add it to the netlist and return that library."""
+        if isinstance(instance, Definition):
+            top = Instance()
+            top.reference = instance
+            self.top_instance = top
+        else:
+            self._top_instance = instance
 
-        library = Library()
+    def create_library(self, name=None, properties=None):
+        """create a library and add it to the netlist and return that library
+
+        parameters
+        ----------
+
+        name - (str) the name of the library
+        properties - (dict) the dictionary which holds the properties of the library
+        """
+
+        library = Library(name, properties)
         self.add_library(library)
         return library
 
     def add_library(self, library, position=None):
-        """Add an already existing library to the netlist.
+        """add an already existing library to the netlist. 
 
         This library should not belong to another netlist. Use
         remove_library from other netlists before adding

@@ -14,18 +14,36 @@ class Instance(FirstClassElement):
     """
     __slots__ = ['_parent', '_reference', '_pins']
 
-    def __init__(self):
-        """Creates an empty object of type instance"""
+    def __init__(self, name=None, properties=None):
+        """Creates an empty object of type instance.
+
+        parameters
+        ----------
+
+        name - (str) the name of this instance
+        properties - (dict) the dictionary which holds the properties
+        """
         super().__init__()
         self._parent = None
         self._reference = None
         self._pins = dict()
         _call_create_instance(self)
+        if name != None:
+            self.name = name
+        if properties != None:
+            assert isinstance(
+                properties, dict), "properties must be a dictionary"
+            for key in properties:
+                self[key] = properties[key]
 
     @property
     def parent(self):
         """Get the definition that contains this instance"""
         return self._parent
+
+    def test(self):
+
+        return True
 
     @property
     def reference(self):
@@ -146,3 +164,15 @@ class Instance(FirstClassElement):
         c = self._clone(dict())
         c._clone_rip()
         return c
+
+    def is_leaf(self):
+        """Check to see if the definition that this instance contains represents a leaf cell.
+
+        Leaf cells are cells with no children instances or no children cables. 
+        Blackbox cells are considered leaf cells as well as direct pass through cells with cables only
+        """
+        if self._reference is None:
+            return False
+        elif len(self._reference._children) > 0 or len(self._reference._cables) > 0:
+            return False
+        return True

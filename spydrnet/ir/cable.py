@@ -13,11 +13,39 @@ class Cable(Bundle):
     This could be thought of much like vector types in VHDL ie std_logic_vector (7 downto 0)"""
     __slots__ = ['_wires']
 
-    def __init__(self):
-        """Creates a cable with no wires and default values for a bundle."""
+    def __init__(self, name=None, properties=None, is_downto=None, is_scalar=None, lower_index=None):
+        """Create a cable with no wires and default values for a bundle.
+
+        parameters
+        ----------
+
+        name - (str) the name of this instance
+        properties - (dict) the dictionary which holds the properties
+        id_downto - (bool) set the downto status. Downto is False if the right index is higher than the left one, True otherwise
+        is_scalar - (bool) set the scalar status. Return True if the item is a scalar False otherwise.
+        lower_index - (int) get the value of the lower index of the array.
+
+        """
         super().__init__()
         self._wires = list()
         _call_create_cable(self)
+        if name != None:
+            self.name = name
+
+        if is_downto is not None:
+            self.is_downto = is_downto
+
+        if is_scalar is not None:
+            self.is_scalar = is_scalar
+
+        if lower_index is not None:
+            self.lower_index = lower_index
+
+        if properties != None:
+            assert isinstance(
+                properties, dict), "properties must be a dictionary"
+            for key in properties:
+                self[key] = properties[key]
 
     def _items(self):
         """Overrides the bundle _items function to return wires"""

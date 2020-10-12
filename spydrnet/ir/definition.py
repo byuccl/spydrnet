@@ -18,7 +18,16 @@ class Definition(FirstClassElement):
     """
     __slots__ = ['_library', '_ports', '_cables', '_children', '_references']
 
-    def __init__(self):
+    def __init__(self, name=None, properties=None):
+        """
+        creates an empty object of type definition
+
+        parameters
+        ----------
+
+        name - (str) the name of this instance
+        properties - (dict) the dictionary which holds the properties
+        """
         super().__init__()
         self._library = None
         self._ports = list()
@@ -26,6 +35,15 @@ class Definition(FirstClassElement):
         self._children = list()
         self._references = set()
         _call_create_definition(self)
+
+        if name != None:
+            self.name = name
+
+        if properties != None:
+            assert isinstance(
+                properties, dict), "properties must be a dictionary"
+            for key in properties:
+                self[key] = properties[key]
 
     @property
     def library(self):
@@ -125,11 +143,20 @@ class Definition(FirstClassElement):
             return False
         return True
 
-    def create_port(self):
+    def create_port(self, name=None, properties=None, is_downto=None, is_scalar=None, lower_index=None):
+        """Create a port, add it to the definition, and return that port.
+
+        parameters
+        ----------
+
+        name - (str) the name of this instance
+        properties - (dict) the dictionary which holds the properties
+        id_downto - (bool) set the downto status. Downto is False if the right index is higher than the left one, True otherwise
+        is_scalar - (bool) set the scalar status. Return True if the item is a scalar False otherwise.
+        lower_index - (int) get the value of the lower index of the array.
+
         """
-        Create a port, add it to the definition, and return that port
-        """
-        port = Port()
+        port = Port(name, properties, is_downto, is_scalar, lower_index)
         self.add_port(port)
         return port
 
@@ -212,11 +239,16 @@ class Definition(FirstClassElement):
                 outer_pin._inner_pin = None
         port._definition = None
 
-    def create_child(self):
+    def create_child(self, name=None, properties=None):
+        """Create an instance to add to the definition, add it, and return the instance.
+
+        parameters
+        ----------
+
+        name - (str) the name of this instance
+        properties - (dict) the dictionary which holds the properties
         """
-        Create an instance to add to the definition, add it, and return the instance.
-        """
-        instance = Instance()
+        instance = Instance(name, properties)
         self.add_child(instance)
         return instance
 
@@ -286,9 +318,19 @@ class Definition(FirstClassElement):
         global_callback._call_definition_remove_child(self, child)
         child._parent = None
 
-    def create_cable(self):
-        """Create a cable, add it to the definition, and return the cable."""
-        cable = Cable()
+    def create_cable(self, name=None, properties=None, is_downto=None, is_scalar=None, lower_index=None):
+        """Create a cable, add it to the definition, and return the cable.
+
+        parameters
+        ----------
+
+        name - (str) the name of this instance
+        properties - (dict) the dictionary which holds the properties
+        id_downto - (bool) set the downto status. Downto is False if the right index is higher than the left one, True otherwise
+        is_scalar - (bool) set the scalar status. Return True if the item is a scalar False otherwise.
+        lower_index - (int) get the value of the lower index of the array.
+        """
+        cable = Cable(name, properties, is_downto, is_scalar, lower_index)
         self.add_cable(cable)
         return cable
 
@@ -360,7 +402,7 @@ class Definition(FirstClassElement):
         cable._definition = None
 
     def _clone_rip_and_replace(self, memo):
-        """Ff an instance that is a reference of this definition was cloned then update the list of references of the definition.
+        """If an instance that is a reference of this definition was cloned then update the list of references of the definition.
 
         For each of the children instances, we should also update the reference to refer to any cloned dictionaries
         inner pins now also need to be updated with new inner pins for each of the definitions that was cloned."""
