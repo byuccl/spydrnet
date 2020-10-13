@@ -9,7 +9,6 @@ from spydrnet.ir.definition import Definition
 
 
 class Netlist(FirstClassElement):
-    # TODO: have to update this documentation once the shortcuts are in place
     """Represents a netlist object.
 
     Contains a top level instance and libraries
@@ -29,8 +28,7 @@ class Netlist(FirstClassElement):
     This is the way to set up a top level definition for the netlist
 
     >>> top_definition = sdn.Definition()
-    >>> top_instance.reference = top_definition
-    >>> netlist.top_instance = top_instance
+    >>> netlist.top_instance = top_definition
     """
     __slots__ = ['_libraries', '_top_instance']
 

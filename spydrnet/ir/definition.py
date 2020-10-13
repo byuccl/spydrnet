@@ -19,8 +19,7 @@ class Definition(FirstClassElement):
     __slots__ = ['_library', '_ports', '_cables', '_children', '_references']
 
     def __init__(self, name=None, properties=None):
-        """
-        creates an empty object of type definition
+        """Creates an empty object of type definition
 
         parameters
         ----------
@@ -238,6 +237,7 @@ class Definition(FirstClassElement):
                 outer_pin._instance = None
                 outer_pin._inner_pin = None
         port._definition = None
+    # TODO: Ask andrew if he wants to add the shorcut to set the reference of the child to this defintion
 
     def create_child(self, name=None, properties=None):
         """Create an instance to add to the definition, add it, and return the instance.
