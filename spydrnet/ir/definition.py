@@ -218,8 +218,7 @@ class Definition(FirstClassElement):
         self._ports = list(x for x in self._ports if x not in excluded_ports)
 
     def _remove_port(self, port):
-        """
-        Internal function to dissociate the port from the definition
+        """Internal function to dissociate the port from the definition
 
         Parameters
         ----------
