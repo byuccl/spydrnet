@@ -11,6 +11,11 @@ class Instance(FirstClassElement):
 
     Instances are literally instances of definitions and they reside inside definitions.
     Function names have been set to adjust for the potential confusion that could arise because instances both have a parent definition and have definitions which they reference.
+
+
+    :ivar parent: the parent of the object. Parent is the definition of the instance that contains the current instance.
+    :ivar reference: the item of the object. Reference is the definition of the instance that instantiated or defined the current instance.
+
     """
     __slots__ = ['_parent', '_reference', '_pins']
 

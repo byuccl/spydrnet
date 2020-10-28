@@ -261,7 +261,9 @@ class Definition(FirstClassElement):
         To create a child with optional parameters
 
         >>> child_instance = definition.create_child()
-        >>> child_instance.reference = definition2
+        >>> child_instance.reference = reference definition
+
+        The reference of the instance is the definition that initialized this instance.
         """
         instance = Instance(name, properties)
         self.add_child(instance)
