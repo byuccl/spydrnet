@@ -29,6 +29,14 @@ class Netlist(FirstClassElement):
 
     >>> top_definition = sdn.Definition()
     >>> netlist.top_instance = top_definition
+
+    We can initialize a "primatives" and a "work" library this way:
+
+    >>> primitives_library = netlist.create_library()
+    >>> primitives_library['EDIF.identifier'] = 'hdi_primitives'
+
+    >>> work_library = netlist.create_library()
+    >>> work_library['EDIF.identifier'] = 'work'
     """
     __slots__ = ['_libraries', '_top_instance']
 
@@ -124,7 +132,7 @@ class Netlist(FirstClassElement):
             self._top_instance = instance
 
     def create_library(self, name=None, properties=None):
-        """create a library and add it to the netlist and return that library
+        """Create a library and add it to the netlist and return that library
 
         parameters
         ----------

@@ -236,16 +236,32 @@ class Definition(FirstClassElement):
                 outer_pin._instance = None
                 outer_pin._inner_pin = None
         port._definition = None
-    # TODO: Ask andrew if he wants to add the shorcut to set the reference of the child to this defintion
 
+    # TODO: Ask andrew if he wants to add the shorcut to set the reference of the child to this defintion
     def create_child(self, name=None, properties=None):
         """Create an instance to add to the definition, add it, and return the instance.
+
+        This functions calls the add_child funciton.
 
         parameters
         ----------
 
         name - (str) the name of this instance
         properties - (dict) the dictionary which holds the properties
+
+        Example
+        -------
+
+        To create a child:
+
+        >>> definition = sdn.Definition()
+        >>> child_instance = definition.create_child()
+        >>> child_instance.reference = definition
+
+        To create a child with optional parameters
+
+        >>> child_instance = definition.create_child()
+        >>> child_instance.reference = definition2
         """
         instance = Instance(name, properties)
         self.add_child(instance)
@@ -254,7 +270,10 @@ class Definition(FirstClassElement):
     def add_child(self, instance, position=None):
         """Add an existing instance to the definition. 
 
-        This instance must not already be included in a definition
+        This instance must not already be included in a definition.
+        It add the instance as a child into the given position.
+        Append to the end of the list if no position is given.
+        It will set the parent of the instance to this definition.
 
         parameters
         ----------

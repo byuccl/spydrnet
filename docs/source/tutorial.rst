@@ -81,14 +81,28 @@ A new file named '<filename>.edf' should be generated in the working directory.
 Examples
 --------
 
-For more of the functionality, features, and uses of SpyDrNet，please visit :ref:`sec:examples`
-
 Creating from scratch
----------------------
+^^^^^^^^^^^^^^^^^^^^^
 
 We can also create the hardware design from scratch
-
+    >>> import spydrnet as sdn
     >>> nelist = sdn.Netlist('myNetlist')
+    >>> instance = sdn.Instance()
+
+For full details regarding the initialization of a Netlist obejct, se :ref:`sec:Netlist`
+
+Renaming an objects
+^^^^^^^^^^^^^^^^^^^
+
+    >>> instance.name = "my_instance"
+
+Setting properties
+^^^^^^^^^^^^^^^^^^
+
+    >>> instance['NAME'] = "name"
+
+For more of the functionality, features, and uses of SpyDrNet，please visit :ref:`sec:examples`
+
 
 Below is a list of all the intermediate representations (IR) used by SpyDrNet. See :ref:`sec:api_spec` for API specification.
 
