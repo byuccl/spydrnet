@@ -34,9 +34,60 @@ class VerilogParser:
         self.direction_string_map["output"] = Port.Direction.OUT
         self.direction_string_map["inout"] = Port.Direction.INOUT
         self.direction_string_map[None] = None
+        self._assigner_definition = dict()
+        self._assigner_library = None
         
         self.instance_to_port_map = dict()
 
+    def _create_assigner_definition(self, width):
+        if self._assigner_library == None:
+            self._assigner_library = Library()
+        definition = self._assigner_library.create_definition()
+        definition.name = "SDN_VERILOG_ASSIGN_" + str(width)
+        cable = definition.create_cable()
+        cable.name = "ASSIGN"
+        porta = definition.create_port()
+        porta.name = "A"
+        portb = definition.create_port()
+        portb.name = "B"
+        porta.direction = Port.Direction.INOUT
+        portb.direction = Port.Direction.INOUT
+        porta.create_pins(width)
+        portb.create_pins(width)
+        cable.create_wires(width)
+        for i in range(width):
+            pa = porta.pins[i]
+            pb = portb.pins[i]
+            w = cable.wires[i]
+            w.connect_pin(pa)
+            w.connect_pin(pb)
+        self._assigner_definition[width] = definition
+        
+
+    def _create_assigner_instance(self, width, parent):
+        if width not in self._assigner_definition:
+            self._create_assigner_definition(width)
+        instance = parent.create_child()
+        instance.reference = self._assigner_definition[width]
+        return instance
+
+    def _create_assigner(self, cable1_info, cable2_info):
+        
+        # k_str = k[0]
+            # if k[1] != None:
+            #     k_str += " [" + str(k[1])
+            #     if k[2] != None:
+            #         k_str += ":" + str(k[2])
+            #     k_str += "]"
+            # v_str = v[0]
+            # if v[1] != None:
+            #     v_str += " [" + str(v[1])
+            #     if k[2] != None:
+            #         v_str += ":" + str(v[2])
+            #     v_str += "]"
+        assert cable1.definition == cable2.definition, "Cannot assign cable from " + cable1.definition.name + " to a cable from " + cable2.definition.name
+        
+        
 
     def parse(self):
         self.initialize_tokenizer()
@@ -347,21 +398,31 @@ class VerilogParser:
         for k,v in assignment_info.items():
             cable_list = definition.get_cables(k[0])
             cable_left = next(cable_list)
-            # cable_list = definition.get_cables(v[0])
-            # cable_right = next(cable_list)
-            k_str = k[0]
-            if k[1] != None:
-                k_str += " [" + str(k[1])
-                if k[2] != None:
-                    k_str += ":" + str(k[2])
-                k_str += "]"
-            v_str = v[0]
-            if v[1] != None:
-                v_str += " [" + str(v[1])
-                if k[2] != None:
-                    v_str += ":" + str(v[2])
-                v_str += "]"
-            cable_left["VERILOG.assignment." + k_str + " = " + v_str] = "true"  
+            # # cable_list = definition.get_cables(v[0])
+            # # cable_right = next(cable_list)
+           
+           #replaced this line a Edif compatible assignment statment handler
+
+            # k_str = k[0]
+            # if k[1] != None:
+            #     k_str += " [" + str(k[1])
+            #     if k[2] != None:
+            #         k_str += ":" + str(k[2])
+            #     k_str += "]"
+            # v_str = v[0]
+            # if v[1] != None:
+            #     v_str += " [" + str(v[1])
+            #     if k[2] != None:
+            #         v_str += ":" + str(v[2])
+            #     v_str += "]"
+            
+            
+            #cable_left["VERILOG.assignment." + k_str + " = " + v_str] = "true"  
+            
+            cable_list = definition.get_cables(v[0])
+            cable_right = next(cable_list)
+
+            self._create_assigner(k, v)
 
         #put in assignment information
 

@@ -14,6 +14,7 @@ class ComposeEdif:
         self._lisp_depth_ = 0
         self.test = 0
 
+
     def run(self, ir=None, file_out="out.edf"):
         """
         compose an edif file from the IR in either file or object form and _output_ it to a file
