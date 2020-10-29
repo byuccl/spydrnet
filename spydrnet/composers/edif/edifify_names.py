@@ -2,7 +2,7 @@ import re
 
 
 class EdififyNames:
-    '''
+    """
     Handles the renaming of objects from other languages to EDIF. Emphasis
     is currently given to verilog.
 
@@ -40,27 +40,30 @@ class EdififyNames:
     &_this_is_an___in_0_3_
 
 
-    '''
+    """
 
     def __init__(self):
         self.valid = set()
         self.non_alpha = set()
-        valid.add("a")
-        valid.add("b")
+        # valid.add("a")
+        # valid.add("b")
 
     def _length_good(self, identifier):
-        '''returns a boolean indicating whether or not the indentifier fits the 256 character limit'''
+        """returns a boolean indicating whether or not the indentifier fits the 256 character limit"""
         return len(identifier) < 256
 
     def _length_fix(self, identifier):
-        '''returns the name with the fixed length of 256 characters if the limit is exceeded'''
+        """returns the name with the fixed length of 256 characters if the limit is exceeded"""
         if not self._length_good(identifier):
             return identifier[:100]
         else:
             return identifier
 
     def _characters_good(self, identifier):
-        '''returns whether the string only contain numbers, characters and '-' '''
+        """Check if the characters meet the edif standards
+
+        returns whether the string only contain numbers, characters and '-' 
+        """
         if not identifier[0].isalpha():
             return False
         for i in range(0, len(identifier)):
@@ -69,7 +72,11 @@ class EdififyNames:
         return True
 
     def _characters_fix(self, identifier):
-        '''replaces all the characters to '-' if it is not valid characters '''
+        """fix the characters so that it meets edif standards
+
+        Add a '&' if the first character is not alphabetic
+        replaces all the characters to '-' if it is not valid characters 
+        """
         starting_index = 0
         if not identifier[0].isalpha():
             identifier = '&' + identifier[:]
@@ -87,22 +94,22 @@ class EdififyNames:
         pass
 
     def set_namespace_key(self, namespace_key):
-        '''
+        """
         set the current namespace dictionary based on the key. This namespace
         will be used to maintain names to check for conflicts.
-        '''
+        """
         pass
 
     def is_valid_identifier(self, identifier):
-        '''
+        """
         check if the identifier is valid in the namespace that is set. Will also
         check to make sure the identifer is valid.
-        '''
+        """
         pass
 
     def make_valid(self, identifier):
-        '''
+        """
         make a compliant identifier based on the identifier given.
         returns the identifier if no change is needed.
-        '''
-        pass
+        """
+        return identifier
