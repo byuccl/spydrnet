@@ -105,11 +105,19 @@ class EdififyNames:
         check if the identifier is valid in the namespace that is set. Will also
         check to make sure the identifer is valid.
         """
-        pass
+        if self._length_good(identifier) is False:
+            return False
+
+        if self._characters_good(identifier) is False:
+            return False
+        return True
 
     def make_valid(self, identifier):
         """
         make a compliant identifier based on the identifier given.
         returns the identifier if no change is needed.
         """
+        identifier = self._length_fix(identifier)
+        identifier = self._characters_good(identifier)
+        identifier = self._length_fix(identifier)
         return identifier
