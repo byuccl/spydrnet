@@ -42,6 +42,7 @@ class VerilogParser:
     def _create_assigner_definition(self, width):
         if self._assigner_library == None:
             self._assigner_library = Library()
+            self._assigner_library.name = "SDN_VERILOG_ASSIGNMENT"
         definition = self._assigner_library.create_definition()
         definition.name = "SDN_VERILOG_ASSIGN_" + str(width)
         cable = definition.create_cable()
@@ -71,8 +72,9 @@ class VerilogParser:
         instance.reference = self._assigner_definition[width]
         return instance
 
-    def _create_assigner(self, cable1_info, cable2_info):
-        
+    def _create_assigner(self, cable1_info, cable2_info, definition):
+        cable1 = next(definition.get_cables(cable1_info[0]))
+        cable2 = next(definition.get_cables(cable2_info[0]))
         # k_str = k[0]
             # if k[1] != None:
             #     k_str += " [" + str(k[1])
@@ -86,7 +88,19 @@ class VerilogParser:
             #         v_str += ":" + str(v[2])
             #     v_str += "]"
         assert cable1.definition == cable2.definition, "Cannot assign cable from " + cable1.definition.name + " to a cable from " + cable2.definition.name
-        
+        width = min(abs(int(cable1_info[2]) - int(cable1_info[1])),abs(int(cable2_info[2]) - int(cable2_info[1])))
+        assign_instance = self._create_assigner_instance(width, definition)
+        i = 0
+        for val in range(min(int(cable1_info[2]), int(cable1_info[1])), max(int(cable1_info[2]), int(cable1_info[1]))):
+            if i > width:
+                break
+            cable1.wires[val].connect_pin(assign_instance.pins[i])
+            i+=1
+        for val in range(min(int(cable2_info[2]), int(cable2_info[1])), max(int(cable2_info[2]), int(cable2_info[1]))):
+            if i > width * 2:
+                break
+            cable1.wires[val].connect_pin(assign_instance.pins[i])
+            i+=1
         
 
     def parse(self):
@@ -396,33 +410,7 @@ class VerilogParser:
             token = self.tokenizer.peek()
 
         for k,v in assignment_info.items():
-            cable_list = definition.get_cables(k[0])
-            cable_left = next(cable_list)
-            # # cable_list = definition.get_cables(v[0])
-            # # cable_right = next(cable_list)
-           
-           #replaced this line a Edif compatible assignment statment handler
-
-            # k_str = k[0]
-            # if k[1] != None:
-            #     k_str += " [" + str(k[1])
-            #     if k[2] != None:
-            #         k_str += ":" + str(k[2])
-            #     k_str += "]"
-            # v_str = v[0]
-            # if v[1] != None:
-            #     v_str += " [" + str(v[1])
-            #     if k[2] != None:
-            #         v_str += ":" + str(v[2])
-            #     v_str += "]"
-            
-            
-            #cable_left["VERILOG.assignment." + k_str + " = " + v_str] = "true"  
-            
-            cable_list = definition.get_cables(v[0])
-            cable_right = next(cable_list)
-
-            self._create_assigner(k, v)
+            self._create_assigner(k, v, definition)
 
         #put in assignment information
 
