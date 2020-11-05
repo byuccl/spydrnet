@@ -56,7 +56,7 @@ import spydrnet as sdn
 i = sdn.Instance()
 i.name = 'hello'
 i2 = sdn.Instance()
-i2.name = 'hello_sdn_1_'
+i2.name = 'hel_sdn_1_'
 l = [i,i2]
 ed.make_valid("hello",l)
 
@@ -82,16 +82,18 @@ ed.make_valid("hello",l)
 
     def _length_good(self, identifier):
         """returns a boolean indicating whether or not the indentifier fits the 256 character limit"""
-        return len(identifier) < 256
+        # return len(identifier) < 256
+        return len(identifier) < 100
 
     def _length_fix(self, identifier):
         """returns the name with the fixed length of 256 characters if the limit is exceeded"""
         if not self._length_good(identifier):
-            regexp = re.compile('_sdn_[0-9]+_$')
-            if regexp is None:
+            pattern = re.compile('_sdn_[0-9]+_$')
+            r = pattern.search(identifier)
+            if r is None:
                 return identifier[:100]
             else:
-                return identifier[:100 - (regexp.end() + 1 - regexp.start())] + identifier[regexp.start():]
+                return identifier[:100 - (r.end() - r.start())] + identifier[r.start():]
         else:
             return identifier
 
@@ -122,6 +124,7 @@ ed.make_valid("hello",l)
             for i in range(starting_index, len(identifier)):
                 if not identifier[i].isalnum():
                     identifier = identifier[: i] + '_' + identifier[i+1:]
+        identifier = self._length_fix(identifier)
         return identifier
 
     def _conflicts_good(self, identifier, objects):
@@ -139,9 +142,9 @@ ed.make_valid("hello",l)
                 identifier = identifier + '_sdn_1_'
             else:
                 # get the number out of the string
-                #num = [int(i) for i in identifier[0:].split() if i.isdigit()]
                 num = int(re.search(r'\d+', identifier[r.start():]).group())
                 identifier = identifier[:r.start()+5] + str(num + 1) + '_'
+            identifier = self._length_fix(identifier)
             identifier = self._conflicts_fix(identifier, objects)
         return identifier
 
@@ -165,8 +168,6 @@ ed.make_valid("hello",l)
 
         identifier = self._length_fix(identifier)
         identifier = self._characters_fix(identifier)
-        identifier = self._length_fix(identifier)
         identifier = self._conflicts_fix(identifier, objects)
-        identifier = self._length_fix(identifier)
 
         return identifier
