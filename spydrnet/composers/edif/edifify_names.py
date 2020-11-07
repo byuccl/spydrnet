@@ -45,32 +45,13 @@ class EdififyNames:
     >>> i = sdn.Instance()
     >>> i.name = 'hello'
     >>> i2 = sdn.Instance()
-    >>> i2.name = 'hello_sdn_1_'
-    >>> l = [i,i2]
-    >>> ed.make_valid("hello",l)
+    >>> i2.name = 'name_sdn_1_'
+    >>> my_list = [i,i2]
+    >>> ed.make_valid("name", my_list)
 
-from spydrnet.composers.edif.edifify_names import EdififyNames
-ed = EdififyNames()
-l = list()
-import spydrnet as sdn
-i = sdn.Instance()
-i.name = 'hello'
-i2 = sdn.Instance()
-i2.name = 'hel_sdn_1_'
-l = [i,i2]
-ed.make_valid("hello",l)
+    The output should be the following:
 
-    ABC...300
-    abc...300
-
-
-    \this_is+an$*`id[0:3]
-    \this_is+an$^`id[3:4]
-
-    &_this_is_an___in_0_3_
-    name1
-    name1_sdn_1_
-    name1_sdn_2_
+    name_sdn_2_
 
     """
 
