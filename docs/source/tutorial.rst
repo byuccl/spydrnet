@@ -89,7 +89,7 @@ We can also create the hardware design from scratch
     >>> nelist = sdn.Netlist('myNetlist')
     >>> instance = sdn.Instance()
 
-For full details regarding the initialization of a Netlist obejct, se :ref:`sec:Netlist`
+For full details regarding the initialization of a Netlist obejct, see :ref:`netlist`
 
 Renaming an objects
 ^^^^^^^^^^^^^^^^^^^
@@ -104,7 +104,7 @@ Setting properties
 For more of the functionality, features, and uses of SpyDrNet，please visit :ref:`sec:examples`
 
 
-Below is a list of all the intermediate representations (IR) used by SpyDrNet. See :ref:`sec:api_spec` for API specification.
+Below is a list of all the intermediate representations (IR) used by SpyDrNet. See :ref:`api_summary` for API specification.
 
 Intermediate Representation
 ----------------------------
