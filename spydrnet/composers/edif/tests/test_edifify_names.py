@@ -42,9 +42,9 @@ class TestEdififyNames(unittest.TestCase):
         l = []
         test_str = ""
         answer_str = ""
-        for i in range(105):
+        for _ in range(105):
             test_str = test_str + 'a'
-        for i in range(100):
+        for _ in range(100):
             answer_str = answer_str + 'a'
         assert ed.make_valid(test_str, l) == answer_str
 
@@ -54,9 +54,9 @@ class TestEdififyNames(unittest.TestCase):
         l = []
         test_str = "$"
         answer_str = "&_"
-        for i in range(105):
+        for _ in range(105):
             test_str = test_str + 'a'
-        for i in range(98):
+        for _ in range(98):
             answer_str = answer_str + 'a'
         assert ed.make_valid(test_str, l) == answer_str
 
@@ -66,14 +66,14 @@ class TestEdififyNames(unittest.TestCase):
 
         instance_1 = sdn.Instance()
         name_1 = '&_'
-        for i in range(98):
+        for _ in range(98):
             name_1 = name_1 + 'a'
         instance_1.name = name_1
 
         instance_2 = sdn.Instance()
 
         name_2 = '&_'
-        for i in range(91):
+        for _ in range(91):
             name_2 = name_2 + 'a'
         name_2 = name_2 + '_sdn_1_'
         instance_2.name = name_2
@@ -81,9 +81,9 @@ class TestEdififyNames(unittest.TestCase):
         l = [instance_1, instance_2]
         test_str = '$'
         answer_str = '&_'
-        for i in range(105):
+        for _ in range(105):
             test_str = test_str + 'a'
-        for i in range(91):
+        for _ in range(91):
             answer_str = answer_str + 'a'
 
         answer_str = answer_str + '_sdn_2_'
