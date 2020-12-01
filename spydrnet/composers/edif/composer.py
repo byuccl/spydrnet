@@ -17,12 +17,11 @@ class ComposeEdif:
 
     def run(self, ir=None, file_out="out.edf"):
         """
-        compose an edif file from the IR in either file or object form and _output_ it to a file
-        **currently only object form will work read the json into an object first**
+        compose an edif file from the IR input a netlist object form and _output_ it to a file
 
         Keyword Arguments:
-        ir -- the object(environment) or file(json) to be composed to edif (default None)
-                        **default should be changed to in.ir**
+        ir -- the object(environment) to be composed to edif (default None)
+
         file_out -- the path and name of the file to which the edif will be written (default "out.edf")
         """
         self.output_filename = file_out
@@ -30,12 +29,21 @@ class ComposeEdif:
         if (isinstance(ir, str)):
             self.filename = ir
             self._read_data_()  # only needed if we start to accept the json format files
-            print("currently json files are unsupported! read into an object first.")
+            print("currently input files directly to the composer are unsupported! read in with the parser first.")
         else:
             self._data_ = ir
         self._open_output_()
         self._output_environment_()
         self._close_output_()
+
+    def _edifify_netlist(self, netlist):
+        #several things need to happen here
+        #libraries need to be reordered
+        #names need to be changed
+        
+        #definitions within libraries need to be reordered
+        pass
+
 
     def _read_data_(self):
         """read _data_ in from a json ir file and store it in _data_"""
