@@ -65,20 +65,78 @@ class Composer:
             self._write_cable(c)
 
         for i in definition.children:
-            self._write_instanciation(i)
+            if i.reference.library.name == "SDN_VERILOG_ASSIGNMENT":
+                self._write_assignments(i)
+            else:
+                self._write_instanciation(i)
         
-        for c in definition.cables:
-            self._write_assignments(c)
+        # for c in definition.cables:
+        #     self._write_assignments(c)
 
         self.file.write("endmodule\n")
 
-    def _write_assignments(self,cable):
-        for k,v in cable.data.items():
-            k = k.split(".")
-            if k[0] == "VERILOG" and k[1] == "assignment" and v == "true":
-                self.file.write("assign ")
-                self._write_escapable_name(k[2])
-                self.file.write(" ;\n")
+    def _get_assignment_indicies(self, instance):
+        porta = instance.reference.ports[0]
+        portb = instance.reference.ports[1]
+        name_list = instance.name.split("_")
+        width = int(name_list[3])
+        pin1 = instance.pins[porta.pins[0]]
+        pin2 = instance.pins[porta.pins[width-1]]
+        pin3 = instance.pins[portb.pins[0]]
+        pin4 = instance.pins[portb.pins[width - 1]]
+        wire1 = pin1.wire
+        wire2 = pin2.wire
+        wire3 = pin3.wire
+        wire4 = pin4.wire
+        cable1 = wire1.cable
+        cable2 = wire3.cable
+        if width == 1:
+            if len(cable1.wires) == width:
+                index1 = None
+                index2 = None
+            else:
+                index1 = cable1.wires.index(wire1) + cable1.lower_index
+                index2 = None
+            if len(cable2.wires) == width:
+                index3 = None
+                index4 = None
+            else:
+                index3 = cable2.wires.index(wire3) + cable2.lower_index
+                index4 = None
+        else:
+            if len(cable1.wires) == width:
+                index1 = None
+                index2 = None
+            else:
+                index1 = cable1.wires.index(wire1) + cable1.lower_index
+                index2 = cable1.wires.index(wire2) + cable1.lower_index
+            if len(cable2.wires) == width:
+                index3 = None
+                index4 = None
+            else:
+                index3 = cable2.wires.index(wire3) + cable2.lower_index
+                index4 = cable2.wires.index(wire4) + cable2.lower_index
+
+        return cable1.name, cable2.name, index1, index2, index3, index4
+        
+
+    def _write_assignment_single_cable(self, cable_name, low, high):
+        self._write_escapable_name(cable_name)
+        if low != None:
+            self.file.write("[")
+            self.file.write(str(low))
+            if high!=None:
+                self.file.write(":")
+                self.file.write(str(high))
+            self.file.write("]")
+
+    def _write_assignments(self, instance):
+        cable1_name, cable2_name, left_low, left_high, right_low, right_high = self._get_assignment_indicies(instance)
+        self.file.write("assign ")
+        self._write_assignment_single_cable(cable1_name, left_low, left_high)
+        self.file.write(" = ")
+        self._write_assignment_single_cable(cable2_name, right_low, right_high)
+        self.file.write(";")
 
     def _write_ports(self, definition):
         self.file.write("(\n    ")
