@@ -6,6 +6,9 @@ from copy import copy, deepcopy, error
 
 
 class Wire(Element):
+    """
+    Represents a wire object
+    """
     __slots__ = ['_cable', '_pins', '__weakref__']
 
     def __init__(self):
@@ -14,10 +17,12 @@ class Wire(Element):
 
     @property
     def cable(self):
+        """The cable that the wire contains"""
         return self._cable
 
     @property
     def pins(self):
+        """The a list of pins that the wire is connected to"""
         return ListView(self._pins)
 
     @pins.setter
@@ -29,6 +34,13 @@ class Wire(Element):
         self._pins = value_list
 
     def connect_pin(self, pin, position=None):
+        """Connects a pin to the wire
+
+        parameters
+        ----------
+
+        value - The pin to connect to
+        """
         global_callback._call_wire_connect_pin(self, pin)
         if isinstance(pin, OuterPin):
             instance = pin.instance
@@ -50,6 +62,13 @@ class Wire(Element):
         pin._wire = self
 
     def disconnect_pin(self, pin):
+        """Disconnect a pin from the wire
+
+        parameters
+        ----------
+
+        value - The pin to disconnect
+        """
         if isinstance(pin, OuterPin):
             instance = pin.instance
             inner_pin = pin.inner_pin
@@ -66,6 +85,13 @@ class Wire(Element):
         self._disconnect_pin(pin)
 
     def disconnect_pins_from(self, pins):
+        """Disconnect a list of pins from the wire
+
+        parameters
+        ----------
+
+        value - The list of pins to disconnect
+        """
         if isinstance(pins, set):
             excluded_pins = pins
         else:
@@ -97,7 +123,7 @@ class Wire(Element):
         pin._wire = None
 
     def _clone_rip_and_replace(self, memo):
-        '''remove from its current environment and place it into the new cloned environment with references held in the memo dictionary'''
+        """Remove from its current environment and place it into the new cloned environment with references held in the memo dictionary"""
         new_pins = list()
         for p in self._pins:
             assert p in memo, "the pin must be cloned"
@@ -106,27 +132,40 @@ class Wire(Element):
         pass
 
     def _clone_rip(self):
-        '''remove from its current environmnet. This will remove all pin pointers and create a floating stand alone instance.'''   
+        """Remove from its current environmnet.
+
+        This will remove all pin pointers and create a floating stand alone instance."""
         self._pins = list()
         pass
 
     def _clone(self, memo):
-        '''not api safe clone function
+        """Not api safe clone function
+
         clone leaving all references in tact.
-        the element can then either be ripped or ripped and replaced'''
+        the element can then either be ripped or ripped and replaced"""
         assert self not in memo, "the object should not have been copied twice in this pass"
         c = Wire()
         memo[self] = c
         c._cable = None
-        c._pins = copy(self._pins) #shallow copy the list so that it retains its pin references
+        # shallow copy the list so that it retains its pin references
+        c._pins = copy(self._pins)
         return c
 
     def clone(self):
-        '''clone wire in an api safe way. The following properties can be expected from the returned element:
+        """clone wire in an api safe way. 
+
+        The following properties can be expected from the returned element:
          * The wire is not connected to any pins.
          * The wire is orphaned from any cable.
          * No pins are connected to the wire
-         '''
+         """
         c = self._clone(dict())
         c._clone_rip()
         return c
+
+    def index(self):
+        """if this wire is in a cable, returns the index number of the wire in the parent cable"""
+
+        assert self.cable is not None, "the wire does not belong to a cable"
+
+        return self.cable.wires.index(self)

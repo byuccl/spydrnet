@@ -2,8 +2,9 @@ from spydrnet.ir.first_class_element import FirstClassElement
 
 
 class Bundle(FirstClassElement):
-    """
-    parent class of ports and cables. Since both of these objects represent arrays of objects they both inherit from
+    """Parent class of ports and cables.
+
+    Since both of these objects represent arrays of objects they both inherit from
     this parent class.
     """
     __slots__ = ['_definition', '_is_downto', '_is_scalar', '_lower_index']
@@ -17,23 +18,26 @@ class Bundle(FirstClassElement):
 
     @property
     def definition(self):
-        """
-        Get the definition that this bundle belongs to. The definition is responsible for changing this value.
+        """Get the definition that this bundle belongs to. 
+
+        The definition is responsible for changing this value.
         """
         return self._definition
 
     @property
     def is_downto(self):
-        """
-        get the downto status of the bundle. Downto is False if the right index is higher than the left one. True
+        """Get the downto status of the bundle. 
+
+        Downto is False if the right index is higher than the left one. True
         otherwise
         """
         return self._is_downto
 
     @is_downto.setter
     def is_downto(self, value):
-        """
-        change the downto value Downto is False if the right index is higher than the left index. True otherwise.
+        """Change the downto value.
+
+        Downto is False if the right index is higher than the left index. True otherwise.
 
         parameters
         ----------
@@ -50,10 +54,12 @@ class Bundle(FirstClassElement):
 
     @property
     def is_scalar(self):
-        """
-        Return True if the item is a scalar False otherwise. the item is not a scalar if it has more than one pin or
-        wire in it. if it has one pin or wire in it it may be a scalar. This mimics vhdl's downto usage which can
-        represent single pin arrays ie. std_logic_vector(0 downto 0) which would have a single pin but not be a scalar.
+        """Return True if the item is a scalar False otherwise.
+
+        The item is not a scalar if it has more than one pin orwire in it. 
+        if it has one pin or wire in it it may be a scalar.
+        This mimics vhdl's downto usage which canrepresent single pin arrays
+        ie. std_logic_vector(0 downto 0) which would have a single pin but not be a scalar.
         """
         _items = self._items()
         if _items and len(_items) > 1:
@@ -62,8 +68,8 @@ class Bundle(FirstClassElement):
 
     @is_scalar.setter
     def is_scalar(self, value):
-        """
-        set the scalar status of single item bundles.
+        """Set the scalar status of single item bundles.
+
         The item is not a scalar if it has more than one pin or wire in it. if it has one or zero pins this function
         can be used to set the value or wire in it it may be a scalar. This mimics vhdl's downto usage which can
         represent single pin arrays ie. std_logic_vector(0 downto 0) which would have a single pin but not be a scalar.
@@ -72,27 +78,28 @@ class Bundle(FirstClassElement):
         ----------
 
         value - (boolean) True if the item is to be a scalar False if it is not. Multi element bundles cannot set
-        is_scalar to True
+        is_scalar to True.
         """
         _items = self._items()
         if _items and len(_items) > 1 and value is True:
-            raise RuntimeError("Cannot set is_scalar to True on a multi-item bundle")
+            raise RuntimeError(
+                "Cannot set is_scalar to True on a multi-item bundle")
         else:
             self._is_scalar = value
 
     @property
     def is_array(self):
-        """
-        this is the logical inverse of is_scalar. see the is_scalar documentation for more insight into the properties
-        of this value
+        """This is the logical inverse of is_scalar. 
+
+        See the is_scalar documentation for more insight into the properties of this value.
         """
         return not self.is_scalar
 
     @is_array.setter
     def is_array(self, value):
-        """
-        this is the logical inverse of is_scalar. see the is_scalar documentation for more insight into the properties
-        of this value
+        """This is the logical inverse of is_scalar. 
+
+        See the is_scalar documentation for more insight into the properties of this value.
 
         parameters
         ----------
@@ -102,22 +109,25 @@ class Bundle(FirstClassElement):
         """
         _items = self._items()
         if _items and len(_items) > 1 and value is False:
-            raise RuntimeError("Cannot set is_array to False on a multi-item bundle")
+            raise RuntimeError(
+                "Cannot set is_array to False on a multi-item bundle")
         else:
             self._is_scalar = not value
 
     @property
     def lower_index(self):
-        """
-        get the value of the lower index of the array. this would be the right index in the case of downto and the left
+        """Get the value of the lower index of the array. 
+
+        This would be the right index in the case of downto and the left
         in the case of to
         """
         return self._lower_index
 
     @lower_index.setter
     def lower_index(self, value):
-        """
-        set the lower index of the array. in the case of to this is the left index and the right in the case of downto
+        """Set the lower index of the array. 
+
+        In the case of to this is the left index and the right in the case of downto
 
         parameters
         ----------

@@ -1,5 +1,5 @@
-#Copyright 2020 please see the license
-#Author Dallin Skouson
+# Copyright 2020 please see the license
+# Author Dallin Skouson
 
 from functools import partial
 import re
@@ -7,12 +7,13 @@ import zipfile
 import io
 import os
 
+
 class VerilogTokenizer:
     @staticmethod
     def from_stream(stream):
         tokenizer = VerilogTokenizer(stream)
         return tokenizer
-    
+
     @staticmethod
     def from_string(string):
         string_stream = io.StringIO(string)
@@ -23,7 +24,7 @@ class VerilogTokenizer:
     def from_filename(filename):
         tokenizer = VerilogTokenizer(filename)
         return tokenizer
-    
+
     def __init__(self, input_source):
         self.token = None
         self.next_token = None
@@ -60,7 +61,7 @@ class VerilogTokenizer:
             return False
 
     def next(self):
-        #lets skip the comments
+        # lets skip the comments
         run = True
         celldef = False
         while run:
@@ -92,6 +93,11 @@ class VerilogTokenizer:
     #     print("whitespace: ", self.token)
     #     return self.token
 
+# def t_MODULE(t):
+#     # r'[a-zA-Z]([a-zA-Z0-9]|_|\[[0-9]*\])'
+#     r'module'
+#     # t.lexer.begin('modulename')
+#     return t
 
     def peek(self):
         #print("Tokenizer: peeked")
@@ -110,11 +116,12 @@ class VerilogTokenizer:
             comment_start = False
             comment_end = False
             escaped = False
-            
+
             token_buffer = list()
             for buffer in iter(partial(self.input_stream.read, 32768), ""):
                 for ch in buffer:
-                    if ch == '\n': self.line_number += 1
+                    if ch == '\n':
+                        self.line_number += 1
                     if comment_start:
                         if (ch == '*'):
                             in_ml_comment = True
@@ -184,9 +191,9 @@ class VerilogTokenizer:
                         token_buffer.append(ch)
 
             if token_buffer:
-                    token = ''.join(token_buffer)
-                    token_buffer.clear()
-                    yield token
+                token = ''.join(token_buffer)
+                token_buffer.clear()
+                yield token
         finally:
             self.input_stream.close()
 
@@ -196,15 +203,16 @@ class VerilogTokenizer:
 
     def expect(self, other):
         if not self.token_equals(other):
-            raise RuntimeError("Parse error: Expecting {} on line {}, recieved {}".format(other, self.line_number, self.token))
+            raise RuntimeError("Parse error: Expecting {} on line {}, recieved {}".format(
+                other, self.line_number, self.token))
 
     def peek_equals(self, other):
         peek_token = self.peek()
         return self.equals(peek_token, other)
-    
+
     def token_equals(self, other):
         return self.equals(self.token, other)
-    
+
     @staticmethod
     def equals(this, that):
         if this == that:
@@ -226,7 +234,7 @@ class VerilogTokenizer:
     #     if token[0:10] == '`timescale':
     #         return True
     #     return False
-    
+
     # def is_celldefine_directive(self, token):
     #     if token[0:11] == '`celldefine':
     #         return True
@@ -239,17 +247,19 @@ class VerilogTokenizer:
 
     def expect_valid_identifier(self):
         if self.is_valid_identifier() is False:
-            raise RuntimeError("Parse error: Expecting Verilog identifier on line {}, recieved {}".format(self.line_number, self.token))
+            raise RuntimeError("Parse error: Expecting Verilog identifier on line {}, recieved {}".format(
+                self.line_number, self.token))
 
     def is_valid_identifier(self):
-        #TODO deal with \ identifiers
+        # TODO deal with \ identifiers
         if re.match(r"[a-zA-Z]|&\a*", self.token) and len(self.token) <= 256:
             return True
         return False
 
     def expect_valid_integerToken(self):
         if self.is_valid_integerToken() is False:
-            raise RuntimeError("Parse error: Expecting integerToken on line {}, recieved {}".format(self.line_number, self.token))
+            raise RuntimeError("Parse error: Expecting integerToken on line {}, recieved {}".format(
+                self.line_number, self.token))
 
     def is_valid_integerToken(self):
         if re.match(r"[-+]?\d+", self.token):
@@ -258,16 +268,19 @@ class VerilogTokenizer:
 
     def expect_valid_stringToken(self):
         if self.is_valid_stringToken() is False:
-            raise RuntimeError("Parse error: Expecting stringToken on line {}, recieved {}".format(self.line_number, self.token))
+            raise RuntimeError("Parse error: Expecting stringToken on line {}, recieved {}".format(
+                self.line_number, self.token))
 
     def is_valid_stringToken(self):
         if re.match(r'"(?:[a-zA-Z]|(?:%[ \t\n\r]*(?:(?:[-+]?\d+[ \t\n\r]+)*(?:[-+]?\d+))*[ \t\n\r]*%)|[0-9]|[\!\#\$\&\'\(\)\*\+\,\-\.\/\:\;\<\=\>\?\@\[\\\]\^\_\`\{\|\}\~]|[ \t\n\r])*"', self.token):
             return True
         return False
 
+
 if __name__ == "__main__":
     # filename = r"C:\Users\keller\workplace\SpyDrNet\data\large_edif\osfbm.edf"
     import cProfile
+
     def run():
         filename = r"/home/dallin/Documents/byuccl/SpyDrNet/spydrnet/support_files/verilog_netlists/4bitadder.v"
         tokenizer = VerilogTokenizer.from_filename(filename)

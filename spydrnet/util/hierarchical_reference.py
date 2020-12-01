@@ -80,9 +80,20 @@ class HRef(GetterShortcuts):
     approach could be taken, but it recreates much of the same information that is available in the original netlist. It
     was therefore decided to leverage the flyweight pattern rather than explicitly manage all of the necessary
     child-item to child-node relationships.
+
+    .. attribute:: item: the item of the object
+    .. attribute:: parent: the parent of the object
     """
     @staticmethod
     def get_all_hrefs_of_item(item):
+        """Get all the href of the itsm
+
+        parameters
+        ----------
+
+        item - The item to get the href from.
+
+        """
         if isinstance(item, ir.Instance):
             for href in HRef.get_all_hrefs_of_instances(item):
                 yield href
@@ -181,6 +192,14 @@ class HRef(GetterShortcuts):
 
     @staticmethod
     def from_sequence(sequence):
+        """Return the href of the sequence
+
+        parameters
+        ----------
+
+        sequence - The sequence to get the href from
+
+        """
         parent = None
         for item in sequence:
             href = HRef.from_parent_and_item(parent, item)
@@ -189,6 +208,15 @@ class HRef(GetterShortcuts):
 
     @staticmethod
     def from_parent_and_item(parent, item):
+        """Return the href with given parent and item
+
+        parameters
+        ----------
+
+        parent - the parent obejct of this href
+        item - the item that the href is reference to
+
+        """
         href = HRef(item, parent)
         if href in flyweight:
             return flyweight[href]()
@@ -199,6 +227,15 @@ class HRef(GetterShortcuts):
     __slots__ = ['_hashcode', 'parent', 'item', '__weakref__']
 
     def __init__(self, item, parent=None):
+        """Initialize the href
+
+        parameters
+        ----------
+
+        item - the item that the href is reference to
+        parent - the parent obejct of this href
+
+        """
         self._hashcode = hash(hash(parent)*31 + hash(item))
         self.parent = parent
         self.item = item
@@ -225,7 +262,7 @@ class HRef(GetterShortcuts):
 
     def __repr__(self):
         return "<{} {} '{}' at 0x{:016X}>".format(self.__class__.__name__, self.item.__class__.__name__, self.name,
-                                                 id(self))
+                                                  id(self))
 
     def __str__(self):
         name = self.name
@@ -235,7 +272,7 @@ class HRef(GetterShortcuts):
     def is_unique(self):
         """
         A hierarchical reference must be valid to be unique. If it is not valid, it may not be unique.
-        :return:
+        : return:
         """
         if self.is_valid is False:
             return False
@@ -248,7 +285,8 @@ class HRef(GetterShortcuts):
                 instances.add(item)
                 parent = item.parent
                 if parent and len(parent.references) > 1 and href.parent:
-                    search_stack += (x for x in parent.references if x != href.parent.item)
+                    search_stack += (x for x in parent.references if x !=
+                                     href.parent.item)
             href = href.parent
         while search_stack:
             instance = search_stack.pop()
@@ -263,6 +301,9 @@ class HRef(GetterShortcuts):
 
     @property
     def is_valid(self):
+        """Checks if the href is valid
+
+        """
         href = self
         while href:
             hparent = href.parent  # href
@@ -325,6 +366,9 @@ class HRef(GetterShortcuts):
 
     @property
     def name(self):
+        """Stores the name of the href
+
+        """
         hseperator = '/'
         names = list()
         index = None

@@ -9,25 +9,26 @@ def get_netlists(obj, *args, **kwargs):
     get_netlists(obj, ...)
 
     Get netlists *within* an object.
-
-    Parameters:
-    -----------
+    
+    Parameters
+    ----------
     obj : object, Iterable - required
         The object or objects associated with this query. Queries return a collection objects associated with the
         provided object or objects that match the query criteria. For example, `sdn.get_libraries(netlist, ...)` would
         return all of the libraries associated with the provided netlist that match the additional criteria.
-    patterns : str, Iterable - optional, positional or named, default: wildcard
+    
+    patterns : str, Iterable - optional, positional or named, (default: wildcard)
         The search patterns. Patterns can be a single string or an Iterable collection of strings. Patterns can be
         absolute or they can contain wildcards or regular expressions. If `patterns` is not provided, then it defaults
         to a wildcard. Patterns are queried against the object property value stored under a specified key. Fast lookups
         are only attempted on absolute patterns that are not regular expressions and contain no wildcards.
-    key : str, optional, default: ".NAME"
+    key : str, optional, (default: ".NAME")
         This is the key that controls which value is being searched.
-    is_case : bool - optional, named, default: True
+    is_case : bool - optional, named, (default: True)
         Specify if patterns should be treated as case sensitive. Only applies to patterns. Does not alter fast lookup
         behavior (if namespace policy uses case insensitive indexing, this parameter will not prevent a fast lookup
         from returning a matching object even if the case is not an exact match).
-    is_re: bool - optional, named, default: False
+    is_re: bool - optional, named, (default: False)
         Specify if patterns are regular expressions. If `False`, a pattern can still contain `*` and `?` wildcards. A
         `*` matches zero or more characters. A `?` matches upto a single character.
     filter : function
@@ -35,11 +36,11 @@ def get_netlists(obj, *args, **kwargs):
         matching virtual instances are returned. Otherwise, virtual instances that cause the filter function to evaluate
         to true are the only items returned.
     
-    Returns the netlists associated with a particular object
-    :param obj:
-    :param value:
-    :param key:
-    :return:
+    Returns
+    -------
+    netlists : generator
+        A generator associated with a particular object
+    
     """
     # Check argument list
     if len(args) == 1 and 'patterns' in kwargs:
