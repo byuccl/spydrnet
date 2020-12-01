@@ -108,15 +108,16 @@ class EdififyNames:
         identifier = self._length_fix(identifier)
         return identifier
 
-    def _conflicts_good(self, identifier, objects):
+    def _conflicts_good(self, obj, identifier, objects):
         for element in objects:
-            if element.name == identifier:
+            if element == obj:
+                continue
+            if element.name == identifier or ("EDIF.identifier" in element.data and element["EDIF.identifier"] == identifier):
                 return False
         return True
 
-    def _conflicts_fix(self, identifier, objects):
-
-        if not self._conflicts_good(identifier, objects):
+    def _conflicts_fix(self, obj, identifier, objects):
+        if not self._conflicts_good(obj, identifier, objects):
             pattern = re.compile('_sdn_[0-9]+_$')
             r = pattern.search(identifier)
             if r is None:
@@ -126,7 +127,7 @@ class EdififyNames:
                 num = int(re.search(r'\d+', identifier[r.start():]).group())
                 identifier = identifier[:r.start()+5] + str(num + 1) + '_'
             identifier = self._length_fix(identifier)
-            identifier = self._conflicts_fix(identifier, objects)
+            identifier = self._conflicts_fix(obj, identifier, objects)
         return identifier
 
     def is_valid_identifier(self, identifier):
@@ -141,14 +142,15 @@ class EdififyNames:
             return False
         return True
 
-    def make_valid(self, identifier, objects):
+    def make_valid(self, obj, objects):
         """
         make a compliant identifier based on the identifier given.
         returns the identifier if no change is needed.
         """
 
+        identifier = obj.name
         identifier = self._length_fix(identifier)
         identifier = self._characters_fix(identifier)
-        identifier = self._conflicts_fix(identifier, objects)
+        identifier = self._conflicts_fix(obj, identifier, objects)
 
         return identifier

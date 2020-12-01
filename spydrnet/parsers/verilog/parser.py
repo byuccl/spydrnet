@@ -352,12 +352,10 @@ class VerilogParser:
                     i = 0
                     outer_port = self._update_port(definition, verilog_rename, width = i, direction=d, lower_index = 0, is_downto = True)
                     for name in name_list:
-                        print(name)
                         name_split = name.split(" ")
                         name = name_split[0]
                         index = None
                         if len(name_split) > 1:
-                            print("print we have an index")
                             #raise Exception
                             index = name_split[1]
                             if ":" in index:
@@ -463,7 +461,6 @@ class VerilogParser:
                 #check and see what a name lookup on the name yeids for the ports
                 #go ahead and modify it if it exists.
                 if token in portwords:
-                    print("in body " + name)
                     if name in self._port_rename_in_to_out_dict:
                         outer_port = self._port_rename_in_to_out_dict[name]
                         name = outer_port.name

@@ -2,6 +2,7 @@ import json
 from spydrnet.ir import *
 import inspect  # used for debug.
 from datetime import datetime
+from spydrnet.composers.edif.edifify_names import EdififyNames
 
 
 class ComposeEdif:
@@ -25,6 +26,7 @@ class ComposeEdif:
         file_out -- the path and name of the file to which the edif will be written (default "out.edf")
         """
         self.output_filename = file_out
+        self._edifify_netlist(ir)
         self._data_ = ir
         if (isinstance(ir, str)):
             self.filename = ir
@@ -37,13 +39,75 @@ class ComposeEdif:
         self._close_output_()
 
     def _edifify_netlist(self, netlist):
-        #several things need to happen here
-        #libraries need to be reordered
-        #names need to be changed
-        
-        #definitions within libraries need to be reordered
-        pass
 
+        #functions defined to be used as dependency getters in topological sort
+        #declared here to be used more as functional oriented code.
+        def _get_definition_dependency_same_library(definition):
+            library = definition.library
+            dependency_set = set()
+            for inst in definition.children:
+                if inst.reference.library == library:
+                    dependency_set.add(inst.reference)
+            return dependency_set
+
+        def _get_library_dependency(lib):
+            dependency_set = set()
+            for definition in lib.definitions:
+                for instance in definition.children:
+                    if instance.reference.library != lib:
+                        dependency_set.add(instance.reference.library)
+            return dependency_set
+
+        netlist.libraries = self._topological_sort(netlist.libraries, _get_library_dependency)
+        for library in netlist.libraries:
+            library.definitions = self._topological_sort(library.definitions, _get_definition_dependency_same_library)
+
+        names = EdififyNames()
+
+        self._add_rename_property(netlist, [], names)
+        self._add_rename_property(netlist.top_instance, [], names)
+        for lib in netlist.libraries:
+            self._add_rename_property(lib, netlist.libraries, names)
+            for definition in lib.definitions:
+                self._add_rename_property(definition, lib.definitions, names)
+                for cable in definition.cables:
+                    self._add_rename_property(cable, definition.cables, names)
+                for instance in definition.children:
+                    self._add_rename_property(instance, definition.children, names)
+                for port in definition.ports:
+                    self._add_rename_property(port, definition.ports, names)
+
+    def _topological_sort(self, list_of_objects, dependecy_function):
+        
+        visited_list = [False] * len(list_of_objects)
+        output_list = []
+        
+        #declared here to be used in a more functional way
+        def _topological_recursive_helper(list_of_objects, index, output_list, visited_list, dependency_function):
+            if index >= len(list_of_objects):
+                return
+            obj = list_of_objects[index]
+            if visited_list[index] == True:
+                _topological_recursive_helper(list_of_objects, index+1, output_list, visited_list, dependecy_function)
+                return
+            visited_list[index] = True
+            for child in dependecy_function(obj):
+                child_index = list_of_objects.index(child)
+                _topological_recursive_helper(list_of_objects, child_index, output_list, visited_list, dependecy_function)
+            output_list.append(obj)
+            _topological_recursive_helper(list_of_objects, index+1, output_list, visited_list, dependecy_function)
+        #end internal function
+        _topological_recursive_helper(list_of_objects, 0, output_list, visited_list, dependecy_function)
+        return output_list
+
+    def _add_rename_property(self, obj, namespace_list, rename_helper):
+        name = obj.name
+        if "EDIF.identifier" in obj.data:
+            return
+        rename = rename_helper.make_valid(obj, namespace_list)
+        if rename != name:
+            obj["EDIF.identifier"] = rename
+            obj["EDIF.rename"] = True
 
     def _read_data_(self):
         """read _data_ in from a json ir file and store it in _data_"""
