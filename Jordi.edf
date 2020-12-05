@@ -1,0 +1,12 @@
+(edif (rename identifier "my_netlist")
+  (edifversion 2 0 0)
+  (edifLevel 0)
+  (keywordmap (keywordlevel 0))
+  (status
+    (written
+      (timeStamp 2020 12 01 14 08 16)
+      
+      (comment "Built by 'BYU spydrnet tool'")
+      )
+    )
+  (design 
