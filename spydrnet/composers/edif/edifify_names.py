@@ -33,21 +33,26 @@ class EdififyNames:
     Examples
     --------
     >>> from spydrnet.composers.edif.edifify_names import EdififyNames
+    >>> import spydrnet as sdn
     >>> ed = EdififyNames()
-    >>> l = list()
-    >>> ed.make_valid("*this_is+an$*`id[0:3]",l)
+    >>> i = sdn.Instance()
+    >>> i.name = "*this_is+an$*`id[0:3]"
+    >>> l = [i]
+    >>> valid_identifier = ed.make_valid(i,l)
 
-    The output should be the following:
+    The valid_identifier should be the following:
 
     &_this_is_an___in_0_3_
 
     >>> import spydrnet as sdn
     >>> i = sdn.Instance()
-    >>> i.name = 'hello'
+    >>> i.name = 'name'
     >>> i2 = sdn.Instance()
     >>> i2.name = 'name_sdn_1_'
-    >>> my_list = [i,i2]
-    >>> ed.make_valid("name", my_list)
+    >>> i3 = sdn.Instance()
+    >>> i3.name = 'name'
+    >>> my_list = [i,i2,i3]
+    >>> ed.make_valid(i3, my_list)
 
     The output should be the following:
 
@@ -58,13 +63,14 @@ class EdififyNames:
     def __init__(self):
         self.valid = set()
         self.non_alpha = set()
+        self.name_length_target = 100
         # valid.add("a")
         # valid.add("b")
 
     def _length_good(self, identifier):
         """returns a boolean indicating whether or not the indentifier fits the 256 character limit"""
         # return len(identifier) < 256
-        return len(identifier) < 100
+        return len(identifier) < self.name_length_target
 
     def _length_fix(self, identifier):
         """returns the name with the fixed length of 256 characters if the limit is exceeded"""
@@ -72,9 +78,9 @@ class EdififyNames:
             pattern = re.compile('_sdn_[0-9]+_$')
             r = pattern.search(identifier)
             if r is None:
-                return identifier[:100]
+                return identifier[:self.name_length_target]
             else:
-                return identifier[:100 - (r.end() - r.start())] + identifier[r.start():]
+                return identifier[:self.name_length_target - (r.end() - r.start())] + identifier[r.start():]
         else:
             return identifier
 

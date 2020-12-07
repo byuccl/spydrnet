@@ -50,13 +50,20 @@ class ComposeEdif:
                     dependency_set.add(inst.reference)
             return dependency_set
 
-        def _get_library_dependency(lib):
-            dependency_set = set()
-            for definition in lib.definitions:
-                for instance in definition.children:
-                    if instance.reference.library != lib:
-                        dependency_set.add(instance.reference.library)
-            return dependency_set
+        def _get_library_dependency(library):
+            depend_set = set()
+            for definition in library.definitions:
+                # print("library: " + library.name)
+                for child in definition.children:
+                    # print("contains: " + child.name)
+                    if child.reference.library != library:
+                        # print("which instances definition " + child.reference.name)
+                        # print("which depends on " + child.reference.library.name)
+                        depend_set.add(child.reference.library)
+            # print("DEPENDENCY LIST RETURNED")
+            # for lib_dep in depend_set:
+            #     print(lib_dep.name)
+            return depend_set
 
         netlist.libraries = self._topological_sort(netlist.libraries, _get_library_dependency)
         for library in netlist.libraries:
@@ -87,8 +94,7 @@ class ComposeEdif:
             if index >= len(list_of_objects):
                 return
             obj = list_of_objects[index]
-            if visited_list[index] == True:
-                _topological_recursive_helper(list_of_objects, index+1, output_list, visited_list, dependecy_function)
+            if visited_list[index]:
                 return
             visited_list[index] = True
             for child in dependecy_function(obj):

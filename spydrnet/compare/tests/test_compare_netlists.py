@@ -38,6 +38,7 @@ class TestCompareNetlists(unittest.TestCase):
                     basename_without_final_ext = os.path.splitext(os.path.basename(filename))[0]
                     composer_filename = os.path.join(tempdirname, basename_without_final_ext)
                     orig_netlist.compose(composer_filename)
+                    print(composer_filename)
                     composer_netlist = sdn.parse(composer_filename)
                 except Exception as e:
                     shutil.copytree(tempdirname, "temp")

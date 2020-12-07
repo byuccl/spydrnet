@@ -49,9 +49,9 @@ class TestEdififyNames(unittest.TestCase):
         l = list()
         test_str = ""
         answer_str = ""
-        for _ in range(105):
+        for _ in range(ed.name_length_target + 5):
             test_str = test_str + 'a'
-        for _ in range(100):
+        for _ in range(ed.name_length_target):
             answer_str = answer_str + 'a'
         i = sdn.Instance()
         i.name = test_str
@@ -63,9 +63,9 @@ class TestEdififyNames(unittest.TestCase):
         l = list()
         test_str = "$"
         answer_str = "&_"
-        for _ in range(105):
+        for _ in range(ed.name_length_target + 5):
             test_str = test_str + 'a'
-        for _ in range(98):
+        for _ in range(ed.name_length_target - 2):
             answer_str = answer_str + 'a'
         i = sdn.Instance()
         i.name = test_str
@@ -78,23 +78,23 @@ class TestEdififyNames(unittest.TestCase):
 
         instance_1 = sdn.Instance()
         name_1 = '&_'
-        for _ in range(98):
+        for _ in range(ed.name_length_target - 2):
             name_1 = name_1 + 'a'
         instance_1.name = name_1
 
         instance_2 = sdn.Instance()
 
         name_2 = '&_'
-        for _ in range(91):
+        for _ in range(ed.name_length_target - 9):
             name_2 = name_2 + 'a'
         name_2 = name_2 + '_sdn_1_'
         instance_2.name = name_2
 
         test_str = '$'
         answer_str = '&_'
-        for _ in range(105):
+        for _ in range(ed.name_length_target + 5):
             test_str = test_str + 'a'
-        for _ in range(91):
+        for _ in range(ed.name_length_target - 9):
             answer_str = answer_str + 'a'
 
         answer_str = answer_str + '_sdn_2_'
