@@ -237,7 +237,6 @@ class Definition(FirstClassElement):
                 outer_pin._inner_pin = None
         port._definition = None
 
-    # TODO: Ask andrew if he wants to add the shorcut to set the reference of the child to this defintion
     def create_child(self, name=None, properties=None):
         """Create an instance to add to the definition, add it, and return the instance.
 
