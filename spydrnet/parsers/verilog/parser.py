@@ -235,7 +235,8 @@ class VerilogParser:
                     cable_def_list = definition.get_cables(cable_name_real)
                     cable = next(cable_def_list)
                     port_list = instance.reference.get_ports(port_name)
-                    # print(port_name)
+                    # if port_name == "O":
+                    #     import pdb; pdb.set_trace()
                     port = next(port_list)
                     # if len(cable_list) > 1:
                     #     import pdb; pdb.set_trace()
@@ -253,7 +254,7 @@ class VerilogParser:
                             cable.wires[low-cable.lower_index].connect_pin(port_pin_map[port][0 + index_offset_initial])
                             index_offset += 1
                         else:
-                            for i in range(low,high):
+                            for i in range(low,high+1):
                                 cable.wires[i-cable.lower_index].connect_pin(port_pin_map[port][i-low + index_offset_initial])
                                 index_offset += 1
         return self.netlist
@@ -289,12 +290,22 @@ class VerilogParser:
         keywords = set(["input", "output", "inout"])
         while token != "endmodule" and token != "endprimative":
             if token in keywords:
-                name, left, right = self.parse_wire()
-                port = self._update_port(definition, name, (max(left,right) - min(left,right)), None, min(left,right), left > right)
+                names, left, right = self.parse_wire()
+                for name in names:
+                    port = self._update_port(definition, name, (max(left,right) - min(left,right)), token, min(left,right), left > right)
             elif token == "function":
                 while token != "endfunction":
                     token = self.tokenizer.next()
             token = self.tokenizer.next()
+
+    def _parse_rename_single(self, name, token):
+        # token = self.tokenizer.next()
+        if token == "[":
+            name += " "
+            while token != "," and token != "}" and token != ')':
+                name += token
+                token = self.tokenizer.next()
+        return name, token
 
 
     def parse_module_header(self, netlist):
@@ -304,6 +315,7 @@ class VerilogParser:
         if token == "#":
             self.parse_parameter_list(definition)
             token = self.tokenizer.next()
+        d = None
         if token == "(":
             
             while True:
@@ -319,19 +331,27 @@ class VerilogParser:
                     token = self.tokenizer.next()
                     if token == "{":
                         while token != "}":
+                            # name = self.tokenizer.next()
+                            # token = self.tokenizer.next()
+                            # if token == "[":
+                            #     name += " "
+                            #     while token != "," and token != "}":
+                            #         name += token
+                            #         token = self.tokenizer.next()
                             name = self.tokenizer.next()
                             token = self.tokenizer.next()
-                            if token == "[":
-                                name += " "
-                                while token != "," and token != "}":
-                                    name += token
-                                    token = self.tokenizer.next()
+                            name, token = self._parse_rename_single(name, token)
                             name_list.append(name)
                             assert token == "," or token == "}", "syntax error expect , or } got " + token + " line " + str(self.tokenizer.line_number)
+                    else:
+                        name = token
+                        token = self.tokenizer.peek()
+                        name, token = self._parse_rename_single(name, token)
+                        name_list.append(name)
+                        assert token == ")", "syntax error expect ) got " + token + " line " + str(self.tokenizer.line_number)
                             
                     temp = self.tokenizer.next()
                     assert temp == ")", "expected ) to finish alias got " + temp + " line " + str(self.tokenizer.line_number)
-                d = None
                 if token == "input" or token == "output" or token == "inout":
                     d = token
                     token = self.tokenizer.next()
@@ -453,33 +473,35 @@ class VerilogParser:
 
                 assignment_info[(name_left, left_left, right_left)] = (name_right, left_right, right_right)
 
-                #print("left side of the assign", name_left + "["+str(left_left) + ":" + str(right_left) + "]", "right side of the assignment", name_right + "["+str(left_right) + ":" + str(right_right) + "]")
-                
+                #print("left side of the assign", name_left + "["+str(left_left) + ":" + str(right_left) + "]", "right side of the assignment", name_right + "["+str(left_right) + ":" + str(right_right) + "]")               
             else:
                 token = self.tokenizer.next()
-                name, left, right = self.parse_wire()
-                #check and see what a name lookup on the name yeids for the ports
-                #go ahead and modify it if it exists.
-                if token in portwords:
-                    if name in self._port_rename_in_to_out_dict:
-                        outer_port = self._port_rename_in_to_out_dict[name]
-                        name = outer_port.name
-                        direction = outer_port.direction
-                        if direction == Port.Direction.INOUT:
-                            token = "inout"
-                        elif direction == Port.Direction.IN:
-                            if token =="output" or token == "inout":
+                names, left, right = self.parse_wire()
+                for name in names:
+                    #check and see what a name lookup on the name yeids for the ports
+                    #go ahead and modify it if it exists.
+                    if token in portwords:
+                        #print(token)
+                        if name in self._port_rename_in_to_out_dict:
+                            #print("unexpected")
+                            outer_port = self._port_rename_in_to_out_dict[name]
+                            name = outer_port.name
+                            direction = outer_port.direction
+                            if direction == Port.Direction.INOUT:
                                 token = "inout"
-                        elif direction == Port.Direction.OUT:
-                            if token == "input" or token == "inout":
-                                token = "inout"
-                        elif direction == Port.Direction.UNDEFINED:
-                            pass
-                        port = self._update_port(definition, name, direction = token)
+                            elif direction == Port.Direction.IN:
+                                if token =="output" or token == "inout":
+                                    token = "inout"
+                            elif direction == Port.Direction.OUT:
+                                if token == "input" or token == "inout":
+                                    token = "inout"
+                            elif direction == Port.Direction.UNDEFINED:
+                                pass
+                            port = self._update_port(definition, name, direction = token)
+                        else:
+                            port = self._update_port(definition, name, width = (max(left,right) - min(left,right)), direction = token, lower_index = min(left,right), is_downto = left > right)
                     else:
-                        port = self._update_port(definition, name, width = (max(left,right) - min(left,right)), direction = token, lower_index = min(left,right), is_downto = left > right)
-                else:
-                    cable = self._update_cable(definition, name, width = (max(left,right) - min(left,right)), lower_index = min(left,right), is_downto = left > right)
+                        cable = self._update_cable(definition, name, width = (max(left,right) - min(left,right)), lower_index = min(left,right), is_downto = left > right)
             token = self.tokenizer.peek()
 
         for k,v in assignment_info.items():
@@ -495,7 +517,12 @@ class VerilogParser:
         token = self.tokenizer.peek()
         if token == "[":
             token = self.tokenizer.next()
-            left = int(self.tokenizer.next())
+            try:
+                str_left = self.tokenizer.next()
+                left = int(str_left)
+            except ValueError:
+                print("expected an integer value following [ instead got " + str_left + " line " + str(self.tokenizer.line_number))
+                raise ValueError
             token = self.tokenizer.next()
             if token == ":":
                 right = int(self.tokenizer.next())
@@ -508,6 +535,7 @@ class VerilogParser:
         #the next token will be either [ or a letter
         #if [ then the next is the left then : then right
         #if a letter then it will just be 0 downto 0
+        name = []
         token = self.tokenizer.next()
         left = 0
         right = 0
@@ -523,7 +551,7 @@ class VerilogParser:
             assert self.tokenizer.next() == "]", "expected an end bracket"+ " " + str(self.tokenizer.line_number)
             token = self.tokenizer.next()
         while True:
-            name = token
+            name.append(token)
             #name, left, right = self.parse_wire_name(self)
             token = self.tokenizer.next()
             #assert token == ";", "expected ; got " + token + " line " + str(self.tokenizer.line_number)

@@ -123,17 +123,19 @@ class EdififyNames:
         return True
 
     def _conflicts_fix(self, obj, identifier, objects):
-        if not self._conflicts_good(obj, identifier, objects):
+        identifier_lower = identifier.lower()
+        if not self._conflicts_good(obj, identifier_lower, objects):
             pattern = re.compile('_sdn_[0-9]+_$')
-            r = pattern.search(identifier)
+            r = pattern.search(identifier_lower)
             if r is None:
-                identifier = identifier + '_sdn_1_'
+                identifier_lower = identifier_lower + '_sdn_1_'
             else:
                 # get the number out of the string
-                num = int(re.search(r'\d+', identifier[r.start():]).group())
-                identifier = identifier[:r.start()+5] + str(num + 1) + '_'
-            identifier = self._length_fix(identifier)
-            identifier = self._conflicts_fix(obj, identifier, objects)
+                num = int(re.search(r'\d+', identifier_lower[r.start():]).group())
+                identifier_lower = identifier_lower[:r.start()+5] + str(num + 1) + '_'
+            identifier_lower = self._length_fix(identifier_lower)
+            identifier_lower = self._conflicts_fix(obj, identifier_lower, objects)
+            identifier = identifier_lower
         return identifier
 
     def is_valid_identifier(self, identifier):

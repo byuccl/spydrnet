@@ -635,7 +635,7 @@ class EdifParser:
             library = self.parse_libraryRef()
             self.expect_end_construct()
         definition = next(library.get_definitions(definition_identifer, key="EDIF.identifier"), None)
-        assert definition is not None, "Definition not found within library by EDIF identifier"
+        assert definition is not None, "Definition not found within library by EDIF identifier. definition: " + definition_identifer + ' in ' + library.name
         self.prefix_pop()
         return definition
 

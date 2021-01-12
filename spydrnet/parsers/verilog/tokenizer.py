@@ -175,7 +175,7 @@ class VerilogTokenizer:
                     elif ch == '/':
                         comment_start = True
                         token_buffer.append(ch)
-                    elif ch in {'(', ')', '.', ',', ';', '[', ']', ':', "{", "}"}:
+                    elif ch in {'(', ')', '.', ',', ';', '[', ']', ':', "{", "}", "*", "#"}:
                         if token_buffer:
                             token = ''.join(token_buffer)
                             token_buffer.clear()

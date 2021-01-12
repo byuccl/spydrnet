@@ -70,7 +70,8 @@ class ComposeEdif:
             library.definitions = self._topological_sort(library.definitions, _get_definition_dependency_same_library)
 
         names = EdififyNames()
-
+        if netlist.name == None:
+            netlist.name = netlist.top_instance.name
         self._add_rename_property(netlist, [], names)
         self._add_rename_property(netlist.top_instance, [], names)
         for lib in netlist.libraries:
@@ -86,24 +87,39 @@ class ComposeEdif:
 
     def _topological_sort(self, list_of_objects, dependecy_function):
         
-        visited_list = [False] * len(list_of_objects)
+        visited = set()
         output_list = []
+        get_dependents = dependecy_function
+
+        def recur(o):
+            nonlocal visited
+            nonlocal output_list
+            nonlocal get_dependents
+            visited.add(o)
+            for dependent in get_dependents(o):
+                if dependent not in visited:
+                    recur(dependent)
+            output_list.append(o)
+
+        for o in list_of_objects:
+            if o not in visited:
+                recur(o)
         
         #declared here to be used in a more functional way
-        def _topological_recursive_helper(list_of_objects, index, output_list, visited_list, dependency_function):
-            if index >= len(list_of_objects):
-                return
-            obj = list_of_objects[index]
-            if visited_list[index]:
-                return
-            visited_list[index] = True
-            for child in dependecy_function(obj):
-                child_index = list_of_objects.index(child)
-                _topological_recursive_helper(list_of_objects, child_index, output_list, visited_list, dependecy_function)
-            output_list.append(obj)
-            _topological_recursive_helper(list_of_objects, index+1, output_list, visited_list, dependecy_function)
-        #end internal function
-        _topological_recursive_helper(list_of_objects, 0, output_list, visited_list, dependecy_function)
+        # def _topological_recursive_helper(list_of_objects, index, output_list, visited_list, dependency_function):
+        #     if index >= len(list_of_objects):
+        #         return
+        #     obj = list_of_objects[index]
+        #     if visited_list[index]:
+        #         return
+        #     visited_list[index] = True
+        #     for child in dependecy_function(obj):
+        #         child_index = list_of_objects.index(child)
+        #         _topological_recursive_helper(list_of_objects, child_index, output_list, visited_list, dependecy_function)
+        #     output_list.append(obj)
+        #     _topological_recursive_helper(list_of_objects, index+1, output_list, visited_list, dependecy_function)
+        
+        # _topological_recursive_helper(list_of_objects, 0, output_list, visited_list, dependecy_function)
         return output_list
 
     def _add_rename_property(self, obj, namespace_list, rename_helper):
@@ -111,8 +127,8 @@ class ComposeEdif:
         if "EDIF.identifier" in obj.data:
             return
         rename = rename_helper.make_valid(obj, namespace_list)
+        obj["EDIF.identifier"] = rename
         if rename != name:
-            obj["EDIF.identifier"] = rename
             obj["EDIF.rename"] = True
 
     def _read_data_(self):
@@ -230,16 +246,35 @@ class ComposeEdif:
         self._new_line_()
 
     def _output_name_of_object_(self, obj):
-        if '.NAME' not in obj or (obj['.NAME'] == obj['EDIF.identifier'] and obj.get('EDIF.rename', False) is False):
-            self._output_.write(obj['EDIF.identifier'])
+        # if '.NAME' not in obj or (obj['.NAME'] == obj['EDIF.identifier'] and obj.get('EDIF.rename', False) is False):
+        #     self._output_.write(obj['EDIF.identifier'])
+        # else:
+        #     identifier = obj['EDIF.identifier']
+        #     rename_name = obj.get('.NAME', identifier)
+        #     self._lisp_increment_()
+        #     self._output_.write("rename ")
+        #     self._output_.write(identifier)
+        #     self._output_.write(' "' + rename_name + '"')
+        #     self._lisp_decrement_()
+        rename, name = self._get_name_string_(obj)
+        if rename:
+            self._lisp_increment_()
+            self._output_.write(name)
+            self._lisp_decrement_()
         else:
+            self._output_.write(name)
+
+
+    def _get_name_string_(self, obj):
+        if '.NAME' not in obj or (obj['.NAME'] == obj['EDIF.identifier'] and obj.get('EDIF.rename', False) is False):
+            rename = False
+            name = obj['EDIF.identifier']
+        else:
+            rename = True
             identifier = obj['EDIF.identifier']
             rename_name = obj.get('.NAME', identifier)
-            self._lisp_increment_()
-            self._output_.write("rename ")
-            self._output_.write(identifier)
-            self._output_.write(' "' + rename_name + '"')
-            self._lisp_decrement_()
+            name = "rename " + identifier + ' "' + rename_name + '"'
+        return rename, name
 
     def _output_definition_(self, definition):
         self._lisp_increment_()
@@ -349,15 +384,15 @@ class ComposeEdif:
         self._lisp_decrement_()
 
     def _output_cable_(self, cable):
-        self._lisp_increment_()
-        self._output_.write("net ")
-        self._output_name_of_object_(cable)
-        self._output_.write(" ")
-        self._lisp_increment_()
-        self._output_.write("joined")
-        self._new_line_()
-        # for port in cable.getConnectionList(): #TODO fuction cable.getConnectionList() needs to be created
         for wire in cable.wires:
+            self._lisp_increment_()
+            self._output_.write("net ")
+            self._output_name_of_cable_wire_(cable, wire)
+            self._output_.write(" ")
+            self._lisp_increment_()
+            self._output_.write("joined")
+            self._new_line_()
+            # for port in cable.getConnectionList(): #TODO fuction cable.getConnectionList() needs to be created
             for pin in wire.pins:
                 # port = pin.port
                 # print(type(pin))
@@ -366,10 +401,36 @@ class ComposeEdif:
                     pin = pin.inner_pin
                 else:
                     self._output_port_ref_(pin.port, self._get_edif_name_(cable), pin)
-        self._new_line_()
-        self._lisp_decrement_()
-        self._new_line_()
-        self._lisp_decrement_()
+            self._new_line_()
+            self._lisp_decrement_()
+            self._new_line_()
+            self._lisp_decrement_()
+
+    def _output_name_of_cable_wire_(self, cable, wire):
+        if len(cable.wires) == 1:
+            self._output_name_of_object_(cable)
+        else:
+        # cable_name = self._get_name_string_(cable)
+            cable_index = self._get_wire_index_(cable, wire)
+            identifier = cable['EDIF.identifier'] + "_" + str(cable_index) + "_"
+            rename_name = cable.get('.NAME', identifier) + "[" + str(cable_index) + "]"
+            name = "rename " + identifier + ' "' + rename_name + '"'
+            self._lisp_increment_()
+            self._output_.write(name)
+            self._lisp_decrement_()
+
+        
+
+    def _get_wire_index_(self, cable, wire):
+        i = 0
+        val = None
+        for w in cable.wires:
+            if wire == w:
+                val = i
+                break
+            i += 1
+        return val + cable.lower_index
+
 
     def _output_inner_pin_(self, pin):
         inner_pin = pin.inner_pin
