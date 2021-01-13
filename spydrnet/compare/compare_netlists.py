@@ -76,8 +76,7 @@ class Comparer:
 
         assert len(definition_orig.cables) == len(definition_composer.cables), \
             "Definitions do not have the same number of cables"
-        # for orig_cable, composer_cable in zip(definition_orig.cables, definition_composer.cables):
-        #     self.compare_cables(orig_cable, orig_cable)
+        
         for orig_cable in definition_orig.cables:
             if orig_cable.name == None:
                 #ports with no name are not compared
