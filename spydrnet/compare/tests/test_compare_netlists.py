@@ -29,7 +29,7 @@ class TestCompareNetlists(unittest.TestCase):
                 continue
             self.compare_parser_and_composer(filename, ii)
 
-    @unittest.skip("Test takes a long time right now.")
+    #@unittest.skip("Test takes a long time right now.")
     def test_large_verilog(self):
         for ii, filename in enumerate(self.verilog_files):
             if os.path.getsize(filename) <= 1024 * 10:
@@ -49,9 +49,9 @@ class TestCompareNetlists(unittest.TestCase):
             if os.path.exists("temp"):
                 shutil.rmtree("temp")
             print(filename)
-            orig_netlist = sdn.parse(filename)
             with tempfile.TemporaryDirectory() as tempdirname:
                 try:
+                    orig_netlist = sdn.parse(filename)
                     basename_without_final_ext = os.path.splitext(os.path.basename(filename))[0]
                     if target_format_extension is None:
                         composer_filename = os.path.join(tempdirname, basename_without_final_ext)
@@ -66,7 +66,7 @@ class TestCompareNetlists(unittest.TestCase):
                     shutil.copytree(tempdirname, "temp")
                     raise e
 
-    @unittest.skip("Test takes a long time right now. see skip explanation fro small version")
+    @unittest.skip("Test takes a long time right now. Additional reasons exist, see skip explanation for small version")
     def test_large_verilog_to_edif(self):
         for ii, filename in enumerate(self.verilog_files):
             if os.path.getsize(filename) <= 1024 * 10:

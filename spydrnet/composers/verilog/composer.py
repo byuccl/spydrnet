@@ -11,6 +11,7 @@ class Composer:
         self.direction_string_map[Port.Direction.OUT] = "output"
         self.direction_string_map[Port.Direction.INOUT] = "inout"
         self.direction_string_map[Port.Direction.UNDEFINED] = "/* undefined port direction */ inout"
+        self.written = set()
 
     def run(self, ir, file_out = "out.v"):
         self._open_file(file_out)
@@ -26,6 +27,11 @@ class Composer:
         instance = netlist.top_instance
         if instance is not None:
             self._write_from_top(instance)
+        for library in netlist.libraries:
+            for definition in library.definitions:
+                if definition not in self.written:
+                    self._write_definition_single(definition)
+
         
     def _write_header(self, netlist):
         self.file.write("////////////////////////////////////////\n")
@@ -38,17 +44,17 @@ class Composer:
             self.file.write("//top instance is none.\n")
 
     def _write_from_top(self, instance):
-        written = set()
+        #self.written = set()
         to_write = deque()
         to_write.append(instance.reference)
         self.file.write('(* STRUCTURAL_NETLIST = "yes" *)\n')
         while(len(to_write) != 0):
             definition = to_write.popleft()
-            if definition in written:
+            if definition in self.written:
                 continue
-            written.add(definition)
+            self.written.add(definition)
             for c in definition.children:
-                if c.reference not in written:
+                if c.reference not in self.written:
                     to_write.append(c.reference)
             # print("writing definition", definition.name)
             self._write_definition_single(definition)
@@ -221,7 +227,7 @@ class Composer:
 
     def _write_cable(self, cable):
         self.file.write("wire ")
-        if not cable.is_scalar:
+        if cable.lower_index != 0 or not cable.is_scalar:
             if cable.is_downto:
                 left = cable.lower_index + len(cable.wires) - 1
                 right = cable.lower_index
@@ -359,42 +365,7 @@ class Composer:
 
         return string_to_write
 
-        # string_to_write = ""
-        # wires = []
-        # for pin in pins:
-        #     if pin.wire is not None:
-        #         wires.append(pin.wire)
 
-        # if len(wires) == 0:
-        #     return None
-
-        # cable = None
-        # count = 0
-        # c_wires = []
-        # w_last = None
-        # for w in wires:
-            
-        #     if cable != w.cable or w == w_last:
-        #         if cable != None:
-        #             string_to_write = self._indicies_from_wires(cable, c_wires, string_to_write)
-        #             if string_to_write[0] != "{":
-        #                 string_to_write = "{" + string_to_write
-        #             string_to_write = string_to_write + " , " + w.cable.name
-        #         else:
-        #             string_to_write = w.cable.name
-        #         cable = w.cable
-        #         w_last = w
-        #         count = 0
-        #         c_wires = []
-        #     count += 1
-        #     c_wires.append(w)
-        
-        # string_to_write = self._indicies_from_wires(cable, c_wires, string_to_write)
-        # if string_to_write[0] == "{":
-        #     string_to_write += " }"
-
-        # return string_to_write
-        
     def _get_wire_index(self, cable, wire):
         i = 0
         val = None

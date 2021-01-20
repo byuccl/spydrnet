@@ -53,16 +53,9 @@ class ComposeEdif:
         def _get_library_dependency(library):
             depend_set = set()
             for definition in library.definitions:
-                # print("library: " + library.name)
                 for child in definition.children:
-                    # print("contains: " + child.name)
                     if child.reference.library != library:
-                        # print("which instances definition " + child.reference.name)
-                        # print("which depends on " + child.reference.library.name)
                         depend_set.add(child.reference.library)
-            # print("DEPENDENCY LIST RETURNED")
-            # for lib_dep in depend_set:
-            #     print(lib_dep.name)
             return depend_set
 
         netlist.libraries = self._topological_sort(netlist.libraries, _get_library_dependency)
@@ -91,35 +84,35 @@ class ComposeEdif:
         output_list = []
         get_dependents = dependecy_function
 
-        def recur(o):
+        def iterate(o):
             nonlocal visited
             nonlocal output_list
             nonlocal get_dependents
-            visited.add(o)
-            for dependent in get_dependents(o):
-                if dependent not in visited:
-                    recur(dependent)
-            output_list.append(o)
+            stack = [o]
+            while(len(stack) > 0):
+                o = stack[-1]
+                for child in get_dependents(o):
+                    if child not in visited:
+                        stack.append(child)
+                if stack[-1] == o:
+                    stack.pop()
+                    visited.add(o)
+                    output_list.append(o)
+                
+        # def recur(o):
+        #     nonlocal visited
+        #     nonlocal output_list
+        #     nonlocal get_dependents
+        #     visited.add(o)
+        #     for dependent in get_dependents(o):
+        #         if dependent not in visited:
+        #             recur(dependent)
+        #     output_list.append(o)
 
         for o in list_of_objects:
             if o not in visited:
-                recur(o)
+                iterate(o)
         
-        #declared here to be used in a more functional way
-        # def _topological_recursive_helper(list_of_objects, index, output_list, visited_list, dependency_function):
-        #     if index >= len(list_of_objects):
-        #         return
-        #     obj = list_of_objects[index]
-        #     if visited_list[index]:
-        #         return
-        #     visited_list[index] = True
-        #     for child in dependecy_function(obj):
-        #         child_index = list_of_objects.index(child)
-        #         _topological_recursive_helper(list_of_objects, child_index, output_list, visited_list, dependecy_function)
-        #     output_list.append(obj)
-        #     _topological_recursive_helper(list_of_objects, index+1, output_list, visited_list, dependecy_function)
-        
-        # _topological_recursive_helper(list_of_objects, 0, output_list, visited_list, dependecy_function)
         return output_list
 
     def _add_rename_property(self, obj, namespace_list, rename_helper):

@@ -13,6 +13,7 @@ class Comparer:
         self.compare()
 
     def compare(self):
+        # try:
         assert self.get_identifier(self.ir_orig) == self.get_identifier(self.ir_composer), \
             "Environments do not have the same identifier"
         assert self.get_original_identifier(self.ir_orig) == self.get_original_identifier(self.ir_composer), \
@@ -21,8 +22,8 @@ class Comparer:
             self.compare_instances(self.ir_orig.top_instance, self.ir_composer.top_instance)
         assert len(self.ir_orig.libraries) == len(self.ir_composer.libraries), \
             "Environments do not have the same number of libraries"
-        # for orig_library, composer_library in zip(self.ir_orig.libraries, self.ir_composer.libraries):
-        #     self.compare_libraries(orig_library, composer_library)
+        # except Exception:
+        #     import pdb; pdb.set_trace()
         for orig_library in self.ir_orig.libraries:
             if orig_library.name == None:
                 #ports with no name are not compared
@@ -34,14 +35,15 @@ class Comparer:
             self.compare_libraries(orig_library, composer_library)
 
     def compare_libraries(self, library_orig, library_composer):
+        # try:
         assert self.get_identifier(library_orig) == self.get_identifier(library_composer), \
             "Libraries do not have the same identifier"
         assert self.get_original_identifier(library_orig) == self.get_original_identifier(library_composer), \
             "Libraries do not have the same original identifier"
         assert len(library_orig.definitions) == len(library_composer.definitions), \
             "Libraries do not have the same amount of definitions"
-        # for orig_definition, composer_definition in zip(library_orig.definitions, library_composer.definitions):
-        #     self.compare_definition(orig_definition, composer_definition)
+        # except Exception:
+        #     import pdb; pdb.set_trace()
         for orig_definition in library_orig.definitions:
             if orig_definition.name == None:
                 #ports with no name are not compared
@@ -97,9 +99,29 @@ class Comparer:
                 print("WARNING: children with name == None exist and are not compared")
                 continue
             else:
-                patterns = orig_instance.name
-            composer_instance = next(sdn.get_instances(definition_composer, patterns))
+                if orig_instance.name.startswith("SDN_Assignment_"):
+                    #skip assignment statements for now
+                    continue
+                else:
+                    patterns = orig_instance.name
+            try:
+                composer_instance = next(sdn.get_instances(definition_composer, patterns))
+            except Exception:
+                import pdb; pdb.set_trace()
             self.compare_instances(orig_instance, composer_instance)
+        
+        #compare assignemnt statements
+        pattern = "SDN_Assignment_*"
+        composer_generator = sdn.get_instances(definition_composer, pattern)
+        orig_generator = sdn.get_instances(definition_orig, pattern)
+        #i just need to make sure that they both contain the same number of each width assignment
+        composer_dict = dict()
+        orig_dict = dict()
+
+
+
+        for k in composer_dict.keys():
+            assert k in orig_dict and orig_dict[k] == composer_dict[k], "there are a different number of "+ str(k) + " width assignment"
 
     def compare_cables(self, cable_orig, cable_composer):
         assert self.get_identifier(cable_orig) == self.get_identifier(cable_composer), \
@@ -114,7 +136,7 @@ class Comparer:
                 "wires connect to a different number of pins"
             for orig_pin, composer_pin in zip(orig_wire.pins, composer_wire.pins):
                 assert type(orig_pin) == type(composer_pin), \
-                    "Environments do not have the same number of libraries"
+                    "pin types do not match up."
                 if isinstance(orig_pin, OuterPin):
                     self.compare_outer_pins(orig_pin, composer_pin)
                 else:
@@ -124,8 +146,12 @@ class Comparer:
         assert pin_orig.instance.reference == pin_orig.inner_pin.port.definition and \
                 pin_composer.instance.reference == pin_composer.inner_pin.port.definition, \
                 "DRC failure, outer pin instance reference on associated pin definition not the same"
+        # try:
         assert self.are_instances_equivalent(pin_orig.instance, pin_composer.instance), \
             "Net does not connect to a pin on the same instance"
+        # except Exception:
+        #     import pdb; pdb.set_trace()
+
         assert self.are_inner_pins_equivalent(pin_orig.inner_pin, pin_orig.inner_pin), \
             "Net does not connect the same pin"
 
@@ -134,8 +160,16 @@ class Comparer:
             "Net does not connect the same pin"
 
     def are_instances_equivalent(self, orig_instance, composer_instance):
-        assert self.get_identifier(orig_instance) == self.get_identifier(composer_instance) and \
-            self.get_identifier(orig_instance.reference) == self.get_identifier(composer_instance.reference) and \
+        orig_name = self.get_identifier(orig_instance)
+        composer_name = self.get_identifier(composer_instance)
+        #assignment instances are not very well kept when written out so just compare the width
+        if orig_name.startswith("SDN_Assignment_") and composer_name.startswith("SDN_Assignment_"):
+            orig_split = orig_name.split("_")
+            composer_split = composer_name.split("_")
+            assert orig_split[3] == composer_split[3], "the widths of the assignments are off " + orig_split[3] + " " + composer_split[3]
+        else:    
+            assert orig_name == composer_name, "Names are not the same " + orig_name + " " + composer_name
+        assert self.get_identifier(orig_instance.reference) == self.get_identifier(composer_instance.reference) and \
             self.get_identifier(orig_instance.reference.library) == \
             self.get_identifier(composer_instance.reference.library) and \
             self.get_identifier(orig_instance.parent) == self.get_identifier(composer_instance.parent) and \

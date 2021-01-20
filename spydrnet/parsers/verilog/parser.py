@@ -235,11 +235,7 @@ class VerilogParser:
                     cable_def_list = definition.get_cables(cable_name_real)
                     cable = next(cable_def_list)
                     port_list = instance.reference.get_ports(port_name)
-                    # if port_name == "O":
-                    #     import pdb; pdb.set_trace()
                     port = next(port_list)
-                    # if len(cable_list) > 1:
-                    #     import pdb; pdb.set_trace()
                     if low == None and high == None:
                         if len(cable.wires) == len(port_pin_map[port]):
                             for i in range(len(cable.wires)):
@@ -251,7 +247,10 @@ class VerilogParser:
                                 index_offset += 1
                     else:
                         if high == None:
+                            # try:
                             cable.wires[low-cable.lower_index].connect_pin(port_pin_map[port][0 + index_offset_initial])
+                            # except Exception:
+                            #     import pdb; pdb.set_trace()
                             index_offset += 1
                         else:
                             for i in range(low,high+1):
@@ -292,7 +291,7 @@ class VerilogParser:
             if token in keywords:
                 names, left, right = self.parse_wire()
                 for name in names:
-                    port = self._update_port(definition, name, (max(left,right) - min(left,right)), token, min(left,right), left > right)
+                    port = self._update_port(definition, name, self.my_minus(self.my_max(left,right), self.my_min(left,right)), token, self.my_min(left,right), self.my_greater(left, right))
             elif token == "function":
                 while token != "endfunction":
                     token = self.tokenizer.next()
@@ -367,7 +366,7 @@ class VerilogParser:
                     token = self.tokenizer.next()
                 if verilog_rename is None:
                     name = token
-                    port = self._update_port(definition, name, width = (max(left,right) - min(left,right)), direction=d, lower_index = min(left,right), is_downto = left > right)
+                    port = self._update_port(definition, name, width = self.my_minus(self.my_max(left,right),self.my_min(left,right)), direction=d, lower_index = self.my_min(left,right), is_downto = self.my_greater(left, right))
                 else:
                     i = 0
                     outer_port = self._update_port(definition, verilog_rename, width = i, direction=d, lower_index = 0, is_downto = True)
@@ -382,7 +381,7 @@ class VerilogParser:
                                 raise Exception
                             index = int(index.strip("]").strip("["))
                         
-                        # # port = self._update_port(definition, name, width = (max(left,right) - min(left,right)), direction=d, lower_index = min(left,right), is_downto = left > right)
+                        # # port = self._update_port(definition, name, width = (max(left,right) - self.my_min(left,right)), direction=d, lower_index = self.my_min(left,right), is_downto = left > right)
                         # # port["VERILOG.port_rename_member"] = "true"
                         # # if index is not None:
                         # #     outer_port["VERILOG.port_rename."+str(i)] = name + " " + index
@@ -499,9 +498,9 @@ class VerilogParser:
                                 pass
                             port = self._update_port(definition, name, direction = token)
                         else:
-                            port = self._update_port(definition, name, width = (max(left,right) - min(left,right)), direction = token, lower_index = min(left,right), is_downto = left > right)
+                            port = self._update_port(definition, name, width = self.my_minus(self.my_max(left,right), self.my_min(left,right)), direction = token, lower_index = self.my_min(left,right), is_downto = self.my_greater(left, right))
                     else:
-                        cable = self._update_cable(definition, name, width = (max(left,right) - min(left,right)), lower_index = min(left,right), is_downto = left > right)
+                        cable = self._update_cable(definition, name, width = self.my_minus(self.my_max(left,right), self.my_min(left,right)), lower_index = self.my_min(left,right), is_downto = self.my_greater(left, right))
             token = self.tokenizer.peek()
 
         for k,v in assignment_info.items():
@@ -537,8 +536,8 @@ class VerilogParser:
         #if a letter then it will just be 0 downto 0
         name = []
         token = self.tokenizer.next()
-        left = 0
-        right = 0
+        left = None
+        right = None
         verilog_types = ["reg", "wire", "integer"]
         v_type = "wire"
         if token in verilog_types:
@@ -810,8 +809,6 @@ class VerilogParser:
         
         cable = next(cable_list, None)
 
-        
-        
         if cable is None:
             cable = definition.create_cable()
             cable.name = name
@@ -855,4 +852,40 @@ class VerilogParser:
         for k,v in properties.items():
             cable[k] = v
 
+        
+
+        # if cable.name == "next_state_i_a2_6":
+        #     print(cable.lower_index)
+        #     import pdb; pdb.set_trace()
+
         return cable
+
+    def my_max(self, a, b):
+        if a == None:
+            return b
+        elif b == None:
+            return a
+        else:
+            return max(a,b)
+
+    def my_min(self, a,b):
+        if a == None:
+            return b
+        elif b == None:
+            return a
+        else:
+            return min(a,b)
+
+    def my_greater(self, a,b):
+        if a == None:
+            return b
+        elif b == None:
+            return a
+        else:
+            return a > b
+
+    def my_minus(self, a, b):
+        if a == None or b == None:
+            return None
+        else:
+            return a - b
