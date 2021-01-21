@@ -1,3 +1,11 @@
+SpyDrNet 1.7.0
+--------------
+January 21, 2021
+
+* Updated Verilog Parser and Composer to be more generic
+* included Tutorial in the documentation
+* added some API shortcuts and updated its usage in the documentation
+
 SpyDrNet 1.6.0
 --------------
 September 24, 2020
