@@ -82,44 +82,6 @@ class TestCompareNetlists(unittest.TestCase):
             self.compare_parser_and_composer(filename, ii, "edf")
         #assert False
             
-
-    # def edif_compare_parser_and_composer(self, filename, ii):
-    #     with self.subTest(i=ii):
-    #         if os.path.exists("temp"):
-    #             shutil.rmtree("temp")
-    #         print(filename)
-    #         orig_netlist = sdn.parse(filename)
-    #         with tempfile.TemporaryDirectory() as tempdirname:
-    #             try:
-    #                 basename_without_final_ext = os.path.splitext(os.path.basename(filename))[0]
-    #                 composer_filename = os.path.join(tempdirname, basename_without_final_ext)
-    #                 orig_netlist.compose(composer_filename)
-    #                 print(composer_filename)
-    #                 composer_netlist = sdn.parse(composer_filename)
-    #             except Exception as e:
-    #                 shutil.copytree(tempdirname, "temp")
-    #                 raise e
-    #         comparer = Comparer(orig_netlist, composer_netlist)
-    #         comparer.run()
-
-    # def verilog_compare_parser_and_composer(self, filename, ii):
-    #     with self.subTest(i=ii):
-    #         if os.path.exists("temp"):
-    #             shutil.rmtree("temp")
-    #         print(filename)
-    #         orig_netlist = sdn.parse(filename)
-    #         with tempfile.TemporaryDirectory() as tempdirname:
-    #             try:
-    #                 basename_without_final_ext = os.path.splitext(os.path.basename(filename))[0]
-    #                 composer_filename = os.path.join(tempdirname, basename_without_final_ext)
-    #                 orig_netlist.compose(composer_filename)
-    #                 print(composer_filename)
-    #                 composer_netlist = sdn.parse(composer_filename)
-    #             except Exception as e:
-    #                 shutil.copytree(tempdirname, "temp")
-    #                 raise e
-    #         comparer = Comparer(orig_netlist, composer_netlist)
-    #         comparer.run()
     
     def test_empty_netlists(self):
         nl1 = sdn.ir.Netlist()

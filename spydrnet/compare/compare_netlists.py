@@ -117,8 +117,24 @@ class Comparer:
         #i just need to make sure that they both contain the same number of each width assignment
         composer_dict = dict()
         orig_dict = dict()
-
-
+        
+        ci = next(composer_generator, None)
+        while ci is not None:
+            num = ci.name.split("_")[3]
+            if num in composer_dict:
+                composer_dict[num] += 1
+            else:
+                composer_dict[num] = 1
+            ci = next(composer_generator, None)
+        
+        oi = next(orig_generator, None)
+        while oi is not None:
+            num = oi.name.split("_")[3]
+            if num in orig_dict:
+                orig_dict[num] +=1
+            else:
+                orig_dict[num] = 1
+            oi = next(orig_generator, None)
 
         for k in composer_dict.keys():
             assert k in orig_dict and orig_dict[k] == composer_dict[k], "there are a different number of "+ str(k) + " width assignment"
