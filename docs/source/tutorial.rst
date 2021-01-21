@@ -101,7 +101,7 @@ Setting properties
 
     >>> instance['NAME'] = "name"
 
-For more of the functionality, features, and uses of SpyDrNet，please visit :ref:`sec:examples`
+For more of the functionality, features, and uses of SpyDrNet, please visit :ref:`sec:examples`
 
 
 Below is a list of all the intermediate representations (IR) used by SpyDrNet. See :ref:`api_summary` for API specification.
