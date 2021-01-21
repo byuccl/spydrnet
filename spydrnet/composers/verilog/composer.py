@@ -11,6 +11,7 @@ class Composer:
         self.direction_string_map[Port.Direction.OUT] = "output"
         self.direction_string_map[Port.Direction.INOUT] = "inout"
         self.direction_string_map[Port.Direction.UNDEFINED] = "/* undefined port direction */ inout"
+        self.written = set()
 
     def run(self, ir, file_out = "out.v"):
         self._open_file(file_out)
@@ -26,6 +27,11 @@ class Composer:
         instance = netlist.top_instance
         if instance is not None:
             self._write_from_top(instance)
+        for library in netlist.libraries:
+            for definition in library.definitions:
+                if definition not in self.written:
+                    self._write_definition_single(definition)
+
         
     def _write_header(self, netlist):
         self.file.write("////////////////////////////////////////\n")
@@ -38,24 +44,30 @@ class Composer:
             self.file.write("//top instance is none.\n")
 
     def _write_from_top(self, instance):
-        written = set()
+        #self.written = set()
         to_write = deque()
         to_write.append(instance.reference)
         self.file.write('(* STRUCTURAL_NETLIST = "yes" *)\n')
         while(len(to_write) != 0):
             definition = to_write.popleft()
-            if definition in written:
+            if definition in self.written:
                 continue
-            written.add(definition)
+            self.written.add(definition)
             for c in definition.children:
-                if c.reference not in written:
+                if c.reference not in self.written:
                     to_write.append(c.reference)
             # print("writing definition", definition.name)
             self._write_definition_single(definition)
 
     def _write_definition_single(self, definition):
+        if definition.library.name == "SDN_VERILOG_ASSIGNMENT":
+            #no need to write assignment definitions.
+            return
+        need_end_primative = False
         if "VERILOG.primative" in definition and definition["VERILOG.primative"] == True:
-            return #no need to write the primative definition out, vivado already knows.
+            #I need to write out the primative cell definition.
+            need_end_primative = True
+            self.file.write("`celldefine\n")
         self.file.write("module ")
         self._write_escapable_name(definition.name)
         self.file.write("\n")
@@ -65,20 +77,80 @@ class Composer:
             self._write_cable(c)
 
         for i in definition.children:
-            self._write_instanciation(i)
+            if i.reference.library.name == "SDN_VERILOG_ASSIGNMENT":
+                self._write_assignments(i)
+            else:
+                self._write_instanciation(i)
         
-        for c in definition.cables:
-            self._write_assignments(c)
+        # for c in definition.cables:
+        #     self._write_assignments(c)
 
         self.file.write("endmodule\n")
+        if need_end_primative:
+            self.file.write("`endcelldefine\n")
 
-    def _write_assignments(self,cable):
-        for k,v in cable.data.items():
-            k = k.split(".")
-            if k[0] == "VERILOG" and k[1] == "assignment" and v == "true":
-                self.file.write("assign ")
-                self._write_escapable_name(k[2])
-                self.file.write(" ;\n")
+    def _get_assignment_indicies(self, instance):
+        porta = instance.reference.ports[0]
+        portb = instance.reference.ports[1]
+        name_list = instance.name.split("_")
+        width = int(name_list[3])
+        pin1 = instance.pins[porta.pins[0]]
+        pin2 = instance.pins[porta.pins[width-1]]
+        pin3 = instance.pins[portb.pins[0]]
+        pin4 = instance.pins[portb.pins[width - 1]]
+        wire1 = pin1.wire
+        wire2 = pin2.wire
+        wire3 = pin3.wire
+        wire4 = pin4.wire
+        cable1 = wire1.cable
+        cable2 = wire3.cable
+        if width == 1:
+            if len(cable1.wires) == width:
+                index1 = None
+                index2 = None
+            else:
+                index1 = cable1.wires.index(wire1) + cable1.lower_index
+                index2 = None
+            if len(cable2.wires) == width:
+                index3 = None
+                index4 = None
+            else:
+                index3 = cable2.wires.index(wire3) + cable2.lower_index
+                index4 = None
+        else:
+            if len(cable1.wires) == width:
+                index1 = None
+                index2 = None
+            else:
+                index1 = cable1.wires.index(wire1) + cable1.lower_index
+                index2 = cable1.wires.index(wire2) + cable1.lower_index
+            if len(cable2.wires) == width:
+                index3 = None
+                index4 = None
+            else:
+                index3 = cable2.wires.index(wire3) + cable2.lower_index
+                index4 = cable2.wires.index(wire4) + cable2.lower_index
+
+        return cable1.name, cable2.name, index1, index2, index3, index4
+        
+
+    def _write_assignment_single_cable(self, cable_name, low, high):
+        self._write_escapable_name(cable_name)
+        if low != None:
+            self.file.write("[")
+            self.file.write(str(low))
+            if high!=None:
+                self.file.write(":")
+                self.file.write(str(high))
+            self.file.write("]")
+
+    def _write_assignments(self, instance):
+        cable1_name, cable2_name, left_low, left_high, right_low, right_high = self._get_assignment_indicies(instance)
+        self.file.write("assign ")
+        self._write_assignment_single_cable(cable1_name, left_low, left_high)
+        self.file.write(" = ")
+        self._write_assignment_single_cable(cable2_name, right_low, right_high)
+        self.file.write(";\n")
 
     def _write_ports(self, definition):
         self.file.write("(\n    ")
@@ -115,9 +187,6 @@ class Composer:
                     
                 rename_str += " } "
                 port_to_rename[p] = rename_str
-                    
-
-
                     
         for p in definition.ports:
             if p in in_rename:
@@ -158,7 +227,7 @@ class Composer:
 
     def _write_cable(self, cable):
         self.file.write("wire ")
-        if not cable.is_scalar:
+        if cable.lower_index != 0 or not cable.is_scalar:
             if cable.is_downto:
                 left = cable.lower_index + len(cable.wires) - 1
                 right = cable.lower_index
@@ -177,7 +246,7 @@ class Composer:
                 if v is not None:
                     self.file.write("(* " + k[13:] + " = " + v + " *)\n")
                 else:
-                    self.file.write("(*" + k[13:] + "*)\n")
+                    self.file.write("(* " + k[13:] + " *)\n")
 
             if "VERILOG.parameters." == k[:19]:
                 parameters[k[19:]] = v
@@ -185,7 +254,7 @@ class Composer:
         self._write_escapable_name(instance.reference.name)
         
         if len(parameters.items()) != 0:
-            self.file.write("#(\n")
+            self.file.write(" #(\n")
             first = True
             for k,v in parameters.items():
                 if first:
@@ -223,40 +292,80 @@ class Composer:
         
 
     def _write_port_wires(self, pins):
+        '''takes a set of pins and returns a string that represents the given bus
+        this bus can be a single cable all in order or a set of cables and indices'''
         string_to_write = ""
-        wires = []
+        previous_cable = None
+        counting_down = None
+        single_slice = True
+        low_index = None
+        high_index = None
+        last_wire = False
+        wire_exists = False
+
+        #function here to help with code reuse. this function is really not needed elsewhere.
+        def terminate_slice():
+            nonlocal string_to_write
+            nonlocal single_slice
+            nonlocal low_index
+            nonlocal high_index
+            nonlocal counting_down
+            if string_to_write == "" or string_to_write[0] != "{":
+                string_to_write = "{ " + string_to_write
+            if not single_slice:
+                string_to_write += ", " 
+            string_to_write += self._get_indexed_name_from_cable(previous_cable, low_index, high_index, counting_down)
+            single_slice = False
+            low_index = None
+            high_index = None
+            counting_down = None
+
         for pin in pins:
-            if pin.wire is not None:
-                wires.append(pin.wire)
+            if pin.wire == None:
+                last_wire = True
+            else:
+                wire_exists = True
+                assert last_wire == False, "there is a gap in the port's pins to be wired up " + pin.inner_pin.port.name
+                index = self._get_wire_index(pin.wire.cable, pin.wire)
+                cable = pin.wire.cable
+                
+                if previous_cable != None and cable != previous_cable:
+                    
+                    terminate_slice()
 
-        if len(wires) == 0:
-            return None
+                elif previous_cable != None and cable == previous_cable:
+                    if counting_down is None:
+                        assert low_index == high_index, "counting_down should always be set if more than one wire has been used"
+                        assert low_index != None, "at least one wire should have been seen by now..."
+                        if abs(low_index - index) != 1:
+                            terminate_slice()
+                        else:
+                            counting_down = index < low_index
+                    elif counting_down and index == low_index - 1:
+                        pass #we are still part of the same slice
+                    elif not counting_down and index == high_index + 1:
+                        pass #we are part of the same slice
+                    else:
+                        terminate_slice()
 
-        cable = None
-        count = 0
-        c_wires = []
-        for w in wires:
+                if low_index is None or index < low_index:
+                    low_index = index
+                if high_index is None or index > high_index:
+                    high_index = index
+                previous_cable = cable
             
-            if cable != w.cable:
-                if cable != None:
-                    string_to_write = self._indicies_from_wires(cable, c_wires, string_to_write)
-                    if string_to_write[0] != "{":
-                        string_to_write = "{" + string_to_write
-                    string_to_write = string_to_write + " , " + w.cable.name
-                else:
-                    string_to_write = w.cable.name
-                cable = w.cable
-                count = 0
-                c_wires = []
-            count += 1
-            c_wires.append(w)
-        
-        string_to_write = self._indicies_from_wires(cable, c_wires, string_to_write)
-        if string_to_write[0] == "{":
+        if not wire_exists:
+            return None
+        if single_slice:
+            assert string_to_write == "", "the string to write should be empty"
+            string_to_write = self._get_indexed_name_from_cable(cable, low_index, high_index, counting_down)
+        else:
+            string_to_write +=", " + self._get_indexed_name_from_cable(cable, low_index, high_index, counting_down)
             string_to_write += " }"
 
         return string_to_write
-        
+
+
     def _get_wire_index(self, cable, wire):
         i = 0
         val = None
@@ -265,27 +374,40 @@ class Composer:
                 val = i
                 break
             i += 1
-        return val
+        return val + cable.lower_index
+
+    def _get_indexed_name_from_cable(self, cable, low_index, high_index, downto):
+        if cable.is_downto == downto:
+            if low_index == cable.lower_index:
+                if high_index == cable.lower_index + len(cable.wires) - 1:
+                    return cable.name
+        if high_index == low_index:
+            return cable.name + " [" + str(high_index) + "] "
+        if downto:
+            return cable.name + " [" + str(high_index) + ":" + str(low_index) + "] "
+        else:
+            return cable.name + " [" + str(low_index) + ":" + str(high_index) + "] "
+
         
 
 
-    def _indicies_from_wires(self, cable, wires, string_to_write):
-        low = None
-        high = None
-        for w in wires:
-            idx = self._get_wire_index(cable, w)
-            if (low is None) or idx < low:
-                low = idx
-            if (high is None) or idx > high:
-                high = idx
-        #if low == cable.lower_index and high == cable.lower_index + len(cable.wires) - 1:
-        if high - low == len(cable.wires) -1:
-            pass
-        elif low == high:
-            string_to_write += " [" + str(low + cable.lower_index) + "]"
-        else:
-            string_to_write += " [" + str(low + cable.lower_index) + ":" + str(high + cable.lower_index) + "]"
-        return string_to_write
+    # def _indicies_from_wires(self, cable, wires, string_to_write):
+    #     low = None
+    #     high = None
+    #     for w in wires:
+    #         idx = self._get_wire_index(cable, w)
+    #         if (low is None) or idx < low:
+    #             low = idx
+    #         if (high is None) or idx > high:
+    #             high = idx
+    #     #if low == cable.lower_index and high == cable.lower_index + len(cable.wires) - 1:
+    #     if high - low == len(cable.wires) -1:
+    #         pass
+    #     elif low == high:
+    #         string_to_write += " [" + str(low + cable.lower_index) + "]"
+    #     else:
+    #         string_to_write += " [" + str(low + cable.lower_index) + ":" + str(high + cable.lower_index) + "]"
+    #     return string_to_write
 
         # pin_cable = pin.wire.cable
         # if len(pins) == len(pin_cable.wires):

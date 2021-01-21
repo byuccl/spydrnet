@@ -7,42 +7,64 @@ from copy import deepcopy, copy, error
 
 
 class Instance(FirstClassElement):
-    """
-    netlist instance of a netlist definition. Instances are literally instances of definitions and they reside inside definitions.
+    """Netlist instance of a netlist definition. 
+
+    Instances are literally instances of definitions and they reside inside definitions.
     Function names have been set to adjust for the potential confusion that could arise because instances both have a parent definition and have definitions which they reference.
+
+
+    :ivar parent: the parent of the object. Parent is the definition of the instance that contains the current instance.
+    :ivar reference: the item of the object. Reference is the definition of the instance that instantiated or defined the current instance.
+
     """
     __slots__ = ['_parent', '_reference', '_pins']
 
-    def __init__(self):
-        """
-        creates an empty object of type instance
+    def __init__(self, name=None, properties=None):
+        """Creates an empty object of type instance.
+
+        parameters
+        ----------
+
+        name - (str) the name of this instance
+        properties - (dict) the dictionary which holds the properties
         """
         super().__init__()
         self._parent = None
         self._reference = None
         self._pins = dict()
         _call_create_instance(self)
+        if name != None:
+            self.name = name
+        if properties != None:
+            assert isinstance(
+                properties, dict), "properties must be a dictionary"
+            for key in properties:
+                self[key] = properties[key]
 
     @property
     def parent(self):
-        '''Get the definition that contains this instance'''
+        """Get the definition that contains this instance"""
         return self._parent
+
+    def test(self):
+
+        return True
 
     @property
     def reference(self):
-        '''get the definition that this instance is instantiating'''
+        """Get the definition that this instance is instantiating"""
         return self._reference
 
     @reference.setter
     def reference(self, value):
-        '''change the definition that represents this instance.
+        """Change the definition that represents this instance.
         Port positioning and size must be taken into account when a new definition is being used.
         if they are different the connections cannot be done automatically with this function.
 
         parameters
         ----------
 
-        value - (Definition) the definition that this instance should be an instance of'''
+        value - (Definition) the definition that this instance should be an instance of"""
         global_callback._call_instance_reference(self, value)
         if value is None:
             for pin in self.pins:
@@ -69,7 +91,8 @@ class Instance(FirstClassElement):
             else:
                 for port in value.ports:
                     for pin in port.pins:
-                        self._pins[pin] = OuterPin.from_instance_and_inner_pin(self, pin)
+                        self._pins[pin] = OuterPin.from_instance_and_inner_pin(
+                            self, pin)
             value._references.add(self)
         self._reference = value
 
@@ -83,33 +106,42 @@ class Instance(FirstClassElement):
 
     @property
     def pins(self):
-        '''get the pins on this instance.'''
+        """Get the pins on this instance."""
         return OuterPinsView(self._pins)
 
-
     def _clone_rip_and_replace_in_definition(self, memo):
-        '''slide the outerpins references into a new context. the instance still references something outside of what has been cloned.'''
+        """Slide the outerpins references into a new context. 
+
+        The instance still references something outside of what has been cloned.
+        """
         for op in self._pins.values():
             op._clone_rip_and_replace(memo)
-            
 
     def _clone_rip_and_replace_in_library(self, memo):
-        '''move the instance into a new library/netlist. this will replace the reference if affected and replace the inner pins that will be affected as well. The instance should not be in the references list of the reference definition'''
+        """Move the instance into a new library/netlist. 
+
+        This will replace the reference if affected and replace the inner pins that will be affected as well.
+        The instance should not be in the references list of the reference definition
+        """
         new_pins = dict()
         for ip, op in self._pins.items():
             new_pins[memo[ip]] = op
         self._pins = new_pins
 
     def _clone_rip(self):
-        '''remove the instance from its current environmnet. This will remove the instance from any wires but it will add it in to the references set on the definition which it instantiates.'''   
+        """Remove the instance from its current environmnet. 
+
+        This will remove the instance from any wires but it will add it in to the references set on the definition which it instantiates.
+        """
         for op in self._pins.values():
             op._wire = None
         self._reference._references.add(self)
 
     def _clone(self, memo):
-        '''not api safe clone function
+        """Not api safe clone function
         clone the instance leaving all references in tact.
-        the instance can then either be ripped or ripped and replaced'''
+        The instance can then either be ripped or ripped and replaced
+        """
         assert self not in memo, "the object should not have been copied twice in this pass"
         c = Instance()
         memo[self] = c
@@ -124,16 +156,28 @@ class Instance(FirstClassElement):
 
     def clone(self):
         """
-        
+
         Clone the instance in an api safe way.
         This call will return a cloned instance that has the following properties:
-        
+
          * the pins in the instance will all be disconnected from wires but they will maintain their references to inner pins
          * the instance references is the same as the cloned object
          * the reference's references list contains this instance
          * the instance is orphaned (no longer a child of the definition to which the cloned definition belonged
-         
+
         """
         c = self._clone(dict())
         c._clone_rip()
         return c
+
+    def is_leaf(self):
+        """Check to see if the definition that this instance contains represents a leaf cell.
+
+        Leaf cells are cells with no children instances or no children cables. 
+        Blackbox cells are considered leaf cells as well as direct pass through cells with cables only
+        """
+        if self._reference is None:
+            return False
+        elif len(self._reference._children) > 0 or len(self._reference._cables) > 0:
+            return False
+        return True

@@ -227,7 +227,7 @@ class HRef(GetterShortcuts):
     __slots__ = ['_hashcode', 'parent', 'item', '__weakref__']
 
     def __init__(self, item, parent=None):
-        """initialize the href
+        """Initialize the href
 
         parameters
         ----------
@@ -366,7 +366,7 @@ class HRef(GetterShortcuts):
 
     @property
     def name(self):
-        """stores the name of the href
+        """Stores the name of the href
 
         """
         hseperator = '/'

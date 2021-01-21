@@ -34,9 +34,108 @@ class VerilogParser:
         self.direction_string_map["output"] = Port.Direction.OUT
         self.direction_string_map["inout"] = Port.Direction.INOUT
         self.direction_string_map[None] = None
-        
+        self._assigner_definition = dict()
+        self._assigner_library = None
+        self._assignment_instance_uid = 0
         self.instance_to_port_map = dict()
+        self._port_rename_in_to_out_dict = dict()
+        self._port_rename_out_to_in_dict = dict()
+        self._port_rename_inner_count_dictionary = dict()
 
+    def _create_assigner_definition(self, width):
+        if self._assigner_library == None:
+            self._assigner_library = Library()
+            self._assigner_library.name = "SDN_VERILOG_ASSIGNMENT"
+            self.netlist.add_library(self._assigner_library, 0)
+        definition = self._assigner_library.create_definition()
+        definition.name = "SDN_VERILOG_ASSIGN_" + str(width)
+        cable = definition.create_cable()
+        cable.name = "ASSIGN"
+        porta = definition.create_port()
+        porta.name = "A"
+        portb = definition.create_port()
+        portb.name = "B"
+        porta.direction = Port.Direction.INOUT
+        portb.direction = Port.Direction.INOUT
+        porta.create_pins(width)
+        portb.create_pins(width)
+        cable.create_wires(width)
+        for i in range(width):
+            pa = porta.pins[i]
+            pb = portb.pins[i]
+            w = cable.wires[i]
+            w.connect_pin(pa)
+            w.connect_pin(pb)
+        self._assigner_definition[width] = definition
+        
+
+    def _create_assigner_instance(self, width, parent):
+        if width not in self._assigner_definition:
+            self._create_assigner_definition(width)
+        instance = parent.create_child()
+        instance.reference = self._assigner_definition[width]
+        return instance
+
+    def _assigner_get_cable_indicies_from_info(self, cable, info):
+        if info[1] is None:
+            return cable.lower_index, cable.lower_index + len(cable.wires) - 1 
+        elif info[2] is None:
+            return int(info[1]), int(info[1])
+        else:
+            return int(info[1]), int(info[2])
+
+    def _create_assigner(self, cable1_info, cable2_info, definition):
+        cable1 = next(definition.get_cables(cable1_info[0]))
+        cable2 = next(definition.get_cables(cable2_info[0]))
+        assert cable1.definition == cable2.definition, "Cannot assign cable from " + cable1.definition.name + " to a cable from " + cable2.definition.name
+        
+        cable1_info1, cable1_info2 = self._assigner_get_cable_indicies_from_info(cable1, cable1_info)
+        cable2_info1, cable2_info2 = self._assigner_get_cable_indicies_from_info(cable2, cable2_info)
+        
+        width = min(abs(cable1_info1 - cable1_info2), abs(cable2_info1 - cable2_info2)) + 1
+        
+        assign_instance = self._create_assigner_instance(width, definition)
+        assign_instance.name = "SDN_Assignment_"+str(self._assignment_instance_uid) + "_" + str(width)
+        porta = assign_instance.reference.ports[0]
+        portb = assign_instance.reference.ports[1]
+        self._assignment_instance_uid += 1
+        
+        #3 general cases to consider
+        #both are none,                                     map the whole wire.
+        #the first is not none and the second is none,      map just the first bit.
+        #the first is not none and the second is not none,  map the bits between the indicies.
+
+
+
+        # if cable1_info[1] == None or cable2_info[1] == None:
+
+
+        # elif cable1_info[2] == None or cable2_info[2] == None:
+        #     ipa = porta.pins[0]
+        #     ipb = portb.pins[0]
+        #     cable1.wires[int(cable1_info[1])-cable1.lower_index].connect_pin(assign_instance.pins[ipa])
+        #     cable2.wires[int(cable2_info[1])-cable2.lower_index].connect_pin(assign_instance.pins[ipb])
+        # else:
+        
+        iterations = 0
+        for val in range(min(cable1_info2, cable1_info1), max(cable1_info2, cable1_info1)+1):
+            if iterations >= width:
+                break
+            ipa = porta.pins[iterations]
+            cable1.wires[val-cable1.lower_index].connect_pin(assign_instance.pins[ipa])
+            iterations +=1
+        iterations = 0
+        for val in range(min(cable2_info2, cable2_info1), max(cable2_info2, cable2_info1)+1):
+            if iterations >= width:
+                break
+            ipb = portb.pins[iterations]
+            cable2.wires[val-cable2.lower_index].connect_pin(assign_instance.pins[ipb])
+            iterations +=1
+
+    def _port_rename_create_assignment(self, outer_port, i, inner_cable, definition, inner_index = None):
+        cable1_info = [outer_port.name,i,None]
+        cable2_info = [inner_cable.name,inner_index,None]
+        self._create_assigner(cable1_info, cable2_info, definition)
 
     def parse(self):
         self.initialize_tokenizer()
@@ -60,7 +159,7 @@ class VerilogParser:
         
         token = self.tokenizer.next()
         line_num = self.tokenizer.line_number
-        netlist = Netlist()
+        self.netlist = Netlist()
         self.primitive_cell = False
         top_next = False
         while token:
@@ -81,13 +180,13 @@ class VerilogParser:
                 params[k] = v
             
             elif token == "module":
-                definition = self.parse_module(params, netlist)
+                definition = self.parse_module(params, self.netlist)
                 #if netlist.top_instance is None:
                 if top_next == True:
                     instance = Instance()
                     instance.name = definition.name
                     instance.reference = definition
-                    netlist.top_instance = instance
+                    self.netlist.top_instance = instance
                     top_next = False
             
             elif token[:2] == "//":
@@ -136,10 +235,7 @@ class VerilogParser:
                     cable_def_list = definition.get_cables(cable_name_real)
                     cable = next(cable_def_list)
                     port_list = instance.reference.get_ports(port_name)
-                    # print(port_name)
                     port = next(port_list)
-                    # if len(cable_list) > 1:
-                    #     import pdb; pdb.set_trace()
                     if low == None and high == None:
                         if len(cable.wires) == len(port_pin_map[port]):
                             for i in range(len(cable.wires)):
@@ -151,13 +247,16 @@ class VerilogParser:
                                 index_offset += 1
                     else:
                         if high == None:
+                            # try:
                             cable.wires[low-cable.lower_index].connect_pin(port_pin_map[port][0 + index_offset_initial])
+                            # except Exception:
+                            #     import pdb; pdb.set_trace()
                             index_offset += 1
                         else:
-                            for i in range(low,high):
+                            for i in range(low,high+1):
                                 cable.wires[i-cable.lower_index].connect_pin(port_pin_map[port][i-low + index_offset_initial])
                                 index_offset += 1
-        return netlist
+        return self.netlist
                 
 
 
@@ -175,13 +274,13 @@ class VerilogParser:
 
     def parse_module(self, params, netlist):
         
-        definition = self.parse_module_header(netlist)
+        definition = self.parse_module_header(self.netlist)
         for k,v in params.items():
             definition[k] = v
         if self.primitive_cell:
             self.parse_primitive_cell_body(definition)
         else:
-            self.parse_module_body(definition, netlist)
+            self.parse_module_body(definition, self.netlist)
         return definition
 
     def parse_primitive_cell_body(self, definition):
@@ -190,21 +289,32 @@ class VerilogParser:
         keywords = set(["input", "output", "inout"])
         while token != "endmodule" and token != "endprimative":
             if token in keywords:
-                name, left, right = self.parse_wire()
-                port = self._update_port(definition, name, (max(left,right) - min(left,right)), None, min(left,right), left > right)
+                names, left, right = self.parse_wire()
+                for name in names:
+                    port = self._update_port(definition, name, self.my_minus(self.my_max(left,right), self.my_min(left,right)), token, self.my_min(left,right), self.my_greater(left, right))
             elif token == "function":
                 while token != "endfunction":
                     token = self.tokenizer.next()
             token = self.tokenizer.next()
 
+    def _parse_rename_single(self, name, token):
+        # token = self.tokenizer.next()
+        if token == "[":
+            name += " "
+            while token != "," and token != "}" and token != ')':
+                name += token
+                token = self.tokenizer.next()
+        return name, token
+
 
     def parse_module_header(self, netlist):
         name = self.tokenizer.next()
-        definition = self._get_create_definition(netlist, name)
+        definition = self._get_create_definition(self.netlist, name)
         token = self.tokenizer.next()
         if token == "#":
             self.parse_parameter_list(definition)
             token = self.tokenizer.next()
+        d = None
         if token == "(":
             
             while True:
@@ -220,19 +330,27 @@ class VerilogParser:
                     token = self.tokenizer.next()
                     if token == "{":
                         while token != "}":
+                            # name = self.tokenizer.next()
+                            # token = self.tokenizer.next()
+                            # if token == "[":
+                            #     name += " "
+                            #     while token != "," and token != "}":
+                            #         name += token
+                            #         token = self.tokenizer.next()
                             name = self.tokenizer.next()
                             token = self.tokenizer.next()
-                            if token == "[":
-                                name += " "
-                                while token != "," and token != "}":
-                                    name += token
-                                    token = self.tokenizer.next()
+                            name, token = self._parse_rename_single(name, token)
                             name_list.append(name)
                             assert token == "," or token == "}", "syntax error expect , or } got " + token + " line " + str(self.tokenizer.line_number)
+                    else:
+                        name = token
+                        token = self.tokenizer.peek()
+                        name, token = self._parse_rename_single(name, token)
+                        name_list.append(name)
+                        assert token == ")", "syntax error expect ) got " + token + " line " + str(self.tokenizer.line_number)
                             
                     temp = self.tokenizer.next()
                     assert temp == ")", "expected ) to finish alias got " + temp + " line " + str(self.tokenizer.line_number)
-                d = None
                 if token == "input" or token == "output" or token == "inout":
                     d = token
                     token = self.tokenizer.next()
@@ -248,7 +366,7 @@ class VerilogParser:
                     token = self.tokenizer.next()
                 if verilog_rename is None:
                     name = token
-                    port = self._update_port(definition, name, width = (max(left,right) - min(left,right)), direction=d, lower_index = min(left,right), is_downto = left > right)
+                    port = self._update_port(definition, name, width = self.my_minus(self.my_max(left,right),self.my_min(left,right)), direction=d, lower_index = self.my_min(left,right), is_downto = self.my_greater(left, right))
                 else:
                     i = 0
                     outer_port = self._update_port(definition, verilog_rename, width = i, direction=d, lower_index = 0, is_downto = True)
@@ -257,15 +375,37 @@ class VerilogParser:
                         name = name_split[0]
                         index = None
                         if len(name_split) > 1:
+                            #raise Exception
                             index = name_split[1]
-                        port = self._update_port(definition, name, width = (max(left,right) - min(left,right)), direction=d, lower_index = min(left,right), is_downto = left > right)
-                        port["VERILOG.port_rename_member"] = "true"
-                        if index is not None:
-                            outer_port["VERILOG.port_rename."+str(i)] = name + " " + index
-                        else:
-                            outer_port["VERILOG.port_rename."+str(i)] = name
+                            if ":" in index:
+                                raise Exception
+                            index = int(index.strip("]").strip("["))
+                        
+                        # # port = self._update_port(definition, name, width = (max(left,right) - self.my_min(left,right)), direction=d, lower_index = self.my_min(left,right), is_downto = left > right)
+                        # # port["VERILOG.port_rename_member"] = "true"
+                        # # if index is not None:
+                        # #     outer_port["VERILOG.port_rename."+str(i)] = name + " " + index
+                        # # else:
+                        # #     outer_port["VERILOG.port_rename."+str(i)] = name
+                        # in_count = 1
+                        # if name in self._port_rename_inner_count_dictionary:
+                        #     in_count = self._port_rename_inner_count_dictionary[name]
+                        #     self._port_rename_inner_count_dictionary[name] += 1
+                        # else:
+                        #     in_count = 1
+                        #     self._port_rename_inner_count_dictionary[name] = 1
+
+                        inner_cable = self._update_cable(definition, name = name, additional_index =index)
+                        # # index_of_interest = 0
+                        # # if index is not None:
+                        # #     index_of_interest = int(index.strip("[").strip("]"))
+                        self._port_rename_in_to_out_dict[name] = outer_port
+                        if outer_port not in self._port_rename_out_to_in_dict:
+                            self._port_rename_out_to_in_dict[outer_port] = []
+                        self._port_rename_out_to_in_dict[outer_port].append(name)
+                        self._port_rename_create_assignment(outer_port, i, inner_cable, definition, inner_index = index)
                         i += 1
-                    outer_port = self._update_port(definition, verilog_rename, width = i, direction=d, lower_index = 0, is_downto = True)
+                        outer_port = self._update_port(definition, verilog_rename, width = i, direction=d, lower_index = 0, is_downto = True)
                     
                 token = self.tokenizer.next()
                 if token == ")":
@@ -276,6 +416,7 @@ class VerilogParser:
         token = self.tokenizer.next()
         assert token == ";", "expected ; to finish the port list"+ " " + str(self.tokenizer.line_number)
         return definition
+
 
 
     def parse_parameter_list(self, definition):
@@ -320,7 +461,7 @@ class VerilogParser:
                     k,v = self.parse_star_parameters()
                     params["VERILOG.star."+k] = v
                 else:
-                    instance = self.parse_single_instance(netlist, definition, def_name, params)
+                    instance = self.parse_single_instance(self.netlist, definition, def_name, params)
                     params = dict()
             elif token == "assign":
                 _ = self.tokenizer.next()
@@ -331,37 +472,39 @@ class VerilogParser:
 
                 assignment_info[(name_left, left_left, right_left)] = (name_right, left_right, right_right)
 
-                #print("left side of the assign", name_left + "["+str(left_left) + ":" + str(right_left) + "]", "right side of the assignment", name_right + "["+str(left_right) + ":" + str(right_right) + "]")
-                
+                #print("left side of the assign", name_left + "["+str(left_left) + ":" + str(right_left) + "]", "right side of the assignment", name_right + "["+str(left_right) + ":" + str(right_right) + "]")               
             else:
                 token = self.tokenizer.next()
-                name, left, right = self.parse_wire()
-                #check and see what a name lookup on the name yeids for the ports
-                #go ahead and modify it if it exists.
-                if token in portwords:
-                    port = self._update_port(definition, name, width = (max(left,right) - min(left,right)), direction = token, lower_index = min(left,right), is_downto = left > right)
-                else:
-                    cable = self._update_cable(definition, name, width = (max(left,right) - min(left,right)), lower_index = min(left,right), is_downto = left > right)
+                names, left, right = self.parse_wire()
+                for name in names:
+                    #check and see what a name lookup on the name yeids for the ports
+                    #go ahead and modify it if it exists.
+                    if token in portwords:
+                        #print(token)
+                        if name in self._port_rename_in_to_out_dict:
+                            #print("unexpected")
+                            outer_port = self._port_rename_in_to_out_dict[name]
+                            name = outer_port.name
+                            direction = outer_port.direction
+                            if direction == Port.Direction.INOUT:
+                                token = "inout"
+                            elif direction == Port.Direction.IN:
+                                if token =="output" or token == "inout":
+                                    token = "inout"
+                            elif direction == Port.Direction.OUT:
+                                if token == "input" or token == "inout":
+                                    token = "inout"
+                            elif direction == Port.Direction.UNDEFINED:
+                                pass
+                            port = self._update_port(definition, name, direction = token)
+                        else:
+                            port = self._update_port(definition, name, width = self.my_minus(self.my_max(left,right), self.my_min(left,right)), direction = token, lower_index = self.my_min(left,right), is_downto = self.my_greater(left, right))
+                    else:
+                        cable = self._update_cable(definition, name, width = self.my_minus(self.my_max(left,right), self.my_min(left,right)), lower_index = self.my_min(left,right), is_downto = self.my_greater(left, right))
             token = self.tokenizer.peek()
 
         for k,v in assignment_info.items():
-            cable_list = definition.get_cables(k[0])
-            cable_left = next(cable_list)
-            # cable_list = definition.get_cables(v[0])
-            # cable_right = next(cable_list)
-            k_str = k[0]
-            if k[1] != None:
-                k_str += " [" + str(k[1])
-                if k[2] != None:
-                    k_str += ":" + str(k[2])
-                k_str += "]"
-            v_str = v[0]
-            if v[1] != None:
-                v_str += " [" + str(v[1])
-                if k[2] != None:
-                    v_str += ":" + str(v[2])
-                v_str += "]"
-            cable_left["VERILOG.assignment." + k_str + " = " + v_str] = "true"  
+            self._create_assigner(k, v, definition)
 
         #put in assignment information
 
@@ -373,7 +516,12 @@ class VerilogParser:
         token = self.tokenizer.peek()
         if token == "[":
             token = self.tokenizer.next()
-            left = int(self.tokenizer.next())
+            try:
+                str_left = self.tokenizer.next()
+                left = int(str_left)
+            except ValueError:
+                print("expected an integer value following [ instead got " + str_left + " line " + str(self.tokenizer.line_number))
+                raise ValueError
             token = self.tokenizer.next()
             if token == ":":
                 right = int(self.tokenizer.next())
@@ -386,9 +534,10 @@ class VerilogParser:
         #the next token will be either [ or a letter
         #if [ then the next is the left then : then right
         #if a letter then it will just be 0 downto 0
+        name = []
         token = self.tokenizer.next()
-        left = 0
-        right = 0
+        left = None
+        right = None
         verilog_types = ["reg", "wire", "integer"]
         v_type = "wire"
         if token in verilog_types:
@@ -401,7 +550,7 @@ class VerilogParser:
             assert self.tokenizer.next() == "]", "expected an end bracket"+ " " + str(self.tokenizer.line_number)
             token = self.tokenizer.next()
         while True:
-            name = token
+            name.append(token)
             #name, left, right = self.parse_wire_name(self)
             token = self.tokenizer.next()
             #assert token == ";", "expected ; got " + token + " line " + str(self.tokenizer.line_number)
@@ -416,7 +565,7 @@ class VerilogParser:
 
     def parse_single_instance(self, netlist, parent, reference_name, params):
         
-        ref_def = self._get_create_definition(netlist, reference_name)
+        ref_def = self._get_create_definition(self.netlist, reference_name)
         instance = parent.create_child()
         for k, v in params.items():
             instance[k] = v
@@ -527,16 +676,16 @@ class VerilogParser:
 
     def _get_create_library(self, netlist, library_name = None):
         if library_name:
-            lib_list = netlist.get_libraries(library_name)
+            lib_list = self.netlist.get_libraries(library_name)
             lib = next(lib_list, None)
             if not lib:
-                lib = netlist.create_library()
+                lib = self.netlist.create_library()
                 lib.name = library_name
         else:
-            lib_list = netlist.get_libraries("work")
+            lib_list = self.netlist.get_libraries("work")
             lib = next(lib_list, None)
             if not lib:
-                lib = netlist.create_library()
+                lib = self.netlist.create_library()
                 lib.name = "work"
         return lib
 
@@ -548,7 +697,7 @@ class VerilogParser:
                 d.name = definition_name
             return d
         else:
-            library = self._get_create_library(netlist)
+            library = self._get_create_library(self.netlist)
             d = next(library.get_definitions(definition_name),None)
             if d is None:
                 d = library.create_definition()
@@ -566,9 +715,9 @@ class VerilogParser:
             inst = definition.create_child()
             inst.name = name
         if reference is not None:
-            ref = netlist.get_definitions(reference)
+            ref = self.netlist.get_definitions(reference)
             if not ref:
-                lib = self._get_create_library(netlist)
+                lib = self._get_create_library(self.netlist)
                 ref = lib.create_definition()
                 ref.name = reference
             inst.reference = ref
@@ -577,8 +726,8 @@ class VerilogParser:
         return inst
 
     def _update_definition(self, netlist, name, library = None, properties = dict()):
-        lib = self._get_create_library(netlist, library)
-        d_list = netlist.get_definitions(name)
+        lib = self._get_create_library(self.netlist, library)
+        d_list = self.netlist.get_definitions(name)
         d = next(d_list, None)
         if not d:
             d = lib.create_definition()
@@ -650,17 +799,37 @@ class VerilogParser:
         return port
 
     def _update_cable(self, definition, name, width = None,
-                direction = None, lower_index = None, is_downto = None, properties = dict()):
+                direction = None, lower_index = None, is_downto = None, properties = dict(), additional_index = None):
+        #use the additional index to add one index to a cable (expanding to fill any gaps and setting lower index appropriately)
+        #if the index exists then nothing happens
+        #width value is primary and overrides any additional index given.
         cable_list = definition.get_cables(name)
 
         direction = self.direction_string_map[direction]
         
         cable = next(cable_list, None)
-        
+
         if cable is None:
             cable = definition.create_cable()
             cable.name = name
-            
+
+        if additional_index is not None and width is None:
+            if len(cable.wires) == 0:
+                lower_index = additional_index
+                width =0
+            elif additional_index >= cable.lower_index and  additional_index < cable.lower_index + len(cable.wires):
+                pass
+            else:
+                width = len(cable.wires)
+                if additional_index < cable.lower_index:
+                    additional_width = cable.lower_index - additional_index
+                    width = width + additional_width
+                    lower_index = additional_index
+                else:
+                    assert additional_index >= cable.lower_index + len(cable.wires)
+                    additional_width = additional_index - cable.lower_index - len(cable.wires)
+                    width = width + additional_width
+
         if width is None and len(cable.wires) == 0:
             width = 0
 
@@ -683,4 +852,40 @@ class VerilogParser:
         for k,v in properties.items():
             cable[k] = v
 
+        
+
+        # if cable.name == "next_state_i_a2_6":
+        #     print(cable.lower_index)
+        #     import pdb; pdb.set_trace()
+
         return cable
+
+    def my_max(self, a, b):
+        if a == None:
+            return b
+        elif b == None:
+            return a
+        else:
+            return max(a,b)
+
+    def my_min(self, a,b):
+        if a == None:
+            return b
+        elif b == None:
+            return a
+        else:
+            return min(a,b)
+
+    def my_greater(self, a,b):
+        if a == None:
+            return b
+        elif b == None:
+            return a
+        else:
+            return a > b
+
+    def my_minus(self, a, b):
+        if a == None or b == None:
+            return None
+        else:
+            return a - b

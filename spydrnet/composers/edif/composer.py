@@ -2,6 +2,7 @@ import json
 from spydrnet.ir import *
 import inspect  # used for debug.
 from datetime import datetime
+from spydrnet.composers.edif.edifify_names import EdififyNames
 
 
 class ComposeEdif:
@@ -14,27 +15,114 @@ class ComposeEdif:
         self._lisp_depth_ = 0
         self.test = 0
 
+
     def run(self, ir=None, file_out="out.edf"):
         """
-        compose an edif file from the IR in either file or object form and _output_ it to a file
-        **currently only object form will work read the json into an object first**
+        compose an edif file from the IR input a netlist object form and _output_ it to a file
 
         Keyword Arguments:
-        ir -- the object(environment) or file(json) to be composed to edif (default None)
-                        **default should be changed to in.ir**
+        ir -- the object(environment) to be composed to edif (default None)
+
         file_out -- the path and name of the file to which the edif will be written (default "out.edf")
         """
         self.output_filename = file_out
+        self._edifify_netlist(ir)
         self._data_ = ir
         if (isinstance(ir, str)):
             self.filename = ir
             self._read_data_()  # only needed if we start to accept the json format files
-            print("currently json files are unsupported! read into an object first.")
+            print("currently input files directly to the composer are unsupported! read in with the parser first.")
         else:
             self._data_ = ir
         self._open_output_()
         self._output_environment_()
         self._close_output_()
+
+    def _edifify_netlist(self, netlist):
+
+        #functions defined to be used as dependency getters in topological sort
+        #declared here to be used more as functional oriented code.
+        def _get_definition_dependency_same_library(definition):
+            library = definition.library
+            dependency_set = set()
+            for inst in definition.children:
+                if inst.reference.library == library:
+                    dependency_set.add(inst.reference)
+            return dependency_set
+
+        def _get_library_dependency(library):
+            depend_set = set()
+            for definition in library.definitions:
+                for child in definition.children:
+                    if child.reference.library != library:
+                        depend_set.add(child.reference.library)
+            return depend_set
+
+        netlist.libraries = self._topological_sort(netlist.libraries, _get_library_dependency)
+        for library in netlist.libraries:
+            library.definitions = self._topological_sort(library.definitions, _get_definition_dependency_same_library)
+
+        names = EdififyNames()
+        if netlist.name == None:
+            netlist.name = netlist.top_instance.name
+        self._add_rename_property(netlist, [], names)
+        self._add_rename_property(netlist.top_instance, [], names)
+        for lib in netlist.libraries:
+            self._add_rename_property(lib, netlist.libraries, names)
+            for definition in lib.definitions:
+                self._add_rename_property(definition, lib.definitions, names)
+                for cable in definition.cables:
+                    self._add_rename_property(cable, definition.cables, names)
+                for instance in definition.children:
+                    self._add_rename_property(instance, definition.children, names)
+                for port in definition.ports:
+                    self._add_rename_property(port, definition.ports, names)
+
+    def _topological_sort(self, list_of_objects, dependecy_function):
+        
+        visited = set()
+        output_list = []
+        get_dependents = dependecy_function
+
+        def iterate(o):
+            nonlocal visited
+            nonlocal output_list
+            nonlocal get_dependents
+            stack = [o]
+            while(len(stack) > 0):
+                o = stack[-1]
+                for child in get_dependents(o):
+                    if child not in visited:
+                        stack.append(child)
+                if stack[-1] == o:
+                    stack.pop()
+                    visited.add(o)
+                    output_list.append(o)
+                
+        # def recur(o):
+        #     nonlocal visited
+        #     nonlocal output_list
+        #     nonlocal get_dependents
+        #     visited.add(o)
+        #     for dependent in get_dependents(o):
+        #         if dependent not in visited:
+        #             recur(dependent)
+        #     output_list.append(o)
+
+        for o in list_of_objects:
+            if o not in visited:
+                iterate(o)
+        
+        return output_list
+
+    def _add_rename_property(self, obj, namespace_list, rename_helper):
+        name = obj.name
+        if "EDIF.identifier" in obj.data:
+            return
+        rename = rename_helper.make_valid(obj, namespace_list)
+        obj["EDIF.identifier"] = rename
+        if rename != name:
+            obj["EDIF.rename"] = True
 
     def _read_data_(self):
         """read _data_ in from a json ir file and store it in _data_"""
@@ -151,16 +239,35 @@ class ComposeEdif:
         self._new_line_()
 
     def _output_name_of_object_(self, obj):
-        if '.NAME' not in obj or (obj['.NAME'] == obj['EDIF.identifier'] and obj.get('EDIF.rename', False) is False):
-            self._output_.write(obj['EDIF.identifier'])
+        # if '.NAME' not in obj or (obj['.NAME'] == obj['EDIF.identifier'] and obj.get('EDIF.rename', False) is False):
+        #     self._output_.write(obj['EDIF.identifier'])
+        # else:
+        #     identifier = obj['EDIF.identifier']
+        #     rename_name = obj.get('.NAME', identifier)
+        #     self._lisp_increment_()
+        #     self._output_.write("rename ")
+        #     self._output_.write(identifier)
+        #     self._output_.write(' "' + rename_name + '"')
+        #     self._lisp_decrement_()
+        rename, name = self._get_name_string_(obj)
+        if rename:
+            self._lisp_increment_()
+            self._output_.write(name)
+            self._lisp_decrement_()
         else:
+            self._output_.write(name)
+
+
+    def _get_name_string_(self, obj):
+        if '.NAME' not in obj or (obj['.NAME'] == obj['EDIF.identifier'] and obj.get('EDIF.rename', False) is False):
+            rename = False
+            name = obj['EDIF.identifier']
+        else:
+            rename = True
             identifier = obj['EDIF.identifier']
             rename_name = obj.get('.NAME', identifier)
-            self._lisp_increment_()
-            self._output_.write("rename ")
-            self._output_.write(identifier)
-            self._output_.write(' "' + rename_name + '"')
-            self._lisp_decrement_()
+            name = "rename " + identifier + ' "' + rename_name + '"'
+        return rename, name
 
     def _output_definition_(self, definition):
         self._lisp_increment_()
@@ -270,15 +377,15 @@ class ComposeEdif:
         self._lisp_decrement_()
 
     def _output_cable_(self, cable):
-        self._lisp_increment_()
-        self._output_.write("net ")
-        self._output_name_of_object_(cable)
-        self._output_.write(" ")
-        self._lisp_increment_()
-        self._output_.write("joined")
-        self._new_line_()
-        # for port in cable.getConnectionList(): #TODO fuction cable.getConnectionList() needs to be created
         for wire in cable.wires:
+            self._lisp_increment_()
+            self._output_.write("net ")
+            self._output_name_of_cable_wire_(cable, wire)
+            self._output_.write(" ")
+            self._lisp_increment_()
+            self._output_.write("joined")
+            self._new_line_()
+            # for port in cable.getConnectionList(): #TODO fuction cable.getConnectionList() needs to be created
             for pin in wire.pins:
                 # port = pin.port
                 # print(type(pin))
@@ -287,10 +394,36 @@ class ComposeEdif:
                     pin = pin.inner_pin
                 else:
                     self._output_port_ref_(pin.port, self._get_edif_name_(cable), pin)
-        self._new_line_()
-        self._lisp_decrement_()
-        self._new_line_()
-        self._lisp_decrement_()
+            self._new_line_()
+            self._lisp_decrement_()
+            self._new_line_()
+            self._lisp_decrement_()
+
+    def _output_name_of_cable_wire_(self, cable, wire):
+        if len(cable.wires) == 1:
+            self._output_name_of_object_(cable)
+        else:
+        # cable_name = self._get_name_string_(cable)
+            cable_index = self._get_wire_index_(cable, wire)
+            identifier = cable['EDIF.identifier'] + "_" + str(cable_index) + "_"
+            rename_name = cable.get('.NAME', identifier) + "[" + str(cable_index) + "]"
+            name = "rename " + identifier + ' "' + rename_name + '"'
+            self._lisp_increment_()
+            self._output_.write(name)
+            self._lisp_decrement_()
+
+        
+
+    def _get_wire_index_(self, cable, wire):
+        i = 0
+        val = None
+        for w in cable.wires:
+            if wire == w:
+                val = i
+                break
+            i += 1
+        return val + cable.lower_index
+
 
     def _output_inner_pin_(self, pin):
         inner_pin = pin.inner_pin
