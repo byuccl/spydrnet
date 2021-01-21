@@ -143,7 +143,7 @@ class NamespaceManager(CallbackListener, ABC):
                     if key in child:
                         no_conflict = namespace.no_conflict(child, key, child[key])
                         if no_conflict is False:
-                            raise ValueError("Adding this element would result in a naming conflict.")
+                            raise ValueError("Adding this element would result in a naming conflict. " + child[key])
             if ".NS" in parent:
                 parent_namespace = parent[".NS"]
                 if ".NS" not in child or child[".NS"] != parent_namespace:

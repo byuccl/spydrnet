@@ -33,21 +33,26 @@ class EdififyNames:
     Examples
     --------
     >>> from spydrnet.composers.edif.edifify_names import EdififyNames
+    >>> import spydrnet as sdn
     >>> ed = EdififyNames()
-    >>> l = list()
-    >>> ed.make_valid("*this_is+an$*`id[0:3]",l)
+    >>> i = sdn.Instance()
+    >>> i.name = "*this_is+an$*`id[0:3]"
+    >>> l = [i]
+    >>> valid_identifier = ed.make_valid(i,l)
 
-    The output should be the following:
+    The valid_identifier should be the following:
 
     &_this_is_an___in_0_3_
 
     >>> import spydrnet as sdn
     >>> i = sdn.Instance()
-    >>> i.name = 'hello'
+    >>> i.name = 'name'
     >>> i2 = sdn.Instance()
     >>> i2.name = 'name_sdn_1_'
-    >>> my_list = [i,i2]
-    >>> ed.make_valid("name", my_list)
+    >>> i3 = sdn.Instance()
+    >>> i3.name = 'name'
+    >>> my_list = [i,i2,i3]
+    >>> ed.make_valid(i3, my_list)
 
     The output should be the following:
 
@@ -58,13 +63,14 @@ class EdififyNames:
     def __init__(self):
         self.valid = set()
         self.non_alpha = set()
+        self.name_length_target = 100
         # valid.add("a")
         # valid.add("b")
 
     def _length_good(self, identifier):
         """returns a boolean indicating whether or not the indentifier fits the 256 character limit"""
         # return len(identifier) < 256
-        return len(identifier) < 100
+        return len(identifier) < self.name_length_target
 
     def _length_fix(self, identifier):
         """returns the name with the fixed length of 256 characters if the limit is exceeded"""
@@ -72,9 +78,9 @@ class EdififyNames:
             pattern = re.compile('_sdn_[0-9]+_$')
             r = pattern.search(identifier)
             if r is None:
-                return identifier[:100]
+                return identifier[:self.name_length_target]
             else:
-                return identifier[:100 - (r.end() - r.start())] + identifier[r.start():]
+                return identifier[:self.name_length_target - (r.end() - r.start())] + identifier[r.start():]
         else:
             return identifier
 
@@ -108,25 +114,28 @@ class EdififyNames:
         identifier = self._length_fix(identifier)
         return identifier
 
-    def _conflicts_good(self, identifier, objects):
+    def _conflicts_good(self, obj, identifier, objects):
         for element in objects:
-            if element.name == identifier:
+            if element == obj:
+                continue
+            if element.name == identifier or ("EDIF.identifier" in element.data and element["EDIF.identifier"] == identifier):
                 return False
         return True
 
-    def _conflicts_fix(self, identifier, objects):
-
-        if not self._conflicts_good(identifier, objects):
+    def _conflicts_fix(self, obj, identifier, objects):
+        identifier_lower = identifier.lower()
+        if not self._conflicts_good(obj, identifier_lower, objects):
             pattern = re.compile('_sdn_[0-9]+_$')
-            r = pattern.search(identifier)
+            r = pattern.search(identifier_lower)
             if r is None:
-                identifier = identifier + '_sdn_1_'
+                identifier_lower = identifier_lower + '_sdn_1_'
             else:
                 # get the number out of the string
-                num = int(re.search(r'\d+', identifier[r.start():]).group())
-                identifier = identifier[:r.start()+5] + str(num + 1) + '_'
-            identifier = self._length_fix(identifier)
-            identifier = self._conflicts_fix(identifier, objects)
+                num = int(re.search(r'\d+', identifier_lower[r.start():]).group())
+                identifier_lower = identifier_lower[:r.start()+5] + str(num + 1) + '_'
+            identifier_lower = self._length_fix(identifier_lower)
+            identifier_lower = self._conflicts_fix(obj, identifier_lower, objects)
+            identifier = identifier_lower
         return identifier
 
     def is_valid_identifier(self, identifier):
@@ -141,14 +150,15 @@ class EdififyNames:
             return False
         return True
 
-    def make_valid(self, identifier, objects):
+    def make_valid(self, obj, objects):
         """
         make a compliant identifier based on the identifier given.
         returns the identifier if no change is needed.
         """
 
+        identifier = obj.name
         identifier = self._length_fix(identifier)
         identifier = self._characters_fix(identifier)
-        identifier = self._conflicts_fix(identifier, objects)
+        identifier = self._conflicts_fix(obj, identifier, objects)
 
         return identifier
