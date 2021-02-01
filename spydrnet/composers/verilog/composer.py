@@ -56,7 +56,8 @@ class Composer:
             for c in definition.children:
                 if c.reference not in self.written:
                     to_write.append(c.reference)
-            # print("writing definition", definition.name)
+            if definition.name is None:
+                raise Exception("Definition: ",definition, " .name is undefined")
             self._write_definition_single(definition)
 
     def _write_definition_single(self, definition):
@@ -69,6 +70,7 @@ class Composer:
             need_end_primative = True
             self.file.write("`celldefine\n")
         self.file.write("module ")
+
         self._write_escapable_name(definition.name)
         self.file.write("\n")
         self._write_ports(definition)
