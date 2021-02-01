@@ -1,0 +1,25 @@
+(edif (rename Netlist_example "Widget_instance")
+  (edifversion 2 0 0)
+  (edifLevel 0)
+  (keywordmap (keywordlevel 0))
+  (status
+    (written
+      (timeStamp 2021 01 31 19 15 45)
+      
+      (comment "Built by 'BYU spydrnet tool'")
+      )
+    )
+  (Library work
+    (edifLevel 0)
+    (technology (numberDefinition ))
+    (Cell Widget (celltype GENERIC)
+      (view netlist (viewtype NETLIST)
+        (interface
+          )
+        )
+      )
+    )
+  (design (rename widget_edif_instance "Widget_instance")
+    (cellref Widget(libraryref work))
+    )
+  )

@@ -15,7 +15,6 @@ class ComposeEdif:
         self._lisp_depth_ = 0
         self.test = 0
 
-
     def run(self, ir=None, file_out="out.edf"):
         """
         compose an edif file from the IR input a netlist object form and _output_ it to a file
@@ -31,7 +30,8 @@ class ComposeEdif:
         if (isinstance(ir, str)):
             self.filename = ir
             self._read_data_()  # only needed if we start to accept the json format files
-            print("currently input files directly to the composer are unsupported! read in with the parser first.")
+            print(
+                "currently input files directly to the composer are unsupported! read in with the parser first.")
         else:
             self._data_ = ir
         self._open_output_()
@@ -40,8 +40,8 @@ class ComposeEdif:
 
     def _edifify_netlist(self, netlist):
 
-        #functions defined to be used as dependency getters in topological sort
-        #declared here to be used more as functional oriented code.
+        # functions defined to be used as dependency getters in topological sort
+        # declared here to be used more as functional oriented code.
         def _get_definition_dependency_same_library(definition):
             library = definition.library
             dependency_set = set()
@@ -58,11 +58,15 @@ class ComposeEdif:
                         depend_set.add(child.reference.library)
             return depend_set
 
-        netlist.libraries = self._topological_sort(netlist.libraries, _get_library_dependency)
+        netlist.libraries = self._topological_sort(
+            netlist.libraries, _get_library_dependency)
         for library in netlist.libraries:
-            library.definitions = self._topological_sort(library.definitions, _get_definition_dependency_same_library)
+            library.definitions = self._topological_sort(
+                library.definitions, _get_definition_dependency_same_library)
 
         names = EdififyNames()
+        if netlist.top_instance is None:
+            raise Exception("netlist.top_instance undefined")
         if netlist.name == None:
             netlist.name = netlist.top_instance.name
         self._add_rename_property(netlist, [], names)
@@ -74,12 +78,13 @@ class ComposeEdif:
                 for cable in definition.cables:
                     self._add_rename_property(cable, definition.cables, names)
                 for instance in definition.children:
-                    self._add_rename_property(instance, definition.children, names)
+                    self._add_rename_property(
+                        instance, definition.children, names)
                 for port in definition.ports:
                     self._add_rename_property(port, definition.ports, names)
 
     def _topological_sort(self, list_of_objects, dependecy_function):
-        
+
         visited = set()
         output_list = []
         get_dependents = dependecy_function
@@ -98,7 +103,7 @@ class ComposeEdif:
                     stack.pop()
                     visited.add(o)
                     output_list.append(o)
-                
+
         # def recur(o):
         #     nonlocal visited
         #     nonlocal output_list
@@ -112,7 +117,7 @@ class ComposeEdif:
         for o in list_of_objects:
             if o not in visited:
                 iterate(o)
-        
+
         return output_list
 
     def _add_rename_property(self, obj, namespace_list, rename_helper):
@@ -166,10 +171,12 @@ class ComposeEdif:
         self._lisp_increment_()
         self._output_.write("cellref ")
         test = self._data_.top_instance
-        self._output_.write(self._data_.top_instance.reference['EDIF.identifier'])
+        self._output_.write(
+            self._data_.top_instance.reference['EDIF.identifier'])
         self._lisp_increment_()
         self._output_.write("libraryref ")
-        self._output_.write(self._data_.top_instance.reference.library['EDIF.identifier'])
+        self._output_.write(
+            self._data_.top_instance.reference.library['EDIF.identifier'])
         self._lisp_decrement_()
         self._lisp_decrement_()
         self._new_line_()
@@ -177,8 +184,9 @@ class ComposeEdif:
         self._new_line_()
 
         self._lisp_decrement_()
-        
-        assert self._lisp_depth_ == 0, "There was an error with parenthesis matching off by " + str(self._lisp_depth_)
+
+        assert self._lisp_depth_ == 0, "There was an error with parenthesis matching off by " + \
+            str(self._lisp_depth_)
 
     def _output_status_(self):
         self._new_line_()
@@ -197,11 +205,13 @@ class ComposeEdif:
         if 'EDIF.status.written.program' in self._data_:
             self._lisp_increment_()
             self._output_.write("program ")
-            self._output_.write('"{}" '.format(self._data_['EDIF.status.written.program']))
+            self._output_.write('"{}" '.format(
+                self._data_['EDIF.status.written.program']))
             if 'EDIF.status.written.program.version' in self._data_:
                 self._lisp_increment_()
                 self._output_.write("version ")
-                self._output_.write('"{}"'.format(self._data_['EDIF.status.written.program.version']))
+                self._output_.write('"{}"'.format(
+                    self._data_['EDIF.status.written.program.version']))
                 self._lisp_decrement_()
             self._lisp_decrement_()
         self._new_line_()
@@ -256,7 +266,6 @@ class ComposeEdif:
             self._lisp_decrement_()
         else:
             self._output_.write(name)
-
 
     def _get_name_string_(self, obj):
         if '.NAME' not in obj or (obj['.NAME'] == obj['EDIF.identifier'] and obj.get('EDIF.rename', False) is False):
@@ -325,7 +334,8 @@ class ComposeEdif:
             self._output_.write(" ")
             self._lisp_increment_()
             self._output_.write("direction ")
-            self._output_.write(self._direction_to_string_(port.direction))  # str(port.direction))
+            self._output_.write(self._direction_to_string_(
+                port.direction))  # str(port.direction))
             self._lisp_decrement_()
             self._lisp_decrement_()
             self._new_line_()
@@ -333,7 +343,8 @@ class ComposeEdif:
         self._output_name_of_object_(port)
         self._lisp_increment_()
         self._output_.write("direction ")
-        self._output_.write(self._direction_to_string_(port.direction))  # str(port.direction))
+        self._output_.write(self._direction_to_string_(
+            port.direction))  # str(port.direction))
         self._lisp_decrement_()
         self._lisp_decrement_()
         self._new_line_()
@@ -357,7 +368,8 @@ class ComposeEdif:
         self._output_.write(" ")
         self._lisp_increment_()
         self._output_.write("viewref ")
-        self._output_.write("netlist ")  # TODO this should be checked against some sort of metadata
+        # TODO this should be checked against some sort of metadata
+        self._output_.write("netlist ")
         self._lisp_increment_()
         self._output_.write("cellref ")
         definition = instance.reference
@@ -393,7 +405,8 @@ class ComposeEdif:
                     self._output_inner_pin_(pin)
                     pin = pin.inner_pin
                 else:
-                    self._output_port_ref_(pin.port, self._get_edif_name_(cable), pin)
+                    self._output_port_ref_(
+                        pin.port, self._get_edif_name_(cable), pin)
             self._new_line_()
             self._lisp_decrement_()
             self._new_line_()
@@ -403,16 +416,16 @@ class ComposeEdif:
         if len(cable.wires) == 1:
             self._output_name_of_object_(cable)
         else:
-        # cable_name = self._get_name_string_(cable)
+            # cable_name = self._get_name_string_(cable)
             cable_index = self._get_wire_index_(cable, wire)
-            identifier = cable['EDIF.identifier'] + "_" + str(cable_index) + "_"
-            rename_name = cable.get('.NAME', identifier) + "[" + str(cable_index) + "]"
+            identifier = cable['EDIF.identifier'] + \
+                "_" + str(cable_index) + "_"
+            rename_name = cable.get('.NAME', identifier) + \
+                "[" + str(cable_index) + "]"
             name = "rename " + identifier + ' "' + rename_name + '"'
             self._lisp_increment_()
             self._output_.write(name)
             self._lisp_decrement_()
-
-        
 
     def _get_wire_index_(self, cable, wire):
         i = 0
@@ -423,7 +436,6 @@ class ComposeEdif:
                 break
             i += 1
         return val + cable.lower_index
-
 
     def _output_inner_pin_(self, pin):
         inner_pin = pin.inner_pin
@@ -528,5 +540,3 @@ class ComposeEdif:
 
     def _close_output_(self):
         self._output_.close()
-
-
