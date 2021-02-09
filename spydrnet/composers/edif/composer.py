@@ -54,6 +54,8 @@ class ComposeEdif:
             depend_set = set()
             for definition in library.definitions:
                 for child in definition.children:
+                    if child.reference is None:
+                        raise Exception("definition: ", child, ".reference is undefined")
                     if child.reference.library != library:
                         depend_set.add(child.reference.library)
             return depend_set

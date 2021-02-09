@@ -4,7 +4,7 @@
   (keywordmap (keywordlevel 0))
   (status
     (written
-      (timeStamp 2021 02 09 10 26 23)
+      (timeStamp 2021 02 09 13 16 40)
       
       (comment "Built by 'BYU spydrnet tool'")
       )
@@ -12,12 +12,25 @@
   (Library work
     (edifLevel 0)
     (technology (numberDefinition ))
+    (Cell AND2 (celltype GENERIC)
+      (view netlist (viewtype NETLIST)
+        (interface
+          (port A(direction INPUT))
+          (port O(direction OUTPUT))
+          )
+        (contents
+          )
+        )
+      )
     (Cell widget (celltype GENERIC)
       (view netlist (viewtype NETLIST)
         (interface
-          (port port_a(direction INPUT))
-          (port port_o(direction OUTPUT))
+          (port A(direction INPUT))
+          (port O(direction OUTPUT))
           )
+        (contents
+          (instance and2 (viewref netlist (cellref AND2(libraryref work)))
+            ))
         )
       )
     )

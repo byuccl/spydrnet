@@ -5,9 +5,22 @@
 (* STRUCTURAL_NETLIST = "yes" *)
 module widget
 (
-    port_a,
-    port_o
+    A,
+    O
 );
-input port_a;
-output port_o;
+input A;
+output O;
+AND2 and2
+(
+
+);
+endmodule
+module AND2
+(
+    A,
+    O
+);
+input A;
+output O;
+wire cable;
 endmodule

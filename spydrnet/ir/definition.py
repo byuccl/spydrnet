@@ -239,7 +239,7 @@ class Definition(FirstClassElement):
                 outer_pin._inner_pin = None
         port._definition = None
 
-    def create_child(self, name=None, properties=None):
+    def create_child(self, name=None, properties=None, reference=None):
         """Create an instance to add to the definition, add it, and return the instance.
 
         This functions calls the add_child funciton.
@@ -257,16 +257,17 @@ class Definition(FirstClassElement):
 
         >>> definition = sdn.Definition()
         >>> child_instance = definition.create_child()
-        >>> child_instance.reference = definition
+        >>> child_instance.name = "child_instance"
+        >>> child_instance.reference = reference_definition
 
         To create a child with optional parameters
 
-        >>> child_instance = definition.create_child()
-        >>> child_instance.reference = reference definition
+        >>> child_instance = definition.create_child(name="child_instance", reference=reference_definition)
 
         The reference of the instance is the definition that initialized this instance.
         """
         instance = Instance(name, properties)
+        instance.reference = reference
         self.add_child(instance)
         return instance
 
