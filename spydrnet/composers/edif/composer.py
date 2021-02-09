@@ -74,6 +74,8 @@ class ComposeEdif:
             raise Exception("netlist.top_instance.name undefined")
         self._add_rename_property(netlist.top_instance, [], names)
         for lib in netlist.libraries:
+            if lib.name is None:
+                raise Exception("library: ",lib, " .name is undefined")
             self._add_rename_property(lib, netlist.libraries, names)
             for definition in lib.definitions:
                 if definition.name is None:
