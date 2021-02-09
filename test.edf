@@ -1,18 +1,10 @@
-<<<<<<< HEAD
 (edif netlist
-=======
-(edif Widget_instance
->>>>>>> 07d268b2d2f995879e1376252fa673a3b6f36baa
   (edifversion 2 0 0)
   (edifLevel 0)
   (keywordmap (keywordlevel 0))
   (status
     (written
-<<<<<<< HEAD
       (timeStamp 2021 02 09 09 49 13)
-=======
-      (timeStamp 2021 02 01 09 43 11)
->>>>>>> 07d268b2d2f995879e1376252fa673a3b6f36baa
       
       (comment "Built by 'BYU spydrnet tool'")
       )
@@ -29,12 +21,7 @@
         )
       )
     )
-<<<<<<< HEAD
   (design widget
     (cellref widget(libraryref work))
-=======
-  (design Widget_instance
-    (cellref Widget(libraryref work))
->>>>>>> 07d268b2d2f995879e1376252fa673a3b6f36baa
     )
   )
