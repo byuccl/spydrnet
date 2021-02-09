@@ -29,7 +29,7 @@ class Port(Bundle):
         IN = 2
         OUT = 3
 
-    def __init__(self, name=None, properties=None, is_downto=None, is_scalar=None, lower_index=None):
+    def __init__(self, name=None, properties=None, is_downto=None, is_scalar=None, lower_index=None, direction=None):
         """Setup an empty port
 
         parameters
@@ -40,6 +40,7 @@ class Port(Bundle):
         id_downto - (bool) set the downto status. Downto is False if the right index is higher than the left one, True otherwise
         is_scalar - (bool) set the scalar status. Return True if the item is a scalar False otherwise.
         lower_index - (int) get the value of the lower index of the array.
+        direction - (Enum) Define the possible directions for a given port. (UNDEFINED, INOUT, IN, OUT)
 
         """
         super().__init__()
@@ -57,6 +58,8 @@ class Port(Bundle):
 
         if lower_index is not None:
             self.lower_index = lower_index
+        if direction is not None:
+            self.direction = direction
 
         if properties != None:
             assert isinstance(

@@ -67,13 +67,18 @@ class ComposeEdif:
         names = EdififyNames()
         if netlist.top_instance is None:
             raise Exception("netlist.top_instance undefined")
-        if netlist.name == None:
+        if netlist.name is None:
             netlist.name = netlist.top_instance.name
         self._add_rename_property(netlist, [], names)
+        if netlist.top_instance.name is None:
+            raise Exception("netlist.top_instance.name undefined")
         self._add_rename_property(netlist.top_instance, [], names)
         for lib in netlist.libraries:
             self._add_rename_property(lib, netlist.libraries, names)
             for definition in lib.definitions:
+                if definition.name is None:
+                    raise Exception(definition,
+                                    'definition.name undefined')
                 self._add_rename_property(definition, lib.definitions, names)
                 for cable in definition.cables:
                     self._add_rename_property(cable, definition.cables, names)
@@ -171,6 +176,8 @@ class ComposeEdif:
         self._lisp_increment_()
         self._output_.write("cellref ")
         test = self._data_.top_instance
+        if self._data_.top_instance.reference is None:
+            raise Exception("netlist.reference undefined")
         self._output_.write(
             self._data_.top_instance.reference['EDIF.identifier'])
         self._lisp_increment_()

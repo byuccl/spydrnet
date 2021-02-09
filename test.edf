@@ -1,10 +1,10 @@
-(edif (rename Netlist_example "Widget_instance")
+(edif netlist
   (edifversion 2 0 0)
   (edifLevel 0)
   (keywordmap (keywordlevel 0))
   (status
     (written
-      (timeStamp 2021 01 31 19 15 45)
+      (timeStamp 2021 02 09 09 49 13)
       
       (comment "Built by 'BYU spydrnet tool'")
       )
@@ -12,14 +12,16 @@
   (Library work
     (edifLevel 0)
     (technology (numberDefinition ))
-    (Cell Widget (celltype GENERIC)
+    (Cell widget (celltype GENERIC)
       (view netlist (viewtype NETLIST)
         (interface
+          (port port_a(direction INPUT))
+          (port port_o(direction INPUT))
           )
         )
       )
     )
-  (design (rename widget_edif_instance "Widget_instance")
-    (cellref Widget(libraryref work))
+  (design widget
+    (cellref widget(libraryref work))
     )
   )

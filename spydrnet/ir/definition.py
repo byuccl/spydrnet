@@ -142,7 +142,7 @@ class Definition(FirstClassElement):
             return False
         return True
 
-    def create_port(self, name=None, properties=None, is_downto=None, is_scalar=None, lower_index=None):
+    def create_port(self, name=None, properties=None, is_downto=None, is_scalar=None, lower_index=None, direction=None):
         """Create a port, add it to the definition, and return that port.
 
         parameters
@@ -153,9 +153,11 @@ class Definition(FirstClassElement):
         id_downto - (bool) set the downto status. Downto is False if the right index is higher than the left one, True otherwise
         is_scalar - (bool) set the scalar status. Return True if the item is a scalar False otherwise.
         lower_index - (int) get the value of the lower index of the array.
+        direction - (Enum) Define the possible directions for a given port. (UNDEFINED, INOUT, IN, OUT)
 
         """
-        port = Port(name, properties, is_downto, is_scalar, lower_index)
+        port = Port(name, properties, is_downto,
+                    is_scalar, lower_index, direction)
         self.add_port(port)
         return port
 

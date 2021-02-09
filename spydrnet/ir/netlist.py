@@ -131,6 +131,31 @@ class Netlist(FirstClassElement):
         else:
             self._top_instance = instance
 
+    def set_top_instance(self, instance, instance_name='instance'):
+        """Sets the top instance of the design.
+
+        The instance must not be null and should probably come from this netlist
+
+        Parameters
+        ----------
+        instance - (Instance or Definition) the instance to set as the top instance. If a definition is passed into the funciton,
+        creates a new instance with that definition and set it as the top instance.
+        """
+        assert instance is None or isinstance(instance, Instance) or isinstance(
+            instance, Definition), "Must specify an instance"
+        global_callback._call_netlist_top_instance(self, instance)
+        # TODO: should We have a DRC that makes sure the instance is of a definition contained in netlist? I think no
+        #  but I am open to hear other points of veiw.
+
+        if isinstance(instance, Definition):
+            top = Instance()
+            top.reference = instance
+            instance.name = instance_name
+            self.top_instance = top
+            self.top_instance.name = instance_name
+        else:
+            self._top_instance = instance
+
     def create_library(self, name=None, properties=None):
         """Create a library and add it to the netlist and return that library
 
