@@ -4,7 +4,7 @@
   (keywordmap (keywordlevel 0))
   (status
     (written
-      (timeStamp 2021 02 09 09 49 13)
+      (timeStamp 2021 02 09 10 26 23)
       
       (comment "Built by 'BYU spydrnet tool'")
       )
@@ -16,7 +16,7 @@
       (view netlist (viewtype NETLIST)
         (interface
           (port port_a(direction INPUT))
-          (port port_o(direction INPUT))
+          (port port_o(direction OUTPUT))
           )
         )
       )

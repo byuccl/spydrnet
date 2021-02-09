@@ -70,17 +70,10 @@ class ComposeEdif:
         if netlist.name is None:
             netlist.name = netlist.top_instance.name
         self._add_rename_property(netlist, [], names)
-        if netlist.top_instance.name is None:
-            raise Exception("netlist.top_instance.name undefined")
         self._add_rename_property(netlist.top_instance, [], names)
         for lib in netlist.libraries:
-            if lib.name is None:
-                raise Exception("library: ",lib, " .name is undefined")
             self._add_rename_property(lib, netlist.libraries, names)
             for definition in lib.definitions:
-                if definition.name is None:
-                    raise Exception(definition,
-                                    'definition.name undefined')
                 self._add_rename_property(definition, lib.definitions, names)
                 for cable in definition.cables:
                     self._add_rename_property(cable, definition.cables, names)
@@ -128,6 +121,8 @@ class ComposeEdif:
         return output_list
 
     def _add_rename_property(self, obj, namespace_list, rename_helper):
+        if obj.name is None:
+            raise Exception('obj, ', obj, '.name undifined')
         name = obj.name
         if "EDIF.identifier" in obj.data:
             return

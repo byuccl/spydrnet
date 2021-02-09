@@ -9,5 +9,5 @@ module widget
     port_o
 );
 input port_a;
-input port_o;
+output port_o;
 endmodule
