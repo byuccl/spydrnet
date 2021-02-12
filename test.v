@@ -22,5 +22,4 @@ module AND2
 );
 input A;
 output O;
-wire cable;
 endmodule

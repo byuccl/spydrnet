@@ -4,7 +4,7 @@
   (keywordmap (keywordlevel 0))
   (status
     (written
-      (timeStamp 2021 02 09 13 16 40)
+      (timeStamp 2021 02 09 21 29 46)
       
       (comment "Built by 'BYU spydrnet tool'")
       )
@@ -17,8 +17,6 @@
         (interface
           (port A(direction INPUT))
           (port O(direction OUTPUT))
-          )
-        (contents
           )
         )
       )
