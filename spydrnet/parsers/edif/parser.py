@@ -526,23 +526,23 @@ class EdifParser:
             elif self.construct_is(NET):
                 cable = self.parse_net()
                 definition = self.elements[-1]
-                is_connected = False
-                for wire in cable.wires:
-                    if len(wire.pins) > 0:
-                        is_connected = True
-                if is_connected is True:
-                    try:
-                        definition.add_cable(cable)
-                    except ValueError as e:
-                        # TODO: Add warning about merging nets together
-                        existing_cable = next(definition.get_cables(cable.name, key="EDIF.identifier"), None)
-                        if existing_cable is None:
-                            existing_cable = next(definition.get_cables(cable['EDIF.identifier'], key="EDIF.identifier"))
-                        for existing_wire, pending_wire in zip(existing_cable.wires, cable.wires):
-                            pins = list(pending_wire.pins)
-                            pending_wire.disconnect_pins_from(pins)
-                            for pin in pins:
-                                existing_wire.connect_pin(pin)
+                # is_connected = False
+                # for wire in cable.wires:
+                #     if len(wire.pins) > 0:
+                #         is_connected = True
+                # if is_connected is True:
+                try:
+                    self.multibit_add_cable(definition, cable)
+                except ValueError as e:
+                    # TODO: Add warning about merging nets together
+                    existing_cable = next(definition.get_cables(cable.name, key="EDIF.identifier"), None)
+                    if existing_cable is None:
+                        existing_cable = next(definition.get_cables(cable['EDIF.identifier'], key="EDIF.identifier"))
+                    for existing_wire, pending_wire in zip(existing_cable.wires, cable.wires):
+                        pins = list(pending_wire.pins)
+                        pending_wire.disconnect_pins_from(pins)
+                        for pin in pins:
+                            existing_wire.connect_pin(pin)
 
             elif self.construct_is(OFF_PAGE_CONNECTOR):
                 raise NotImplementedError()
@@ -919,6 +919,83 @@ class EdifParser:
             self.prefix_append('identifier')
             self.set_attribute(self.parse_identifier())
             self.prefix_pop()
+
+    def multibit_add_cable(self, definition, cable):
+        c_edif_id = cable["EDIF.identifier"]
+        c_name = cable.name
+
+        e_index, e_short = self.separate_name_and_index(c_edif_id, "_")
+        n_index, n_short = self.separate_name_and_index(c_name, "[")
+    
+        index = n_index
+        if e_index == None:
+            index = None
+
+        existing_cable = next(definition.get_cables(n_short), None)
+        if existing_cable == None:
+            existing_cable = next(definition.get_cables(e_short, key="EDIF.identifier"), None)
+        if existing_cable is None:
+            if index is None:
+                cable.is_array = False                
+                cable.lower_index = 0
+            else:
+                cable.is_array = True
+                if "EDIF.identifier" in cable:
+                    cable["EDIF.identifier"] = e_short
+                cable.name = n_short
+                cable.lower_index = index
+            definition.add_cable(cable)
+
+        else: #there is alread a cable that could need to be merged.
+            if existing_cable.is_array == False or index == None:
+                definition.add_cable(cable) #if this works great. otherwise the parent code will handle the error
+            else: # the cables should be merged
+                if index > existing_cable.lower_index:
+                    if index < existing_cable.lower_index + len(existing_cable.wires):
+                        w = cable.wires[0]
+                        ew = existing_cable.wires[index - existing_cable.lower_index]
+                        pins = w.pins
+                        for pin in pins:
+                            w.disconnect_pin(pin)
+                            ew.connect_pin(pin)
+                    else: # index is outside current cable range
+                        existing_cable.create_wires(index - existing_cable.lower_index - len(existing_cable.wires))
+                        wire = cable.wires[0]
+                        cable.remove_wire(wire)
+                        existing_cable.add_wire(wire)
+                else: #index is lower than the lowest current index in the cable
+                    difference = existing_cable.lower_index - index
+                    starting_count = len(existing_cable.wires)
+                    wire = cable.wires[0]
+                    cable.remove_wire(wire)
+                    existing_cable.add_wire(wire)
+                    existing_cable.create_wires(difference - 1)
+                    existing_cable.lower_index = index
+                    wire_list = existing_cable.wires[starting_count:] + existing_cable.wires[:starting_count]
+                    cable.wires = wire_list
+                    
+    def separate_name_and_index(self, name, split_character):
+        name_split = name.split(split_character)
+        index = None
+        short_name = name
+        if split_character == "[":
+            if len(name_split) > 1 and name_split[-1][-1] == "]" and name_split[-1][:-1].isdigit():
+                index = int(name_split[-1][:-1])
+                for i in reversed(range(len(name))):
+                    if name[i] == split_character:
+                        break
+                short_name = name[:i]
+        elif split_character == "_":
+            if len(name_split) > 2 and name_split[-1] == "" and name_split[-2].isdigit():
+                index = int(name_split[-2])
+                count = 0
+                for i in reversed(range(len(name))):
+                    if name[i] == split_character:
+                        count+=1
+                    if count == 2:
+                        break
+                short_name = name[:i]
+        return index, short_name
 
     def parse_rename(self):
         self.expect(RENAME)

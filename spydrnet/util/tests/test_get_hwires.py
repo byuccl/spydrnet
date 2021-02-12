@@ -10,7 +10,7 @@ class TestGetHWires(unittest.TestCase):
 
     def test_wild_card_search_on_netlist(self):
         hrefs = list(sdn.get_hwires(self.netlist))
-        self.assertTrue(len(hrefs) > 0)
+        assert (len(hrefs) > 0)
 
     def test_absolute_search(self):
         href = next(self.netlist.get_hwires('<const0>'), None)
@@ -18,7 +18,7 @@ class TestGetHWires(unittest.TestCase):
 
     def test_regex_search(self):
         hrefs = list(sdn.get_hwires(self.netlist, '.*FSM_onehot.*', is_re=True))
-        self.assertTrue(len(hrefs) == 21)
+        assert (len(hrefs) == 21)
 
     def test_parameters(self):
         self.assertRaises(TypeError, sdn.get_hwires, self.netlist, r'.*FSM_onehot.*', patterns=r".*FSM_onehot.*")
@@ -31,7 +31,7 @@ class TestGetHWires(unittest.TestCase):
         port = definition.ports[0]
         pin = port.pins[0]
         hrefs = list(sdn.get_hwires(pin))
-        self.assertTrue(len(hrefs) == 1)
+        assert (len(hrefs) == 1)
 
     def test_get_hwires_of_wire(self):
         library = self.netlist.libraries[1]
@@ -39,13 +39,13 @@ class TestGetHWires(unittest.TestCase):
         cable = definition.cables[0]
         wire = cable.wires[0]
         hrefs = list(sdn.get_hwires(wire))
-        self.assertTrue(len(hrefs) == 1)
+        assert (len(hrefs) == 1)
 
     def test_get_hwire_of_invalid_reference(self):
         from spydrnet.util.hierarchical_reference import HRef
         invalid_href = HRef.from_parent_and_item(None, None)
         hrefs = list(sdn.get_hwires(invalid_href))
-        self.assertTrue(len(hrefs) == 0)
+        assert (len(hrefs) == 0)
 
     def test_get_hwires_from_hrefs_of_cable_and_wire(self):
         library = self.netlist.libraries[1]
@@ -58,9 +58,9 @@ class TestGetHWires(unittest.TestCase):
         cable_href = HRef.from_parent_and_item(href_top, cable)
         wire_href = HRef.from_parent_and_item(cable_href, wire)
         href_result = next(sdn.get_hwires(cable_href), None)
-        self.assertTrue(href_result is wire_href)
+        assert (href_result is wire_href)
         href_result = next(sdn.get_hwires(wire_href), None)
-        self.assertTrue(href_result is wire_href)
+        assert (href_result is wire_href)
 
     def test_get_hwires_from_hrefs_of_port_and_pin(self):
         library = self.netlist.libraries[1]
@@ -72,23 +72,23 @@ class TestGetHWires(unittest.TestCase):
         from spydrnet.util.hierarchical_reference import HRef
         port_href = HRef.from_parent_and_item(href.parent.parent, port)
         href_result = next(sdn.get_hwires(port_href), None)
-        self.assertTrue(href_result is href)
+        assert (href_result is href)
         pin_href = HRef.from_parent_and_item(port_href, pin)
         href_result = next(sdn.get_hwires(pin_href), None)
-        self.assertTrue(href_result is href)
+        assert (href_result is href)
 
     def test_from_href_of_instance(self):
         href = next(sdn.get_hinstances(self.netlist.top_instance))
         hrefs = list(sdn.get_hwires(href))
-        self.assertTrue(len(hrefs) == 114)
+        assert (len(hrefs) == 114)
 
     def test_from_instance(self):
         hrefs = list(sdn.get_hwires(self.netlist.top_instance))
-        self.assertTrue(len(hrefs) == 114)
+        assert (len(hrefs) == 114)
 
     def test_from_library(self):
         hrefs = list(sdn.get_hwires(self.netlist.libraries[0], selection=sdn.OUTSIDE))
-        self.assertTrue(len(hrefs) == 114)
+        assert (len(hrefs) == 114)
 
     def test_from_wire_and_cable(self):
         library = self.netlist.libraries[1]
@@ -96,9 +96,9 @@ class TestGetHWires(unittest.TestCase):
         cable = definition.cables[0]
         wire = cable.wires[0]
         hrefs = list(sdn.get_hwires(wire))
-        self.assertTrue(len(hrefs) == 1)
+        assert (len(hrefs) == 1)
         hrefs = list(sdn.get_hwires(cable))
-        self.assertTrue(len(hrefs) == 1)
+        assert (len(hrefs) == 1)
 
     def test_from_outerpin(self):
         library = self.netlist.libraries[1]
@@ -106,7 +106,7 @@ class TestGetHWires(unittest.TestCase):
         instance = definition.children[0]
         outerpin = next(iter(instance.pins))
         hrefs = list(sdn.get_hwires(outerpin, selection="OUTSIDE"))
-        self.assertTrue(len(hrefs) == 1)
+        assert (len(hrefs) == 1)
 
     def test_bad_selection_type(self):
         self.assertRaises(TypeError, self.netlist.get_hwires, selection="NOT_AN_OPTION")
@@ -114,7 +114,7 @@ class TestGetHWires(unittest.TestCase):
 
     def test_of_bad_instance(self):
         hrefs = list(sdn.get_hwires(sdn.Instance()))
-        self.assertTrue(len(hrefs) == 0)
+        assert (len(hrefs) == 0)
 
     def test_through_hierarchy(self):
         netlist = sdn.Netlist()
@@ -136,10 +136,10 @@ class TestGetHWires(unittest.TestCase):
 
         top_inst_href = next(sdn.get_hinstances(netlist.top_instance))
         hrefs = list(sdn.get_hwires(top_inst_href, recursive=True))
-        self.assertTrue(len(hrefs) == 1)
+        assert (len(hrefs) == 1)
 
         hrefs = list(sdn.get_hwires(middle_inst))
-        self.assertTrue(len(hrefs) == 1)
+        assert (len(hrefs) == 1)
 
     def test_through_hierarchy_again(self):
         netlist = sdn.Netlist()
@@ -207,27 +207,27 @@ class TestGetHWires(unittest.TestCase):
 
         href = next(sdn.get_hwires(top_floating_wire))
         hrefs = set(sdn.get_hwires(netlist.top_instance))
-        self.assertTrue(href in hrefs)
+        assert (href in hrefs)
 
         #look at wire_name
         href = next(sdn.get_hwires(middle_floating_wire))
-        self.assertTrue('middle/middle_cable[1]', href.name)
+        assert ('middle/middle_cable[1]', href.name)
         hrefs = set(sdn.get_hwires(netlist.top_instance, recursive=True))
-        self.assertTrue(href in hrefs)
+        assert (href in hrefs)
 
         hrefs = set(sdn.get_hwires(middle_cable, selection="OUTSIDE"))
         href_top_wire = next(sdn.get_hwires(top_cable.wires[0]))
         href_middle_wire = next(sdn.get_hwires(middle_cable.wires[0]))
         href_bottom_wire = next(sdn.get_hwires(bottom_cable.wires[0]))
-        self.assertTrue(href_top_wire in hrefs and href_middle_wire not in hrefs and href_bottom_wire in hrefs)
+        assert (href_top_wire in hrefs and href_middle_wire not in hrefs and href_bottom_wire in hrefs)
 
         hrefs = set(sdn.get_hwires(middle_cable, selection="ALL"))
         href_middle_floating_wire = next(sdn.get_hwires(middle_floating_wire))
-        self.assertTrue(href_top_wire in hrefs and href_middle_wire in hrefs and href_bottom_wire in hrefs and
+        assert (href_top_wire in hrefs and href_middle_wire in hrefs and href_bottom_wire in hrefs and
                         href_middle_floating_wire in hrefs)
 
         all_wires = set(netlist.get_hwires())
-        self.assertTrue(len(all_wires) == 2)
+        assert (len(all_wires) == 2)
 
         all_wires = set(netlist.get_hwires(recursive=True))
-        self.assertTrue(len(all_wires) == 6)
+        assert (len(all_wires) == 6)
