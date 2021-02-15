@@ -10,6 +10,8 @@ module widget
 );
 input A;
 output O;
+wire cable;
+wire cable2;
 AND2 and2
 (
 

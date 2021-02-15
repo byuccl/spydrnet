@@ -4,7 +4,7 @@
   (keywordmap (keywordlevel 0))
   (status
     (written
-      (timeStamp 2021 02 09 21 29 46)
+      (timeStamp 2021 02 15 15 19 34)
       
       (comment "Built by 'BYU spydrnet tool'")
       )
@@ -28,6 +28,16 @@
           )
         (contents
           (instance and2 (viewref netlist (cellref AND2(libraryref work)))
+            )(net cable (joined
+              (portref A)
+              (portref A)
+              
+              )
+            )(net cable2 (joined
+              (portref O)
+              (portref O)
+              
+              )
             ))
         )
       )
