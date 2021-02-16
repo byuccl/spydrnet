@@ -26,7 +26,7 @@ wire.connect_pin(out_a_2)
 # create an instance of AND2 which resides in widget
 inst_and2 = def_widget.create_child(name="and2", reference=def_and2)
 pins = inst_and2.get_pins()
-print(pins[0])
+print(pins)
 
 sdn.compose(netlist, 'test.edf')
 sdn.compose(netlist, 'test.v')
