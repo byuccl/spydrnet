@@ -10,9 +10,11 @@ module widget
 );
 input A;
 output O;
+wire cable;
+wire cable2;
 AND2 and2
 (
-
+    .O(cable [0] )
 );
 endmodule
 module AND2
