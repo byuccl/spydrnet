@@ -8,3 +8,5 @@ netlist.top_instance = instance
 print(netlist)
 print(cable)
 print(instance)
+library = netlist.create_library(name='lib')
+print(library)

@@ -181,3 +181,25 @@ class Instance(FirstClassElement):
         elif len(self._reference._children) > 0 or len(self._reference._cables) > 0:
             return False
         return True
+
+    def __str__(self):
+        """Re-define the print function so it is easier to read"""
+        rep = super().__str__()
+        rep = rep[:-1] + '; '
+        if self.parent is None:
+            rep += 'parent definition undefined'
+        elif self.parent.name is None:
+            rep += 'parent definition.name undefined'
+        else:
+            rep += 'parent definition.name \'' + self.parent.name + '\''
+
+        rep += '; '
+
+        if self.reference is None:
+            rep += 'reference definition undefined'
+        elif self.reference.name is None:
+            rep += 'reference definition.name undefined'
+        else:
+            rep += 'reference definition.name \'' + self.reference.name + '\''
+        rep += '>'
+        return rep
