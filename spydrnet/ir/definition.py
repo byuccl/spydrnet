@@ -511,11 +511,11 @@ class Definition(FirstClassElement):
         rep = super().__str__()
         rep = rep[:-1] + '; '
         if self.library is None:
-            rep += 'library undefined'
+            rep += 'Library undefined'
         elif self.library.name is None:
-            rep += 'library.name undefined'
+            rep += 'Library.name undefined'
         else:
-            rep += 'library.name \'' + self.library.name + '\''
+            rep += 'Library.name \'' + self.library.name + '\''
         rep += '; '
         rep += 'ports: '
         rep += str(sum(1 for _ in self.get_ports()))

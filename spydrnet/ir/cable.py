@@ -184,3 +184,16 @@ class Cable(Bundle):
         c = self._clone(dict())
         c._clone_rip()
         return c
+
+    # def __str__(self):
+    #     """Re-define the print function so it is easier to read"""
+    #     rep = str(type(self))
+    #     rep = rep[:-1] + '; '
+    #     if self.cable is None:
+    #         rep += 'Not contained by any Cable'
+    #     elif self.cable.name is None:
+    #         rep += 'Contained by Cable whose name is undefined'
+    #     else:
+    #         rep += 'Cotained by Cable.name \'' + str(self.cable) + '\''
+    #     rep += '>'
+    #     return rep
