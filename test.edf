@@ -4,7 +4,7 @@
   (keywordmap (keywordlevel 0))
   (status
     (written
-      (timeStamp 2021 02 16 10 30 21)
+      (timeStamp 2021 03 01 14 20 07)
       
       (comment "Built by 'BYU spydrnet tool'")
       )
@@ -24,16 +24,21 @@
       (view netlist (viewtype NETLIST)
         (interface
           (port A(direction INPUT))
+          (port B(direction INPUT))
+          (port C(direction INPUT))
+          (port D(direction INPUT))
           (port O(direction OUTPUT))
           )
         (contents
           (instance and2 (viewref netlist (cellref AND2(libraryref work)))
-            )(net cable (joined
-              (portref O (instanceref and2))
+            )(net A (joined
+              (portref A (instanceref and2))
               (portref A)
               
               )
-            )(net cable2 (joined
+            )(net O (joined
+              (portref O (instanceref and2))
+              (portref O)
               
               )
             ))

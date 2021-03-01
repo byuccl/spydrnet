@@ -6,15 +6,25 @@
 module widget
 (
     A,
+    B,
+    C,
+    D,
     O
 );
 input A;
+input B;
+input C;
+input D;
 output O;
-wire cable;
-wire cable2;
+wire A;
+wire B;
+wire C;
+wire D;
+wire O;
 AND2 and2
 (
-    .O(cable [0] )
+    .A(A [0] ),
+    .O(O [0] )
 );
 endmodule
 module AND2
