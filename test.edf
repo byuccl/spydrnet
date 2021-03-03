@@ -4,7 +4,7 @@
   (keywordmap (keywordlevel 0))
   (status
     (written
-      (timeStamp 2021 03 01 14 20 07)
+      (timeStamp 2021 03 03 13 59 05)
       
       (comment "Built by 'BYU spydrnet tool'")
       )
@@ -16,7 +16,17 @@
       (view netlist (viewtype NETLIST)
         (interface
           (port A(direction INPUT))
-          (port O(direction OUTPUT))
+          (port B(direction INPUT))
+          (port Q(direction OUTPUT))
+          )
+        )
+      )
+    (Cell OR2 (celltype GENERIC)
+      (view netlist (viewtype NETLIST)
+        (interface
+          (port A(direction INPUT))
+          (port B(direction INPUT))
+          (port Q(direction OUTPUT))
           )
         )
       )
@@ -30,15 +40,41 @@
           (port O(direction OUTPUT))
           )
         (contents
-          (instance and2 (viewref netlist (cellref AND2(libraryref work)))
+          (instance and2_1 (viewref netlist (cellref AND2(libraryref work)))
+            )(instance and2_2 (viewref netlist (cellref AND2(libraryref work)))
+            )(instance or2 (viewref netlist (cellref OR2(libraryref work)))
             )(net A (joined
-              (portref A (instanceref and2))
               (portref A)
+              (portref A (instanceref and2_1))
+              
+              )
+            )(net B (joined
+              (portref B)
+              (portref B (instanceref and2_1))
+              
+              )
+            )(net C (joined
+              (portref C)
+              (portref A (instanceref and2_2))
+              
+              )
+            )(net D (joined
+              (portref D)
+              (portref B (instanceref and2_2))
+              
+              )
+            )(net Q1 (joined
+              (portref Q (instanceref and2_1))
+              (portref A (instanceref or2))
+              
+              )
+            )(net Q2 (joined
+              (portref Q (instanceref and2_2))
+              (portref B (instanceref or2))
               
               )
             )(net O (joined
-              (portref O (instanceref and2))
-              (portref O)
+              (portref Q (instanceref or2))
               
               )
             ))

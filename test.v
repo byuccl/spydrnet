@@ -20,18 +20,45 @@ wire A;
 wire B;
 wire C;
 wire D;
+wire Q1;
+wire Q2;
 wire O;
-AND2 and2
+AND2 and2_1
 (
     .A(A [0] ),
-    .O(O [0] )
+    .B(B [0] ),
+    .Q(Q1 [0] )
+);
+AND2 and2_2
+(
+    .A(C [0] ),
+    .B(D [0] ),
+    .Q(Q2 [0] )
+);
+OR2 or2
+(
+    .A(Q1 [0] ),
+    .B(Q2 [0] ),
+    .Q(O [0] )
 );
 endmodule
 module AND2
 (
     A,
-    O
+    B,
+    Q
 );
 input A;
-output O;
+input B;
+output Q;
+endmodule
+module OR2
+(
+    A,
+    B,
+    Q
+);
+input A;
+input B;
+output Q;
 endmodule
