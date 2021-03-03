@@ -166,6 +166,7 @@ class VerilogTokenizer:
                             #print('appended ', ch)
                         else:
                             escaped = False
+                            token_buffer.append(" ")
                             token = ''.join(token_buffer)
                             token_buffer.clear()
                             yield token

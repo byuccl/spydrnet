@@ -978,14 +978,14 @@ class EdifParser:
         name_split = name.split(split_character)
         index = None
         short_name = name
-        if split_character == "[" and name[0] != "\\":
+        if split_character == "[" and (name[0] != "\\" or (len(name.split(" ")) == 2 and name.split(" ")[1] != "")):
             if len(name_split) > 1 and name_split[-1][-1] == "]" and name_split[-1][:-1].isdigit():
                 index = int(name_split[-1][:-1])
                 for i in reversed(range(len(name))):
                     if name[i] == split_character:
                         break
                 short_name = name[:i]
-        elif split_character == "_" and name[0:2] != "&_":
+        elif split_character == "_":# and (name[0:2] == "&_" or ():
 
             # Assuming that all names that start with a &_ map to escaped \
             #
@@ -1003,7 +1003,7 @@ class EdifParser:
             # Other than here we try to maintain the user supplied name and do 
             # not change characters. a name starting with &_ will simply become
 
-            if len(name_split) > 2 and name_split[-1] == "" and name_split[-2].isdigit():
+            if len(name_split) > 2 and name_split[-1] == "" and name_split[-2].isdigit() and (name[0:2] != "&_" or (name_split[-3] == "")):
                 index = int(name_split[-2])
                 count = 0
                 for i in reversed(range(len(name))):

@@ -58,9 +58,13 @@ class ComposeEdif:
                         depend_set.add(child.reference.library)
             return depend_set
 
+        # try:
         netlist.libraries = self._topological_sort(netlist.libraries, _get_library_dependency)
         for library in netlist.libraries:
             library.definitions = self._topological_sort(library.definitions, _get_definition_dependency_same_library)
+        # except:
+        #     #import pdb; pdb.set_trace()
+
 
         names = EdififyNames()
         if netlist.name == None:
@@ -96,8 +100,9 @@ class ComposeEdif:
                         stack.append(child)
                 if stack[-1] == o:
                     stack.pop()
-                    visited.add(o)
-                    output_list.append(o)
+                    if o not in visited:
+                        visited.add(o)
+                        output_list.append(o)
                 
         # def recur(o):
         #     nonlocal visited
@@ -400,7 +405,7 @@ class ComposeEdif:
             self._lisp_decrement_()
 
     def _output_name_of_cable_wire_(self, cable, wire):
-        if len(cable.wires) == 1:
+        if len(cable.wires) == 1 and not cable.is_array:
             self._output_name_of_object_(cable)
         else:
         # cable_name = self._get_name_string_(cable)
