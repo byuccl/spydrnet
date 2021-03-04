@@ -64,8 +64,11 @@ class Cable(Bundle):
         """
         value_list = list(value)
         value_set = set(value_list)
+        # try:
         assert len(value_list) == len(value_set) and set(self._wires) == value_set, \
             "Set of values does not match, assigment can only be used for reordering, values must be unique"
+        # except:
+        #     import pdb; pdb.set_trace()
         self._wires = value_list
 
     def create_wires(self, wire_count):

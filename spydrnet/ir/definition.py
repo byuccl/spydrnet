@@ -505,3 +505,7 @@ class Definition(FirstClassElement):
         c = self._clone(dict())
         c._clone_rip()
         return c
+
+
+    def __repr__(self):
+        return "<spydrnet.definition " + str(self.name) + ", cables:"+str(len(self.cables)) + ", children:"+str(len(self.children)) + ", ports:"+str(len(self.ports)) + ", references:"+str(len(self.references)) + ">"

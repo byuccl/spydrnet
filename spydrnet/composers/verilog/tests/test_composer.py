@@ -75,3 +75,50 @@ class TestVerilogComposer(unittest.TestCase):
         
         assert errors == 0, "there were errors while parsing and composing files. Please see the output."
 
+    def test_get_indexed_name_from_cable_multi_bit_full(self):
+        composer = composers.verilog.composer.Composer()
+        cable = sdn.ir.Cable()
+        cable.name = "my_name"
+        width = 3
+        cable.create_wires(width)
+        cable.is_downto = True
+        low_index = 0
+        high_index = low_index + width - 1
+        downto = True
+        name = composer._get_indexed_name_from_cable(cable, low_index, high_index, downto)
+        assert name == cable.name, "expected the full cable to be called by it's name without indicies,\
+            expected " + cable.name + " got " + name
+
+        cable.lower_index = 5
+        low_index = 5
+        high_index = low_index + width - 1
+
+        name = composer._get_indexed_name_from_cable(cable, low_index, high_index, downto)
+        assert name == cable.name, "expected the full cable to be called by it's name without indicies,\
+            expected " + cable.name + " got " + name
+
+    def test_get_indexed_name_from_cable_single_bit_full(self):
+        composer = composers.verilog.composer.Composer()
+        cable = sdn.ir.Cable()
+        cable.name = "my_name"
+        cable.create_wire()
+        cable.is_downto = True
+        low_index = 0
+        high_index = low_index
+        downto = True
+        name = composer._get_indexed_name_from_cable(cable, low_index, high_index, downto)
+        assert name == cable.name, "expected the full cable to be called by it's name without indicies,\
+            expected " + cable.name + " got " + name
+
+        downto = False
+        name = composer._get_indexed_name_from_cable(cable, low_index, high_index, downto)
+        assert name == cable.name, "expected the full cable to be called by it's name without indicies,\
+            expected " + cable.name + " got " + name
+
+    # def test_get_indexed_name_from_cable_multi_bit_single_index(self):
+    #     composer = composers.verilog.composer.Composer()
+    #     composer._get_indexed_name_from_cable(cable, low_index, high_index, downto)
+
+    # def test_get_indexed_name_from_cable_multi_bit_multi_index(self):
+    #     composer = composers.verilog.composer.Composer()
+    #     composer._get_indexed_name_from_cable(cable, low_index, high_index, downto)
