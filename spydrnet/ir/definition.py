@@ -60,7 +60,7 @@ class Definition(FirstClassElement):
 
     @ports.setter
     def ports(self, value):
-        """Reorder ports that are instanced in this definition. 
+        """Reorder ports that are instanced in this definition.
 
         Use remove_port and add_port to remove and add ports
         respectively
@@ -162,7 +162,7 @@ class Definition(FirstClassElement):
         return port
 
     def add_port(self, port, position=None):
-        """Add a preexisting port to the definition. 
+        """Add a preexisting port to the definition.
 
         This port must not be a member of any definition
 
@@ -186,7 +186,7 @@ class Definition(FirstClassElement):
                 reference._pins[pin] = OuterPin(reference, pin)
 
     def remove_port(self, port):
-        """Remove a port from the definition. 
+        """Remove a port from the definition.
 
         his port must be a member of the definition in order to be removed
 
@@ -272,7 +272,7 @@ class Definition(FirstClassElement):
         return instance
 
     def add_child(self, instance, position=None):
-        """Add an existing instance to the definition. 
+        """Add an existing instance to the definition.
 
         This instance must not already be included in a definition.
         It add the instance as a child into the given position.
@@ -296,7 +296,7 @@ class Definition(FirstClassElement):
         instance._parent = self
 
     def remove_child(self, child):
-        """Remove an instance from the definition. 
+        """Remove an instance from the definition.
 
         The instance must be a member of the definition already
 
@@ -310,7 +310,7 @@ class Definition(FirstClassElement):
         self._children.remove(child)
 
     def remove_children_from(self, children):
-        """Remove a set of instances from the definition. 
+        """Remove a set of instances from the definition.
 
         All instances must be members of the definition
 
@@ -357,7 +357,7 @@ class Definition(FirstClassElement):
         return cable
 
     def add_cable(self, cable, position=None):
-        """Add a cable to the definition. 
+        """Add a cable to the definition.
 
         The cable must not already be a member of another definition.
 
@@ -378,7 +378,7 @@ class Definition(FirstClassElement):
         cable._definition = self
 
     def remove_cable(self, cable):
-        """Remove a cable from the definition. 
+        """Remove a cable from the definition.
 
         The cable must be a member of the definition.
 
@@ -416,7 +416,7 @@ class Definition(FirstClassElement):
         self._cables = included_cables
 
     def _remove_cable(self, cable):
-        """Dissociate the cable from this definition. 
+        """Dissociate the cable from this definition.
 
         This function is internal and should not be called.
         """
@@ -444,7 +444,7 @@ class Definition(FirstClassElement):
                 instance._clone_rip_and_replace_in_library(memo)
 
     def _clone_rip(self):
-        """Remove from its current environmnet. 
+        """Remove from its current environmnet.
 
         add all instances to their appropriate reference lists.
         """
@@ -508,3 +508,25 @@ class Definition(FirstClassElement):
         c = self._clone(dict())
         c._clone_rip()
         return c
+
+    def __str__(self):
+        """Re-define the print function so it is easier to read"""
+        rep = super().__str__()
+        rep = rep[:-1] + '; '
+        if self.library is None:
+            rep += 'Library undefined'
+        elif self.library.name is None:
+            rep += 'Library.name undefined'
+        else:
+            rep += 'Library.name \'' + self.library.name + '\''
+        rep += '; '
+        rep += 'ports: '
+        rep += str(sum(1 for _ in self.get_ports()))
+        rep += '; cables: '
+        rep += str(sum(1 for _ in self.get_cables()))
+        rep += '; children: '
+        rep += str(len(self.children))
+        rep += '; references: '
+        rep += str(len(self.references))
+        rep += '>'
+        return rep

@@ -271,3 +271,11 @@ class Port(Bundle):
         c = self._clone(dict())
         c._clone_rip()
         return c
+
+    def __str__(self):
+        """Re-define the print function so it is easier to read"""
+        rep = super().__str__()
+        rep = rep[:-1] + '; '
+        rep += str(self.direction)
+        rep += '>'
+        return rep

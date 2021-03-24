@@ -287,3 +287,16 @@ class Netlist(FirstClassElement):
         c = self._clone(memo)
         c._clone_rip(memo)
         return c
+
+    def __str__(self):
+        """Re-define the print function so it is easier to read"""
+        rep = super().__str__()
+        rep = rep[:-1] + '; '
+        if self.top_instance is None:
+            rep += 'top_instance undefined'
+        elif self.top_instance.name is None:
+            rep += 'top_instance.name undefined'
+        else:
+            rep += 'top_instance.name \'' + self.top_instance.name + '\''
+        rep += '>'
+        return rep
