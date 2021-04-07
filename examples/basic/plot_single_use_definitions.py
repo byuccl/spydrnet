@@ -18,7 +18,7 @@ import collections
 # (defined by no listed cables or child within child's reference), else return False
 def is_black_box(instance):
     definition = instance.reference
-    if len(definition.cables) is not 0 or len(definition.children) is not 0:
+    if len(definition.cables) != 0 or len(definition.children) != 0:
         return False
     return True
 
