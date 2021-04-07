@@ -1,3 +1,10 @@
+"""
+=====================================
+Minimal Script
+=====================================
+
+Builds a netlist from scratch
+"""
 import spydrnet as sdn
 
 netlist = sdn.Netlist(name='netlist')
@@ -81,7 +88,7 @@ wire_q_2.connect_pin(inst_and2_2.pins[pin_and2_q])
 
 wire_q_1.connect_pin(inst_or2.pins[pin_or2_a])
 wire_q_2.connect_pin(inst_or2.pins[pin_or2_b])
+wire_o.connect_pin(pin_widget_o)
 wire_o.connect_pin(inst_or2.pins[pin_or2_q])
 
 sdn.compose(netlist, 'test.edf')
-sdn.compose(netlist, 'test.v')

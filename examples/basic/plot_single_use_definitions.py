@@ -6,6 +6,8 @@ Make Instances unique
 Creates definitions for none-leaf instances so each instance has its own definition
 """
 
+import os
+import tempfile
 import spydrnet as sdn
 import collections
 
@@ -26,6 +28,7 @@ def increment_definition_count(definition):
         definition_count[definition] = 1
     else:
         definition_count[definition] += 1
+
 
 def trace_definition(definition):
     top_order = collections.deque()
@@ -63,8 +66,10 @@ def copy_metadata(original, copy, copy_num=None):
         if 'EDIF.identifier' in copy.data:
             while copy['EDIF.identifier'] + '_UNIQUE_' + str(copy_num) in definition_count:
                 copy_num += 1
-            definition_count[copy['EDIF.identifier'] + '_UNIQUE_' + str(copy_num)] = 1
-            copy['EDIF.identifier'] = copy['EDIF.identifier'] + '_UNIQUE_' + str(copy_num)
+            definition_count[copy['EDIF.identifier'] +
+                             '_UNIQUE_' + str(copy_num)] = 1
+            copy['EDIF.identifier'] = copy['EDIF.identifier'] + \
+                '_UNIQUE_' + str(copy_num)
         if '.NAME' in copy.data:
             copy['.NAME'] = copy['.NAME'] + '_UNIQUE_' + str(copy_num)
 
@@ -75,7 +80,8 @@ def copy_ports(original, copy):
         copy_metadata(original_port, new_port)
         new_port.direction = original_port.direction
         for original_inner_pin in original_port.pins:
-            original_inner_pin_to_new_inner_pin[original_inner_pin] = new_port.create_pin()
+            original_inner_pin_to_new_inner_pin[original_inner_pin] = new_port.create_pin(
+            )
         if hasattr(original_port, 'is_array'):
             new_port.is_array = original_port.is_array
         if hasattr(original_port, 'is_scalar'):
@@ -111,7 +117,8 @@ def copy_cable(original, copy):
 
             for original_pin in original_wire.pins:
                 if isinstance(original_pin, sdn.InnerPin):
-                    new_wire.connect_pin(original_inner_pin_to_new_inner_pin[original_pin])
+                    new_wire.connect_pin(
+                        original_inner_pin_to_new_inner_pin[original_pin])
                 else:
                     new_wire.connect_pin(outer_pin_map[original_pin])
 
@@ -145,7 +152,8 @@ def make_definition_copies(def_to_copy, num_of_copies):
             def_to_copy.library.add_definition(def_copy, y)
         except KeyError:
             name = def_to_copy['EDIF.identifier']
-            message = 'Try to add a definition with name of ' + name + 'but the name was already use'
+            message = 'Try to add a definition with name of ' + \
+                name + 'but the name was already use'
             raise KeyError(message)
     definition_clean_up(def_to_copy)
     return definition_copies
@@ -155,6 +163,7 @@ def clean(definition):
     for child in definition.children:
         if child.reference in definition_copies:
             make_instances_unique(child)
+
 
 definition_count = dict()
 original_inner_pin_to_new_inner_pin = dict()
@@ -171,8 +180,6 @@ for definition in reverse_topological_order:
     make_definition_copies(definition, definition_count[definition] - 1)
 clean(top_def)
 
-import tempfile
-import os
 with tempfile.TemporaryDirectory() as td:
     file_name = example_name + '_unique.edf'
     sdn.compose(ir, os.path.join(td, file_name))
