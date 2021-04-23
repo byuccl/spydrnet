@@ -1,4 +1,3 @@
-
 from spydrnet.parsers.verilog.tokenizer import VerilogTokenizer
 from spydrnet.ir import Netlist, Library, Definition, Port, Cable, Instance, OuterPin
 from spydrnet.plugins import namespace_manager
@@ -221,9 +220,8 @@ class VerilogParser:
                     low = None
                     high = None
                     index_offset_initial = index_offset
-                    # if cable_name[len(cable_name)-1] == "]" and (cable_name[0] != "\\" or len(cable_name.split(" ")) > 1):
-                    if cable_name[len(cable_name)-1] == "]":
-                        cable_name_real, index = cable_name.split("\t")
+                    if cable_name[len(cable_name)-1] == "]" and (cable_name[0] != "\\" or len(cable_name.split(" ")) > 1):
+                        cable_name_real, index = cable_name.split(" ")
                         indicies = index[1:len(index)-1].split(":")
                         if len(indicies) == 1:
                             low = int(indicies[0])
@@ -373,17 +371,14 @@ class VerilogParser:
                     outer_port = self._update_port(definition, verilog_rename, width = i, direction=d, lower_index = 0, is_downto = True)
                     for name in name_list:
                         name_split = name.split(" ")
-                        if len(name_split) > 1 and name_split[1] == '':
-                            index = None
-                        else:
-                            name = name_split[0]
-                            index = None
-                            if len(name_split) > 1:
-                                #raise Exception
-                                index = name_split[1]
-                                if ":" in index:
-                                    raise Exception
-                                index = int(index.strip("]").strip("["))
+                        name = name_split[0]
+                        index = None
+                        if len(name_split) > 1:
+                            #raise Exception
+                            index = name_split[1]
+                            if ":" in index:
+                                raise Exception
+                            index = int(index.strip("]").strip("["))
                         
                         # # port = self._update_port(definition, name, width = (max(left,right) - self.my_min(left,right)), direction=d, lower_index = self.my_min(left,right), is_downto = left > right)
                         # # port["VERILOG.port_rename_member"] = "true"
@@ -650,7 +645,7 @@ class VerilogParser:
                     cable_name = token
                     token = self.tokenizer.next()
                     if token == "[": #this will be a slice. for now just put it in the value
-                        cable_name += "\t" + token
+                        cable_name += " " + token
                         while token != "]":
                             token = self.tokenizer.next()
                             cable_name += token
@@ -674,6 +669,8 @@ class VerilogParser:
         
         assert token == ")", "port list needs to be ended with a ) but ends with " + token + " line " + str(self.tokenizer.line_number)
 
+
+        
         return port_map
 
     def _get_create_library(self, netlist, library_name = None):
