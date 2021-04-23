@@ -1,4 +1,3 @@
-
 from spydrnet.parsers.verilog.tokenizer import VerilogTokenizer
 from spydrnet.ir import Netlist, Library, Definition, Port, Cable, Instance, OuterPin
 from spydrnet.plugins import namespace_manager

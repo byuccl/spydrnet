@@ -21,27 +21,27 @@ class TestCompareNetlists(unittest.TestCase):
         for ii, filename in enumerate(self.edif_files):
             if os.path.getsize(filename) <= 1024 * 10:
                 continue
-            self.compare_parser_and_composer(filename, ii)
+            self.compare_parser_and_composer(filename, ii, "edf")
 
     def test_small_edif(self):
         for ii, filename in enumerate(self.edif_files):
             if os.path.getsize(filename) > 1024 * 10:
                 continue
-            self.compare_parser_and_composer(filename, ii)
+            self.compare_parser_and_composer(filename, ii, "edf")
 
     @unittest.skip("Test takes a long time right now.")
     def test_large_verilog(self):
         for ii, filename in enumerate(self.verilog_files):
             if os.path.getsize(filename) <= 1024 * 10:
                 continue
-            self.compare_parser_and_composer(filename, ii)
+            self.compare_parser_and_composer(filename, ii, "v")
         #assert False
 
     def test_small_verilog(self):
         for ii, filename in enumerate(self.verilog_files):
             if os.path.getsize(filename) > 1024 * 10:
                 continue
-            self.compare_parser_and_composer(filename, ii)
+            self.compare_parser_and_composer(filename, ii, "v")
         #assert False
 
     def compare_parser_and_composer(self,filename, ii, target_format_extension = None):
@@ -63,10 +63,11 @@ class TestCompareNetlists(unittest.TestCase):
                     comparer = Comparer(orig_netlist, composer_netlist)
                     comparer.run()
                 except Exception as e:
-                    shutil.copytree(tempdirname, "temp")
+                    shutil.copytree(tempdirname, "temp"+filename)
+                    #import pdb; pdb.set_trace()
                     raise e
 
-    @unittest.skip("Test takes a long time right now. Additional reasons exist, see skip explanation for small version")
+    @unittest.skip("Test takes a long time right now. see reason on small verilog to edif")
     def test_large_verilog_to_edif(self):
         for ii, filename in enumerate(self.verilog_files):
             if os.path.getsize(filename) <= 1024 * 10:
@@ -74,15 +75,14 @@ class TestCompareNetlists(unittest.TestCase):
             self.compare_parser_and_composer(filename, ii, "edf")
         #assert False
 
-    @unittest.skip("Test will fail as of version 1.7 because the edif parser does not handle multi bit cables. When cables are ignored this test passes.")
+    @unittest.skip("currently not working properly for the number of cables on some examples please use with caution")
     def test_small_verilog_to_edif(self):
         for ii, filename in enumerate(self.verilog_files):
             if os.path.getsize(filename) > 1024 * 10:
                 continue
             self.compare_parser_and_composer(filename, ii, "edf")
         #assert False
-            
-    
+        
     def test_empty_netlists(self):
         nl1 = sdn.ir.Netlist()
         nl2 = sdn.ir.Netlist()

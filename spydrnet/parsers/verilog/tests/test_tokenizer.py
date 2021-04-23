@@ -23,4 +23,3 @@ class TestVerilogTokenizer(unittest.TestCase):
         while(tokenizer.has_next()):
             #print(tokenizer.next())
             tokenizer.next()
-

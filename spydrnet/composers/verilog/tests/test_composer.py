@@ -1,4 +1,3 @@
-
 import unittest
 import spydrnet as sdn
 from spydrnet import composers
@@ -74,4 +73,3 @@ class TestVerilogComposer(unittest.TestCase):
         print("processed",i,"errors", errors)
         
         assert errors == 0, "there were errors while parsing and composing files. Please see the output."
-

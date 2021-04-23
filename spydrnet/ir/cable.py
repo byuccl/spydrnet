@@ -64,8 +64,11 @@ class Cable(Bundle):
         """
         value_list = list(value)
         value_set = set(value_list)
+        # try:
         assert len(value_list) == len(value_set) and set(self._wires) == value_set, \
             "Set of values does not match, assigment can only be used for reordering, values must be unique"
+        # except:
+        #     import pdb; pdb.set_trace()
         self._wires = value_list
 
     def create_wires(self, wire_count):
@@ -184,3 +187,19 @@ class Cable(Bundle):
         c = self._clone(dict())
         c._clone_rip()
         return c
+
+    def __str__(self):
+        """Re-define the print function so it is easier to read"""
+        rep = str(type(self))
+        rep = rep[:-1] + '; '
+        if self.is_downto is not None and self.is_downto is True:
+            rep += 'is_downto: True; '
+        else:
+            rep += 'is_downto: False; '
+        if self.is_scalar is True:
+            rep += 'is_scalar: True; '
+        else:
+            rep += 'is_scalar: False; '
+        rep += 'lower index: ' + str(self.lower_index)
+        rep += '>'
+        return rep
