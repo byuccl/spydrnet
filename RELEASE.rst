@@ -1,3 +1,11 @@
+SpyDrNet 1.8.0
+--------------
+April 23, 2021
+
+* included the miniscript to the graph in API summary in the documentation
+* added pretty print functions for some Intermediate Representation
+* Warning: The verilog composer is still in progress but works the same as 1.7.0 for now
+  
 SpyDrNet 1.7.0
 --------------
 January 21, 2021
