@@ -4,7 +4,8 @@ April 23, 2021
 
 * included the miniscript to the graph in API summary in the documentation
 * added pretty print functions for some Intermediate Representation
-* Warning: The verilog composer is still in progress but works the same as 1.7.0 for now
+* Warning: The Verilog composer is still in progress but works the same as 1.7.0 for now
+* Warning: We don't suggest using Python 3.5 for this release. There is an issue with the Verilog parser associated with Python 3.5
   
 SpyDrNet 1.7.0
 --------------
