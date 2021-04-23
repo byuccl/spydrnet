@@ -1,0 +1,307 @@
+\babel@toc {english}{}
+\contentsline {chapter}{\numberline {1}Introduction}{2}{chapter.1}%
+\contentsline {section}{\numberline {1.1}SpyDrNet Getting Started}{2}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Aracnid Etymology}{5}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Other Information}{5}{section.1.3}%
+\contentsline {chapter}{\numberline {2}Element Data}{6}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Keys}{6}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Setting Data}{6}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Getting Data}{6}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Deleting Data}{7}{section.2.4}%
+\contentsline {chapter}{\numberline {3}API Summary}{8}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Basic object types}{10}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Netlist}{10}{subsection.3.1.1}%
+\contentsline {subsubsection}{Overview}{10}{subsubsection*.3}%
+\contentsline {subsubsection}{Methods}{11}{subsubsection*.5}%
+\contentsline {paragraph}{spydrnet.Netlist.\_\_init\_\_}{11}{paragraph*.6}%
+\contentsline {paragraph}{spydrnet.Netlist.compose}{12}{paragraph*.8}%
+\contentsline {paragraph}{spydrnet.Netlist.libraries}{12}{paragraph*.10}%
+\contentsline {paragraph}{spydrnet.Netlist.top\_instance}{12}{paragraph*.12}%
+\contentsline {paragraph}{spydrnet.Netlist.create\_library}{12}{paragraph*.14}%
+\contentsline {paragraph}{spydrnet.Netlist.add\_library}{12}{paragraph*.16}%
+\contentsline {paragraph}{spydrnet.Netlist.remove\_library}{13}{paragraph*.18}%
+\contentsline {paragraph}{spydrnet.Netlist.remove\_libraries\_from}{13}{paragraph*.20}%
+\contentsline {paragraph}{spydrnet.Netlist.clone}{13}{paragraph*.22}%
+\contentsline {paragraph}{spydrnet.Netlist.get\_netlists}{13}{paragraph*.24}%
+\contentsline {paragraph}{spydrnet.Netlist.get\_libraries}{13}{paragraph*.26}%
+\contentsline {paragraph}{spydrnet.Netlist.get\_definitions}{13}{paragraph*.28}%
+\contentsline {paragraph}{spydrnet.Netlist.get\_instances}{13}{paragraph*.30}%
+\contentsline {paragraph}{spydrnet.Netlist.get\_ports}{14}{paragraph*.32}%
+\contentsline {paragraph}{spydrnet.Netlist.get\_pins}{14}{paragraph*.34}%
+\contentsline {paragraph}{spydrnet.Netlist.get\_cables}{14}{paragraph*.36}%
+\contentsline {paragraph}{spydrnet.Netlist.get\_wires}{14}{paragraph*.38}%
+\contentsline {paragraph}{spydrnet.Netlist.get\_hinstances}{14}{paragraph*.40}%
+\contentsline {paragraph}{spydrnet.Netlist.get\_hports}{14}{paragraph*.42}%
+\contentsline {paragraph}{spydrnet.Netlist.get\_hpins}{14}{paragraph*.44}%
+\contentsline {paragraph}{spydrnet.Netlist.get\_hcables}{14}{paragraph*.46}%
+\contentsline {paragraph}{spydrnet.Netlist.get\_hwires}{15}{paragraph*.48}%
+\contentsline {subsection}{\numberline {3.1.2}Library}{15}{subsection.3.1.2}%
+\contentsline {subsubsection}{Overview}{15}{subsubsection*.50}%
+\contentsline {subsubsection}{Methods}{15}{subsubsection*.52}%
+\contentsline {paragraph}{spydrnet.Library.\_\_init\_\_}{15}{paragraph*.53}%
+\contentsline {paragraph}{spydrnet.Library.netlist}{16}{paragraph*.55}%
+\contentsline {paragraph}{spydrnet.Library.definitions}{16}{paragraph*.57}%
+\contentsline {paragraph}{spydrnet.Library.create\_definition}{16}{paragraph*.59}%
+\contentsline {paragraph}{spydrnet.Library.add\_definition}{16}{paragraph*.61}%
+\contentsline {paragraph}{spydrnet.Library.remove\_definition}{16}{paragraph*.63}%
+\contentsline {paragraph}{spydrnet.Library.remove\_definitions\_from}{16}{paragraph*.65}%
+\contentsline {paragraph}{spydrnet.Library.clone}{17}{paragraph*.67}%
+\contentsline {paragraph}{spydrnet.Library.get\_netlists}{17}{paragraph*.69}%
+\contentsline {paragraph}{spydrnet.Library.get\_libraries}{17}{paragraph*.71}%
+\contentsline {paragraph}{spydrnet.Library.get\_definitions}{17}{paragraph*.73}%
+\contentsline {paragraph}{spydrnet.Library.get\_instances}{17}{paragraph*.75}%
+\contentsline {paragraph}{spydrnet.Library.get\_ports}{17}{paragraph*.77}%
+\contentsline {paragraph}{spydrnet.Library.get\_pins}{17}{paragraph*.79}%
+\contentsline {paragraph}{spydrnet.Library.get\_cables}{18}{paragraph*.81}%
+\contentsline {paragraph}{spydrnet.Library.get\_wires}{18}{paragraph*.83}%
+\contentsline {paragraph}{spydrnet.Library.get\_hinstances}{18}{paragraph*.85}%
+\contentsline {paragraph}{spydrnet.Library.get\_hports}{18}{paragraph*.87}%
+\contentsline {paragraph}{spydrnet.Library.get\_hpins}{18}{paragraph*.89}%
+\contentsline {paragraph}{spydrnet.Library.get\_hcables}{18}{paragraph*.91}%
+\contentsline {paragraph}{spydrnet.Library.get\_hwires}{18}{paragraph*.93}%
+\contentsline {subsection}{\numberline {3.1.3}Definition}{18}{subsection.3.1.3}%
+\contentsline {subsubsection}{Overview}{18}{subsubsection*.95}%
+\contentsline {subsubsection}{Methods}{19}{subsubsection*.97}%
+\contentsline {paragraph}{spydrnet.Definition.\_\_init\_\_}{19}{paragraph*.98}%
+\contentsline {paragraph}{spydrnet.Definition.is\_leaf}{19}{paragraph*.100}%
+\contentsline {paragraph}{Getter Functions}{19}{paragraph*.102}%
+\contentsline {subparagraph}{spydrnet.Definition.get\_netlists}{20}{subparagraph*.103}%
+\contentsline {subparagraph}{spydrnet.Definition.library}{20}{subparagraph*.105}%
+\contentsline {subparagraph}{spydrnet.Definition.ports}{20}{subparagraph*.107}%
+\contentsline {subparagraph}{spydrnet.Definition.cables}{20}{subparagraph*.109}%
+\contentsline {subparagraph}{spydrnet.Definition.children}{20}{subparagraph*.111}%
+\contentsline {subparagraph}{spydrnet.Definition.references}{21}{subparagraph*.113}%
+\contentsline {subparagraph}{spydrnet.Definition.create\_port}{21}{subparagraph*.115}%
+\contentsline {subparagraph}{spydrnet.Definition.add\_port}{21}{subparagraph*.117}%
+\contentsline {subparagraph}{spydrnet.Definition.remove\_port}{21}{subparagraph*.119}%
+\contentsline {subparagraph}{spydrnet.Definition.remove\_ports\_from}{22}{subparagraph*.121}%
+\contentsline {subparagraph}{spydrnet.Definition.create\_child}{22}{subparagraph*.123}%
+\contentsline {subparagraph}{spydrnet.Definition.add\_child}{22}{subparagraph*.125}%
+\contentsline {subparagraph}{spydrnet.Definition.remove\_child}{23}{subparagraph*.127}%
+\contentsline {subparagraph}{spydrnet.Definition.remove\_children\_from}{23}{subparagraph*.129}%
+\contentsline {subparagraph}{spydrnet.Definition.create\_cable}{23}{subparagraph*.131}%
+\contentsline {subparagraph}{spydrnet.Definition.add\_cable}{23}{subparagraph*.133}%
+\contentsline {subparagraph}{spydrnet.Definition.remove\_cable}{24}{subparagraph*.135}%
+\contentsline {subparagraph}{spydrnet.Definition.remove\_cables\_from}{24}{subparagraph*.137}%
+\contentsline {subparagraph}{spydrnet.Definition.clone}{24}{subparagraph*.139}%
+\contentsline {subparagraph}{spydrnet.Definition.get\_libraries}{24}{subparagraph*.141}%
+\contentsline {subparagraph}{spydrnet.Definition.get\_definitions}{24}{subparagraph*.143}%
+\contentsline {subparagraph}{spydrnet.Definition.get\_instances}{24}{subparagraph*.145}%
+\contentsline {subparagraph}{spydrnet.Definition.get\_ports}{25}{subparagraph*.147}%
+\contentsline {subparagraph}{spydrnet.Definition.get\_pins}{25}{subparagraph*.149}%
+\contentsline {subparagraph}{spydrnet.Definition.get\_cables}{25}{subparagraph*.151}%
+\contentsline {subparagraph}{spydrnet.Definition.get\_wires}{25}{subparagraph*.153}%
+\contentsline {subparagraph}{spydrnet.Definition.get\_hinstances}{25}{subparagraph*.155}%
+\contentsline {subparagraph}{spydrnet.Definition.get\_hports}{25}{subparagraph*.157}%
+\contentsline {subparagraph}{spydrnet.Definition.get\_hpins}{25}{subparagraph*.159}%
+\contentsline {subparagraph}{spydrnet.Definition.get\_hcables}{25}{subparagraph*.161}%
+\contentsline {subparagraph}{spydrnet.Definition.get\_hwires}{26}{subparagraph*.163}%
+\contentsline {subsection}{\numberline {3.1.4}Instance}{26}{subsection.3.1.4}%
+\contentsline {subsubsection}{Overview}{26}{subsubsection*.165}%
+\contentsline {subsubsection}{Methods}{26}{subsubsection*.167}%
+\contentsline {paragraph}{spydrnet.Instance.\_\_init\_\_}{27}{paragraph*.168}%
+\contentsline {paragraph}{spydrnet.Instance.parent}{27}{paragraph*.170}%
+\contentsline {paragraph}{spydrnet.Instance.reference}{27}{paragraph*.172}%
+\contentsline {paragraph}{spydrnet.Instance.get\_ports}{27}{paragraph*.174}%
+\contentsline {paragraph}{spydrnet.Instance.pins}{27}{paragraph*.176}%
+\contentsline {paragraph}{spydrnet.Instance.clone}{27}{paragraph*.178}%
+\contentsline {paragraph}{spydrnet.Instance.get\_netlists}{28}{paragraph*.180}%
+\contentsline {paragraph}{spydrnet.Instance.get\_libraries}{28}{paragraph*.182}%
+\contentsline {paragraph}{spydrnet.Instance.get\_definitions}{28}{paragraph*.184}%
+\contentsline {paragraph}{spydrnet.Instance.get\_instances}{28}{paragraph*.186}%
+\contentsline {paragraph}{spydrnet.Instance.get\_pins}{28}{paragraph*.188}%
+\contentsline {paragraph}{spydrnet.Instance.get\_cables}{28}{paragraph*.190}%
+\contentsline {paragraph}{spydrnet.Instance.get\_wires}{28}{paragraph*.192}%
+\contentsline {paragraph}{spydrnet.Instance.get\_hinstances}{28}{paragraph*.194}%
+\contentsline {paragraph}{spydrnet.Instance.get\_hports}{29}{paragraph*.196}%
+\contentsline {paragraph}{spydrnet.Instance.get\_hpins}{29}{paragraph*.198}%
+\contentsline {paragraph}{spydrnet.Instance.get\_hcables}{29}{paragraph*.200}%
+\contentsline {paragraph}{spydrnet.Instance.get\_hwires}{29}{paragraph*.202}%
+\contentsline {subsection}{\numberline {3.1.5}Port}{29}{subsection.3.1.5}%
+\contentsline {subsubsection}{Overview}{29}{subsubsection*.204}%
+\contentsline {subsubsection}{Methods}{29}{subsubsection*.206}%
+\contentsline {paragraph}{spydrnet.Port.\_\_init\_\_}{30}{paragraph*.207}%
+\contentsline {paragraph}{spydrnet.Port.direction}{30}{paragraph*.209}%
+\contentsline {paragraph}{spydrnet.Port.pins}{30}{paragraph*.211}%
+\contentsline {paragraph}{spydrnet.Port.create\_pin}{30}{paragraph*.213}%
+\contentsline {paragraph}{spydrnet.Port.add\_pin}{31}{paragraph*.215}%
+\contentsline {paragraph}{spydrnet.Port.remove\_pin}{31}{paragraph*.217}%
+\contentsline {paragraph}{spydrnet.Port.remove\_pins\_from}{31}{paragraph*.219}%
+\contentsline {paragraph}{spydrnet.Port.clone}{31}{paragraph*.221}%
+\contentsline {paragraph}{spydrnet.Port.get\_netlists}{31}{paragraph*.223}%
+\contentsline {paragraph}{spydrnet.Port.get\_libraries}{32}{paragraph*.225}%
+\contentsline {paragraph}{spydrnet.Port.get\_definitions}{32}{paragraph*.227}%
+\contentsline {paragraph}{spydrnet.Port.get\_instances}{32}{paragraph*.229}%
+\contentsline {paragraph}{spydrnet.Port.get\_ports}{32}{paragraph*.231}%
+\contentsline {paragraph}{spydrnet.Port.get\_pins}{32}{paragraph*.233}%
+\contentsline {paragraph}{spydrnet.Port.get\_cables}{32}{paragraph*.235}%
+\contentsline {paragraph}{spydrnet.Port.get\_wires}{32}{paragraph*.237}%
+\contentsline {paragraph}{spydrnet.Port.get\_hinstances}{32}{paragraph*.239}%
+\contentsline {paragraph}{spydrnet.Port.get\_hports}{33}{paragraph*.241}%
+\contentsline {paragraph}{spydrnet.Port.get\_hpins}{33}{paragraph*.243}%
+\contentsline {paragraph}{spydrnet.Port.get\_hcables}{33}{paragraph*.245}%
+\contentsline {paragraph}{spydrnet.Port.get\_hwires}{33}{paragraph*.247}%
+\contentsline {subsection}{\numberline {3.1.6}InnerPin}{33}{subsection.3.1.6}%
+\contentsline {subsubsection}{Overview}{33}{subsubsection*.249}%
+\contentsline {subsubsection}{Methods}{33}{subsubsection*.251}%
+\contentsline {paragraph}{spydrnet.InnerPin.\_\_init\_\_}{34}{paragraph*.252}%
+\contentsline {paragraph}{spydrnet.InnerPin.port}{34}{paragraph*.254}%
+\contentsline {paragraph}{spydrnet.InnerPin.wire}{34}{paragraph*.256}%
+\contentsline {paragraph}{spydrnet.InnerPin.clone}{34}{paragraph*.258}%
+\contentsline {paragraph}{spydrnet.InnerPin.get\_netlists}{34}{paragraph*.260}%
+\contentsline {paragraph}{spydrnet.InnerPin.get\_libraries}{34}{paragraph*.262}%
+\contentsline {paragraph}{spydrnet.InnerPin.get\_definitions}{35}{paragraph*.264}%
+\contentsline {paragraph}{spydrnet.InnerPin.get\_instances}{35}{paragraph*.266}%
+\contentsline {paragraph}{spydrnet.InnerPin.get\_ports}{35}{paragraph*.268}%
+\contentsline {paragraph}{spydrnet.InnerPin.get\_pins}{35}{paragraph*.270}%
+\contentsline {paragraph}{spydrnet.InnerPin.get\_cables}{35}{paragraph*.272}%
+\contentsline {paragraph}{spydrnet.InnerPin.get\_wires}{35}{paragraph*.274}%
+\contentsline {paragraph}{spydrnet.InnerPin.get\_hinstances}{35}{paragraph*.276}%
+\contentsline {paragraph}{spydrnet.InnerPin.get\_hports}{35}{paragraph*.278}%
+\contentsline {paragraph}{spydrnet.InnerPin.get\_hpins}{36}{paragraph*.280}%
+\contentsline {paragraph}{spydrnet.InnerPin.get\_hcables}{36}{paragraph*.282}%
+\contentsline {paragraph}{spydrnet.InnerPin.get\_hwires}{36}{paragraph*.284}%
+\contentsline {subsection}{\numberline {3.1.7}OuterPin}{36}{subsection.3.1.7}%
+\contentsline {subsubsection}{Overview}{36}{subsubsection*.286}%
+\contentsline {subsubsection}{Methods}{36}{subsubsection*.288}%
+\contentsline {paragraph}{spydrnet.OuterPin.\_\_init\_\_}{37}{paragraph*.289}%
+\contentsline {paragraph}{spydrnet.OuterPin.from\_instance\_and\_inner\_pin}{37}{paragraph*.291}%
+\contentsline {paragraph}{spydrnet.OuterPin.instance}{37}{paragraph*.293}%
+\contentsline {paragraph}{spydrnet.OuterPin.inner\_pin}{37}{paragraph*.295}%
+\contentsline {paragraph}{spydrnet.OuterPin.clone}{37}{paragraph*.297}%
+\contentsline {paragraph}{spydrnet.OuterPin.get\_netlists}{38}{paragraph*.299}%
+\contentsline {paragraph}{spydrnet.OuterPin.get\_libraries}{38}{paragraph*.301}%
+\contentsline {paragraph}{spydrnet.OuterPin.get\_definitions}{38}{paragraph*.303}%
+\contentsline {paragraph}{spydrnet.OuterPin.get\_instances}{38}{paragraph*.305}%
+\contentsline {paragraph}{spydrnet.OuterPin.get\_ports}{38}{paragraph*.307}%
+\contentsline {paragraph}{spydrnet.OuterPin.get\_pins}{38}{paragraph*.309}%
+\contentsline {paragraph}{spydrnet.OuterPin.get\_cables}{38}{paragraph*.311}%
+\contentsline {paragraph}{spydrnet.OuterPin.get\_wires}{38}{paragraph*.313}%
+\contentsline {paragraph}{spydrnet.OuterPin.get\_hinstances}{39}{paragraph*.315}%
+\contentsline {paragraph}{spydrnet.OuterPin.get\_hports}{39}{paragraph*.317}%
+\contentsline {paragraph}{spydrnet.OuterPin.get\_hpins}{39}{paragraph*.319}%
+\contentsline {paragraph}{spydrnet.OuterPin.get\_hcables}{39}{paragraph*.321}%
+\contentsline {paragraph}{spydrnet.OuterPin.get\_hwires}{39}{paragraph*.323}%
+\contentsline {subsection}{\numberline {3.1.8}Cable}{39}{subsection.3.1.8}%
+\contentsline {subsubsection}{Overview}{39}{subsubsection*.325}%
+\contentsline {subsubsection}{Methods}{39}{subsubsection*.327}%
+\contentsline {paragraph}{spydrnet.Cable.\_\_init\_\_}{40}{paragraph*.328}%
+\contentsline {paragraph}{spydrnet.Cable.wires}{40}{paragraph*.330}%
+\contentsline {paragraph}{spydrnet.Cable.create\_wire}{40}{paragraph*.332}%
+\contentsline {paragraph}{spydrnet.Cable.add\_wire}{41}{paragraph*.334}%
+\contentsline {paragraph}{spydrnet.Cable.create\_wires}{41}{paragraph*.336}%
+\contentsline {paragraph}{spydrnet.Cable.remove\_wire}{41}{paragraph*.338}%
+\contentsline {paragraph}{spydrnet.Cable.remove\_wires\_from}{41}{paragraph*.340}%
+\contentsline {paragraph}{spydrnet.Cable.clone}{41}{paragraph*.342}%
+\contentsline {paragraph}{spydrnet.Cable.get\_netlists}{42}{paragraph*.344}%
+\contentsline {paragraph}{spydrnet.Cable.get\_libraries}{42}{paragraph*.346}%
+\contentsline {paragraph}{spydrnet.Cable.get\_definitions}{42}{paragraph*.348}%
+\contentsline {paragraph}{spydrnet.Cable.get\_instances}{42}{paragraph*.350}%
+\contentsline {paragraph}{spydrnet.Cable.get\_ports}{42}{paragraph*.352}%
+\contentsline {paragraph}{spydrnet.Cable.get\_pins}{42}{paragraph*.354}%
+\contentsline {paragraph}{spydrnet.Cable.get\_cables}{42}{paragraph*.356}%
+\contentsline {paragraph}{spydrnet.Cable.get\_wires}{42}{paragraph*.358}%
+\contentsline {paragraph}{spydrnet.Cable.get\_hinstances}{43}{paragraph*.360}%
+\contentsline {paragraph}{spydrnet.Cable.get\_hports}{43}{paragraph*.362}%
+\contentsline {paragraph}{spydrnet.Cable.get\_hpins}{43}{paragraph*.364}%
+\contentsline {paragraph}{spydrnet.Cable.get\_hcables}{43}{paragraph*.366}%
+\contentsline {paragraph}{spydrnet.Cable.get\_hwires}{43}{paragraph*.368}%
+\contentsline {subsection}{\numberline {3.1.9}Wire}{43}{subsection.3.1.9}%
+\contentsline {subsubsection}{Overview}{43}{subsubsection*.370}%
+\contentsline {subsubsection}{Methods}{43}{subsubsection*.372}%
+\contentsline {paragraph}{spydrnet.Wire.\_\_init\_\_}{44}{paragraph*.373}%
+\contentsline {paragraph}{spydrnet.Wire.cable}{44}{paragraph*.375}%
+\contentsline {paragraph}{spydrnet.Wire.pins}{44}{paragraph*.377}%
+\contentsline {paragraph}{spydrnet.Wire.connect\_pin}{44}{paragraph*.379}%
+\contentsline {paragraph}{spydrnet.Wire.disconnect\_pin}{44}{paragraph*.381}%
+\contentsline {paragraph}{spydrnet.Wire.disconnect\_pins\_from}{44}{paragraph*.383}%
+\contentsline {paragraph}{spydrnet.Wire.clone}{45}{paragraph*.385}%
+\contentsline {paragraph}{spydrnet.Wire.get\_netlists}{45}{paragraph*.387}%
+\contentsline {paragraph}{spydrnet.Wire.get\_libraries}{45}{paragraph*.389}%
+\contentsline {paragraph}{spydrnet.Wire.get\_definitions}{45}{paragraph*.391}%
+\contentsline {paragraph}{spydrnet.Wire.get\_instances}{45}{paragraph*.393}%
+\contentsline {paragraph}{spydrnet.Wire.get\_ports}{45}{paragraph*.395}%
+\contentsline {paragraph}{spydrnet.Wire.get\_pins}{45}{paragraph*.397}%
+\contentsline {paragraph}{spydrnet.Wire.get\_cables}{46}{paragraph*.399}%
+\contentsline {paragraph}{spydrnet.Wire.get\_wires}{46}{paragraph*.401}%
+\contentsline {paragraph}{spydrnet.Wire.get\_hinstances}{46}{paragraph*.403}%
+\contentsline {paragraph}{spydrnet.Wire.get\_hports}{46}{paragraph*.405}%
+\contentsline {paragraph}{spydrnet.Wire.get\_hpins}{46}{paragraph*.407}%
+\contentsline {paragraph}{spydrnet.Wire.get\_hcables}{46}{paragraph*.409}%
+\contentsline {paragraph}{spydrnet.Wire.get\_hwires}{46}{paragraph*.411}%
+\contentsline {subsection}{\numberline {3.1.10}HRef}{46}{subsection.3.1.10}%
+\contentsline {subsubsection}{Overview}{46}{subsubsection*.413}%
+\contentsline {subsubsection}{Methods}{48}{subsubsection*.415}%
+\contentsline {paragraph}{spydrnet.util.HRef.\_\_init\_\_}{49}{paragraph*.416}%
+\contentsline {paragraph}{spydrnet.util.HRef.get\_all\_hrefs\_of\_item}{49}{paragraph*.418}%
+\contentsline {paragraph}{spydrnet.util.HRef.get\_all\_hrefs\_of\_instances}{49}{paragraph*.420}%
+\contentsline {paragraph}{spydrnet.util.HRef.from\_sequence}{49}{paragraph*.422}%
+\contentsline {paragraph}{spydrnet.util.HRef.from\_parent\_and\_item}{49}{paragraph*.424}%
+\contentsline {paragraph}{spydrnet.util.HRef.is\_unique}{49}{paragraph*.426}%
+\contentsline {paragraph}{spydrnet.util.HRef.is\_valid}{50}{paragraph*.428}%
+\contentsline {paragraph}{spydrnet.util.HRef.name}{50}{paragraph*.430}%
+\contentsline {paragraph}{spydrnet.util.HRef.get\_netlists}{50}{paragraph*.432}%
+\contentsline {paragraph}{spydrnet.util.HRef.get\_libraries}{50}{paragraph*.434}%
+\contentsline {paragraph}{spydrnet.util.HRef.get\_definitions}{50}{paragraph*.436}%
+\contentsline {paragraph}{spydrnet.util.HRef.get\_instances}{50}{paragraph*.438}%
+\contentsline {paragraph}{spydrnet.util.HRef.get\_ports}{50}{paragraph*.440}%
+\contentsline {paragraph}{spydrnet.util.HRef.get\_pins}{50}{paragraph*.442}%
+\contentsline {paragraph}{spydrnet.util.HRef.get\_cables}{51}{paragraph*.444}%
+\contentsline {paragraph}{spydrnet.util.HRef.get\_wires}{51}{paragraph*.446}%
+\contentsline {paragraph}{spydrnet.util.HRef.get\_hinstances}{51}{paragraph*.448}%
+\contentsline {paragraph}{spydrnet.util.HRef.get\_hports}{51}{paragraph*.450}%
+\contentsline {paragraph}{spydrnet.util.HRef.get\_hpins}{51}{paragraph*.452}%
+\contentsline {paragraph}{spydrnet.util.HRef.get\_hcables}{51}{paragraph*.454}%
+\contentsline {paragraph}{spydrnet.util.HRef.get\_hwires}{51}{paragraph*.456}%
+\contentsline {subsection}{\numberline {3.1.11}spydrnet.parse}{52}{subsection.3.1.11}%
+\contentsline {subsection}{\numberline {3.1.12}spydrnet.ir.Pin}{52}{subsection.3.1.12}%
+\contentsline {subsection}{\numberline {3.1.13}spydrnet.ir.Bundle}{53}{subsection.3.1.13}%
+\contentsline {subsection}{\numberline {3.1.14}spydrnet.ir.Element}{54}{subsection.3.1.14}%
+\contentsline {subsection}{\numberline {3.1.15}spydrnet.ir.FirstClassElement}{54}{subsection.3.1.15}%
+\contentsline {section}{\numberline {3.2}Getter Functions}{55}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}spydrnet.get\_netlists}{56}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}spydrnet.get\_libraries}{56}{subsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.2.3}spydrnet.get\_definitions}{57}{subsection.3.2.3}%
+\contentsline {subsection}{\numberline {3.2.4}spydrnet.get\_ports}{58}{subsection.3.2.4}%
+\contentsline {subsection}{\numberline {3.2.5}spydrnet.get\_pins}{59}{subsection.3.2.5}%
+\contentsline {subsection}{\numberline {3.2.6}spydrnet.get\_cables}{59}{subsection.3.2.6}%
+\contentsline {subsection}{\numberline {3.2.7}spydrnet.get\_wires}{60}{subsection.3.2.7}%
+\contentsline {subsection}{\numberline {3.2.8}spydrnet.get\_instances}{60}{subsection.3.2.8}%
+\contentsline {subsection}{\numberline {3.2.9}spydrnet.get\_hinstances}{61}{subsection.3.2.9}%
+\contentsline {subsection}{\numberline {3.2.10}spydrnet.get\_hports}{62}{subsection.3.2.10}%
+\contentsline {subsection}{\numberline {3.2.11}spydrnet.get\_hpins}{63}{subsection.3.2.11}%
+\contentsline {subsection}{\numberline {3.2.12}spydrnet.get\_hcables}{63}{subsection.3.2.12}%
+\contentsline {subsection}{\numberline {3.2.13}spydrnet.get\_hwires}{64}{subsection.3.2.13}%
+\contentsline {section}{\numberline {3.3}Other Functions}{65}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}spydrnet.compose}{65}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}spydrnet.flatten.flatten}{65}{subsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.3.3}spydrnet.uniquify.uniquify}{65}{subsection.3.3.3}%
+\contentsline {subsection}{\numberline {3.3.4}spydrnet.clone.clone}{65}{subsection.3.3.4}%
+\contentsline {section}{\numberline {3.4}Shortcuts}{66}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}GetterShortcuts}{66}{subsection.3.4.1}%
+\contentsline {subsubsection}{Overview}{66}{subsubsection*.484}%
+\contentsline {subsubsection}{Methods}{66}{subsubsection*.486}%
+\contentsline {paragraph}{spydrnet.shortcuts.getter.GetterShortcuts.get\_netlists}{67}{paragraph*.487}%
+\contentsline {paragraph}{spydrnet.shortcuts.getter.GetterShortcuts.get\_libraries}{67}{paragraph*.489}%
+\contentsline {paragraph}{spydrnet.shortcuts.getter.GetterShortcuts.get\_definitions}{67}{paragraph*.491}%
+\contentsline {paragraph}{spydrnet.shortcuts.getter.GetterShortcuts.get\_instances}{67}{paragraph*.493}%
+\contentsline {paragraph}{spydrnet.shortcuts.getter.GetterShortcuts.get\_ports}{67}{paragraph*.495}%
+\contentsline {paragraph}{spydrnet.shortcuts.getter.GetterShortcuts.get\_pins}{67}{paragraph*.497}%
+\contentsline {paragraph}{spydrnet.shortcuts.getter.GetterShortcuts.get\_cables}{67}{paragraph*.499}%
+\contentsline {paragraph}{spydrnet.shortcuts.getter.GetterShortcuts.get\_wires}{67}{paragraph*.501}%
+\contentsline {paragraph}{spydrnet.shortcuts.getter.GetterShortcuts.get\_hinstances}{68}{paragraph*.503}%
+\contentsline {paragraph}{spydrnet.shortcuts.getter.GetterShortcuts.get\_hports}{68}{paragraph*.505}%
+\contentsline {paragraph}{spydrnet.shortcuts.getter.GetterShortcuts.get\_hpins}{68}{paragraph*.507}%
+\contentsline {paragraph}{spydrnet.shortcuts.getter.GetterShortcuts.get\_hcables}{68}{paragraph*.509}%
+\contentsline {paragraph}{spydrnet.shortcuts.getter.GetterShortcuts.get\_hwires}{68}{paragraph*.511}%
+\contentsline {chapter}{\numberline {A}Tutorial}{69}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Installation}{71}{section.A.1}%
+\contentsline {section}{\numberline {A.2}Working Environment}{71}{section.A.2}%
+\contentsline {section}{\numberline {A.3}Parsing}{71}{section.A.3}%
+\contentsline {section}{\numberline {A.4}Composing}{72}{section.A.4}%
+\contentsline {section}{\numberline {A.5}Examples}{72}{section.A.5}%
+\contentsline {subsection}{\numberline {A.5.1}Creating from scratch}{72}{subsection.A.5.1}%
+\contentsline {subsection}{\numberline {A.5.2}Renaming an objects}{72}{subsection.A.5.2}%
+\contentsline {subsection}{\numberline {A.5.3}Setting properties}{72}{subsection.A.5.3}%
+\contentsline {section}{\numberline {A.6}Intermediate Representation}{72}{section.A.6}%
+\contentsline {chapter}{Index}{74}{section*.514}%
