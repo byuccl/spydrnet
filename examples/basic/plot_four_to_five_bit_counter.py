@@ -113,14 +113,20 @@ rst = None
 for cable in top_def.cables:
     if cable['EDIF.identifier'] == 'inc_dec_IBUF':
         inc_wire = cable.wires[0]
-    elif cable['EDIF.identifier'] == 'out_OBUF_0_':
+    # elif cable['EDIF.identifier'] == 'out_OBUF_0_':
+    #     out0 = cable.wires[0]
+    # elif cable['EDIF.identifier'] == 'out_OBUF_1_':
+    #     out1 = cable.wires[0]
+    # elif cable['EDIF.identifier'] == 'out_OBUF_2_':
+    #     out2 = cable.wires[0]
+    # elif cable['EDIF.identifier'] == 'out_OBUF_3_':
+    #     out3 = cable.wires[0]
+    elif cable['EDIF.identifier'] == 'out_OBUF':
         out0 = cable.wires[0]
-    elif cable['EDIF.identifier'] == 'out_OBUF_1_':
-        out1 = cable.wires[0]
-    elif cable['EDIF.identifier'] == 'out_OBUF_2_':
-        out2 = cable.wires[0]
-    elif cable['EDIF.identifier'] == 'out_OBUF_3_':
-        out3 = cable.wires[0]
+        out1 = cable.wires[1]
+        out2 = cable.wires[2]
+        out3 = cable.wires[3]
+
     elif cable['EDIF.identifier'] == 'clk_IBUF_BUFG':
         clk = cable.wires[0]
     elif cable['EDIF.identifier'] == 'enable_IBUF':
