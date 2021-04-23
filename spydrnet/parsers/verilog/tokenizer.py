@@ -74,9 +74,7 @@ class VerilogTokenizer:
         if self.next_token:
             return self.next_token
         else:
-            print("this is where I am")
             self.next_token = next(self.generator)
-            print("this is where I am 2")
             return self.next_token
 
     def generate_tokens(self):

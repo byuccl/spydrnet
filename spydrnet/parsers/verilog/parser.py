@@ -171,6 +171,9 @@ class VerilogParser:
             #this is a comment token, skip it
             token = self.tokenizer.next()
         return token
+        # token = self.peek_token()
+        # self.tokenizer.next()
+        # return token
 
     #######################################################
     ##parsing functions
@@ -178,22 +181,31 @@ class VerilogParser:
 
     def parse_verilog(self):
         netlist = sdn.Netlist()
-        netlist.create_library("work")
-        netlist.create_library("primatives")
+        self.work = netlist.create_library("work")
+        self.primatives = netlist.create_library("primatives")
+        self.current_library = self.work
 
         preprocessor_defines = set()
+        star_properties = dict()
+        time_scale = None
 
         while self.tokenizer.has_next():
             token = self.peek_token()
-            if token == vt.CELL_DEFINE:
+            if token.split(maxsplit = 1)[0] == vt.CELL_DEFINE:
                 self.current_library = self.primatives
-                token = self.next_token()
-            elif token == vt.END_CELL_DEFINE:
+                token = token.split(maxsplit = 1)[1]
+            elif token.split(maxsplit = 1)[0] == vt.END_CELL_DEFINE:
                 self.current_library = self.work
-                token = self.next_token()
+                token = token.split(maxsplit = 1)[1]
 
             elif token == vt.MODULE:
                 self.parse_module()
+                #go ahead and set the extra metadata that we collected to this point
+                if time_scale is not None:
+                    self.current_definition["Verilog.TimeScale"] = time_scale
+                if len(star_properties.keys()) > 0:
+                    self.current_definition["Verilog.StarProperties"] = star_properties
+                    star_properties = dict()
             
             elif token == vt.DEFINE:
                 assert False, "Currently `define is not supported"
@@ -203,9 +215,17 @@ class VerilogParser:
                 if token not in preprocessor_defines:
                     while token != vt.ENDIF:
                         token = self.next_token()
-                        
+            elif token == vt.OPEN_PARENTHESIS:
+                k,v = self.parse_star_property()
+                star_properties[k] = v
+                
+            elif token.split(maxsplit = 1)[0] == vt.TIMESCALE:
+                token = self.next_token()
+                time_scale = token.split(maxsplit = 1)[1]
             else:
-                pass #todo ensure that anything that is parsed before each module is added as metadata
+                pass       
+                assert False, self.error_string("something at the top level of the file", "got unexpected token", token)
+                
         return sdn.Netlist()
 
     def parse_module(self):
@@ -235,6 +255,9 @@ class VerilogParser:
         assert token == "(", self.error_string("(", "for port mapping", token)
 
         self.parse_module_header_ports()
+
+        token = self.next_token()
+        assert token == vt.SEMI_COLON, self.error_string(vt.SEMI_COLON, "to end the module header section", token)
 
 
     def parse_module_header_parameters(self):
@@ -460,6 +483,9 @@ class VerilogParser:
 
         self.create_or_update_cable(name, left_index = left, right_index = right, var_type = var_type)
 
+        token = self.next_token()
+        assert token == vt.SEMI_COLON, self.error_string(vt.SEMI_COLON, "to end cable declaration", token)
+
     def parse_instantiation(self):
         token = self.next_token()
         assert vt.is_valid_identifier(token), self.error_string("module identifier", "for instantiation", token)
@@ -475,12 +501,13 @@ class VerilogParser:
         name = token
 
         token = self.peek_token()
-        assert token == vt.OPEN_PARENTHESIS(), self.error_string(vt.OPEN_PARENTHESIS, "to start port to cable mapping", token)
-
-        self.parse_port_mapping()
+        assert token == vt.OPEN_PARENTHESIS, self.error_string(vt.OPEN_PARENTHESIS, "to start port to cable mapping", token)
 
         instance = self.current_definition.create_child()
         self.current_instance = instance
+
+        self.parse_port_mapping()
+        
         instance.name = name
         instance.reference = self.blackbox_holder.get_blackbox(def_name)
 
@@ -665,6 +692,26 @@ class VerilogParser:
             token = self.next_token()
             assert token == vt.CLOSE_BRACKET, self.error_string("]", "to terminate array slice", token)
             return left, right
+
+    def parse_star_property(self):
+        token = self.next_token()
+        assert token == vt.OPEN_PARENTHESIS, self.error_string(vt.OPEN_PARENTHESIS, "to begin star property", token)
+        token = self.next_token()
+        assert token == vt.STAR, self.error_string(vt.STAR, "to begin star property", token)
+        token = self.next_token()
+        assert vt.is_valid_identifier(token)
+        key = token
+        token = self.next_token()
+        assert token == vt.EQUAL, self.error_string(vt.EQUAL, "to set a star parameter", token)
+        token = self.next_token()
+        value = ""
+        while token != vt.STAR:
+            value += token
+            token = self.next_token()
+        assert token == vt.STAR, self.error_string(vt.STAR, "to start the ending of a star property", token)
+        token = self.next_token()
+        assert token == vt.CLOSE_PARENTHESIS, self.error_string(vt.CLOSE_PARENTHESIS, "to end the star property", token)
+        return key, value
     
     #######################################################
     ##assignment helpers

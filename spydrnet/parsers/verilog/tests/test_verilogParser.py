@@ -1,3 +1,6 @@
+# Copyright 2021 please see the license
+# Author Dallin Skouson
+
 import unittest
 import spydrnet as sdn
 from spydrnet.parsers.verilog.parser import VerilogParser
@@ -944,7 +947,18 @@ class TestVerilogParser(unittest.TestCase):
         for i in range(count):
             parser.parse_port_declaration()
 
-    
+    def test_create_or_update_port_on_instance(self):
+        parser = VerilogParser()
+        parser.current_definition = sdn.Definition()
+        parser.current_instance = parser.current_definition.create_child()
+        parser.current_instance.reference = parser.blackbox_holder.get_blackbox("definition1")
+
+        pins = parser.create_or_update_port_on_instance("port1", 1)
+
+        assert parser.current_instance.reference.ports[0].name == "port1"
+        assert len(parser.current_instance.reference.ports[0].pins) == 1
+        assert len(parser.current_instance.pins) == 1
+        assert len(pins) == 1
 
     ############################################
     ##test helpers
