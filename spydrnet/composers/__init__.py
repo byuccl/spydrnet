@@ -8,6 +8,8 @@ def compose(netlist, filename):
     if extension_lower in {".edf", ".edif"}:
         from spydrnet.composers.edif.composer import ComposeEdif
         composer = ComposeEdif()
+        if netlist.name is None:
+            raise Exception("netlist.name undefined")
         composer.run(netlist, filename)
     elif extension_lower in [".v", ".vh"]:
         from spydrnet.composers.verilog.composer import Composer

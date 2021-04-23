@@ -64,12 +64,10 @@ class EdififyNames:
         self.valid = set()
         self.non_alpha = set()
         self.name_length_target = 100
-        # valid.add("a")
-        # valid.add("b")
 
     def _length_good(self, identifier):
         """returns a boolean indicating whether or not the indentifier fits the 256 character limit"""
-        # return len(identifier) < 256
+
         return len(identifier) < self.name_length_target
 
     def _length_fix(self, identifier):
@@ -131,10 +129,13 @@ class EdififyNames:
                 identifier_lower = identifier_lower + '_sdn_1_'
             else:
                 # get the number out of the string
-                num = int(re.search(r'\d+', identifier_lower[r.start():]).group())
-                identifier_lower = identifier_lower[:r.start()+5] + str(num + 1) + '_'
+                num = int(
+                    re.search(r'\d+', identifier_lower[r.start():]).group())
+                identifier_lower = identifier_lower[:r.start(
+                )+5] + str(num + 1) + '_'
             identifier_lower = self._length_fix(identifier_lower)
-            identifier_lower = self._conflicts_fix(obj, identifier_lower, objects)
+            identifier_lower = self._conflicts_fix(
+                obj, identifier_lower, objects)
             identifier = identifier_lower
         return identifier
 
@@ -155,7 +156,6 @@ class EdififyNames:
         make a compliant identifier based on the identifier given.
         returns the identifier if no change is needed.
         """
-
         identifier = obj.name
         identifier = self._length_fix(identifier)
         identifier = self._characters_fix(identifier)
