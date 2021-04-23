@@ -4,13 +4,15 @@ import spydrnet as sdn
 
 class TestGetHCables(unittest.TestCase):
     netlist = None
+
     @classmethod
     def setUpClass(cls) -> None:
         cls.netlist = sdn.load_example_netlist_by_name('b13')
 
     def test_wild_card_search_on_netlist(self):
         hrefs = list(sdn.get_hcables(self.netlist))
-        self.assertTrue(len(hrefs) == 114 and all(isinstance(x.item, sdn.Cable) for x in hrefs))
+        self.assertTrue(len(hrefs) == 76 and all(
+            isinstance(x.item, sdn.Cable) for x in hrefs))
 
     def test_absolute_search(self):
         href = next(self.netlist.get_hcables('<const0>'), None)
@@ -18,12 +20,16 @@ class TestGetHCables(unittest.TestCase):
         self.assertIsInstance(href.item, sdn.Cable)
 
     def test_regex_search(self):
-        hrefs = list(sdn.get_hcables(self.netlist, '.*FSM_onehot.*', is_re=True))
-        self.assertTrue(len(hrefs) == 21 and all(isinstance(x.item, sdn.Cable) for x in hrefs))
+        hrefs = list(sdn.get_hcables(
+            self.netlist, '.*FSM_onehot.*', is_re=True))
+        self.assertTrue(len(hrefs) == 8 and all(
+            isinstance(x.item, sdn.Cable) for x in hrefs))
 
     def test_parameters(self):
-        self.assertRaises(TypeError, sdn.get_hcables, self.netlist, r'.*FSM_onehot.*', patterns=r".*FSM_onehot.*")
-        self.assertRaises(TypeError, sdn.get_hcables, self.netlist, parameter_does_not_exit=True)
+        self.assertRaises(TypeError, sdn.get_hcables, self.netlist,
+                          r'.*FSM_onehot.*', patterns=r".*FSM_onehot.*")
+        self.assertRaises(TypeError, sdn.get_hcables,
+                          self.netlist, parameter_does_not_exit=True)
         self.assertRaises(TypeError, sdn.get_hcables, object())
 
     def test_get_hcables_of_pin(self):
@@ -85,15 +91,19 @@ class TestGetHCables(unittest.TestCase):
     def test_from_href_of_instance(self):
         href = next(sdn.get_hinstances(self.netlist.top_instance))
         hrefs = list(sdn.get_hcables(href))
-        self.assertTrue(len(hrefs) == 114 and all(isinstance(x.item, sdn.Cable) for x in hrefs))
+        self.assertTrue(len(hrefs) == 76 and all(
+            isinstance(x.item, sdn.Cable) for x in hrefs))
 
     def test_from_instance(self):
         hrefs = list(sdn.get_hcables(self.netlist.top_instance))
-        self.assertTrue(len(hrefs) == 114 and all(isinstance(x.item, sdn.Cable) for x in hrefs))
+        self.assertTrue(len(hrefs) == 76 and all(
+            isinstance(x.item, sdn.Cable) for x in hrefs))
 
     def test_from_library(self):
-        hrefs = list(sdn.get_hcables(self.netlist.libraries[0], selection=sdn.OUTSIDE))
-        self.assertTrue(len(hrefs) == 114 and all(isinstance(x.item, sdn.Cable) for x in hrefs))
+        hrefs = list(sdn.get_hcables(
+            self.netlist.libraries[0], selection=sdn.OUTSIDE))
+        self.assertTrue(len(hrefs) == 76 and all(
+            isinstance(x.item, sdn.Cable) for x in hrefs))
 
     def test_from_wire_and_cable(self):
         library = self.netlist.libraries[1]
@@ -101,9 +111,11 @@ class TestGetHCables(unittest.TestCase):
         cable = definition.cables[0]
         wire = cable.wires[0]
         hrefs = list(sdn.get_hcables(wire))
-        self.assertTrue(len(hrefs) == 1 and all(isinstance(x.item, sdn.Cable) for x in hrefs))
+        self.assertTrue(len(hrefs) == 1 and all(
+            isinstance(x.item, sdn.Cable) for x in hrefs))
         hrefs = list(sdn.get_hcables(cable))
-        self.assertTrue(len(hrefs) == 1 and all(isinstance(x.item, sdn.Cable) for x in hrefs))
+        self.assertTrue(len(hrefs) == 1 and all(
+            isinstance(x.item, sdn.Cable) for x in hrefs))
 
     def test_from_outerpin(self):
         library = self.netlist.libraries[1]
@@ -111,10 +123,12 @@ class TestGetHCables(unittest.TestCase):
         instance = definition.children[0]
         outerpin = next(iter(instance.pins))
         hrefs = list(sdn.get_hcables(outerpin, selection="OUTSIDE"))
-        self.assertTrue(len(hrefs) == 1 and all(isinstance(x.item, sdn.Cable) for x in hrefs))
+        self.assertTrue(len(hrefs) == 1 and all(
+            isinstance(x.item, sdn.Cable) for x in hrefs))
 
     def test_bad_selection_type(self):
-        self.assertRaises(TypeError, self.netlist.get_hcables, selection="NOT_AN_OPTION")
+        self.assertRaises(TypeError, self.netlist.get_hcables,
+                          selection="NOT_AN_OPTION")
         self.assertRaises(TypeError, self.netlist.get_hcables, selection=None)
 
     def test_of_bad_instance(self):
@@ -141,10 +155,12 @@ class TestGetHCables(unittest.TestCase):
 
         top_inst_href = next(sdn.get_hinstances(netlist.top_instance))
         hrefs = list(sdn.get_hcables(top_inst_href, recursive=True))
-        self.assertTrue(len(hrefs) == 1 and all(isinstance(x.item, sdn.Cable) for x in hrefs))
+        self.assertTrue(len(hrefs) == 1 and all(
+            isinstance(x.item, sdn.Cable) for x in hrefs))
 
         hrefs = list(sdn.get_hcables(middle_inst))
-        self.assertTrue(len(hrefs) == 1 and all(isinstance(x.item, sdn.Cable) for x in hrefs))
+        self.assertTrue(len(hrefs) == 1 and all(
+            isinstance(x.item, sdn.Cable) for x in hrefs))
 
     def test_through_hierarchy_again(self):
         netlist = sdn.Netlist()
@@ -214,7 +230,7 @@ class TestGetHCables(unittest.TestCase):
         hrefs = set(sdn.get_hcables(netlist.top_instance))
         self.assertTrue(href in hrefs)
 
-        #look at wire_name
+        # look at wire_name
         href = next(sdn.get_hcables(middle_floating_wire))
         self.assertTrue('middle/middle_cable[1]', href.name)
         hrefs = set(sdn.get_hcables(netlist.top_instance, recursive=True))
@@ -224,7 +240,8 @@ class TestGetHCables(unittest.TestCase):
         href_top_wire = next(sdn.get_hcables(top_cable.wires[0]))
         href_middle_wire = next(sdn.get_hcables(middle_cable.wires[0]))
         href_bottom_wire = next(sdn.get_hcables(bottom_cable.wires[0]))
-        self.assertTrue(href_top_wire in hrefs and href_middle_wire not in hrefs and href_bottom_wire in hrefs)
+        self.assertTrue(
+            href_top_wire in hrefs and href_middle_wire not in hrefs and href_bottom_wire in hrefs)
 
         hrefs = set(sdn.get_hcables(middle_cable, selection="ALL"))
         href_middle_floating_wire = next(sdn.get_hcables(middle_floating_wire))
