@@ -1,4 +1,4 @@
-﻿spydrnet.Cable.clone
+spydrnet.Cable.clone
 ====================
 
 .. currentmodule:: spydrnet

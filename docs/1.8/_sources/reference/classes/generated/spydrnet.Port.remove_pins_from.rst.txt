@@ -1,4 +1,4 @@
-﻿spydrnet.Port.remove\_pins\_from
+spydrnet.Port.remove\_pins\_from
 ================================
 
 .. currentmodule:: spydrnet

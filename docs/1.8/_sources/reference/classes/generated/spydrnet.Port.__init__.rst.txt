@@ -1,4 +1,4 @@
-﻿spydrnet.Port.\_\_init\_\_
+spydrnet.Port.\_\_init\_\_
 ==========================
 
 .. currentmodule:: spydrnet

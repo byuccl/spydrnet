@@ -1,4 +1,4 @@
-﻿spydrnet.uniquify.uniquify
+spydrnet.uniquify.uniquify
 ==========================
 
 .. currentmodule:: spydrnet.uniquify

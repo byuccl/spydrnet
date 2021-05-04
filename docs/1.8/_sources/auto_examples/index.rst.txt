@@ -46,6 +46,27 @@ Basic
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="Builds a netlist from scratch">
+
+.. only:: html
+
+ .. figure:: /auto_examples/basic/images/thumb/sphx_glr_minimal_thumb.png
+     :alt: Minimal Script
+
+     :ref:`sphx_glr_auto_examples_basic_minimal.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/basic/minimal
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="Creates definitions for none-leaf instances so each instance has its own definition">
 
 .. only:: html

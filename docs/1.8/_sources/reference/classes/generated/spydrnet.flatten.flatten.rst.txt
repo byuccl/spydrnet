@@ -1,4 +1,4 @@
-﻿spydrnet.flatten.flatten
+spydrnet.flatten.flatten
 ========================
 
 .. currentmodule:: spydrnet.flatten

@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html4" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Cable &mdash; SpyDrNet UNSPECIFIED documentation</title>
   
@@ -16,10 +16,14 @@
   <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
 
   
   
+
   
+  
+
   
 
   
@@ -29,10 +33,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -54,7 +58,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> SpyDrNet
+            <a href="../../index.html" class="icon icon-home"> SpyDrNet
           
 
           
@@ -165,6 +169,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -180,7 +186,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../_sources/reference/classes/cable.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -198,9 +204,9 @@
 <span id="id1"></span><h1>Cable<a class="headerlink" href="#cable" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
+<dl class="class">
 <dt id="spydrnet.Cable">
-<em class="property">class </em><code class="sig-prename descclassname">spydrnet.</code><code class="sig-name descname">Cable</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">properties</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">is_downto</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">is_scalar</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">lower_index</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/spydrnet/ir/cable.html#Cable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.Cable" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">spydrnet.</code><code class="descname">Cable</code><span class="sig-paren">(</span><em>name=None</em>, <em>properties=None</em>, <em>is_downto=None</em>, <em>is_scalar=None</em>, <em>lower_index=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/spydrnet/ir/cable.html#Cable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.Cable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Representino of several wires in a collection.</p>
 <p>Much like Ports cable extend the bundle class, giving them indexing ability they represent several wires in a collection or bus that are generally related.
 This could be thought of much like vector types in VHDL ie std_logic_vector (7 downto 0)</p>
@@ -209,74 +215,74 @@ This could be thought of much like vector types in VHDL ie std_logic_vector (7 d
 </div>
 <div class="section" id="methods">
 <h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
-<table class="longtable docutils align-default">
+<table border="1" class="longtable docutils">
 <colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
+<col width="10%" />
+<col width="90%" />
 </colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Cable.__init__.html#spydrnet.Cable.__init__" title="spydrnet.Cable.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.__init__</span></code></a>([name, properties, …])</p></td>
-<td><p>Create a cable with no wires and default values for a bundle.</p></td>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/spydrnet.Cable.__init__.html#spydrnet.Cable.__init__" title="spydrnet.Cable.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.__init__</span></code></a>([name,&nbsp;properties,&nbsp;…])</td>
+<td>Create a cable with no wires and default values for a bundle.</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Cable.wires.html#spydrnet.Cable.wires" title="spydrnet.Cable.wires"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.wires</span></code></a></p></td>
-<td><p>Gets a list of wires that are in this cable</p></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/spydrnet.Cable.wires.html#spydrnet.Cable.wires" title="spydrnet.Cable.wires"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.wires</span></code></a></td>
+<td>Gets a list of wires that are in this cable</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Cable.create_wire.html#spydrnet.Cable.create_wire" title="spydrnet.Cable.create_wire"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.create_wire</span></code></a>()</p></td>
-<td><p>Creates a wire and adds it to the cable.</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/spydrnet.Cable.create_wire.html#spydrnet.Cable.create_wire" title="spydrnet.Cable.create_wire"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.create_wire</span></code></a>()</td>
+<td>Creates a wire and adds it to the cable.</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Cable.add_wire.html#spydrnet.Cable.add_wire" title="spydrnet.Cable.add_wire"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.add_wire</span></code></a>(wire[, position])</p></td>
-<td><p>Adds a wire to the cable at the given position.</p></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/spydrnet.Cable.add_wire.html#spydrnet.Cable.add_wire" title="spydrnet.Cable.add_wire"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.add_wire</span></code></a>(wire[,&nbsp;position])</td>
+<td>Adds a wire to the cable at the given position.</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Cable.create_wires.html#spydrnet.Cable.create_wires" title="spydrnet.Cable.create_wires"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.create_wires</span></code></a>(wire_count)</p></td>
-<td><p>Creates wire_count wires for this cable and adds them to it.</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/spydrnet.Cable.create_wires.html#spydrnet.Cable.create_wires" title="spydrnet.Cable.create_wires"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.create_wires</span></code></a>(wire_count)</td>
+<td>Creates wire_count wires for this cable and adds them to it.</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Cable.remove_wire.html#spydrnet.Cable.remove_wire" title="spydrnet.Cable.remove_wire"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.remove_wire</span></code></a>(wire)</p></td>
-<td><p>removes the given wire from the cable and return it.</p></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/spydrnet.Cable.remove_wire.html#spydrnet.Cable.remove_wire" title="spydrnet.Cable.remove_wire"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.remove_wire</span></code></a>(wire)</td>
+<td>removes the given wire from the cable and return it.</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Cable.remove_wires_from.html#spydrnet.Cable.remove_wires_from" title="spydrnet.Cable.remove_wires_from"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.remove_wires_from</span></code></a>(wires)</p></td>
-<td><p>Remove all wires given from the cable.</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/spydrnet.Cable.remove_wires_from.html#spydrnet.Cable.remove_wires_from" title="spydrnet.Cable.remove_wires_from"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.remove_wires_from</span></code></a>(wires)</td>
+<td>Remove all wires given from the cable.</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Cable.clone.html#spydrnet.Cable.clone" title="spydrnet.Cable.clone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.clone</span></code></a>()</p></td>
-<td><p>Clone the Cable and all of its wires in an api safe way the following will be true of the returned cable</p></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/spydrnet.Cable.clone.html#spydrnet.Cable.clone" title="spydrnet.Cable.clone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.clone</span></code></a>()</td>
+<td>Clone the Cable and all of its wires in an api safe way the following will be true of the returned cable</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Cable.get_netlists.html#spydrnet.Cable.get_netlists" title="spydrnet.Cable.get_netlists"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.get_netlists</span></code></a>(…)</p></td>
-<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_netlists.html#spydrnet.get_netlists" title="spydrnet.get_netlists"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_netlists()</span></code></a>.</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/spydrnet.Cable.get_netlists.html#spydrnet.Cable.get_netlists" title="spydrnet.Cable.get_netlists"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.get_netlists</span></code></a>(…)</td>
+<td>Shortcut to <a class="reference internal" href="generated/spydrnet.get_netlists.html#spydrnet.get_netlists" title="spydrnet.get_netlists"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_netlists()</span></code></a>.</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Cable.get_libraries.html#spydrnet.Cable.get_libraries" title="spydrnet.Cable.get_libraries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.get_libraries</span></code></a>(…)</p></td>
-<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_libraries.html#spydrnet.get_libraries" title="spydrnet.get_libraries"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_libraries()</span></code></a>.</p></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/spydrnet.Cable.get_libraries.html#spydrnet.Cable.get_libraries" title="spydrnet.Cable.get_libraries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.get_libraries</span></code></a>(…)</td>
+<td>Shortcut to <a class="reference internal" href="generated/spydrnet.get_libraries.html#spydrnet.get_libraries" title="spydrnet.get_libraries"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_libraries()</span></code></a>.</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Cable.get_definitions.html#spydrnet.Cable.get_definitions" title="spydrnet.Cable.get_definitions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.get_definitions</span></code></a>(…)</p></td>
-<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_definitions.html#spydrnet.get_definitions" title="spydrnet.get_definitions"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_definitions()</span></code></a>.</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/spydrnet.Cable.get_definitions.html#spydrnet.Cable.get_definitions" title="spydrnet.Cable.get_definitions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.get_definitions</span></code></a>(…)</td>
+<td>Shortcut to <a class="reference internal" href="generated/spydrnet.get_definitions.html#spydrnet.get_definitions" title="spydrnet.get_definitions"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_definitions()</span></code></a>.</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Cable.get_instances.html#spydrnet.Cable.get_instances" title="spydrnet.Cable.get_instances"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.get_instances</span></code></a>(…)</p></td>
-<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_instances.html#spydrnet.get_instances" title="spydrnet.get_instances"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_instances()</span></code></a>.</p></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/spydrnet.Cable.get_instances.html#spydrnet.Cable.get_instances" title="spydrnet.Cable.get_instances"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.get_instances</span></code></a>(…)</td>
+<td>Shortcut to <a class="reference internal" href="generated/spydrnet.get_instances.html#spydrnet.get_instances" title="spydrnet.get_instances"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_instances()</span></code></a>.</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Cable.get_ports.html#spydrnet.Cable.get_ports" title="spydrnet.Cable.get_ports"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.get_ports</span></code></a>(…)</p></td>
-<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_ports.html#spydrnet.get_ports" title="spydrnet.get_ports"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_ports()</span></code></a>.</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/spydrnet.Cable.get_ports.html#spydrnet.Cable.get_ports" title="spydrnet.Cable.get_ports"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.get_ports</span></code></a>(…)</td>
+<td>Shortcut to <a class="reference internal" href="generated/spydrnet.get_ports.html#spydrnet.get_ports" title="spydrnet.get_ports"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_ports()</span></code></a>.</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Cable.get_pins.html#spydrnet.Cable.get_pins" title="spydrnet.Cable.get_pins"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.get_pins</span></code></a>(…)</p></td>
-<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_pins.html#spydrnet.get_pins" title="spydrnet.get_pins"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_pins()</span></code></a>.</p></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/spydrnet.Cable.get_pins.html#spydrnet.Cable.get_pins" title="spydrnet.Cable.get_pins"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.get_pins</span></code></a>(…)</td>
+<td>Shortcut to <a class="reference internal" href="generated/spydrnet.get_pins.html#spydrnet.get_pins" title="spydrnet.get_pins"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_pins()</span></code></a>.</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Cable.get_cables.html#spydrnet.Cable.get_cables" title="spydrnet.Cable.get_cables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.get_cables</span></code></a>(…)</p></td>
-<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_cables.html#spydrnet.get_cables" title="spydrnet.get_cables"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_cables()</span></code></a>.</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/spydrnet.Cable.get_cables.html#spydrnet.Cable.get_cables" title="spydrnet.Cable.get_cables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.get_cables</span></code></a>(…)</td>
+<td>Shortcut to <a class="reference internal" href="generated/spydrnet.get_cables.html#spydrnet.get_cables" title="spydrnet.get_cables"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_cables()</span></code></a>.</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Cable.get_wires.html#spydrnet.Cable.get_wires" title="spydrnet.Cable.get_wires"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.get_wires</span></code></a>(…)</p></td>
-<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_wires.html#spydrnet.get_wires" title="spydrnet.get_wires"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_wires()</span></code></a>.</p></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/spydrnet.Cable.get_wires.html#spydrnet.Cable.get_wires" title="spydrnet.Cable.get_wires"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.get_wires</span></code></a>(…)</td>
+<td>Shortcut to <a class="reference internal" href="generated/spydrnet.get_wires.html#spydrnet.get_wires" title="spydrnet.get_wires"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_wires()</span></code></a>.</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Cable.get_hinstances.html#spydrnet.Cable.get_hinstances" title="spydrnet.Cable.get_hinstances"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.get_hinstances</span></code></a>(…)</p></td>
-<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_hinstances.html#spydrnet.get_hinstances" title="spydrnet.get_hinstances"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_hinstances()</span></code></a>.</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/spydrnet.Cable.get_hinstances.html#spydrnet.Cable.get_hinstances" title="spydrnet.Cable.get_hinstances"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.get_hinstances</span></code></a>(…)</td>
+<td>Shortcut to <a class="reference internal" href="generated/spydrnet.get_hinstances.html#spydrnet.get_hinstances" title="spydrnet.get_hinstances"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_hinstances()</span></code></a>.</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Cable.get_hports.html#spydrnet.Cable.get_hports" title="spydrnet.Cable.get_hports"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.get_hports</span></code></a>(…)</p></td>
-<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_hports.html#spydrnet.get_hports" title="spydrnet.get_hports"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_hports()</span></code></a>.</p></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/spydrnet.Cable.get_hports.html#spydrnet.Cable.get_hports" title="spydrnet.Cable.get_hports"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.get_hports</span></code></a>(…)</td>
+<td>Shortcut to <a class="reference internal" href="generated/spydrnet.get_hports.html#spydrnet.get_hports" title="spydrnet.get_hports"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_hports()</span></code></a>.</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Cable.get_hpins.html#spydrnet.Cable.get_hpins" title="spydrnet.Cable.get_hpins"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.get_hpins</span></code></a>(…)</p></td>
-<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_hpins.html#spydrnet.get_hpins" title="spydrnet.get_hpins"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_hpins()</span></code></a>.</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/spydrnet.Cable.get_hpins.html#spydrnet.Cable.get_hpins" title="spydrnet.Cable.get_hpins"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.get_hpins</span></code></a>(…)</td>
+<td>Shortcut to <a class="reference internal" href="generated/spydrnet.get_hpins.html#spydrnet.get_hpins" title="spydrnet.get_hpins"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_hpins()</span></code></a>.</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Cable.get_hcables.html#spydrnet.Cable.get_hcables" title="spydrnet.Cable.get_hcables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.get_hcables</span></code></a>(…)</p></td>
-<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_hcables.html#spydrnet.get_hcables" title="spydrnet.get_hcables"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_hcables()</span></code></a>.</p></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/spydrnet.Cable.get_hcables.html#spydrnet.Cable.get_hcables" title="spydrnet.Cable.get_hcables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.get_hcables</span></code></a>(…)</td>
+<td>Shortcut to <a class="reference internal" href="generated/spydrnet.get_hcables.html#spydrnet.get_hcables" title="spydrnet.get_hcables"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_hcables()</span></code></a>.</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Cable.get_hwires.html#spydrnet.Cable.get_hwires" title="spydrnet.Cable.get_hwires"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.get_hwires</span></code></a>(…)</p></td>
-<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_hwires.html#spydrnet.get_hwires" title="spydrnet.get_hwires"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_hwires()</span></code></a>.</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/spydrnet.Cable.get_hwires.html#spydrnet.Cable.get_hwires" title="spydrnet.Cable.get_hwires"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cable.get_hwires</span></code></a>(…)</td>
+<td>Shortcut to <a class="reference internal" href="generated/spydrnet.get_hwires.html#spydrnet.get_hwires" title="spydrnet.get_hwires"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_hwires()</span></code></a>.</td>
 </tr>
 </tbody>
 </table>
@@ -288,37 +294,29 @@ This could be thought of much like vector types in VHDL ie std_logic_vector (7 d
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="generated/spydrnet.Cable.__init__.html" class="btn btn-neutral float-right" title="spydrnet.Cable.__init__" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="generated/spydrnet.OuterPin.get_hwires.html" class="btn btn-neutral float-left" title="spydrnet.OuterPin.get_hwires" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="generated/spydrnet.Cable.__init__.html" class="btn btn-neutral float-right" title="spydrnet.Cable.__init__" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="generated/spydrnet.OuterPin.get_hwires.html" class="btn btn-neutral float-left" title="spydrnet.OuterPin.get_hwires" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2019, Brigham Young Universitiy
+        &#169; Copyright 2019, Brigham Young Universitiy.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

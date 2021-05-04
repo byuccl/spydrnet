@@ -1,4 +1,4 @@
-﻿spydrnet.Definition.remove\_cables\_from
+spydrnet.Definition.remove\_cables\_from
 ========================================
 
 .. currentmodule:: spydrnet

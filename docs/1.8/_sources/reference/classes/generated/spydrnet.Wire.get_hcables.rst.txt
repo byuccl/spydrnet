@@ -1,4 +1,4 @@
-﻿spydrnet.Wire.get\_hcables
+spydrnet.Wire.get\_hcables
 ==========================
 
 .. currentmodule:: spydrnet

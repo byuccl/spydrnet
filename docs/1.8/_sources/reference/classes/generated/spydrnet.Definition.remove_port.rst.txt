@@ -1,4 +1,4 @@
-﻿spydrnet.Definition.remove\_port
+spydrnet.Definition.remove\_port
 ================================
 
 .. currentmodule:: spydrnet

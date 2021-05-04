@@ -1,4 +1,4 @@
-﻿spydrnet.Netlist.clone
+spydrnet.Netlist.clone
 ======================
 
 .. currentmodule:: spydrnet

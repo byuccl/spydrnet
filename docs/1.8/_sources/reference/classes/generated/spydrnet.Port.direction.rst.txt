@@ -1,6 +1,6 @@
-﻿spydrnet.Port.direction
+spydrnet.Port.direction
 =======================
 
 .. currentmodule:: spydrnet
 
-.. autoproperty:: Port.direction
+.. autoattribute:: Port.direction

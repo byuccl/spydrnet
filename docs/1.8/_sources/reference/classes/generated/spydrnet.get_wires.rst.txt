@@ -1,4 +1,4 @@
-﻿spydrnet.get\_wires
+spydrnet.get\_wires
 ===================
 
 .. currentmodule:: spydrnet

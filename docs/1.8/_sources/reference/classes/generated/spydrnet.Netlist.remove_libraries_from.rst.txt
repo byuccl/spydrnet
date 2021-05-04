@@ -1,4 +1,4 @@
-﻿spydrnet.Netlist.remove\_libraries\_from
+spydrnet.Netlist.remove\_libraries\_from
 ========================================
 
 .. currentmodule:: spydrnet

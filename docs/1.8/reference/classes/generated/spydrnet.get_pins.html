@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html4" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>spydrnet.get_pins &mdash; SpyDrNet UNSPECIFIED documentation</title>
   
@@ -16,10 +16,14 @@
   <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/gallery-binder.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery-rendered-html.css" type="text/css" />
 
   
   
+
   
+  
+
   
 
   
@@ -29,10 +33,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -54,7 +58,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> SpyDrNet
+            <a href="../../../index.html" class="icon icon-home"> SpyDrNet
           
 
           
@@ -163,6 +167,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -178,7 +184,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../_sources/reference/classes/generated/spydrnet.get_pins.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -194,30 +200,34 @@
             
   <div class="section" id="spydrnet-get-pins">
 <h1>spydrnet.get_pins<a class="headerlink" href="#spydrnet-get-pins" title="Permalink to this headline">¶</a></h1>
-<dl class="py function">
+<dl class="function">
 <dt id="spydrnet.get_pins">
-<code class="sig-prename descclassname">spydrnet.</code><code class="sig-name descname">get_pins</code><span class="sig-paren">(</span><em class="sig-param">obj</em>, <em class="sig-param">...</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/spydrnet/util/get_pins.html#get_pins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.get_pins" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">spydrnet.</code><code class="descname">get_pins</code><span class="sig-paren">(</span><em>obj</em>, <em>...</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/spydrnet/util/get_pins.html#get_pins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spydrnet.get_pins" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get pins <em>within</em> an object.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>obj</strong> (<em>object, Iterable - required</em>) – The object or objects associated with this query. Queries return a collection objects associated with the
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>obj</strong> (<em>object, Iterable - required</em>) – The object or objects associated with this query. Queries return a collection objects associated with the
 provided object or objects that match the query criteria. For example, <cite>sdn.get_ports(definition, …)</cite> would
-return all of the ports associated with the provided definition that match the additional criteria.</p></li>
-<li><p><strong>selection</strong> (<em>Selection.{INSIDE, OUTSIDE}, default: INSIDE</em>) – Controls the type of pin returned. Setting this parameter to “OUTSIDE” will return the outer pins of the objects
-queried. For cables, this returns the corresponding pin based on this parameter.</p></li>
-<li><p><strong>filter</strong> (<em>function</em>) – This is a single input function that can be used to filter out unwanted virtual instances. If not specifed, all
+return all of the ports associated with the provided definition that match the additional criteria.</li>
+<li><strong>selection</strong> (<em>Selection.{INSIDE, OUTSIDE}, default: INSIDE</em>) – Controls the type of pin returned. Setting this parameter to “OUTSIDE” will return the outer pins of the objects
+queried. For cables, this returns the corresponding pin based on this parameter.</li>
+<li><strong>filter</strong> (<em>function</em>) – This is a single input function that can be used to filter out unwanted virtual instances. If not specifed, all
 matching virtual instances are returned. Otherwise, virtual instances that cause the filter function to evaluate
-to true are the only items returned.</p></li>
+to true are the only items returned.</li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>pins</strong> – The pins associated with a particular object or collection of objects.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>generator</p>
-</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>pins</strong> – The pins associated with a particular object or collection of objects.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">generator</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -227,37 +237,29 @@ to true are the only items returned.</p></li>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="spydrnet.get_cables.html" class="btn btn-neutral float-right" title="spydrnet.get_cables" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="spydrnet.get_ports.html" class="btn btn-neutral float-left" title="spydrnet.get_ports" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="spydrnet.get_cables.html" class="btn btn-neutral float-right" title="spydrnet.get_cables" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="spydrnet.get_ports.html" class="btn btn-neutral float-left" title="spydrnet.get_ports" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2019, Brigham Young Universitiy
+        &#169; Copyright 2019, Brigham Young Universitiy.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

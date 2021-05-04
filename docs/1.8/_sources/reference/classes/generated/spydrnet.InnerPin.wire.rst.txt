@@ -1,6 +1,6 @@
-﻿spydrnet.InnerPin.wire
+spydrnet.InnerPin.wire
 ======================
 
 .. currentmodule:: spydrnet
 
-.. autoproperty:: InnerPin.wire
+.. autoattribute:: InnerPin.wire

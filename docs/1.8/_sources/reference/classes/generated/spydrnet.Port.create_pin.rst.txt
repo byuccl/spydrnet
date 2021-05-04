@@ -1,4 +1,4 @@
-﻿spydrnet.Port.create\_pin
+spydrnet.Port.create\_pin
 =========================
 
 .. currentmodule:: spydrnet

@@ -1,4 +1,4 @@
-﻿spydrnet.Definition.\_\_init\_\_
+spydrnet.Definition.\_\_init\_\_
 ================================
 
 .. currentmodule:: spydrnet

@@ -1,4 +1,4 @@
-﻿spydrnet.Netlist.get\_pins
+spydrnet.Netlist.get\_pins
 ==========================
 
 .. currentmodule:: spydrnet

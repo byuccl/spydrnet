@@ -1,4 +1,4 @@
-﻿spydrnet.OuterPin.get\_libraries
+spydrnet.OuterPin.get\_libraries
 ================================
 
 .. currentmodule:: spydrnet

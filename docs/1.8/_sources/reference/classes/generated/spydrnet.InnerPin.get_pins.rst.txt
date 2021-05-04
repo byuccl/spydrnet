@@ -1,4 +1,4 @@
-﻿spydrnet.InnerPin.get\_pins
+spydrnet.InnerPin.get\_pins
 ===========================
 
 .. currentmodule:: spydrnet

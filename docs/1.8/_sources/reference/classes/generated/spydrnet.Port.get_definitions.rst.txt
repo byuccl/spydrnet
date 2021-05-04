@@ -1,4 +1,4 @@
-﻿spydrnet.Port.get\_definitions
+spydrnet.Port.get\_definitions
 ==============================
 
 .. currentmodule:: spydrnet

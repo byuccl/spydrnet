@@ -1,4 +1,4 @@
-﻿spydrnet.util.HRef.get\_definitions
+spydrnet.util.HRef.get\_definitions
 ===================================
 
 .. currentmodule:: spydrnet.util

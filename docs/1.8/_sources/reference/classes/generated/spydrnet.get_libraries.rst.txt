@@ -1,4 +1,4 @@
-﻿spydrnet.get\_libraries
+spydrnet.get\_libraries
 =======================
 
 .. currentmodule:: spydrnet

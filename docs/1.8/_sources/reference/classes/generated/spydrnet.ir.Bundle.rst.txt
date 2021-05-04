@@ -1,4 +1,4 @@
-﻿spydrnet.ir.Bundle
+spydrnet.ir.Bundle
 ==================
 
 .. currentmodule:: spydrnet.ir

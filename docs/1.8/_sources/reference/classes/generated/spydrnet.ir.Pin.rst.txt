@@ -1,4 +1,4 @@
-﻿spydrnet.ir.Pin
+spydrnet.ir.Pin
 ===============
 
 .. currentmodule:: spydrnet.ir

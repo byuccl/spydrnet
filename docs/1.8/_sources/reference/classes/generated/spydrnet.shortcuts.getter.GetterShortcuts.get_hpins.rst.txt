@@ -1,4 +1,4 @@
-﻿spydrnet.shortcuts.getter.GetterShortcuts.get\_hpins
+spydrnet.shortcuts.getter.GetterShortcuts.get\_hpins
 ====================================================
 
 .. currentmodule:: spydrnet.shortcuts.getter

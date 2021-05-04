@@ -1,4 +1,4 @@
-﻿spydrnet.ir.FirstClassElement
+spydrnet.ir.FirstClassElement
 =============================
 
 .. currentmodule:: spydrnet.ir

@@ -1,4 +1,4 @@
-﻿spydrnet.clone.clone
+spydrnet.clone.clone
 ====================
 
 .. currentmodule:: spydrnet.clone

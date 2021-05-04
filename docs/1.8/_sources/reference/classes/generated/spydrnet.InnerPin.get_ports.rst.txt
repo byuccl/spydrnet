@@ -1,4 +1,4 @@
-﻿spydrnet.InnerPin.get\_ports
+spydrnet.InnerPin.get\_ports
 ============================
 
 .. currentmodule:: spydrnet

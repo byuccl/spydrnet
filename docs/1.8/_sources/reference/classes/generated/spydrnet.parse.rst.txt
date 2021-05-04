@@ -1,4 +1,4 @@
-﻿spydrnet.parse
+spydrnet.parse
 ==============
 
 .. currentmodule:: spydrnet

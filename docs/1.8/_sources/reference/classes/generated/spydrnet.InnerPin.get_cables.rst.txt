@@ -1,4 +1,4 @@
-﻿spydrnet.InnerPin.get\_cables
+spydrnet.InnerPin.get\_cables
 =============================
 
 .. currentmodule:: spydrnet

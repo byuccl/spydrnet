@@ -1,4 +1,4 @@
-﻿spydrnet.Library.\_\_init\_\_
+spydrnet.Library.\_\_init\_\_
 =============================
 
 .. currentmodule:: spydrnet

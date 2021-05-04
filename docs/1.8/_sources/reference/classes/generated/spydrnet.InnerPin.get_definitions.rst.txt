@@ -1,4 +1,4 @@
-﻿spydrnet.InnerPin.get\_definitions
+spydrnet.InnerPin.get\_definitions
 ==================================
 
 .. currentmodule:: spydrnet

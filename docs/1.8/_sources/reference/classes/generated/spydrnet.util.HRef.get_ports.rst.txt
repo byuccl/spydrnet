@@ -1,4 +1,4 @@
-﻿spydrnet.util.HRef.get\_ports
+spydrnet.util.HRef.get\_ports
 =============================
 
 .. currentmodule:: spydrnet.util

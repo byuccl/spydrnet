@@ -1,4 +1,4 @@
-﻿spydrnet.OuterPin.get\_netlists
+spydrnet.OuterPin.get\_netlists
 ===============================
 
 .. currentmodule:: spydrnet

@@ -1,4 +1,4 @@
-﻿spydrnet.Cable.get\_hinstances
+spydrnet.Cable.get\_hinstances
 ==============================
 
 .. currentmodule:: spydrnet

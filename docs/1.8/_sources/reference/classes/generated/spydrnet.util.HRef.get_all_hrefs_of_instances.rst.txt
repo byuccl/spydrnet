@@ -1,4 +1,4 @@
-﻿spydrnet.util.HRef.get\_all\_hrefs\_of\_instances
+spydrnet.util.HRef.get\_all\_hrefs\_of\_instances
 =================================================
 
 .. currentmodule:: spydrnet.util

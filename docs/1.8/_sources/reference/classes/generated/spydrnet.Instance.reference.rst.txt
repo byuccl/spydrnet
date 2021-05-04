@@ -1,6 +1,6 @@
-﻿spydrnet.Instance.reference
+spydrnet.Instance.reference
 ===========================
 
 .. currentmodule:: spydrnet
 
-.. autoproperty:: Instance.reference
+.. autoattribute:: Instance.reference

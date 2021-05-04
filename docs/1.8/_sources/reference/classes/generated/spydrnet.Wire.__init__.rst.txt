@@ -1,4 +1,4 @@
-﻿spydrnet.Wire.\_\_init\_\_
+spydrnet.Wire.\_\_init\_\_
 ==========================
 
 .. currentmodule:: spydrnet

@@ -1,4 +1,4 @@
-﻿spydrnet.OuterPin.get\_hports
+spydrnet.OuterPin.get\_hports
 =============================
 
 .. currentmodule:: spydrnet

@@ -1,4 +1,4 @@
-﻿spydrnet.Definition.get\_hinstances
+spydrnet.Definition.get\_hinstances
 ===================================
 
 .. currentmodule:: spydrnet

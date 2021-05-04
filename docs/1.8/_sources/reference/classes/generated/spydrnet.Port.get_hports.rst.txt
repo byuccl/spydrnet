@@ -1,4 +1,4 @@
-﻿spydrnet.Port.get\_hports
+spydrnet.Port.get\_hports
 =========================
 
 .. currentmodule:: spydrnet

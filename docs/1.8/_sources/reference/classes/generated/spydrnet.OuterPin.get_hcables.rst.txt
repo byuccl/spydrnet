@@ -1,4 +1,4 @@
-﻿spydrnet.OuterPin.get\_hcables
+spydrnet.OuterPin.get\_hcables
 ==============================
 
 .. currentmodule:: spydrnet

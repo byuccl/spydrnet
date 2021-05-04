@@ -1,4 +1,4 @@
-﻿spydrnet.Cable.get\_definitions
+spydrnet.Cable.get\_definitions
 ===============================
 
 .. currentmodule:: spydrnet

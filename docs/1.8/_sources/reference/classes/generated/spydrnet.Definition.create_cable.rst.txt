@@ -1,4 +1,4 @@
-﻿spydrnet.Definition.create\_cable
+spydrnet.Definition.create\_cable
 =================================
 
 .. currentmodule:: spydrnet

@@ -1,4 +1,4 @@
-﻿spydrnet.OuterPin.\_\_init\_\_
+spydrnet.OuterPin.\_\_init\_\_
 ==============================
 
 .. currentmodule:: spydrnet

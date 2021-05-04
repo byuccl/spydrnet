@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html4" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>spydrnet.ir.definition &mdash; SpyDrNet UNSPECIFIED documentation</title>
   
@@ -16,10 +16,14 @@
   <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/gallery-binder.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery-rendered-html.css" type="text/css" />
 
   
   
+
   
+  
+
   
 
   
@@ -29,10 +33,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -52,7 +56,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> SpyDrNet
+            <a href="../../../index.html" class="icon icon-home"> SpyDrNet
           
 
           
@@ -135,6 +139,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -159,16 +165,16 @@
            <div itemprop="articleBody">
             
   <h1>Source code for spydrnet.ir.definition</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">spydrnet.ir.first_class_element</span> <span class="kn">import</span> <span class="n">FirstClassElement</span>
-<span class="kn">from</span> <span class="nn">spydrnet.ir.port</span> <span class="kn">import</span> <span class="n">Port</span>
-<span class="kn">from</span> <span class="nn">spydrnet.ir.cable</span> <span class="kn">import</span> <span class="n">Cable</span>
-<span class="kn">from</span> <span class="nn">spydrnet.ir.instance</span> <span class="kn">import</span> <span class="n">Instance</span>
-<span class="kn">from</span> <span class="nn">spydrnet.ir.outerpin</span> <span class="kn">import</span> <span class="n">OuterPin</span>
-<span class="kn">from</span> <span class="nn">spydrnet.ir.views.listview</span> <span class="kn">import</span> <span class="n">ListView</span>
-<span class="kn">from</span> <span class="nn">spydrnet.ir.views.setview</span> <span class="kn">import</span> <span class="n">SetView</span>
-<span class="kn">from</span> <span class="nn">spydrnet.global_state</span> <span class="kn">import</span> <span class="n">global_callback</span>
-<span class="kn">from</span> <span class="nn">spydrnet.global_state.global_callback</span> <span class="kn">import</span> <span class="n">_call_create_definition</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span><span class="p">,</span> <span class="n">copy</span><span class="p">,</span> <span class="n">error</span>
+<span></span><span class="kn">from</span> <span class="nn">spydrnet.ir.first_class_element</span> <span class="k">import</span> <span class="n">FirstClassElement</span>
+<span class="kn">from</span> <span class="nn">spydrnet.ir.port</span> <span class="k">import</span> <span class="n">Port</span>
+<span class="kn">from</span> <span class="nn">spydrnet.ir.cable</span> <span class="k">import</span> <span class="n">Cable</span>
+<span class="kn">from</span> <span class="nn">spydrnet.ir.instance</span> <span class="k">import</span> <span class="n">Instance</span>
+<span class="kn">from</span> <span class="nn">spydrnet.ir.outerpin</span> <span class="k">import</span> <span class="n">OuterPin</span>
+<span class="kn">from</span> <span class="nn">spydrnet.ir.views.listview</span> <span class="k">import</span> <span class="n">ListView</span>
+<span class="kn">from</span> <span class="nn">spydrnet.ir.views.setview</span> <span class="k">import</span> <span class="n">SetView</span>
+<span class="kn">from</span> <span class="nn">spydrnet.global_state</span> <span class="k">import</span> <span class="n">global_callback</span>
+<span class="kn">from</span> <span class="nn">spydrnet.global_state.global_callback</span> <span class="k">import</span> <span class="n">_call_create_definition</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span><span class="p">,</span> <span class="n">copy</span><span class="p">,</span> <span class="n">error</span>
 
 
 <div class="viewcode-block" id="Definition"><a class="viewcode-back" href="../../../reference/classes/definition.html#spydrnet.Definition">[docs]</a><span class="k">class</span> <span class="nc">Definition</span><span class="p">(</span><span class="n">FirstClassElement</span><span class="p">):</span>
@@ -179,7 +185,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_library&#39;</span><span class="p">,</span> <span class="s1">&#39;_ports&#39;</span><span class="p">,</span> <span class="s1">&#39;_cables&#39;</span><span class="p">,</span> <span class="s1">&#39;_children&#39;</span><span class="p">,</span> <span class="s1">&#39;_references&#39;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="Definition.__init__"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.Definition.__init__.html#spydrnet.Definition.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Definition.__init__"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.Definition.__init__.html#spydrnet.Definition.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Creates an empty object of type definition</span>
 
 <span class="sd">        parameters</span>
@@ -221,7 +227,7 @@
 
     <span class="nd">@ports</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">ports</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Reorder ports that are instanced in this definition. </span>
+        <span class="sd">&quot;&quot;&quot;Reorder ports that are instanced in this definition.</span>
 
 <span class="sd">        Use remove_port and add_port to remove and add ports</span>
 <span class="sd">        respectively</span>
@@ -303,7 +309,7 @@
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
-<div class="viewcode-block" id="Definition.create_port"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.Definition.create_port.html#spydrnet.Definition.create_port">[docs]</a>    <span class="k">def</span> <span class="nf">create_port</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_downto</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_scalar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lower_index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Definition.create_port"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.Definition.create_port.html#spydrnet.Definition.create_port">[docs]</a>    <span class="k">def</span> <span class="nf">create_port</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_downto</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_scalar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lower_index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create a port, add it to the definition, and return that port.</span>
 
 <span class="sd">        parameters</span>
@@ -314,14 +320,16 @@
 <span class="sd">        id_downto - (bool) set the downto status. Downto is False if the right index is higher than the left one, True otherwise</span>
 <span class="sd">        is_scalar - (bool) set the scalar status. Return True if the item is a scalar False otherwise.</span>
 <span class="sd">        lower_index - (int) get the value of the lower index of the array.</span>
+<span class="sd">        direction - (Enum) Define the possible directions for a given port. (UNDEFINED, INOUT, IN, OUT)</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">port</span> <span class="o">=</span> <span class="n">Port</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">is_downto</span><span class="p">,</span> <span class="n">is_scalar</span><span class="p">,</span> <span class="n">lower_index</span><span class="p">)</span>
+        <span class="n">port</span> <span class="o">=</span> <span class="n">Port</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">is_downto</span><span class="p">,</span>
+                    <span class="n">is_scalar</span><span class="p">,</span> <span class="n">lower_index</span><span class="p">,</span> <span class="n">direction</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_port</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">port</span></div>
 
 <div class="viewcode-block" id="Definition.add_port"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.Definition.add_port.html#spydrnet.Definition.add_port">[docs]</a>    <span class="k">def</span> <span class="nf">add_port</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add a preexisting port to the definition. </span>
+        <span class="sd">&quot;&quot;&quot;Add a preexisting port to the definition.</span>
 
 <span class="sd">        This port must not be a member of any definition</span>
 
@@ -345,7 +353,7 @@
                 <span class="n">reference</span><span class="o">.</span><span class="n">_pins</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span> <span class="o">=</span> <span class="n">OuterPin</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">pin</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Definition.remove_port"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.Definition.remove_port.html#spydrnet.Definition.remove_port">[docs]</a>    <span class="k">def</span> <span class="nf">remove_port</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Remove a port from the definition. </span>
+        <span class="sd">&quot;&quot;&quot;Remove a port from the definition.</span>
 
 <span class="sd">        his port must be a member of the definition in order to be removed</span>
 
@@ -398,7 +406,7 @@
                 <span class="n">outer_pin</span><span class="o">.</span><span class="n">_inner_pin</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">port</span><span class="o">.</span><span class="n">_definition</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="Definition.create_child"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.Definition.create_child.html#spydrnet.Definition.create_child">[docs]</a>    <span class="k">def</span> <span class="nf">create_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Definition.create_child"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.Definition.create_child.html#spydrnet.Definition.create_child">[docs]</a>    <span class="k">def</span> <span class="nf">create_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create an instance to add to the definition, add it, and return the instance.</span>
 
 <span class="sd">        This functions calls the add_child funciton.</span>
@@ -416,21 +424,22 @@
 
 <span class="sd">        &gt;&gt;&gt; definition = sdn.Definition()</span>
 <span class="sd">        &gt;&gt;&gt; child_instance = definition.create_child()</span>
-<span class="sd">        &gt;&gt;&gt; child_instance.reference = definition</span>
+<span class="sd">        &gt;&gt;&gt; child_instance.name = &quot;child_instance&quot;</span>
+<span class="sd">        &gt;&gt;&gt; child_instance.reference = reference_definition</span>
 
 <span class="sd">        To create a child with optional parameters</span>
 
-<span class="sd">        &gt;&gt;&gt; child_instance = definition.create_child()</span>
-<span class="sd">        &gt;&gt;&gt; child_instance.reference = reference definition</span>
+<span class="sd">        &gt;&gt;&gt; child_instance = definition.create_child(name=&quot;child_instance&quot;, reference=reference_definition)</span>
 
 <span class="sd">        The reference of the instance is the definition that initialized this instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">instance</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">properties</span><span class="p">)</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">reference</span> <span class="o">=</span> <span class="n">reference</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">instance</span></div>
 
 <div class="viewcode-block" id="Definition.add_child"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.Definition.add_child.html#spydrnet.Definition.add_child">[docs]</a>    <span class="k">def</span> <span class="nf">add_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add an existing instance to the definition. </span>
+        <span class="sd">&quot;&quot;&quot;Add an existing instance to the definition.</span>
 
 <span class="sd">        This instance must not already be included in a definition.</span>
 <span class="sd">        It add the instance as a child into the given position.</span>
@@ -454,7 +463,7 @@
         <span class="n">instance</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="Definition.remove_child"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.Definition.remove_child.html#spydrnet.Definition.remove_child">[docs]</a>    <span class="k">def</span> <span class="nf">remove_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Remove an instance from the definition. </span>
+        <span class="sd">&quot;&quot;&quot;Remove an instance from the definition.</span>
 
 <span class="sd">        The instance must be a member of the definition already</span>
 
@@ -468,7 +477,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">child</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Definition.remove_children_from"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.Definition.remove_children_from.html#spydrnet.Definition.remove_children_from">[docs]</a>    <span class="k">def</span> <span class="nf">remove_children_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">children</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Remove a set of instances from the definition. </span>
+        <span class="sd">&quot;&quot;&quot;Remove a set of instances from the definition.</span>
 
 <span class="sd">        All instances must be members of the definition</span>
 
@@ -515,7 +524,7 @@
         <span class="k">return</span> <span class="n">cable</span></div>
 
 <div class="viewcode-block" id="Definition.add_cable"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.Definition.add_cable.html#spydrnet.Definition.add_cable">[docs]</a>    <span class="k">def</span> <span class="nf">add_cable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cable</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add a cable to the definition. </span>
+        <span class="sd">&quot;&quot;&quot;Add a cable to the definition.</span>
 
 <span class="sd">        The cable must not already be a member of another definition.</span>
 
@@ -536,7 +545,7 @@
         <span class="n">cable</span><span class="o">.</span><span class="n">_definition</span> <span class="o">=</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="Definition.remove_cable"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.Definition.remove_cable.html#spydrnet.Definition.remove_cable">[docs]</a>    <span class="k">def</span> <span class="nf">remove_cable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cable</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Remove a cable from the definition. </span>
+        <span class="sd">&quot;&quot;&quot;Remove a cable from the definition.</span>
 
 <span class="sd">        The cable must be a member of the definition.</span>
 
@@ -574,7 +583,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_cables</span> <span class="o">=</span> <span class="n">included_cables</span></div>
 
     <span class="k">def</span> <span class="nf">_remove_cable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cable</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Dissociate the cable from this definition. </span>
+        <span class="sd">&quot;&quot;&quot;Dissociate the cable from this definition.</span>
 
 <span class="sd">        This function is internal and should not be called.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -602,7 +611,7 @@
                 <span class="n">instance</span><span class="o">.</span><span class="n">_clone_rip_and_replace_in_library</span><span class="p">(</span><span class="n">memo</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_clone_rip</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Remove from its current environmnet. </span>
+        <span class="sd">&quot;&quot;&quot;Remove from its current environmnet.</span>
 
 <span class="sd">        add all instances to their appropriate reference lists.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -665,35 +674,57 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clone</span><span class="p">(</span><span class="nb">dict</span><span class="p">())</span>
         <span class="n">c</span><span class="o">.</span><span class="n">_clone_rip</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">c</span></div></div>
+        <span class="k">return</span> <span class="n">c</span></div>
+
+    <span class="c1"># def __repr__(self):</span>
+    <span class="c1">#     return &quot;&lt;spydrnet.definition &quot; + str(self.name) + &quot;, cables:&quot;+str(len(self.cables)) + &quot;, children:&quot;+str(len(self.children)) + &quot;, ports:&quot;+str(len(self.ports)) + &quot;, references:&quot;+str(len(self.references)) + &quot;&gt;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Re-define the print function so it is easier to read&quot;&quot;&quot;</span>
+        <span class="n">rep</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+        <span class="n">rep</span> <span class="o">=</span> <span class="n">rep</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;; &#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rep</span> <span class="o">+=</span> <span class="s1">&#39;Library undefined&#39;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rep</span> <span class="o">+=</span> <span class="s1">&#39;Library.name undefined&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rep</span> <span class="o">+=</span> <span class="s1">&#39;Library.name </span><span class="se">\&#39;</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\&#39;</span><span class="s1">&#39;</span>
+        <span class="n">rep</span> <span class="o">+=</span> <span class="s1">&#39;; &#39;</span>
+        <span class="n">rep</span> <span class="o">+=</span> <span class="s1">&#39;ports: &#39;</span>
+        <span class="n">rep</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_ports</span><span class="p">()))</span>
+        <span class="n">rep</span> <span class="o">+=</span> <span class="s1">&#39;; cables: &#39;</span>
+        <span class="n">rep</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cables</span><span class="p">()))</span>
+        <span class="n">rep</span> <span class="o">+=</span> <span class="s1">&#39;; children: &#39;</span>
+        <span class="n">rep</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">))</span>
+        <span class="n">rep</span> <span class="o">+=</span> <span class="s1">&#39;; references: &#39;</span>
+        <span class="n">rep</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">references</span><span class="p">))</span>
+        <span class="n">rep</span> <span class="o">+=</span> <span class="s1">&#39;&gt;&#39;</span>
+        <span class="k">return</span> <span class="n">rep</span></div>
 </pre></div>
 
            </div>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2019, Brigham Young Universitiy
+        &#169; Copyright 2019, Brigham Young Universitiy.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html4" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Traversal and Statistics of a Netlist &mdash; SpyDrNet UNSPECIFIED documentation</title>
   
@@ -16,10 +16,14 @@
   <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
 
   
   
+
   
+  
+
   
 
   
@@ -29,17 +33,17 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Make Instances unique" href="plot_single_use_definitions.html" />
+    <link rel="next" title="Minimal Script" href="minimal.html" />
     <link rel="prev" title="Examples" href="../index.html" /> 
 </head>
 
@@ -54,7 +58,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> SpyDrNet
+            <a href="../../index.html" class="icon icon-home"> SpyDrNet
           
 
           
@@ -99,6 +103,7 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">Examples</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="../index.html#basic">Basic</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Traversal and Statistics of a Netlist</a></li>
+<li class="toctree-l3"><a class="reference internal" href="minimal.html">Minimal Script</a></li>
 <li class="toctree-l3"><a class="reference internal" href="plot_single_use_definitions.html">Make Instances unique</a></li>
 <li class="toctree-l3"><a class="reference internal" href="plot_four_to_five_bit_counter.html">Four Bit Counter To Five Bit Counter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="plot_flatten.html">Flattens a netlist</a></li>
@@ -147,6 +152,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -160,7 +167,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../_sources/auto_examples/basic/plot_stat.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -175,8 +182,9 @@
            <div itemprop="articleBody">
             
   <div class="sphx-glr-download-link-note admonition note">
-<p class="admonition-title">Note</p>
-<p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-basic-plot-stat-py"><span class="std std-ref">here</span></a>     to download the full example code</p>
+<p class="first admonition-title">Note</p>
+<p class="last">Click <a class="reference internal" href="#sphx-glr-download-auto-examples-basic-plot-stat-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
 </div>
 <div class="sphx-glr-example-title section" id="traversal-and-statistics-of-a-netlist">
 <span id="sphx-glr-auto-examples-basic-plot-stat-py"></span><h1>Traversal and Statistics of a Netlist<a class="headerlink" href="#traversal-and-statistics-of-a-netlist" title="Permalink to this headline">¶</a></h1>
@@ -377,7 +385,7 @@ Library name: work
                                 Referenced Definition: FDCE
                         Child name: rst_IBUF_inst
                                 Referenced Definition: IBUF
-                 21 cables detected
+                 15 cables detected
                         Cable Name clk
                                 Number of wires: 1
                         Cable Name clk_IBUF
@@ -392,30 +400,18 @@ Library name: work
                                 Number of wires: 1
                         Cable Name inc_dec_IBUF
                                 Number of wires: 1
-                        Cable Name out_0_
-                                Number of wires: 1
+                        Cable Name out
+                                Number of wires: 4
                         Cable Name out_0__i_1_n_0
-                                Number of wires: 1
-                        Cable Name out_1_
                                 Number of wires: 1
                         Cable Name out_1__i_1_n_0
                                 Number of wires: 1
-                        Cable Name out_2_
-                                Number of wires: 1
                         Cable Name out_2__i_1_n_0
-                                Number of wires: 1
-                        Cable Name out_3_
                                 Number of wires: 1
                         Cable Name out_3__i_1_n_0
                                 Number of wires: 1
-                        Cable Name out_OBUF_0_
-                                Number of wires: 1
-                        Cable Name out_OBUF_1_
-                                Number of wires: 1
-                        Cable Name out_OBUF_2_
-                                Number of wires: 1
-                        Cable Name out_OBUF_3_
-                                Number of wires: 1
+                        Cable Name out_OBUF
+                                Number of wires: 4
                         Cable Name rst
                                 Number of wires: 1
                         Cable Name rst_IBUF
@@ -475,14 +471,12 @@ Library name: work
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t\t\t</span><span class="s2">Number of wires:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">cable</span><span class="o">.</span><span class="n">wires</span><span class="p">))</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.041 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.132 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-basic-plot-stat-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
-<p><a class="reference download internal" download="" href="../../_downloads/82ade89067d73b45dd228271a29ad35c/plot_stat.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_stat.py</span></code></a></p>
-</div>
+<a class="reference download internal" download="" href="../../_downloads/82ade89067d73b45dd228271a29ad35c/plot_stat.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_stat.py</span></code></a></div>
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
-<p><a class="reference download internal" download="" href="../../_downloads/df61b6179b21c1faab2177d460054e0e/plot_stat.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_stat.ipynb</span></code></a></p>
-</div>
+<a class="reference download internal" download="" href="../../_downloads/df61b6179b21c1faab2177d460054e0e/plot_stat.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_stat.ipynb</span></code></a></div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
 </div>
@@ -492,37 +486,29 @@ Library name: work
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="plot_single_use_definitions.html" class="btn btn-neutral float-right" title="Make Instances unique" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="../index.html" class="btn btn-neutral float-left" title="Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="minimal.html" class="btn btn-neutral float-right" title="Minimal Script" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../index.html" class="btn btn-neutral float-left" title="Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2019, Brigham Young Universitiy
+        &#169; Copyright 2019, Brigham Young Universitiy.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

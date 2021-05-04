@@ -1,4 +1,4 @@
-﻿spydrnet.Port.clone
+spydrnet.Port.clone
 ===================
 
 .. currentmodule:: spydrnet

@@ -1,4 +1,4 @@
-﻿spydrnet.compose
+spydrnet.compose
 ================
 
 .. currentmodule:: spydrnet

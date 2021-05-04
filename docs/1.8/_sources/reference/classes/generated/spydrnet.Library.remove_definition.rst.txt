@@ -1,4 +1,4 @@
-﻿spydrnet.Library.remove\_definition
+spydrnet.Library.remove\_definition
 ===================================
 
 .. currentmodule:: spydrnet

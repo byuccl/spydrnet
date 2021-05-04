@@ -1,4 +1,4 @@
-﻿spydrnet.ir.Element
+spydrnet.ir.Element
 ===================
 
 .. currentmodule:: spydrnet.ir
@@ -13,7 +13,6 @@
 
    .. autosummary::
    
-      ~Element.__init__
       ~Element.get_cables
       ~Element.get_definitions
       ~Element.get_hcables

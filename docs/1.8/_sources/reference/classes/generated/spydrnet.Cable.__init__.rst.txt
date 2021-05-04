@@ -1,4 +1,4 @@
-﻿spydrnet.Cable.\_\_init\_\_
+spydrnet.Cable.\_\_init\_\_
 ===========================
 
 .. currentmodule:: spydrnet

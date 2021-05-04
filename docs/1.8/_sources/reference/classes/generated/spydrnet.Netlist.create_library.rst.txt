@@ -1,4 +1,4 @@
-﻿spydrnet.Netlist.create\_library
+spydrnet.Netlist.create\_library
 ================================
 
 .. currentmodule:: spydrnet

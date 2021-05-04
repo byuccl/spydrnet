@@ -1,4 +1,4 @@
-﻿spydrnet.Cable.remove\_wire
+spydrnet.Cable.remove\_wire
 ===========================
 
 .. currentmodule:: spydrnet

@@ -1,4 +1,4 @@
-﻿spydrnet.Netlist.get\_hinstances
+spydrnet.Netlist.get\_hinstances
 ================================
 
 .. currentmodule:: spydrnet

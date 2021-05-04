@@ -1,4 +1,4 @@
-﻿spydrnet.shortcuts.getter.GetterShortcuts.get\_netlists
+spydrnet.shortcuts.getter.GetterShortcuts.get\_netlists
 =======================================================
 
 .. currentmodule:: spydrnet.shortcuts.getter

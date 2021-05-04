@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html4" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>How to Contribute &mdash; SpyDrNet UNSPECIFIED documentation</title>
   
@@ -16,10 +16,14 @@
   <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
   <link rel="stylesheet" href="../_static/gallery-binder.css" type="text/css" />
   <link rel="stylesheet" href="../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery-rendered-html.css" type="text/css" />
 
   
   
+
   
+  
+
   
 
   
@@ -29,10 +33,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script src="../_static/language_data.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -54,7 +58,7 @@
           
 
           
-            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> SpyDrNet
+            <a href="../index.html" class="icon icon-home"> SpyDrNet
           
 
           
@@ -156,6 +160,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -169,7 +175,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../_sources/developer/contribute.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -193,21 +199,21 @@ order to ensure a positive environment exists around SpyDrNet.</p>
 <p><strong>some suggestions as you get started</strong></p>
 <blockquote>
 <div><ul class="simple">
-<li><p>Make sure you have a recent version of python installed. We test against version 3.5 and up.</p></li>
-<li><p>Clone the repository and create a new branch on which to make changes.</p></li>
-<li><p>Connect through Git Hub. The issues tab is the primary place for conversations and questions.</p></li>
-<li><p>Make sure that there are tests for your code.</p></li>
-<li><p>While we do not require 100% test coverage it is a good idea to strive to achive it.</p></li>
-<li><p>Make sure that your code passes the Travis CI test before merging to master</p></li>
+<li>Make sure you have a recent version of python installed. We test against version 3.5 and up.</li>
+<li>Clone the repository and create a new branch on which to make changes.</li>
+<li>Connect through Git Hub. The issues tab is the primary place for conversations and questions.</li>
+<li>Make sure that there are tests for your code.</li>
+<li>While we do not require 100% test coverage it is a good idea to strive to achive it.</li>
+<li>Make sure that your code passes the Travis CI test before merging to master</li>
 </ul>
 </div></blockquote>
 <p><strong>To start contributing please follow the following steps</strong></p>
 <ol class="arabic simple">
-<li><p>Create a github account</p></li>
-<li><p>Clone the SpyDrNet repositoy</p></li>
-<li><p>Otherwise fork the repository to make your changes.</p></li>
-<li><p>Once you have made your changes make a pull request.</p></li>
-<li><p>When the pull request has passed the tests it will be reviewed and merged</p></li>
+<li>Create a github account</li>
+<li>Clone the SpyDrNet repositoy</li>
+<li>Otherwise fork the repository to make your changes.</li>
+<li>Once you have made your changes make a pull request.</li>
+<li>When the pull request has passed the tests it will be reviewed and merged</li>
 </ol>
 <p><strong>Write (or other) privileges can be obtained</strong></p>
 <p><em>if</em></p>
@@ -241,17 +247,17 @@ publically available. This section aims to help you do just that. The steps
 are listed in what appears to us at this time to be the best order of
 operations. Steps which need more explanation are highlighted below.</p>
 <ol class="arabic simple">
-<li><p>run <cite>git merge master</cite> while the pre-release branch is checked out.</p></li>
-<li><p>Create a pull request with the updated code in the pre-release branch.</p></li>
-<li><p>Update the release notes</p></li>
-<li><p>Update the documentation and ensure it can build properly</p></li>
-<li><p>Commit those changes to the pull request</p></li>
-<li><p>Update the tag</p></li>
-<li><p>Build the python package (this will update the documentation’s version number)</p></li>
-<li><p>Build the documentation</p></li>
-<li><p>Create the release on Github</p></li>
-<li><p>Publish the packages</p></li>
-<li><p>Publish the documentation</p></li>
+<li>run <cite>git merge master</cite> while the pre-release branch is checked out.</li>
+<li>Create a pull request with the updated code in the pre-release branch.</li>
+<li>Update the release notes</li>
+<li>Update the documentation and ensure it can build properly</li>
+<li>Commit those changes to the pull request</li>
+<li>Update the tag</li>
+<li>Build the python package (this will update the documentation’s version number)</li>
+<li>Build the documentation</li>
+<li>Create the release on Github</li>
+<li>Publish the packages</li>
+<li>Publish the documentation</li>
 </ol>
 <div class="section" id="updating-the-documentation">
 <h2>Updating the documentation<a class="headerlink" href="#updating-the-documentation" title="Permalink to this headline">¶</a></h2>
@@ -359,37 +365,29 @@ link)</p>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="repository.html" class="btn btn-neutral float-right" title="GitHub Repository" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="index.html" class="btn btn-neutral float-left" title="Developer’s Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="repository.html" class="btn btn-neutral float-right" title="GitHub Repository" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Developer’s Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2019, Brigham Young Universitiy
+        &#169; Copyright 2019, Brigham Young Universitiy.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

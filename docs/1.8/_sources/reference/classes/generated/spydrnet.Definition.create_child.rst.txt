@@ -1,4 +1,4 @@
-﻿spydrnet.Definition.create\_child
+spydrnet.Definition.create\_child
 =================================
 
 .. currentmodule:: spydrnet

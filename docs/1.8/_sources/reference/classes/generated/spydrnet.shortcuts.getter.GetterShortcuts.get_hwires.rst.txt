@@ -1,4 +1,4 @@
-﻿spydrnet.shortcuts.getter.GetterShortcuts.get\_hwires
+spydrnet.shortcuts.getter.GetterShortcuts.get\_hwires
 =====================================================
 
 .. currentmodule:: spydrnet.shortcuts.getter

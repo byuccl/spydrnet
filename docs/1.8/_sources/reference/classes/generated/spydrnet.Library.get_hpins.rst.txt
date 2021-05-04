@@ -1,4 +1,4 @@
-﻿spydrnet.Library.get\_hpins
+spydrnet.Library.get\_hpins
 ===========================
 
 .. currentmodule:: spydrnet

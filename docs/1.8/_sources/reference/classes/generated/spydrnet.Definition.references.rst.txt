@@ -1,6 +1,6 @@
-﻿spydrnet.Definition.references
+spydrnet.Definition.references
 ==============================
 
 .. currentmodule:: spydrnet
 
-.. autoproperty:: Definition.references
+.. autoattribute:: Definition.references

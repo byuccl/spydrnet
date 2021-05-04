@@ -1,4 +1,4 @@
-﻿spydrnet.Library.clone
+spydrnet.Library.clone
 ======================
 
 .. currentmodule:: spydrnet

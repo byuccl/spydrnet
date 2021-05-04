@@ -1,6 +1,6 @@
-﻿spydrnet.Netlist.libraries
+spydrnet.Netlist.libraries
 ==========================
 
 .. currentmodule:: spydrnet
 
-.. autoproperty:: Netlist.libraries
+.. autoattribute:: Netlist.libraries

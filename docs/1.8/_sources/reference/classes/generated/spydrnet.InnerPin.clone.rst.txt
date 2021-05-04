@@ -1,4 +1,4 @@
-﻿spydrnet.InnerPin.clone
+spydrnet.InnerPin.clone
 =======================
 
 .. currentmodule:: spydrnet

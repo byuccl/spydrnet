@@ -1,4 +1,4 @@
-﻿spydrnet.Netlist.\_\_init\_\_
+spydrnet.Netlist.\_\_init\_\_
 =============================
 
 .. currentmodule:: spydrnet

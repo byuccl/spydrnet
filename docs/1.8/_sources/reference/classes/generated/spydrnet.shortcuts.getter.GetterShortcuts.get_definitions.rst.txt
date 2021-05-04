@@ -1,4 +1,4 @@
-﻿spydrnet.shortcuts.getter.GetterShortcuts.get\_definitions
+spydrnet.shortcuts.getter.GetterShortcuts.get\_definitions
 ==========================================================
 
 .. currentmodule:: spydrnet.shortcuts.getter

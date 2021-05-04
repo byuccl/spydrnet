@@ -1,4 +1,4 @@
-﻿spydrnet.Wire.get\_hpins
+spydrnet.Wire.get\_hpins
 ========================
 
 .. currentmodule:: spydrnet

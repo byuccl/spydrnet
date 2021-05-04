@@ -1,4 +1,4 @@
-﻿spydrnet.Netlist.get\_definitions
+spydrnet.Netlist.get\_definitions
 =================================
 
 .. currentmodule:: spydrnet

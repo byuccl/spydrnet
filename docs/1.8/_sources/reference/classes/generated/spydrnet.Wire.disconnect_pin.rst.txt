@@ -1,4 +1,4 @@
-﻿spydrnet.Wire.disconnect\_pin
+spydrnet.Wire.disconnect\_pin
 =============================
 
 .. currentmodule:: spydrnet

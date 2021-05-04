@@ -1,4 +1,4 @@
-﻿spydrnet.Definition.is\_leaf
+spydrnet.Definition.is\_leaf
 ============================
 
 .. currentmodule:: spydrnet

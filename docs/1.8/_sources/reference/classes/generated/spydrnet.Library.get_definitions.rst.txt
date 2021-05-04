@@ -1,4 +1,4 @@
-﻿spydrnet.Library.get\_definitions
+spydrnet.Library.get\_definitions
 =================================
 
 .. currentmodule:: spydrnet

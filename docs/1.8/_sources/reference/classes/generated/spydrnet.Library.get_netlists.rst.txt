@@ -1,4 +1,4 @@
-﻿spydrnet.Library.get\_netlists
+spydrnet.Library.get\_netlists
 ==============================
 
 .. currentmodule:: spydrnet

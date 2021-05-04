@@ -6,6 +6,8 @@ Flattens a netlist
 Remove hierarchy from a netlist.
 """
 
+import os
+import tempfile
 import spydrnet as sdn
 
 
@@ -15,7 +17,7 @@ import spydrnet as sdn
 # (defined by no listed cables or child within child's reference), else return False
 def is_black_box(instance):
     definition = instance.reference
-    if len(definition.cables) is not 0 or len(definition.children) is not 0:
+    if len(definition.cables) != 0 or len(definition.children) != 0:
         return False
     return True
 
@@ -30,24 +32,25 @@ def copy_instance(parent_instance, instance, new_instance):
     for key, value in instance.data.items():
         new_instance[key] = value
     # Change new_instance EDIF.identifier to represent its hierarchical name
-    new_instance['EDIF.identifier'] = parent_instance['EDIF.identifier'] + '_' + new_instance['EDIF.identifier']
+    new_instance['EDIF.identifier'] = parent_instance['EDIF.identifier'] + \
+        '_' + new_instance['EDIF.identifier']
     # Determine if parent_instance and instance have .NAME in it data
     # Uses .NAME if available, else used EDIF.identifier to generate
     # .NAME for new_instance
     if '.NAME' in parent_instance:
         if '.NAME' in instance:
             new_instance['.NAME'] = parent_instance['.NAME'] + '/' \
-                                                       + instance['.NAME']
+                + instance['.NAME']
         else:
             new_instance['.NAME'] = parent_instance['.NAME'] + '/' \
-                                                       + instance['EDIF.identifier']
+                + instance['EDIF.identifier']
     else:
         if '.NAME' in instance:
             new_instance['.NAME'] = parent_instance['EDIF.identifier'] + '/' \
-                                                       + instance['.NAME']
+                + instance['.NAME']
         else:
             new_instance['.NAME'] = parent_instance['EDIF.identifier'] + '/' \
-                                                       + instance['EDIF.identifier']
+                + instance['EDIF.identifier']
     # Have new_instance reference the same definition as instance
     new_instance.reference = instance.reference
 
@@ -105,15 +108,18 @@ def flatten_definition(definition, top_definition=False):
         map = dict()
         # Check if progress information should be printed
         if top_definition and not is_black_box(child):
-            print("Need to move cells from", child['EDIF.identifier'], "that references", child.reference['EDIF.identifier'])
+            print("Need to move cells from", child['EDIF.identifier'],
+                  "that references", child.reference['EDIF.identifier'])
         # Loop through each grandchild of definition
         for grandchild in grandchildren:
             if not is_black_box(grandchild):
-                print("Need to move cells from", grandchild['EDIF.identifier'], "that references", grandchild.reference['EDIF.identifier'])
+                print("Need to move cells from", grandchild['EDIF.identifier'],
+                      "that references", grandchild.reference['EDIF.identifier'])
                 # Flatten any children if they contain non_leaf grandchildren
                 # Keep track of grandchildren that are leaf nodes
                 leaf_grandchildren.extend(flatten_definition(child.reference))
-                print("Finished moving cells from", grandchild['EDIF.identifier'])
+                print("Finished moving cells from",
+                      grandchild['EDIF.identifier'])
             else:
                 # Keep track of grandchildren that are leaf nodes
                 leaf_grandchildren.append(grandchild)
@@ -143,7 +149,9 @@ def flatten_definition(definition, top_definition=False):
                     new_wire.connect_pin(map[pin.instance].pins[pin.inner_pin])
             # Check if we should name the cable or should use the outside cable
             if name_cable:
-                new_cable['EDIF.identifier'] = child['EDIF.identifier'] + '_' + cable['EDIF.identifier']
+                new_cable['EDIF.identifier'] = child['EDIF.identifier'] + \
+                    '_' + cable['EDIF.identifier']
+                new_cable.name = new_cable['EDIF.identifier']
             else:
                 use_outside_cable(new_cable, cable, child)
         # Remove any original children that is not a leaf
@@ -155,7 +163,6 @@ def flatten_definition(definition, top_definition=False):
     return created
 
 
-
 example_name1 = "unique_challenge"
 example_name2 = "three_layer_hierarchy"
 example_name3 = "unique_different_modules"
@@ -164,8 +171,6 @@ ir = sdn.load_example_netlist_by_name(example_name)
 top_def = ir.top_instance.reference
 flatten_definition(top_def, top_definition=True)
 
-import tempfile
-import os
 with tempfile.TemporaryDirectory() as td:
     file_name = example_name + '_flat.edf'
     sdn.compose(ir, os.path.join(td, file_name))

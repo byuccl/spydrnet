@@ -1,4 +1,4 @@
-﻿spydrnet.Wire.get\_instances
+spydrnet.Wire.get\_instances
 ============================
 
 .. currentmodule:: spydrnet

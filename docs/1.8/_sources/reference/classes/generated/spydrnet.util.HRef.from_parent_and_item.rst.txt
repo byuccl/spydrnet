@@ -1,4 +1,4 @@
-﻿spydrnet.util.HRef.from\_parent\_and\_item
+spydrnet.util.HRef.from\_parent\_and\_item
 ==========================================
 
 .. currentmodule:: spydrnet.util
