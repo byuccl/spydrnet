@@ -62,7 +62,7 @@ class VerilogTokenizer:
             return False
 
     def next(self):
-        if self.next_token:
+        if self.next_token is not None:
             self.token = self.next_token
             self.next_token = None
         else:
@@ -71,7 +71,7 @@ class VerilogTokenizer:
 
 
     def peek(self):
-        if self.next_token:
+        if self.next_token is not None:
             return self.next_token
         else:
             self.next_token = next(self.generator)

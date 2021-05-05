@@ -37,45 +37,86 @@ class VerilogParser:
     todo: need to setup a way to let the ports lower index be floating until it's defined later. when a blackbox is instantiated
     that has a port that is perhaps not 0 lower indexed then the current system may do something wrong when the port is given its proper
     lower index. for now, it is required that all ports lower indicies are 0 
+
+    assignments can be kept in an assignment dictionary that will map a name to a group of wires like a cable. 
+    This will take the shape of a class that is name with a group of wires. kindof like a cable but the wires will
+    all need to belong to another cable. this is used uniquely for lookups and will not remain in the
+    intermediate representation
+
+    on compose assignments can be generated when there would otherwise be a concatenation operator in a port map
     
     '''
-    # class PortAliasManager:
-
-    #     def __init__(self):
-    #         self.flush()
-
-    #     def flush(self):
-    #         self.wire_to_pin = dict()
-
-    #     def add_wire(self, wire, pin):
-    #         self.wire_to_pin[wire] = pin
-
-    #     def wire_aliased(self, wire):
-    #         return wire in self.wire_to_pin.keys()
-
-    #     def get_port_from_wire(self, wire):
-    #         return self.wire_to_pin[wire]
-
-    #     def get_all_ports_from_wires(self, wires):
-    #         '''
-    #         get all ports that are referenced in the list of wires
-
-    #         wires is an iterable of sdn.Wire type objects
-    #         returns a set of distinct port objects
-    #         '''
-    #         ports = set()
-    #         for w in wires:
-    #             ports.add(self.get_port_from_wire(w).port)
-    #         return ports
 
     #########################################################
     ##helper classes
     #########################################################
 
+    
+
+
+    class AssignmentManager:
+
+        class AssignmentCable:
+
+            '''
+            assignments are basically a name mapped to some wires.
+            '''
+
+            def __init__(self, wires = [], lower_index = 0):
+                self.wires = wires
+                self.lower_index = wires
+
+            def get_wires(self, left, right):
+                '''
+                get the wires out of the wires list that correspond to the left and right
+                indicies.
+                '''
+                index = None
+                if left is not None and right is not None:
+                    l = left - self.lower_index
+                    r = right - self.lower_index + 1
+                    return self.wires[l:r]
+                elif right is not None:
+                    index = right
+                elif left is not None:
+                    index = left
+                else:
+                    return self.wires
+                return [self.wires[index]]
+        
+        def __init__(self):
+            self.assignment_dict = dict()
+        
+        def is_assigned(self, name):
+            return name in self.assignment_dict
+        
+        def create_assign(self, name, wires, lower_index):
+            aca = self.AssignmentCable(wires, lower_index)
+            self.assignment_dict[name] = aca
+
+        def get_wires(self, name, left, right):
+            self.assignment_dict[name].get_wires(left, right)
+
+    class CableSuggestionHolder:
+
+        def __init__(self):
+            self.defined = set()
+
+        def clear(self):
+            self.defined = set()
+
+        def define_cable(self, cable):
+            self.defined.add(cable)
+
+        def is_defined(self, cable):
+            return cable in self.defined
+
+
     class BlackboxHolder:
         
         def __init__(self):
             self.name_lookup = dict()
+            self.defined = set()
         
         def get_blackbox(self, name):
             '''creates or returns the black box based on the name'''
@@ -86,6 +127,18 @@ class VerilogParser:
                 definition.name = name
                 self.name_lookup[name] = definition
                 return definition
+
+        def define(self, name):
+            '''adds the name to the defined set'''
+            self.defined.add(self.name_lookup[name])
+
+        def get_undefined_blackboxes(self):
+            '''return an iterable of all undefined blackboxes'''
+            undef = set()
+            for v in self.name_lookup.values():
+                if v not in self.defined:
+                    undef.add(v)
+            return undef
 
     # class PortSuggestionHolder:
 
@@ -128,15 +181,16 @@ class VerilogParser:
         self.filename = None
         self.tokenizer = None
 
-        self.current_netlist = None
+        self.netlist = None
         self.current_library = None
         self.current_definition = None
         self.current_instance = None
 
-        self.primatives = None
+        self.primitives = None
         self.work = None
 
         self.blackbox_holder = self.BlackboxHolder()
+        self.assignment_manager = self.AssignmentManager()
         #self.port_suggestion_holder = self.PortSuggestionHolder()
           
     def parse(self):
@@ -147,15 +201,41 @@ class VerilogParser:
         self.initialize_tokenizer()
         ns_default = namespace_manager.default
         namespace_manager.default = "DEFAULT"
-        self.current_netlist = self.parse_verilog()
+        self.parse_verilog()
         namespace_manager.default = ns_default
         self.tokenizer.__del__()
-        return self.current_netlist
+        return self.netlist
 
     def initialize_tokenizer(self):
         self.tokenizer = VerilogTokenizer(self.filename)
 
     def peek_token(self):
+        token = self.peek_token_remove_comments()
+        if token[0] == '`':
+            t_split = token.split(maxsplit=1)
+            if len(t_split)> 1 and t_split[0] in [vt.IFDEF]:
+                while t_split[0] != vt.ENDIF:
+                    token = self.next_token_remove_comments()
+                    t_split = token.split(maxsplit=1)
+                token = self.peek_token_remove_comments()
+            if len(t_split) > 1 and t_split[0] == vt.DEFINE:
+                assert False, self.error_string("define not supported", "assumes all macros are undefined", vt.DEFINE)
+        return token
+
+    def next_token(self):
+        token = self.next_token_remove_comments()
+        if token[0] == '`':
+            t_split = token.split(maxsplit=1)
+            if len(t_split)> 1 and t_split[0] in [vt.IFDEF]:
+                while t_split[0] != vt.ENDIF:
+                    token = self.next_token_remove_comments()
+                    t_split = token.split(maxsplit=1)
+                token = self.next_token_remove_comments()
+            if len(t_split) > 1 and t_split[0] == vt.DEFINE:
+                assert False, self.error_string("define not supported", "assumes all macros are undefined", vt.DEFINE)
+        return token
+
+    def peek_token_remove_comments(self):
         '''peeks from the tokenizer this wrapper function exists to skip comment tokens'''
         token = self.tokenizer.peek()
         while len(token) >= 2 and token[0] == "/" and (token[1] == "/" or token[1] == "*"):
@@ -164,7 +244,7 @@ class VerilogParser:
             token = self.tokenizer.peek()
         return token
 
-    def next_token(self):
+    def next_token_remove_comments(self):
         '''peeks from the tokenizer this wrapper function exists to skip comment tokens'''
         token = self.tokenizer.next()
         while len(token) >= 2 and (token[0:1] == vt.OPEN_LINE_COMMENT or token[0:1] == vt.OPEN_BLOCK_COMMENT):
@@ -180,27 +260,43 @@ class VerilogParser:
     #######################################################
 
     def parse_verilog(self):
-        netlist = sdn.Netlist()
-        self.work = netlist.create_library("work")
-        self.primatives = netlist.create_library("primatives")
+        self.netlist = sdn.Netlist()
+        self.work = self.netlist.create_library("work")
+        self.primitives = self.netlist.create_library("SDN.verilog_primitives")
         self.current_library = self.work
 
         preprocessor_defines = set()
         star_properties = dict()
         time_scale = None
+        primitive_cell = False
 
         while self.tokenizer.has_next():
             token = self.peek_token()
             if token.split(maxsplit = 1)[0] == vt.CELL_DEFINE:
-                self.current_library = self.primatives
-                token = token.split(maxsplit = 1)[1]
+                primitive_cell = True
+                self.current_library = self.primitives
+                #token = token.split(maxsplit = 1)[1]
+                token = self.next_token()
             elif token.split(maxsplit = 1)[0] == vt.END_CELL_DEFINE:
+                primitive_cell = False
                 self.current_library = self.work
-                token = token.split(maxsplit = 1)[1]
+                #token = token.split(maxsplit = 1)[1]
+                token = self.next_token()
 
             elif token == vt.MODULE:
-                self.parse_module()
+                if primitive_cell:
+                    self.parse_primitive()
+                else:
+                    self.parse_module()
                 #go ahead and set the extra metadata that we collected to this point
+                if time_scale is not None:
+                    self.current_definition["Verilog.TimeScale"] = time_scale
+                if len(star_properties.keys()) > 0:
+                    self.current_definition["Verilog.StarProperties"] = star_properties
+                    star_properties = dict()
+            
+            elif token == vt.PRIMITIVE:
+                self.parse_primitive()
                 if time_scale is not None:
                     self.current_definition["Verilog.TimeScale"] = time_scale
                 if len(star_properties.keys()) > 0:
@@ -225,8 +321,63 @@ class VerilogParser:
             else:
                 pass       
                 assert False, self.error_string("something at the top level of the file", "got unexpected token", token)
-                
-        return sdn.Netlist()
+        
+        self.add_blackbox_definitions()
+
+        return self.netlist
+
+    def add_blackbox_definitions(self):
+        self.current_library = self.primitives
+        for d in self.blackbox_holder.get_undefined_blackboxes():
+            d["VERILOG.primitive"] = True
+            self.current_library.add_definition(d)
+
+    def parse_primitive(self):
+        '''simply skips the whole definition:'''
+        token = self.next_token()
+        if token == vt.MODULE:
+            while token != vt.END_MODULE:
+                token = self.next_token()
+
+        elif token == vt.PRIMITIVE:
+            while token != vt.END_PRIMITIVE:
+                token = self.next_token()
+        #to use these definitions uncomment the following
+        # '''similar to parse module but it will only look for the inputs and outputs to get an idea of how those things look'''
+
+        # token = self.next_token()
+        # assert token == vt.MODULE or token == vt.PRIMITIVE, self.error_string(vt.MODULE, "to begin module statement", token)
+        # token = self.next_token()
+        # assert vt.is_valid_identifier(token), self.error_string("identifier", "not a valid module name", token)
+        # name = token
+
+        # definition = self.blackbox_holder.get_blackbox(name)
+        # self.blackbox_holder.define(name)
+        # self.current_library.add_definition(definition)
+        # self.current_definition = definition
+
+        # #uses the same header parser because the primitives and regular cells have the same header.
+        # self.parse_module_header()
+
+
+        # self.parse_primitive_body()
+
+
+
+    def parse_primitive_body(self):
+        ''' just look for port information'''
+        
+        token = self.peek_token()
+
+        while token != vt.END_MODULE and token != vt.END_PRIMITIVE:
+            token = self.peek_token()
+            if token == vt.FUNCTION:
+                while token != vt.END_FUNCTION:
+                    token = self.next_token()
+            if token in vt.PORT_DIRECTIONS:
+                self.parse_port_declaration(dict())
+            else:
+                token = self.next_token()
 
     def parse_module(self):
         
@@ -237,8 +388,12 @@ class VerilogParser:
         name = token
 
         definition = self.blackbox_holder.get_blackbox(name)
+        self.blackbox_holder.define(name)
         self.current_library.add_definition(definition)
         self.current_definition = definition
+        if self.netlist.top_instance is None:
+            self.netlist.top_instance = sdn.Instance()
+            self.netlist.top_instance.reference = definition
 
         self.parse_module_header()
 
@@ -417,19 +572,29 @@ class VerilogParser:
         direction_tokens = [vt.INPUT, vt.OUTPUT, vt.INOUT]
         variable_tokens = [vt.WIRE, vt.REG]
         token = self.peek_token()
+        params = dict()
         while token != vt.END_MODULE:
             if token in direction_tokens:
-                self.parse_port_declaration()
+                self.parse_port_declaration(params)
+                params = dict()
             elif token in variable_tokens:
-                self.parse_cable_declaration()
+                self.parse_cable_declaration(params)
+                params = dict()
             elif vt.is_valid_identifier(token):
-                self.parse_instantiation()
+                self.parse_instantiation(params)
+                params = dict()
+            elif token == vt.OPEN_PARENTHESIS:
+                k,v = self.parse_star_property()
+                params[k] = v
             else:
-                assert False, self.error_string("direction, reg, wire, or instance identifier", "in module body", token)
+                assert False, self.error_string("direction, reg, wire, star_properties, or instance identifier", "in module body", token)
 
             token = self.peek_token()
+        
+        token = self.next_token()
+        assert token == vt.END_MODULE, self.error_string(vt.END_MODULE, "to end the module body", token)
 
-    def parse_port_declaration(self):
+    def parse_port_declaration(self, properties):
         '''parse the port declaration post port list.'''
         token = self.next_token()
         assert token in vt.PORT_DIRECTIONS, self.error_string("direction keyword", "to define port", token)
@@ -451,21 +616,29 @@ class VerilogParser:
         
         token = self.next_token()
         assert vt.is_valid_identifier(token), self.error_string("port identifier", "identify port", token)
-        name = token
+        names = []
+        names.append(token)
 
         token = self.next_token()
+        while token == vt.COMMA:
+            token = self.next_token()
+            names.append(token)
+            token = self.next_token()
+
         assert token == vt.SEMI_COLON, self.error_string(vt.SEMI_COLON, "to end port declaration", token)
-        
-        cable = self.create_or_update_cable(name, left_index = left, right_index = right, var_type = var_type)
 
-        port_list = self.get_all_ports_from_wires(self.get_wires_from_cable(cable, left, right))
-        
-        assert len(port_list) > 0, self.error_string("port name defined in the module header", "declare a port", "name = " + cable.name)
+        for name in names:    
+            cable = self.create_or_update_cable(name, left_index = left, right_index = right, var_type = var_type)
 
-        for p in port_list:
-            self.create_or_update_port(p.name, left_index = left, right_index = right, direction = direction)
+            port_list = self.get_all_ports_from_wires(self.get_wires_from_cable(cable, left, right))
+            
+            assert len(port_list) > 0, self.error_string("port name defined in the module header", "to declare a port", cable.name)
 
-    def parse_cable_declaration(self):
+            for p in port_list:
+                port = self.create_or_update_port(p.name, left_index = left, right_index = right, direction = direction)
+                port["Verilog.StarProperties"] = properties
+
+    def parse_cable_declaration(self, properties):
         token = self.next_token()
         assert token in [vt.REG, vt.WIRE], self.error_string("reg or wire", "for cable declaration", token)
         var_type = token
@@ -481,12 +654,13 @@ class VerilogParser:
         assert vt.is_valid_identifier(token), self.error_string("valid cable identifier", "identify the cable", token)
         name = token
 
-        self.create_or_update_cable(name, left_index = left, right_index = right, var_type = var_type)
+        cable = self.create_or_update_cable(name, left_index = left, right_index = right, var_type = var_type)
+        cable["Verilog.StarProperties"] = properties
 
         token = self.next_token()
         assert token == vt.SEMI_COLON, self.error_string(vt.SEMI_COLON, "to end cable declaration", token)
 
-    def parse_instantiation(self):
+    def parse_instantiation(self, properties):
         token = self.next_token()
         assert vt.is_valid_identifier(token), self.error_string("module identifier", "for instantiation", token)
         def_name = token
@@ -506,12 +680,16 @@ class VerilogParser:
         instance = self.current_definition.create_child()
         self.current_instance = instance
 
-        self.parse_port_mapping()
-        
         instance.name = name
         instance.reference = self.blackbox_holder.get_blackbox(def_name)
+        instance["Verilog.StarProperties"] = properties
+
+        self.parse_port_mapping()
 
         self.set_instance_parameters(instance, parameter_dict)
+
+        token = self.next_token()
+        assert token == vt.SEMI_COLON, self.error_string(vt.SEMI_COLON, "to end instatiation", token)
         
     def parse_parameter_mapping(self):
         params = dict()
@@ -572,34 +750,46 @@ class VerilogParser:
         token = self.next_token()
         assert token == vt.OPEN_PARENTHESIS, self.error_string(vt.OPEN_PARENTHESIS, "to encapsulate cable name in port mapping", token)
 
-        token = self.next_token()
-        cable = None
-        left = None
-        right = None
+        token = self.peek_token()
+        # cable = None
+        # left = None
+        # right = None
         if token != vt.CLOSE_PARENTHESIS:
-            assert vt.is_valid_identifier(token), self.error_string("valid cable identifier", "cable name to map in port mapping", token)
-            cable_name = token
-            token = self.peek_token()
-            left = None
-            right = None
-            if token == vt.OPEN_BRACKET:
-                left, right = self.parse_brackets()
-            cable = self.create_or_update_cable(cable_name, left_index = left, right_index = right)
-            token = self.next_token()
+            # assert vt.is_valid_identifier(token), self.error_string("valid cable identifier", "cable name to map in port mapping", token)
+            # cable_name = token
+            # token = self.peek_token()
+            # left = None
+            # right = None
+            # if token == vt.OPEN_BRACKET:
+            #     left, right = self.parse_brackets()
+            # cable = self.create_or_update_cable(cable_name, left_index = left, right_index = right)
+            # token = self.next_token()
 
-            pins = self.create_or_update_port_on_instance(port_name, len(cable.wires))
-            wires = self.get_wires_from_cable(cable, left, right)
+            # wires = self.get_wires_from_cable(cable, left, right)
+            
 
-            assert len(pins) == len(wires), self.error_string("pins length to match cable.wires length", "INTERNAL ERROR", str(len(pins)) + "!=" + str(len(wires)))
+            if token == vt.OPEN_BRACE:
+                wires = self.parse_cable_concatenation()
+            else:
+                cable, left, right = self.parse_variable_instantiation()
+                wires = self.get_wires_from_cable(cable, left, right)
 
-            for i in range(len(pins)):
+            pins = self.create_or_update_port_on_instance(port_name, len(wires))
+
+
+            assert len(pins) >= len(wires), self.error_string("pins length to match or exceed cable.wires length", "INTERNAL ERROR", str(len(pins)) + "!=" + str(len(wires)))
+
+            #there can be unconnected pins at the end of the port.
+            for i in range(len(wires)):
                 wires[i].connect_pin(pins[i])
+            
+            token = self.next_token()
 
         else:
             #the port is intentionally left unconnected.
             self.create_or_update_port_on_instance(port_name, 1)
 
-        assert token == vt.CLOSE_PARENTHESIS, self.error_string(vt.CLOSE_PARENTHESIS, "to end cable name in port mapping", result)
+        assert token == vt.CLOSE_PARENTHESIS, self.error_string(vt.CLOSE_PARENTHESIS, "to end cable name in port mapping", token)
 
     # def parse_variable_declaration(self):
     #     direction_tokens = [vt.INPUT, vt.OUTPUT, vt.INOUT]
@@ -830,7 +1020,7 @@ class VerilogParser:
         return cable
 
     # def create_or_get_definition(self, name):
-    #     dictionary_generator = self.current_netlist.get_definitions(name)
+    #     dictionary_generator = self.netlist.get_definitions(name)
     #     definition = next(cable_generator, None)
     #     if definition == None:
     #         definition = self.current_library.create_definition()

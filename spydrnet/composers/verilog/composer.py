@@ -63,10 +63,10 @@ class Composer:
         if definition.library.name == "SDN_VERILOG_ASSIGNMENT":
             #no need to write assignment definitions.
             return
-        need_end_primative = False
-        if "VERILOG.primative" in definition and definition["VERILOG.primative"] == True:
-            #I need to write out the primative cell definition.
-            need_end_primative = True
+        need_end_primitive = False
+        if "VERILOG.primitive" in definition and definition["VERILOG.primitive"] == True:
+            #I need to write out the primitive cell definition.
+            need_end_primitive = True
             self.file.write("`celldefine\n")
         self.file.write("module ")
         self._write_escapable_name(definition.name)
@@ -86,7 +86,7 @@ class Composer:
         #     self._write_assignments(c)
 
         self.file.write("endmodule\n")
-        if need_end_primative:
+        if need_end_primitive:
             self.file.write("`endcelldefine\n")
 
     def _get_assignment_indicies(self, instance):

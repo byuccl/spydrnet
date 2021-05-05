@@ -229,6 +229,30 @@ class TestVerilogParser(unittest.TestCase):
         names = [d.cables[0].name, d.cables[1].name, d.cables[2].name]
         assert "cable1" in names and "cable2" in names and "cable3" in names
 
+    def test_non_zero_lower_port_index(self):
+        '''this test based on an issue found while parsing riscv_multi_core.v in the support files
+        to see the problem lines that caused this test see line 89 and line 41'''
+
+        parser = VerilogParser()
+        token_list = ["module", "alu", "(", "instruction", ")", ";", "output", "[", "27", ":", "26", "]", "instruction", ";", "endmodule"]
+        tokenizer = self.TestTokenizer(token_list)
+        parser.tokenizer = tokenizer
+        parser.current_library = sdn.Library(name = "TestLibrary")
+        parser.netlist = sdn.Netlist()
+        parser.netlist.add_library(parser.current_library)
+        
+        parser.parse_module()
+
+        assert len(parser.current_definition.ports) == 1
+        assert len(parser.current_definition.cables) == 1
+        c = parser.current_definition.cables[0]
+        p = parser.current_definition.ports[0]
+        assert c.name == "instruction"
+        assert len(c.wires) == 2
+        assert p.name == "instruction"
+        assert len(p.pins) == 2
+        for w in c.wires:
+            assert w.pins[0] in p.pins
 
     ###################################################
     ##Array Slicing
@@ -634,6 +658,19 @@ class TestVerilogParser(unittest.TestCase):
 
         assert k == "INIT"
         assert v == "1hABCD1230"
+    
+
+    def test_parse_parameter_map_single_multi_token_value(self):
+        parser = VerilogParser()
+        tokens = [".","INIT", "(", "200.000000", ")"]
+        tokenizer = self.TestTokenizer(tokens)
+        parser.tokenizer = tokenizer
+
+        k,v = parser.parse_parameter_map_single()
+
+        assert k == "INIT"
+        assert v == "200.000000"
+        assert parser.tokenizer.has_next() == False
 
     def test_parse_port_map_single(self):
         parser = VerilogParser()
@@ -924,7 +961,7 @@ class TestVerilogParser(unittest.TestCase):
             c.wires[0].connect_pin(p.pins[0])
 
         for i in range(count):
-            parser.parse_port_declaration()
+            parser.parse_port_declaration(dict())
 
 
     @unittest.expectedFailure

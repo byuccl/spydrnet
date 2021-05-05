@@ -162,7 +162,8 @@ class ComposeEdif:
         self._output_status_()
         self._new_line_()
         for library in self._data_.libraries:
-            self._output_library_(library)
+            if library.name != "SDN.verilog_primitives":
+                self._output_library_(library)
 
         self._lisp_increment_()
         self._output_.write("design ")
