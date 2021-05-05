@@ -41,7 +41,9 @@ class Comparer:
         assert self.get_original_identifier(library_orig) == self.get_original_identifier(library_composer), \
             "Libraries do not have the same original identifier"
         assert len(library_orig.definitions) == len(library_composer.definitions), \
-            "Libraries do not have the same amount of definitions"
+            "Libraries do not have the same amount of definitions " \
+            + str(library_orig) + " " + str(len(library_orig.definitions)) + " " +\
+            str(library_composer) + " " + str(len(library_composer.definitions))
         # except Exception:
         #     import pdb; pdb.set_trace()
         for orig_definition in library_orig.definitions:

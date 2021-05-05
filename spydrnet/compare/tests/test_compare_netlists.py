@@ -63,8 +63,8 @@ class TestCompareNetlists(unittest.TestCase):
                     comparer = Comparer(orig_netlist, composer_netlist)
                     comparer.run()
                 except Exception as e:
-                    shutil.copytree(tempdirname, "temp"+filename)
-                    #import pdb; pdb.set_trace()
+                    import pdb; pdb.set_trace()
+                    shutil.copytree(tempdirname, "temp")
                     raise e
 
     #@unittest.skip("Test takes a long time right now.

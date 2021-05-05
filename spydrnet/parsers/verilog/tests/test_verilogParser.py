@@ -251,8 +251,19 @@ class TestVerilogParser(unittest.TestCase):
         assert len(c.wires) == 2
         assert p.name == "instruction"
         assert len(p.pins) == 2
+
+        import pdb; pdb.set_trace()
+
         for w in c.wires:
             assert w.pins[0] in p.pins
+
+    def test_port_cable_resize_post_creation(self):
+        '''we need a test that creates a port and then resizes it on definition
+        
+        module something(port);
+        input [3:0] port;
+        endmodule'''
+        pass
 
     ###################################################
     ##Array Slicing

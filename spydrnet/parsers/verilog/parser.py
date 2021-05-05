@@ -97,19 +97,19 @@ class VerilogParser:
         def get_wires(self, name, left, right):
             self.assignment_dict[name].get_wires(left, right)
 
-    class CableSuggestionHolder:
+    # class CableSuggestionHolder:
 
-        def __init__(self):
-            self.defined = set()
+    #     def __init__(self):
+    #         self.defined = set()
 
-        def clear(self):
-            self.defined = set()
+    #     def clear(self):
+    #         self.defined = set()
 
-        def define_cable(self, cable):
-            self.defined.add(cable)
+    #     def define_cable(self, cable):
+    #         self.defined.add(cable)
 
-        def is_defined(self, cable):
-            return cable in self.defined
+    #     def is_defined(self, cable):
+    #         return cable in self.defined
 
 
     class BlackboxHolder:
@@ -538,10 +538,12 @@ class VerilogParser:
         '''parse the port declaration in the module header'''
         token = self.peek_token()
         direction = None
+        defining = False
         if token in vt.PORT_DIRECTIONS:
             token = self.next_token()
             direction = vt.string_to_port_direction(token)
             token = self.peek_token()
+            defining = True
         
         left = None
         right = None
@@ -551,8 +553,8 @@ class VerilogParser:
         token = self.next_token()
         assert vt.is_valid_identifier(token), self.error_string("identifier", "for port declaration", token)
         name = token
-        port = self.create_or_update_port(name,left_index = left, right_index = right, direction = direction)
-        cable = self.create_or_update_cable(name, left_index = left, right_index = right)
+        port = self.create_or_update_port(name,left_index = left, right_index = right, direction = direction, defining = defining)
+        cable = self.create_or_update_cable(name, left_index = left, right_index = right, defining = defining)
         
         #wire together the cables and the port
         assert len(port.pins) == len(cable.wires), "Internal Error: the pins in a created port and the number of wires in it's cable do not match up"
@@ -628,15 +630,18 @@ class VerilogParser:
         assert token == vt.SEMI_COLON, self.error_string(vt.SEMI_COLON, "to end port declaration", token)
 
         for name in names:    
-            cable = self.create_or_update_cable(name, left_index = left, right_index = right, var_type = var_type)
+            cable = self.create_or_update_cable(name, left_index = left, right_index = right, var_type = var_type, defining = True)
 
             port_list = self.get_all_ports_from_wires(self.get_wires_from_cable(cable, left, right))
             
             assert len(port_list) > 0, self.error_string("port name defined in the module header", "to declare a port", cable.name)
 
-            for p in port_list:
-                port = self.create_or_update_port(p.name, left_index = left, right_index = right, direction = direction)
-                port["Verilog.StarProperties"] = properties
+            if len(port_list) > 1:
+                for p in port_list:
+                    port = self.create_or_update_port(p.name, direction = direction)
+                    port["Verilog.StarProperties"] = properties
+            else:
+                port = self.create_or_update_port(port_list.pop().name, left_index = left, right_index = right, direction = direction, defining = True)
 
     def parse_cable_declaration(self, properties):
         token = self.next_token()
@@ -705,7 +710,7 @@ class VerilogParser:
             token = self.next_token()
             assert token in [vt.CLOSE_PARENTHESIS, vt.COMMA], self.error_string(vt.COMMA + " or " + vt.CLOSE_PARENTHESIS, "to separate parameters or end parameter mapping", token)
 
-        assert token == vt.CLOSE_PARENTHESIS, self.error_string(vt.CLOSE_PARENTHESIS, "to terminate ", result)
+        assert token == vt.CLOSE_PARENTHESIS, self.error_string(vt.CLOSE_PARENTHESIS, "to terminate ", token)
 
         return params
 
@@ -977,7 +982,47 @@ class VerilogParser:
         else:
             return sdn.Port.Direction.UNDEFINED
 
-    def create_or_update_cable(self, name, left_index = None, right_index = None, var_type = None):
+
+    ########################################################################################
+    ##Port and cable creation and update managment
+    ########################################################################################
+
+    '''I'm handed a few different possible senarios
+
+    module name(port1, port2,...);
+    input [3:0] port1
+    output [3:0] port2
+    endmodule
+
+    or
+
+    module name
+    (
+        input [3:0] port1,
+        output[3:0] port2,
+        ...
+    );
+
+    additionally i need to be aware of the possibility that something like this happens
+
+    module name(.port1({cable1, cable2}));
+    input [1:0] cable1;
+    output [1:0] cable2;
+
+    I want to handle both of these examples the same way somehow
+    lets just get all of the information from the header and have the following functions:
+    
+    #in the header we will have these to make a port cable pair
+    create_cable(name)
+    create_port(name)
+
+    attach_wires_to_port(port, wires)
+
+    
+    '''
+
+
+    def create_or_update_cable(self, name, left_index = None, right_index = None, var_type = None, defining = False):
         cable_generator = self.current_definition.get_cables(name)
         cable = next(cable_generator, None)
         if cable == None:
@@ -1004,6 +1049,11 @@ class VerilogParser:
         else:
             in_upper = None
             in_lower = None
+
+        if defining and in_lower is not None: #if the cable width is being defined then recenter the cable
+            cable.lower_index = in_lower
+            cable_lower = cable.lower_index
+            cable_upper = cable.lower_index + len(cable.wires) - 1
 
         if in_upper is not None and in_lower is not None:
 
@@ -1067,7 +1117,7 @@ class VerilogParser:
                 pins.append(pin)
         return pins
 
-    def create_or_update_port(self, name, left_index = None, right_index = None, direction = None, definition = None):
+    def create_or_update_port(self, name, left_index = None, right_index = None, direction = None, definition = None, defining = False):
         if definition == None:
             definition = self.current_definition
 
@@ -1097,6 +1147,11 @@ class VerilogParser:
         else:
             in_upper = None
             in_lower = None
+
+        if defining and in_lower is not None: #if the cable width is being defined then recenter the cable
+            port.lower_index = in_lower
+            port_lower = port.lower_index
+            port_upper = port.lower_index + len(port.pins) - 1
 
         if in_upper is not None and in_lower is not None:
 
