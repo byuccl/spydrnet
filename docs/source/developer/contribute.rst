@@ -73,17 +73,17 @@ In the examples below, replace 1.5.0 with the version number you want to release
 
 **Creation**
 
-`git tag -a v1.5.0 -m “SpyDrNet 1.5.0”`
+>>> git tag -a v1.5.0 -m "SpyDrNet 1.5.0"
 
 **Push your changes to the tags**
 
-`git push --tags`
+>>> git push --tags
 
 **Updating**
 
-`git tag -a v1.5.0 -m “SpyDrNet 1.5.0” -f`
+>>> git tag -a v1.5.0 -m "SpyDrNet 1.5.0" -f
 
-`git push --tags -f`
+>>> git push --tags -f
 
 Building the python package
 ---------------------------
@@ -92,15 +92,15 @@ Refer to pypi.org They have a tutorial called “uploading packages”
 
 Upgrade pip if needed.
 
-`Python3 -m pip install --upgrade pip`
+>>> python3 -m pip install --upgrade pip
 
 Make sure everything is up to date
 
-`Python3 -m pip install --user --upgrade setuptools wheel`
+>>> python3 -m pip install --user --upgrade setuptools wheel
 
 Make the python archive package:
 
-`Python3 setup.py sdist bdist_wheel`
+>>> python3 setup.py sdist bdist_wheel
 
 The build files will be stored in the following directories 
 
@@ -109,13 +109,15 @@ spydrnet/build and spydrnet/dist
 Building the documentation
 --------------------------
 
-in the docs directory
+Make sure you are in the docs directory
 
-run: `make clean`
+>>> cd docs
 
-run: `make latexpdf`
+then run the followings:
 
-run: `make html`
+>>> make clean
+>>> make latexpdf
+>>> make html
 
 Make sure that each one executes and doesn't have errors. It's also nice if 
 the warnings are minimized as well, of course the most important thing is that the
@@ -144,7 +146,7 @@ to the test pip server then the production server.
 Publishing the documentation
 ----------------------------
 
-This is easiest on Linux (or at least not Windows, I'm not sure how MacOS works)
+This is easiest on Linux (or at least not Windows, MacOS works fine as well)
 
 Checkout the gh-pages branch create a new folder with the release number as the
 name. Copy the `docs/build/html` folder into the newly created folder.
@@ -154,17 +156,17 @@ be updated to point to the newly updated documentation.
 
 Check which version of the documentation the stable link points to
 
-`ls -lha`
+>>> ls -lha
 
 to update the stable link remove it first (watch syntax here very carefully, a
 terminating \ could make the command delete the folder's contents instead of the
 link)
 
-`rm stable`
+>>> rm stable
 
 then create a link to the new folder
 
-`ln -s version.number stable`
+>>> ln -s version.number stable
 
 run git add to add the newly created folder and the stable link
 
