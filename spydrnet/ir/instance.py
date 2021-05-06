@@ -17,7 +17,7 @@ class Instance(FirstClassElement):
     :ivar child: the instance itself is the child of the parent.
     :ivar reference: the item of the object. Reference is the definition of the instance.
     
-    For example, definition 1 instances definition 2. Definition 1 is the parent, the instance is the child, and definition 2 is the instance's reference.
+    For example, when writing definition 1, we instance definition 2. Definition 1 is the parent, the instance is the child, and definition 2 is the instance's reference.
 
     """
     __slots__ = ['_parent', '_reference', '_pins']
