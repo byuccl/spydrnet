@@ -127,7 +127,7 @@ SpyDrNet's intermediate representation of netlists (IR) is what sets it apart fo
     A Definition outlines the contents of each component that can be instantiated elsewhere in the design. It holds information that is pertinant to all instances of itself including subcomponents ports and connections.
 
 :class:`Instance`
-    This element holds pointers to the definition which it instances, and contains its own set of pins to be connected to within its parent definition.
+    This element holds pointers to the definition which it instances (the reference), and contains its own set of pins to be connected to within the definition that holds the instance (the parent). The instance is also called a "child" of the parent.
 
 :class:`Bundle`
     The Bundle class is a parent class of Ports and Cables because each can be thought of as an array. This class defines the structure that helps us properly represent array objects in netlists including the width, direction (to or downto) and starting index. As a parent class this class is not directly instantiated in netlist.
