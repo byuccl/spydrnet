@@ -9,12 +9,15 @@ from copy import deepcopy, copy, error
 class Instance(FirstClassElement):
     """Netlist instance of a netlist definition. 
 
-    Instances are literally instances of definitions and they reside inside definitions.
-    Function names have been set to adjust for the potential confusion that could arise because instances both have a parent definition and have definitions which they reference.
+    Instances are literally instances of definitions and they reside inside other definitions.
+    Function names have been set to prevent potential confusion that could arise because instances have both a parent definition and definitions which they reference.
 
 
-    :ivar parent: the parent of the object. Parent is the definition of the instance that contains the current instance.
-    :ivar reference: the item of the object. Reference is the definition of the instance that instantiated or defined the current instance.
+    :ivar parent: the parent of the object. Parent is the definition that instances another definition.
+    :ivar child: the instance itself is the child of the parent.
+    :ivar reference: the item of the object. Reference is the definition of the instance.
+    
+    For example, definition 1 instances definition 2. Definition 1 is the parent, the instance is the child, and definition 2 is the instance's reference.
 
     """
     __slots__ = ['_parent', '_reference', '_pins']
