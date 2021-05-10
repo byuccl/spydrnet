@@ -153,7 +153,7 @@ class Comparer:
         #zip is left here because the order of wires in cables matters.
         for orig_wire, composer_wire in zip(cable_orig.wires, cable_composer.wires):
             assert len(orig_wire.pins) == len(composer_wire.pins), \
-                "wires connect to a different number of pins"
+                "wires connect to a different number of pins " + orig_wire.cable.name + " " + composer_wire.cable.name
             for orig_pin, composer_pin in zip(orig_wire.pins, composer_wire.pins):
                 assert type(orig_pin) == type(composer_pin), \
                     "pin types do not match up."

@@ -229,6 +229,23 @@ class TestVerilogParser(unittest.TestCase):
         names = [d.cables[0].name, d.cables[1].name, d.cables[2].name]
         assert "cable1" in names and "cable2" in names and "cable3" in names
 
+    def test_port_aliasing_single(self):
+        parser = VerilogParser()
+        token_list = [".", "portName", "(", "cable1", ")"]
+        parser.tokenizer = self.TestTokenizer(token_list)
+
+        d = sdn.Definition()
+        parser.current_definition = d
+
+        parser.parse_module_header_port_alias()
+
+        assert len(d.ports) == 1
+        assert d.ports[0].name == "portName"
+        assert len(d.cables) == 1
+        assert len(d.ports[0].pins) == 1
+        assert len(d.cables[0].wires) == 1
+        assert d.cables[0].name == "cable1"
+
     def test_non_zero_lower_port_index(self):
         '''this test based on an issue found while parsing riscv_multi_core.v in the support files
         to see the problem lines that caused this test see line 89 and line 41'''
@@ -251,8 +268,8 @@ class TestVerilogParser(unittest.TestCase):
         assert len(c.wires) == 2
         assert p.name == "instruction"
         assert len(p.pins) == 2
-
-        import pdb; pdb.set_trace()
+        assert c.lower_index == 26
+        assert p.lower_index == 26
 
         for w in c.wires:
             assert w.pins[0] in p.pins
@@ -263,7 +280,68 @@ class TestVerilogParser(unittest.TestCase):
         module something(port);
         input [3:0] port;
         endmodule'''
-        pass
+        parser = VerilogParser()
+        token_list = ["module", "alu", "(", "instruction", ")", ";", "output", "[", "3", ":", "0", "]", "instruction", ";", "endmodule"]
+        tokenizer = self.TestTokenizer(token_list)
+        parser.tokenizer = tokenizer
+        parser.current_library = sdn.Library(name = "TestLibrary")
+        parser.netlist = sdn.Netlist()
+        parser.netlist.add_library(parser.current_library)
+        
+        parser.parse_module()
+
+        assert len(parser.current_definition.ports) == 1
+        assert len(parser.current_definition.cables) == 1
+        c = parser.current_definition.cables[0]
+        p = parser.current_definition.ports[0]
+        assert c.name == "instruction"
+        assert len(c.wires) == 4
+        assert p.name == "instruction"
+        assert len(p.pins) == 4
+        assert c.lower_index == 0
+        assert p.lower_index == 0
+
+        for w in c.wires:
+            assert w.pins[0] in p.pins
+
+    def test_port_resize_on_aliased_port(self):
+        '''example of this found in sha3_core.v on line 63176 or 63177 something to do with \\byte_num[0] '''
+        tokens = ["module", "keccak", "(",\
+            '.','byte_num','(','{','\\byte_num[2] ',',','\\byte_num[1] ', ',','\\byte_num[0] ','}',')',\
+            ")", ";", "input", '\\byte_num[0] ', ';', 'input', '\\byte_num[1] ', ';', 'input', '\\byte_num[2] ',';', "endmodule"]
+        tokenizer = self.TestTokenizer(tokens)
+        parser = VerilogParser()
+        parser.tokenizer = tokenizer
+        parser.current_library = sdn.Library(name = "TestLibrary")
+        parser.netlist = sdn.Netlist()
+        parser.netlist.add_library(parser.current_library)
+        
+        parser.parse_module()
+
+        assert len(parser.current_definition.ports) == 1
+        assert len(parser.current_definition.cables) == 3
+        names = []
+        for c in parser.current_definition.cables:
+            names.append(c.name)
+            assert len(c.wires) == 1
+        assert '\\byte_num[2] ' in names
+        assert '\\byte_num[1] ' in names
+        assert '\\byte_num[0] ' in names
+        assert parser.current_definition.ports[0].name == 'byte_num'
+
+
+
+    def test_parse_empty_module_header(self):
+        '''example in bram.v in the support files on line 18'''
+        tokens = ["(", ")", ";"]
+        tokenizer = self.TestTokenizer(tokens)
+        parser = VerilogParser()
+        parser.tokenizer = tokenizer
+        parser.current_definition = sdn.Definition
+
+        parser.parse_module_header() #intent is to just make sure this does not crash
+        #todo add some aserts to check to make sure the number of cables and ports is still 0
+
 
     ###################################################
     ##Array Slicing
@@ -714,7 +792,6 @@ class TestVerilogParser(unittest.TestCase):
         for p in parser.current_instance.pins:
             assert p in w_pins
 
-
     ############################################################################
     ##Port creation and modification
     ############################################################################
@@ -811,7 +888,7 @@ class TestVerilogParser(unittest.TestCase):
         self.create_port_helper(tests, parser)
 
     def test_change_port_direction(self):
-        pass #TODO
+        pass #TODO not sure yet how I should deal with this.
 
     def test_dont_change_port(self):
         parser, c1, c2, c3 = self.init_port_creation()
@@ -971,7 +1048,7 @@ class TestVerilogParser(unittest.TestCase):
             c = parser.create_or_update_cable(n)
             c.wires[0].connect_pin(p.pins[0])
 
-        for i in range(count):
+        for _ in range(count):
             parser.parse_port_declaration(dict())
 
 
@@ -992,8 +1069,8 @@ class TestVerilogParser(unittest.TestCase):
 
         #the ports are in the definition but not connected this should fail
 
-        for i in range(count):
-            parser.parse_port_declaration()
+        for _ in range(count):
+            parser.parse_port_declaration(properties = dict())
 
     def test_create_or_update_port_on_instance(self):
         parser = VerilogParser()
@@ -1007,6 +1084,108 @@ class TestVerilogParser(unittest.TestCase):
         assert len(parser.current_instance.reference.ports[0].pins) == 1
         assert len(parser.current_instance.pins) == 1
         assert len(pins) == 1
+
+    ############################################
+    ##assignment tests
+    ############################################
+
+    def test_create_new_assignment_instance(self):
+        '''make sure the name, and width make sense
+        also take advantage of the setup to make sure the definition returned is the same for the same width'''
+        parser = VerilogParser()
+        parser.netlist = sdn.Netlist()
+        parser.current_definition = sdn.Definition()
+        width = 4
+        instance = parser.create_assignment_instance(width)
+        assert len(instance.pins) == width * 2
+        assert instance.name == "SDN_VERILOG_ASSIGNMENT_" + str(width) + "_" + str(0)
+        assert instance.reference == parser.get_assignment_definition(width)
+
+    def test_create_new_assignment_definition(self):
+        '''make sure the names, width and acutal connectivity make sense'''
+        parser = VerilogParser()
+        parser.netlist = sdn.Netlist()
+        parser.current_definition = sdn.Definition()
+        width = 4
+        definition = parser.get_assignment_definition(width)
+        assert definition.name == "SDN_VERILOG_ASSIGNMENT_" + str(width)
+        assert len(definition.ports) == 2
+        assert len(definition.ports[0].pins) == width
+        assert len(definition.ports[1].pins) == width
+        assert len(definition.cables) == 1
+        for i in range(width):
+            assert definition.ports[0].pins[i] in definition.cables[0].wires[i].pins
+            assert definition.ports[1].pins[i] in definition.cables[0].wires[i].pins
+
+
+    def test_connect_assigned_wires(self):
+        '''make sure the wires are actually connected to the instance and that the connectivity makes sense'''
+        parser = VerilogParser()
+        parser.netlist = sdn.Netlist()
+        parser.current_definition = sdn.Definition()
+        o_cable = parser.current_definition.create_cable(name = "c1")
+        i_cable = parser.current_definition.create_cable(name = "c2")
+        o_cable.create_wires(4)
+        i_cable.create_wires(4)
+        parser.connect_wires_for_assign(o_cable, 1, 0, i_cable, 3, 2)
+
+
+    def test_names_of_instances_are_different(self):
+        '''make sure the names of multiple instances of the same width are different'''
+        parser = VerilogParser()
+        parser.netlist = sdn.Netlist()
+        parser.current_definition = sdn.Definition()
+        width = 4
+        inst1 = parser.create_assignment_instance(width)
+        inst2 = parser.create_assignment_instance(width)
+        assert inst1.name == "SDN_VERILOG_ASSIGNMENT_" + str(width) + "_" + str(0)
+        assert inst2.name == "SDN_VERILOG_ASSIGNMENT_" + str(width) + "_" + str(1)
+
+    def test_parse_assign(self):
+        parser = VerilogParser()
+        parser.netlist = sdn.Netlist()
+        parser.current_definition = sdn.Definition()
+        tokens = ["assign", "cable1", "=", "cable2", ";", "assign", "SR2", "[", "2", "]", "=", "\\<const0> ", ";"]
+        tokenizer = self.TestTokenizer(tokens)
+        parser.tokenizer = tokenizer
+        c1, o_left, o_right, c2, i_left, i_right = parser.parse_assign()
+        assert c1.name == "cable1"
+        assert c2.name == "cable2"
+        assert o_left == None
+        assert o_right == None
+        assert i_left == None
+        assert i_right == None
+        c1, o_left, o_right, c2, i_left, i_right = parser.parse_assign()
+        assert c1.name == "SR2"
+        assert c2.name == "\\<const0> "
+        assert o_left == 2
+        assert o_right == None
+        assert i_left == None
+        assert i_right == None
+
+    ############################################
+    ##Parse star parameters
+    ############################################
+    
+    def test_parse_star_with_value(self):
+        tokens = ['(', '*', 'key', '=', 'value', '*', ')']
+        tokenizer = self.TestTokenizer(tokens)
+        parser = VerilogParser()
+        parser.tokenizer = tokenizer
+        
+        k,v = parser.parse_star_property()
+        assert k == "key"
+        assert v == "value"
+
+    def test_parser_star_without_value(self):
+        tokens = ['(', '*', 'key', '*', ')']
+        tokenizer = self.TestTokenizer(tokens)
+        parser = VerilogParser()
+        parser.tokenizer = tokenizer
+        
+        k,v = parser.parse_star_property()
+        assert k == "key"
+        assert v is None
 
     ############################################
     ##test helpers

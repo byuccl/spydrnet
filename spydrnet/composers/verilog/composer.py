@@ -65,165 +65,292 @@ class Composer:
             return
         need_end_primitive = False
         if "VERILOG.primitive" in definition and definition["VERILOG.primitive"] == True:
-            #I need to write out the primitive cell definition.
-            need_end_primitive = True
-            self.file.write("`celldefine\n")
-        self.file.write("module ")
-        self._write_escapable_name(definition.name)
-        self.file.write("\n")
-        self._write_ports(definition)
+            #do I need to write out the primitive cell definition?
+            # need_end_primitive = True
+            # self.file.write("`celldefine\n")
+            pass
+        else:
+            self.file.write("module ")
+            self._write_escapable_name(definition.name)
+            self.file.write("\n")
+            self._write_ports(definition)
 
-        for c in definition.cables:
-            self._write_cable(c)
+            for c in definition.cables:
+                self._write_cable(c)
 
-        for i in definition.children:
-            if i.reference.library.name == "SDN_VERILOG_ASSIGNMENT":
-                self._write_assignments(i)
-            else:
-                self._write_instanciation(i)
+            for i in definition.children:
+                if i.reference.library.name == "SDN_VERILOG_ASSIGNMENT":
+                    self._write_assignments(i)
+                else:
+                    self._write_instanciation(i)
+            
+            # for c in definition.cables:
+            #     self._write_assignments(c)
+
+            self.file.write("endmodule\n")
+        # if need_end_primitive:
+        #     self.file.write("`endcelldefine\n")
+
+    def _get_wire_indicies_in_cable(self, wire):
+        '''return the index of the given wire'''
+        cable = wire.cable
+        return cable.wires.index(wire) + cable.lower_index
+
+
+    def _get_assignment_cable_indicies_from_port(self, port, instance):
+        '''get the cable associated with the outer pins on the instance's port.'''
         
-        # for c in definition.cables:
-        #     self._write_assignments(c)
+        right_pin = port.pins[0]
+        left_pin = port.pins[-1]
+        right_pin = instance.pins[right_pin]
+        left_pin = instance.pins[left_pin]
+        
+        
+        
+        left_wire = left_pin.wire
+        right_wire = right_pin.wire
+        assert left_wire.cable == right_wire.cable
 
-        self.file.write("endmodule\n")
-        if need_end_primitive:
-            self.file.write("`endcelldefine\n")
+        if not left_wire.cable.is_downto:
+            temp = right_wire
+            right_pin = left_wire
+            left_wire = temp
+
+        left = self._get_wire_indicies_in_cable(left_wire)
+        right = self._get_wire_indicies_in_cable(right_wire)
+
+        name = left_wire.cable.name
+
+        cable = left_wire.cable
+
+        if max(left,right) == (cable.lower_index + len(cable.wires) - 1) and min(left, right) == cable.lower_index:
+            left = None
+            right = None
+        elif left == right:
+            left = None
+        
+
+        return name, left, right
 
     def _get_assignment_indicies(self, instance):
-        porta = instance.reference.ports[0]
-        portb = instance.reference.ports[1]
-        name_list = instance.name.split("_")
-        width = int(name_list[3])
-        pin1 = instance.pins[porta.pins[0]]
-        pin2 = instance.pins[porta.pins[width-1]]
-        pin3 = instance.pins[portb.pins[0]]
-        pin4 = instance.pins[portb.pins[width - 1]]
-        wire1 = pin1.wire
-        wire2 = pin2.wire
-        wire3 = pin3.wire
-        wire4 = pin4.wire
-        cable1 = wire1.cable
-        cable2 = wire3.cable
-        if width == 1:
-            if len(cable1.wires) == width:
-                index1 = None
-                index2 = None
-            else:
-                index1 = cable1.wires.index(wire1) + cable1.lower_index
-                index2 = None
-            if len(cable2.wires) == width:
-                index3 = None
-                index4 = None
-            else:
-                index3 = cable2.wires.index(wire3) + cable2.lower_index
-                index4 = None
-        else:
-            if len(cable1.wires) == width:
-                index1 = None
-                index2 = None
-            else:
-                index1 = cable1.wires.index(wire1) + cable1.lower_index
-                index2 = cable1.wires.index(wire2) + cable1.lower_index
-            if len(cable2.wires) == width:
-                index3 = None
-                index4 = None
-            else:
-                index3 = cable2.wires.index(wire3) + cable2.lower_index
-                index4 = cable2.wires.index(wire4) + cable2.lower_index
+        '''it should only be one cable per assignment port the instance must also be an assignment instance'''
+        definition = instance.reference
+        in_port = next(definition.get_ports("i"), None)
+        assert in_port != None
+        out_port = next(definition.get_ports("o"), None)
+        assert out_port != None
 
-        return cable1.name, cable2.name, index1, index2, index3, index4
+        cable_in_name, in_left, in_right = self._get_assignment_cable_indicies_from_port(in_port, instance)
+        cable_out_name, out_left, out_right = self._get_assignment_cable_indicies_from_port(out_port, instance)
+
+        return cable_in_name, cable_out_name, in_left, in_right, out_left, out_right
+    # def _get_assignment_indicies(self, instance):
+    #     porta = instance.reference.ports[0]
+    #     portb = instance.reference.ports[1]
+    #     name_list = instance.name.split("_")
+    #     width = int(name_list[3])
+    #     pin1 = instance.pins[porta.pins[0]]
+    #     pin2 = instance.pins[porta.pins[width-1]]
+    #     pin3 = instance.pins[portb.pins[0]]
+    #     pin4 = instance.pins[portb.pins[width - 1]]
+    #     wire1 = pin1.wire
+    #     wire2 = pin2.wire
+    #     wire3 = pin3.wire
+    #     wire4 = pin4.wire
+    #     cable1 = wire1.cable
+    #     cable2 = wire3.cable
+    #     if width == 1:
+    #         if len(cable1.wires) == width:
+    #             index1 = None
+    #             index2 = None
+    #         else:
+    #             index1 = cable1.wires.index(wire1) + cable1.lower_index
+    #             index2 = None
+    #         if len(cable2.wires) == width:
+    #             index3 = None
+    #             index4 = None
+    #         else:
+    #             index3 = cable2.wires.index(wire3) + cable2.lower_index
+    #             index4 = None
+    #     else:
+    #         if len(cable1.wires) == width:
+    #             index1 = None
+    #             index2 = None
+    #         else:
+    #             index1 = cable1.wires.index(wire1) + cable1.lower_index
+    #             index2 = cable1.wires.index(wire2) + cable1.lower_index
+    #         if len(cable2.wires) == width:
+    #             index3 = None
+    #             index4 = None
+    #         else:
+    #             index3 = cable2.wires.index(wire3) + cable2.lower_index
+    #             index4 = cable2.wires.index(wire4) + cable2.lower_index
+
+    #     return cable1.name, cable2.name, index1, index2, index3, index4
         
 
     def _write_assignment_single_cable(self, cable_name, low, high):
         self._write_escapable_name(cable_name)
-        if low != None:
+        if high != None:
             self.file.write("[")
-            self.file.write(str(low))
-            if high!=None:
+            self.file.write(str(high))
+            if low!=None:
                 self.file.write(":")
-                self.file.write(str(high))
+                self.file.write(str(low))
             self.file.write("]")
 
     def _write_assignments(self, instance):
-        cable1_name, cable2_name, left_low, left_high, right_low, right_high = self._get_assignment_indicies(instance)
+        cable_in_name, cable_out_name, in_low, in_high, out_low, out_high = self._get_assignment_indicies(instance)
         self.file.write("assign ")
-        self._write_assignment_single_cable(cable1_name, left_low, left_high)
+        self._write_assignment_single_cable(cable_out_name, out_low, out_high)
         self.file.write(" = ")
-        self._write_assignment_single_cable(cable2_name, right_low, right_high)
+        self._write_assignment_single_cable(cable_in_name, in_low, in_high)
         self.file.write(";\n")
 
-    def _write_ports(self, definition):
-        self.file.write("(\n    ")
-        first = True
-        port_to_rename = dict()
-        in_rename = set()
-        for p in definition.ports:
-            highest_position = 0
-            rename_members = OrderedDict()
-            for k,v in p.data.items():
-                k = k.split(".")
-                if k[0] == "VERILOG" and k[1] == "port_rename":
-                    rename = True
-                    position = k[2]
-                    if int(position) > highest_position:
-                        highest_position = int(position)
-                    rename_members[int(position)] = v
-                elif k[0] == "VERILOG" and k[1] == "port_rename_member" and v == "true":
-                    in_rename.add(p)
-                    continue
+    # def _write_ports(self, definition):
+    #     self.file.write("(\n    ")
+    #     first = True
+    #     port_to_rename = dict()
+    #     in_rename = set()
+    #     for p in definition.ports:
+    #         highest_position = 0
+    #         rename_members = OrderedDict()
+    #         for k,v in p.data.items():
+    #             k = k.split(".")
+    #             if k[0] == "VERILOG" and k[1] == "port_rename":
+    #                 rename = True
+    #                 position = k[2]
+    #                 if int(position) > highest_position:
+    #                     highest_position = int(position)
+    #                 rename_members[int(position)] = v
+    #             elif k[0] == "VERILOG" and k[1] == "port_rename_member" and v == "true":
+    #                 in_rename.add(p)
+    #                 continue
 
-            if len(rename_members.keys()) == 0:
-                pass
-            elif len(rename_members.keys()) == 1:
-                port_to_rename[p] = rename_members[0]
-            else:
-                rename_str = "{ "
-                for i in range(highest_position+1):
-                    if i == 0:
-                        pass
-                    else:
-                        rename_str += " , "
-                    rename_str += rename_members[i]
+    #         if len(rename_members.keys()) == 0:
+    #             pass
+    #         elif len(rename_members.keys()) == 1:
+    #             port_to_rename[p] = rename_members[0]
+    #         else:
+    #             rename_str = "{ "
+    #             for i in range(highest_position+1):
+    #                 if i == 0:
+    #                     pass
+    #                 else:
+    #                     rename_str += " , "
+    #                 rename_str += rename_members[i]
                     
-                rename_str += " } "
-                port_to_rename[p] = rename_str
+    #             rename_str += " } "
+    #             port_to_rename[p] = rename_str
                     
-        for p in definition.ports:
-            if p in in_rename:
-                continue
+    #     for p in definition.ports:
+    #         if p in in_rename:
+    #             continue
               
-            if first:
-                #self.file.write(p.name)    
-                first = False
+    #         if first:
+    #             #self.file.write(p.name)    
+    #             first = False
+    #         else:
+    #             self.file.write(",\n    ")
+    #             #self.file.write(p.name)
+    #         if p in port_to_rename:
+    #             self.file.write(".")
+    #             self._write_escapable_name(p.name)
+    #             self.file.write("(")
+    #             self.file.write(port_to_rename[p])
+    #             self.file.write(")")
+    #         else:
+    #             self._write_escapable_name(p.name)
+    #     self.file.write("\n);\n")
+    #     for p in definition.ports:
+    #         if p in port_to_rename:
+    #             continue
+            
+    #         self.file.write(self.direction_string_map[p.direction])
+    #         self.file.write(" ")
+    #         if not p.is_scalar:
+    #             if p.is_downto:
+    #                 left = p.lower_index + len(p.pins) - 1
+    #                 right = p.lower_index
+    #             else:
+    #                 left = p.lower_index
+    #                 right = p.lower_index + len(p.pins) - 1
+    #             self.file.write("["+str(left)+":"+str(right)+"]")
+    #         #self.file.write(p.name)
+    #         self._write_escapable_name(p.name)
+    #         self.file.write(";\n")
+
+    def _write_ports(self, definition):
+        '''write all ports in the netlist. needs to take into account port aliasing as well'''
+        self._write_header_ports(definition)
+        self._write_port_list(definition)
+
+    
+    def _write_header_ports(self, definition):
+        self.file.write("(")
+        first = "\n    "
+        for p in definition.ports:
+            cables = self._get_cable_list_from_port(p)
+            self.file.write(first)
+            cable = cables.pop()
+            if len(cables) == 0 and cable.name == p.name:
+                self._write_escapable_name(p.name)
             else:
-                self.file.write(",\n    ")
-                #self.file.write(p.name)
-            if p in port_to_rename:
+                wires = self._get_wires_list_from_port(p)
                 self.file.write(".")
                 self._write_escapable_name(p.name)
-                self.file.write("(")
-                self.file.write(port_to_rename[p])
-                self.file.write(")")
-            else:
-                self._write_escapable_name(p.name)
+                self.file.write("({")
+                between = ""
+                for w in wires:
+                    self.file.write(between)
+                    if w is not None:
+                        self._write_escapable_name(w.cable.name)
+                        index = self._get_wire_indicies_in_cable(w)
+                        self.file.write("[" + str(index) + "]")
+                    between = ", "
+                self.file.write("})")
+
+            first = ",\n    "
         self.file.write("\n);\n")
+
+    def _get_wires_list_from_port(self, port):
+        wires = list()
+        none_exist = True
+        for p in port.pins:
+            if p.wire is not None:
+                none_exist = False
+            wires.append(p.wire)
+        if none_exist:
+            return list()
+        return wires
+
+
+    def _get_cable_list_from_port(self, port):
+        cables = set()
+        for p in port.pins:
+            if p.wire != None:
+                cables.add(p.wire.cable)
+        return cables
+
+    def _write_port_list(self, definition):
+        first = "\n"
         for p in definition.ports:
-            if p in port_to_rename:
-                continue
-            
-            self.file.write(self.direction_string_map[p.direction])
-            self.file.write(" ")
-            if not p.is_scalar:
-                if p.is_downto:
-                    left = p.lower_index + len(p.pins) - 1
-                    right = p.lower_index
-                else:
-                    left = p.lower_index
-                    right = p.lower_index + len(p.pins) - 1
-                self.file.write("["+str(left)+":"+str(right)+"]")
-            #self.file.write(p.name)
-            self._write_escapable_name(p.name)
-            self.file.write(";\n")
+            cables = self._get_cable_list_from_port(p)
+            for c in cables:
+                self.file.write(first)
+                self.file.write(self.direction_string_map[p.direction])
+                self.file.write(" ")
+                if len(c.wires) > 1 or c.lower_index != 0:
+                    left = c.lower_index + len(c.wires) -1
+                    right = c.lower_index
+                    if not c.is_downto:
+                        temp = left
+                        left = right
+                        right = temp
+                    self.file.write("[" + str(left) + ":" + str(right) + "]")
+                self._write_escapable_name(c.name)
+                self.file.write(";")
+        self.file.write("\n\n")
 
     def _write_cable(self, cable):
         self.file.write("wire ")
