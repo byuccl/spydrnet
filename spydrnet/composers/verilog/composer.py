@@ -64,32 +64,31 @@ class Composer:
             #no need to write assignment definitions.
             return
         need_end_primitive = False
-        if "VERILOG.primitive" in definition and definition["VERILOG.primitive"] == True:
-            #do I need to write out the primitive cell definition?
-            # need_end_primitive = True
-            # self.file.write("`celldefine\n")
-            pass
-        else:
-            self.file.write("module ")
-            self._write_escapable_name(definition.name)
-            self.file.write("\n")
-            self._write_ports(definition)
+        #if "VERILOG.primitive" in definition and definition["VERILOG.primitive"] == True:
+        if definition.library.name == "SDN.verilog_primitives":
+            need_end_primitive = True
+            self.file.write("`celldefine\n")
+        # else:
+        self.file.write("module ")
+        self._write_escapable_name(definition.name)
+        self.file.write("\n")
+        self._write_ports(definition)
 
-            for c in definition.cables:
-                self._write_cable(c)
+        for c in definition.cables:
+            self._write_cable(c)
 
-            for i in definition.children:
-                if i.reference.library.name == "SDN_VERILOG_ASSIGNMENT":
-                    self._write_assignments(i)
-                else:
-                    self._write_instanciation(i)
-            
-            # for c in definition.cables:
-            #     self._write_assignments(c)
+        for i in definition.children:
+            if i.reference.library.name == "SDN_VERILOG_ASSIGNMENT":
+                self._write_assignments(i)
+            else:
+                self._write_instanciation(i)
+        
+        # for c in definition.cables:
+        #     self._write_assignments(c)
 
-            self.file.write("endmodule\n")
-        # if need_end_primitive:
-        #     self.file.write("`endcelldefine\n")
+        self.file.write("endmodule\n")
+        if need_end_primitive:
+            self.file.write("`endcelldefine\n")
 
     def _get_wire_indicies_in_cable(self, wire):
         '''return the index of the given wire'''

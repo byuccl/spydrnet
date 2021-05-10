@@ -55,6 +55,9 @@ PRIMITIVE = 'primitive'
 END_PRIMITIVE = 'endprimitive'
 FUNCTION = 'function'
 END_FUNCTION = 'endfunction'
+TASK = 'task'
+END_TASK = 'endtask'
+INTEGER = 'integer'
 
 #SET OF ALL THINGS THAT WILL END AN IDENTIFIER IF THEY ARE NOT ESCAPED.
 #elif ch in {'(', ')', '.', ',', ';', '[', ']', ':', "{", "}", "*", "#", "`"}:
@@ -105,6 +108,7 @@ ALL_VERILOG_TOKENS = {
     OPEN_BLOCK_COMMENT,\
     CLOSE_BLOCK_COMMENT,\
     OPEN_LINE_COMMENT,\
+    INTEGER,\
 }
 
 def is_valid_identifier(token):

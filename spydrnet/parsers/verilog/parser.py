@@ -263,6 +263,7 @@ class VerilogParser:
 
     def parse_verilog(self):
         self.netlist = sdn.Netlist()
+        self.netlist.name = "SDN_VERILOG_NETLIST"
         self.work = self.netlist.create_library("work")
         self.primitives = self.netlist.create_library("SDN.verilog_primitives")
         self.current_library = self.work
@@ -336,47 +337,50 @@ class VerilogParser:
 
     def parse_primitive(self):
         '''simply skips the whole definition:'''
-        token = self.next_token()
-        if token == vt.MODULE:
-            while token != vt.END_MODULE:
-                token = self.next_token()
+        # token = self.next_token()
+        # if token == vt.MODULE:
+        #     while token != vt.END_MODULE:
+        #         token = self.next_token()
 
-        elif token == vt.PRIMITIVE:
-            while token != vt.END_PRIMITIVE:
-                token = self.next_token()
+        # elif token == vt.PRIMITIVE:
+        #     while token != vt.END_PRIMITIVE:
+        #         token = self.next_token()
         #to use these definitions uncomment the following
-        # '''similar to parse module but it will only look for the inputs and outputs to get an idea of how those things look'''
+        '''similar to parse module but it will only look for the inputs and outputs to get an idea of how those things look'''
 
-        # token = self.next_token()
-        # assert token == vt.MODULE or token == vt.PRIMITIVE, self.error_string(vt.MODULE, "to begin module statement", token)
-        # token = self.next_token()
-        # assert vt.is_valid_identifier(token), self.error_string("identifier", "not a valid module name", token)
-        # name = token
+        token = self.next_token()
+        assert token == vt.MODULE or token == vt.PRIMITIVE, self.error_string(vt.MODULE, "to begin module statement", token)
+        token = self.next_token()
+        assert vt.is_valid_identifier(token), self.error_string("identifier", "not a valid module name", token)
+        name = token
 
-        # definition = self.blackbox_holder.get_blackbox(name)
-        # self.blackbox_holder.define(name)
-        # self.current_library.add_definition(definition)
-        # self.current_definition = definition
+        definition = self.blackbox_holder.get_blackbox(name)
+        self.blackbox_holder.define(name)
+        self.current_library.add_definition(definition)
+        self.current_definition = definition
 
-        # #uses the same header parser because the primitives and regular cells have the same header.
-        # self.parse_module_header()
+        #uses the same header parser because the primitives and regular cells have the same header.
+        self.parse_module_header()
 
 
-        # self.parse_primitive_body()
+        self.parse_primitive_body()
 
 
 
     def parse_primitive_body(self):
-        ''' just look for port information'''
+        ''' just look for port information, skip tasks and functions to help out.'''
         
         token = self.peek_token()
 
         while token != vt.END_MODULE and token != vt.END_PRIMITIVE:
             token = self.peek_token()
-            if token == vt.FUNCTION:
+            if token == vt.FUNCTION: #these constructs may contain input output or inout
                 while token != vt.END_FUNCTION:
                     token = self.next_token()
-            if token in vt.PORT_DIRECTIONS:
+            elif token == vt.TASK: #these constructs may contain input output or inout
+                while token != vt.END_TASK:
+                    token = self.next_token()
+            elif token in vt.PORT_DIRECTIONS:
                 self.parse_port_declaration(dict())
             else:
                 token = self.next_token()
@@ -396,7 +400,9 @@ class VerilogParser:
         self.assignment_count = 0
         if self.netlist.top_instance is None:
             self.netlist.top_instance = sdn.Instance()
+            self.netlist.top_instance.name = definition.name + "_top"
             self.netlist.top_instance.reference = definition
+            self.netlist.name = "SDN_VERILOG_NETLIST_" + definition.name
 
         self.parse_module_header()
 
@@ -449,7 +455,11 @@ class VerilogParser:
             key += token
 
             token = self.next_token()
-            assert token == "="
+            if key == vt.INTEGER:
+                key += " " + token
+                token = self.next_token()
+
+            assert token == vt.EQUAL, self.error_string(vt.EQUAL, "in parameter list", token)
 
             token = self.next_token()
             #not really sure what to assert here.

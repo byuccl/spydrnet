@@ -29,7 +29,7 @@ class TestCompareNetlists(unittest.TestCase):
                 continue
             self.compare_parser_and_composer(filename, ii, "edf")
 
-    @unittest.skip("Test takes a long time right now.")
+    #@unittest.skip("Test takes a long time right now.")
     def test_large_verilog(self):
         for ii, filename in enumerate(self.verilog_files):
             if os.path.getsize(filename) <= 1024 * 10:
