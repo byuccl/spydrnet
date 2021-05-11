@@ -124,7 +124,7 @@ SpyDrNet's intermediate representation of netlists (IR) is what sets it apart fo
     This netlist element contains an ordered collection of cell or module definitions associated with a library.
     
 :class:`Definition`
-    A Definition outlines the contents of each component that can be instantiated elsewhere in the design. It holds information that is pertinant to all instances of itself including subcomponents ports and connections.
+    A Definition outlines the contents of each component that can be instantiated elsewhere in the design. It holds information that is pertinent to all instances of itself including subcomponents ports and connections.
 
 :class:`Instance`
     This element holds pointers to the definition which it instances (the reference), and contains its own set of pins to be connected to within the definition that holds the instance (the parent). The instance is also called a "child" of the parent.
@@ -145,7 +145,7 @@ SpyDrNet's intermediate representation of netlists (IR) is what sets it apart fo
     These pins are collected in Ports and are contained on the inside of the definitions. There is one set of inner pins per definition but they could refer to several sets of OuterPins.
 
 :class:`OuterPin`
-    These pins are collected on instances. They let us distinguish between connections to multiple instances of a single definition. These objects remove the need to carefuly track hierarcy while navigating a netlist.
+    These pins are collected on instances. They let us distinguish between connections to multiple instances of a single definition. These objects remove the need to carefuly track hierarchy while navigating a netlist.
 
 :class:`Wire`
     Wires are grouped inside cables and are elements that help hold connection information between single pins on instances within a definition and within its ports.
