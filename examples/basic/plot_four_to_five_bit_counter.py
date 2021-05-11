@@ -14,6 +14,8 @@ import spydrnet as sdn
 # identifier: The string identifier the the port we want
 # Returns associated outer_pin or None if instance
 # Note: Only works with ports of length 1
+
+
 def get_pin(instance, identifier):
     # Loop through each key-map pair of instance's pin
     for inner_pin, outer_pin in instance.pins.items():
@@ -29,10 +31,13 @@ def get_pin(instance, identifier):
 ir = sdn.load_example_netlist_by_name("fourBitCounter")
 
 # Retrieves needed libraries and definitions
-primitives_library = next(x for x in ir.libraries if x['EDIF.identifier'] == 'hdi_primitives')
+primitives_library = next(
+    x for x in ir.libraries if x['EDIF.identifier'] == 'hdi_primitives')
 work_library = next(x for x in ir.libraries if x['EDIF.identifier'] == 'work')
-fdce_definition = next(x for x in primitives_library.definitions if x['EDIF.identifier'] == 'FDCE')
-obuf_definition = next(x for x in primitives_library.definitions if x['EDIF.identifier'] == 'OBUF')
+fdce_definition = next(
+    x for x in primitives_library.definitions if x['EDIF.identifier'] == 'FDCE')
+obuf_definition = next(
+    x for x in primitives_library.definitions if x['EDIF.identifier'] == 'OBUF')
 
 # The example does not contain a needed primitive definition so we need to create it
 # Create a new definition and places it in primitives_library
@@ -57,7 +62,7 @@ output_port.direction = sdn.OUT
 # Create the pins that the new port will use
 output_port.create_pins(1)
 # Set the identifier that the new port will use
-output_port['EDIF.identifier'] = "O"    
+output_port['EDIF.identifier'] = "O"
 
 # Gets the definition that represents the top module
 top_def = ir.top_instance.reference
@@ -108,14 +113,20 @@ rst = None
 for cable in top_def.cables:
     if cable['EDIF.identifier'] == 'inc_dec_IBUF':
         inc_wire = cable.wires[0]
-    elif cable['EDIF.identifier'] == 'out_OBUF_0_':
+    # elif cable['EDIF.identifier'] == 'out_OBUF_0_':
+    #     out0 = cable.wires[0]
+    # elif cable['EDIF.identifier'] == 'out_OBUF_1_':
+    #     out1 = cable.wires[0]
+    # elif cable['EDIF.identifier'] == 'out_OBUF_2_':
+    #     out2 = cable.wires[0]
+    # elif cable['EDIF.identifier'] == 'out_OBUF_3_':
+    #     out3 = cable.wires[0]
+    elif cable['EDIF.identifier'] == 'out_OBUF':
         out0 = cable.wires[0]
-    elif cable['EDIF.identifier'] == 'out_OBUF_1_':
-        out1 = cable.wires[0]
-    elif cable['EDIF.identifier'] == 'out_OBUF_2_':
-        out2 = cable.wires[0]
-    elif cable['EDIF.identifier'] == 'out_OBUF_3_':
-       out3 = cable.wires[0]
+        out1 = cable.wires[1]
+        out2 = cable.wires[2]
+        out3 = cable.wires[3]
+
     elif cable['EDIF.identifier'] == 'clk_IBUF_BUFG':
         clk = cable.wires[0]
     elif cable['EDIF.identifier'] == 'enable_IBUF':
@@ -192,6 +203,6 @@ for pin in out_port.pins:
     if temp is not None:
         # Preserve what the wire was
         old_wire = temp
-        
+
 print()
 print("The counter is now a five bit counter.")

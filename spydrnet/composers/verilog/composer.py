@@ -56,7 +56,8 @@ class Composer:
             for c in definition.children:
                 if c.reference not in self.written:
                     to_write.append(c.reference)
-            # print("writing definition", definition.name)
+            if definition.name is None:
+                raise Exception("Definition: ",definition, " .name is undefined")
             self._write_definition_single(definition)
 
     def _write_definition_single(self, definition):
@@ -70,6 +71,7 @@ class Composer:
             self.file.write("`celldefine\n")
         # else:
         self.file.write("module ")
+
         self._write_escapable_name(definition.name)
         self.file.write("\n")
         self._write_ports(definition)
@@ -503,12 +505,6 @@ class Composer:
         return val + cable.lower_index
 
     def _get_indexed_name_from_cable(self, cable, low_index, high_index, downto):
-        assert low_index >= cable.lower_index and\
-            high_index >= low_index and \
-            high_index <= cable.lower_index + len(cable.wires) - 1,\
-            "cable indicies out of range"
-        if len(cable.wires) == 1:
-            return cable.name
         if cable.is_downto == downto:
             if low_index == cable.lower_index:
                 if high_index == cable.lower_index + len(cable.wires) - 1:
@@ -580,8 +576,7 @@ class Composer:
         # return string_to_write
 
     def _write_escapable_name(self, str_in):
-        self.file.write(str_in)
-        # if str_in[0] == "\\":
-        #     self.file.write(str_in + " ")
-        # else:
-        #     self.file.write(str_in)
+        if str_in[0] == "\\":
+            self.file.write(str_in + " ")
+        else:
+            self.file.write(str_in)

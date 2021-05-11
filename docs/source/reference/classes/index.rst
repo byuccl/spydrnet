@@ -5,7 +5,7 @@ API Summary
 ===========
 
 The SpyDrNet API can be used to create, analyze, and transform a netlist. Netlist are represented in memory in an Intermediate Representation. :numref:`fig:ExampleIR` show the representation of a simple circuit in the SpyDrNet Intermediate Representation.
-
+If you would like an example of using the SpyDrNet tool to create a netlist like this, click :ref:`here <sphx_glr_auto_examples_basic_minimal.py>`  
 
 .. _fig:ExampleIR:
 .. figure:: ../../figures/ExampleCircuit.png

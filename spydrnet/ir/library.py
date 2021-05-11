@@ -207,5 +207,15 @@ class Library(FirstClassElement):
         c._clone_rip(memo)
         return c
 
-    def __repr__(self):
-        return "<spydrnet.definition " + str(self.name) + ", definitions:"+str(len(self.definitions)) + ">"
+    def __str__(self):
+        """Re-define the print function so it is easier to read"""
+        rep = super().__str__()
+        rep = rep[:-1] + '; '
+        if self.netlist is None:
+            rep += 'parent netlist undefined'
+        elif self.netlist.name is None:
+            rep += 'parent netlist.name undefined'
+        else:
+            rep += 'parent netlist.name \'' + self.netlist.name + '\''
+        rep += '>'
+        return rep

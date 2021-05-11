@@ -94,3 +94,14 @@ class FirstClassElement(Element):
     def get(self, *args, **kwargs):
         """get the item from the data structure"""
         return self._data.get(*args, **kwargs)
+
+    def __str__(self):
+        """Re-define the print function so it is easier to read"""
+        rep = str(type(self))
+        rep = rep[:-1] + '; '
+        if self.name is None:
+            rep += 'name undefined'
+        else:
+            rep += 'name \'' + self.name + '\''
+        rep += '>'
+        return rep
