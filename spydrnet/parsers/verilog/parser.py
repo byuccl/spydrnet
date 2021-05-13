@@ -22,30 +22,21 @@ class VerilogParser:
     the first token to expect in a function will be the token that starts that construct.
     '''
 
-    '''some notes:
-
-    port aliasing: .my_in_port({bit1, bit2, bit3, bit4})
-    Port aliasing happens in some Xlinix generated netlists
-    the port name for example my_in_port is used by all refernces outside the module
-    the names bit1, bit2, bit3, bit4 are used interally including for declaring the definition
-    So how do I know that the concatenated cables line up with the port?
-    I plan to have other port creation methods create a cable with the same name as the port (to allow for mapping to instances directly)
-    in the case of an alias the cable name will just be different than the port name.
-    options not chosen: have the ports and the cables be assigned
-
-    pass
-    todo: need to setup a way to let the ports lower index be floating until it's defined later. when a blackbox is instantiated
-    that has a port that is perhaps not 0 lower indexed then the current system may do something wrong when the port is given its proper
-    lower index. for now, it is required that all ports lower indicies are 0 
-
-    assignments can be kept in an assignment dictionary that will map a name to a group of wires like a cable. 
-    This will take the shape of a class that is name with a group of wires. kindof like a cable but the wires will
-    all need to belong to another cable. this is used uniquely for lookups and will not remain in the
-    intermediate representation
-
-    on compose assignments can be generated when there would otherwise be a concatenation operator in a port map
-    
-    '''
+    #########################################################
+    ##Note to contributors
+    #########################################################
+    #I have tried to follow the convention that each function
+    #parses all of the construct it is designed to parse
+    #for example the parse module function will call the parse
+    #instance function. It will not consume any of the tokens
+    #that belong to the instance instantations including the
+    #semi colon
+    #
+    #I would suggest following this convention even on constructs
+    #where the first word is always the same.
+    #the small overhead of using the peek function to not consume
+    #the token has been well worth it.
+    # --Dallin
 
     #########################################################
     ##helper classes
@@ -54,65 +45,9 @@ class VerilogParser:
     
 
 
-    # class AssignmentManager:
-
-    #     class AssignmentCable:
-
-    #         '''
-    #         assignments are basically a name mapped to some wires.
-    #         '''
-
-    #         def __init__(self, wires = [], lower_index = 0):
-    #             self.wires = wires
-    #             self.lower_index = wires
-
-    #         def get_wires(self, left, right):
-    #             '''
-    #             get the wires out of the wires list that correspond to the left and right
-    #             indicies.
-    #             '''
-    #             index = None
-    #             if left is not None and right is not None:
-    #                 l = left - self.lower_index
-    #                 r = right - self.lower_index + 1
-    #                 return self.wires[l:r]
-    #             elif right is not None:
-    #                 index = right
-    #             elif left is not None:
-    #                 index = left
-    #             else:
-    #                 return self.wires
-    #             return [self.wires[index]]
-        
-    #     def __init__(self):
-    #         self.assignment_dict = dict()
-        
-    #     def is_assigned(self, name):
-    #         return name in self.assignment_dict
-        
-    #     def create_assign(self, name, wires, lower_index):
-    #         aca = self.AssignmentCable(wires, lower_index)
-    #         self.assignment_dict[name] = aca
-
-    #     def get_wires(self, name, left, right):
-    #         self.assignment_dict[name].get_wires(left, right)
-
-    # class CableSuggestionHolder:
-
-    #     def __init__(self):
-    #         self.defined = set()
-
-    #     def clear(self):
-    #         self.defined = set()
-
-    #     def define_cable(self, cable):
-    #         self.defined.add(cable)
-
-    #     def is_defined(self, cable):
-    #         return cable in self.defined
-
-
     class BlackboxHolder:
+        '''this is an internal class that helps manage
+        modules that are instanced before they are declared'''
         
         def __init__(self):
             self.name_lookup = dict()
@@ -138,29 +73,7 @@ class VerilogParser:
             for v in self.name_lookup.values():
                 if v not in self.defined:
                     undef.add(v)
-            return undef
-
-    # class PortSuggestionHolder:
-
-    #     def __init__(self):
-    #         self.port_suggested = set()
-    #         self.port_defined = set()
-        
-    #     def is_defined(self, port):
-    #         return port in self.port_defined
-
-    #     def suggest_port(self, port):
-    #         if port not in self.port_defined:
-    #             self.port_suggested.add(port)
-        
-    #     def is_suggested(self, port):
-    #         return port in self.port_suggested
-
-    #     def define_port(self, port):
-    #         self.port_defined.add(port)
-    #         if port in self.port_suggested:
-    #             self.port_suggested.remove(port)
-            
+            return undef        
 
     #######################################################
     ##setup functions
@@ -192,8 +105,6 @@ class VerilogParser:
         self.assignment_count = 0
 
         self.blackbox_holder = self.BlackboxHolder()
-        #self.assignment_manager = self.AssignmentManager()
-        #self.port_suggestion_holder = self.PortSuggestionHolder()
           
     def parse(self):
         ''' parse a verilog netlist represented by verilog file
@@ -253,9 +164,7 @@ class VerilogParser:
             #this is a comment token, skip it
             token = self.tokenizer.next()
         return token
-        # token = self.peek_token()
-        # self.tokenizer.next()
-        # return token
+        
 
     #######################################################
     ##parsing functions
@@ -337,16 +246,6 @@ class VerilogParser:
             self.current_library.add_definition(d)
 
     def parse_primitive(self):
-        '''simply skips the whole definition:'''
-        # token = self.next_token()
-        # if token == vt.MODULE:
-        #     while token != vt.END_MODULE:
-        #         token = self.next_token()
-
-        # elif token == vt.PRIMITIVE:
-        #     while token != vt.END_PRIMITIVE:
-        #         token = self.next_token()
-        #to use these definitions uncomment the following
         '''similar to parse module but it will only look for the inputs and outputs to get an idea of how those things look'''
 
         token = self.next_token()
@@ -484,8 +383,6 @@ class VerilogParser:
 
         token = self.peek_token()
 
-        #port_list = []
-
         while token != ")":
             #the first token could be a name or input output or inout
             if token == ".":
@@ -534,7 +431,6 @@ class VerilogParser:
 
         for i in range(len(port.pins)):
             wires[i].connect_pin(port.pins[i])
-            #self.port_alias_manager.add_wire(wires[i], port.pins[i])
 
     
     def parse_cable_concatenation(self):
@@ -796,22 +692,8 @@ class VerilogParser:
         assert token == vt.OPEN_PARENTHESIS, self.error_string(vt.OPEN_PARENTHESIS, "to encapsulate cable name in port mapping", token)
 
         token = self.peek_token()
-        # cable = None
-        # left = None
-        # right = None
+        
         if token != vt.CLOSE_PARENTHESIS:
-            # assert vt.is_valid_identifier(token), self.error_string("valid cable identifier", "cable name to map in port mapping", token)
-            # cable_name = token
-            # token = self.peek_token()
-            # left = None
-            # right = None
-            # if token == vt.OPEN_BRACKET:
-            #     left, right = self.parse_brackets()
-            # cable = self.create_or_update_cable(cable_name, left_index = left, right_index = right)
-            # token = self.next_token()
-
-            # wires = self.get_wires_from_cable(cable, left, right)
-            
 
             if token == vt.OPEN_BRACE:
                 wires = self.parse_cable_concatenation()
@@ -835,53 +717,7 @@ class VerilogParser:
             self.create_or_update_port_on_instance(port_name, 1)
 
         assert token == vt.CLOSE_PARENTHESIS, self.error_string(vt.CLOSE_PARENTHESIS, "to end cable name in port mapping", token)
-
-    # def parse_variable_declaration(self):
-    #     direction_tokens = [vt.INPUT, vt.OUTPUT, vt.INOUT]
-    #     type_tokens = [vt.REG, vt.WIRE]
-    #     token = self.next_token()
-    #     name = None
-    #     direction = None
-    #     var_type = None
-    #     left = None
-    #     right = None
-
-    #     if token in direction_tokens:
-    #         direction = self.convert_string_to_port_direction(token)
-    #     elif token in type_tokens:
-    #         var_type = token
-    #     else:
-    #         assert False, self.error_string("port direction or wire or reg", "to start variable declaration", token)
-
-    #     token = self.peek_token()
-
-    #     if token in direction_tokens:
-    #         direction = self.convert_string_to_port_direction(token)
-    #         self.next_token() #consume the peeked token
-    #     elif token in type_tokens:
-    #         var_type = token
-    #         self.next_token() #consume the peeked token
-
-    #     token = self.peek_token()
-
-    #     if token == vt.OPEN_BRACKET:
-    #         left, right = self.parse_brackets()
-
-    #     token = self.next_token()
-    #     name = token
-
-    #     token = self.next_token()
-    #     assert token in [vt.COMMA, vt.SEMI_COLON, vt.CLOSE_PARENTHESIS],\
-    #         self.error_string("; , or )", "to terminate variable declaration", token)
-
-    #     cable = self.create_or_update_cable(name, left_index = left, right_index = right, var_type = var_type)
-    #     if direction is not None:
-    #         port = self.create_or_update_port(name, left_index = left, right_index = right, direction = direction)
-    #     else:
-    #         port = None
         
-    #     return cable, port
-            
     
     def parse_assign(self):
         token = self.next_token()
@@ -1060,7 +896,6 @@ class VerilogParser:
 
     def get_wires_from_cable(self, cable, left, right):
         wires = []
-        # cable_wires = cable.wires
 
         if left != None and right != None:
             left = left - cable.lower_index
@@ -1134,15 +969,6 @@ class VerilogParser:
                 resized_cable.wires[i].connect_pin(resized_port.pins[i])
         
 
-
-    # def insert_pin_into_port(self, port, index):
-    #     if index < port.lower_index:
-    #         self.prepend_pins(port, port.lower_index - index)
-    #     elif index > port.lower_index + len(port.pins) - 1:
-    #         self.postpend_pins(port, index - (port.lower_index + len(port.pins) -1))
-    #     else:
-
-
     def create_or_update_cable(self, name, left_index = None, right_index = None, var_type = None, defining = False):
         cable_generator = self.current_definition.get_cables(name)
         cable = next(cable_generator, None)
@@ -1152,8 +978,6 @@ class VerilogParser:
             return cable
 
         assert cable.name == name
-
-        #figure out what we need to do with the indicies
 
         cable_lower = cable.lower_index
         cable_upper = cable.lower_index + len(cable.wires) - 1 #-1 so that it is the same number if the width is 1
@@ -1190,14 +1014,6 @@ class VerilogParser:
 
         return cable
 
-    # def create_or_get_definition(self, name):
-    #     dictionary_generator = self.netlist.get_definitions(name)
-    #     definition = next(cable_generator, None)
-    #     if definition == None:
-    #         definition = self.current_library.create_definition()
-    #         definition.name = name
-
-    #     return definition
 
     def populate_new_cable(self, cable, name, left_index, right_index, var_type):
         cable.name = name
