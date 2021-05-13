@@ -1189,6 +1189,47 @@ class TestVerilogParser(unittest.TestCase):
             assert k == "key"
             assert v is None
 
+    def test_parser_star_list(self):
+        '''example taken from a file that is not in our support files.
+        the construct in question is referenced in xilinx documentation
+        (* KEEP, DONT_TOUCH, BEL = "C6LUT" *)
+        additionally:
+        (*BEL="H6LUT",RLOC="X0Y0"*)
+        and I presume that:
+        (* KEEP, DONT_TOUCH *)
+        would all be valid
+        ''' 
+        tokens = ["(", "*", "KEEP", ",", "DONT_TOUCH", ",", "BEL", "=", '"C6LUT"', "*", ")",\
+            "(", "*", "BEL", "=", '"H6LUT"', ",", "RLOC", "=", '"X0Y0"', "*", ")",\
+            "(", "*", "KEEP", ",", "DONT_TOUCH", "*", ")"]
+        
+        tokenizer = self.TestTokenizer(tokens)
+        parser = VerilogParser()
+        parser.tokenizer = tokenizer
+        
+        stars0 = parser.parse_star_property()
+        stars1 = parser.parse_star_property()
+        stars2 = parser.parse_star_property()
+
+        assert "KEEP" in stars0
+        assert stars0["KEEP"] == None
+        assert "DONT_TOUCH" in stars0
+        assert stars0["DONT_TOUCH"] == None
+        assert "BEL" in stars0
+        assert stars0["BEL"] == '"C6LUT"'
+
+        assert "BEL" in stars1
+        assert stars1["BEL"] == '"H6LUT"'
+        assert "RLOC" in stars1
+        assert stars1["RLOC"] == '"X0Y0"'
+
+        assert "KEEP" in stars2
+        assert stars2["KEEP"] == None
+        assert "DONT_TOUCH" in stars2
+        assert stars2["DONT_TOUCH"] == None
+        
+
+
     ############################################
     ##test helpers
     ############################################
