@@ -315,8 +315,9 @@ class VerilogParser:
                     while token != vt.ENDIF:
                         token = self.next_token()
             elif token == vt.OPEN_PARENTHESIS:
-                k,v = self.parse_star_property()
-                star_properties[k] = v
+                stars = self.parse_star_property()
+                for k,v in stars.items():
+                    star_properties[k] = v
                 
             elif token.split(maxsplit = 1)[0] == vt.TIMESCALE:
                 token = self.next_token()
@@ -621,8 +622,9 @@ class VerilogParser:
                 self.parse_instantiation(params)
                 params = dict()
             elif token == vt.OPEN_PARENTHESIS:
-                k,v = self.parse_star_property()
-                params[k] = v
+                stars = self.parse_star_property()
+                for k,v in stars.items():
+                    params[k] = v
             else:
                 assert False, self.error_string("direction, reg, wire, star_properties, or instance identifier", "in module body", token)
 
@@ -931,24 +933,29 @@ class VerilogParser:
         assert token == vt.OPEN_PARENTHESIS, self.error_string(vt.OPEN_PARENTHESIS, "to begin star property", token)
         token = self.next_token()
         assert token == vt.STAR, self.error_string(vt.STAR, "to begin star property", token)
+        properties_dict = dict()
         token = self.next_token()
-        assert vt.is_valid_identifier(token)
-        key = token
-        token = self.next_token()
-        assert token in [vt.EQUAL, vt.STAR], self.error_string(vt.EQUAL + " or " + vt.STAR, "to set a star parameter", token)
-        if token == vt.EQUAL:
+        while token != vt.STAR:
+            assert vt.is_valid_identifier(token)
+            key = token
             token = self.next_token()
-            value = ""
-            while token != vt.STAR:
-                value += token
+            assert token in [vt.EQUAL, vt.STAR, vt.COMMA], self.error_string(vt.EQUAL + " or " + vt.STAR + " or " + vt.COMMA, "to set a star parameter", token)
+            if token == vt.EQUAL:
                 token = self.next_token()
-        else:
-            value = None
+                value = ""
+                while token != vt.STAR and token != vt.COMMA:
+                    value += token
+                    token = self.next_token()
+            else:
+                value = None
+            properties_dict[key] = value
+            if token != vt.STAR:
+                token = self.next_token()
         assert token == vt.STAR, self.error_string(vt.STAR, "to start the ending of a star property", token)
         token = self.next_token()
         assert token == vt.CLOSE_PARENTHESIS, self.error_string(vt.CLOSE_PARENTHESIS, "to end the star property", token)
 
-        return key, value
+        return properties_dict
     
     #######################################################
     ##assignment helpers

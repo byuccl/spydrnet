@@ -112,7 +112,12 @@ ALL_VERILOG_TOKENS = {
 }
 
 def is_valid_identifier(token):
-    if token[0] == '\\' and token[-1] == " ":
+    if token == "":
+        return False
+    elif token[0] == '\\' and token[-1] == " ":
+        for white in WHITESPACE: #there shouldn't be whitespace before the ending space
+            if white in token[:-1]:
+                return False
         return True
     else:
         if token[0] not in LETTERS and token[0] != "_":
@@ -123,6 +128,8 @@ def is_valid_identifier(token):
         return True
 
 def is_numeric(token):
+    if token == "":
+        return False
     for c in token:
         if c not in NUMBERS:
             return False

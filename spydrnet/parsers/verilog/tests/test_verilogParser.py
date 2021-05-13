@@ -1173,9 +1173,10 @@ class TestVerilogParser(unittest.TestCase):
         parser = VerilogParser()
         parser.tokenizer = tokenizer
         
-        k,v = parser.parse_star_property()
-        assert k == "key"
-        assert v == "value"
+        stars = parser.parse_star_property()
+        for k,v in stars.items():
+            assert k == "key"
+            assert v == "value"
 
     def test_parser_star_without_value(self):
         tokens = ['(', '*', 'key', '*', ')']
@@ -1183,9 +1184,10 @@ class TestVerilogParser(unittest.TestCase):
         parser = VerilogParser()
         parser.tokenizer = tokenizer
         
-        k,v = parser.parse_star_property()
-        assert k == "key"
-        assert v is None
+        stars = parser.parse_star_property()
+        for k,v in stars.items():
+            assert k == "key"
+            assert v is None
 
     ############################################
     ##test helpers
