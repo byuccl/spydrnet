@@ -164,6 +164,12 @@ def clean(definition):
         if child.reference in definition_copies:
             make_instances_unique(child)
 
+#print a list of all libraries and definitions in a netlist
+def libraries_definitions(my_netlist):
+    for library in my_netlist.libraries:
+        definitions = list(definition.name for definition in library.definitions)
+        print("   DEFINITIONS IN '",library.name,"':",definitions)
+
 
 definition_count = dict()
 original_inner_pin_to_new_inner_pin = dict()
@@ -173,6 +179,7 @@ definition_copies = dict()
 
 example_name = 'unique_challenge'
 ir = sdn.load_example_netlist_by_name(example_name)
+ir_orig = sdn.load_example_netlist_by_name(example_name) #store the original netlist for display later
 top_def = ir.top_instance.reference
 
 reverse_topological_order = get_reverse_topological_order(ir)
@@ -183,3 +190,9 @@ clean(top_def)
 with tempfile.TemporaryDirectory() as td:
     file_name = example_name + '_unique.edf'
     sdn.compose(ir, os.path.join(td, file_name))
+
+#show the original netlist with its definitions and the new netlist with each instance now as a unique definition
+print("ORIGINAL")
+libraries_definitions(ir_orig)
+print("UNIQUE")
+libraries_definitions(ir)
