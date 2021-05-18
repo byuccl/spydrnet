@@ -7,7 +7,7 @@ Some example functions that can be run to display information in a netlist.
 1) print the hierarchy in a netlist
 2) print each library with its definitions in a netlist
 3) print wire connects between ports in a netlist.
-For an even simpler display of netlist information, try using these functions with the Minimal Script example
+For an even simpler display of netlist information, try using these functions with the Minimal Script example.
 
 """
 
