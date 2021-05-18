@@ -3,7 +3,7 @@
 Flattens a netlist
 =====================================
 
-Remove hierarchy from a netlist.
+Remove hierarchy from a netlist. The original hierarchy and new hierarchy (after flattening) will be printed.
 """
 
 import os
