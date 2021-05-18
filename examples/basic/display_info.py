@@ -4,9 +4,10 @@ Display Information Functions
 =====================================
 
 Some example functions that can be run to display information in a netlist.
-1. Print the hierarchy in a netlist
-2. Print each library with its definitions in a netlist
-3. Print wire connects between ports in a netlist
+1) Print the hierarchy in a netlist
+2) Print each library with its definitions in a netlist
+3) Print wire connects between ports in a netlist
+
 """
 
 import spydrnet as sdn
