@@ -38,7 +38,7 @@ def print_connections(current_netlist):
             for pin in pin.wire.pins:
                 instance = list(instance.name for instance in pin.get_instances())
                 for port in pin.get_ports():
-                    #for each pin, get the associate port and check the direction
+                    #for each pin, get the associated port and check the direction
                     if port.direction is sdn.IN:
                         if IN is "EXTERNAL":
                             IN = port.name + " of " + str(instance)
