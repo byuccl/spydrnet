@@ -49,7 +49,7 @@ def print_connections(current_netlist):
                             OUT = port.name + " of " + str(instance)
                         else:
                             OUT = OUT + ", " + port.name + " of " + str(instance)
-            print("\t",OUT,"connects to",IN)
+            print("\t",OUT,"---->",IN)
 
 
 print("HIERARCHY:")
