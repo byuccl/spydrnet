@@ -3,10 +3,12 @@
 Display Information Functions
 =====================================
 
-Some example functions that can be run to display information in a netlist.
+Some example functions that can be run to display information in a netlist:
     1) print the hierarchy in a netlist
     2) print each library with its definitions in a netlist
-    3) print wire connects between ports in a netlist.
+    3) print wire connections between ports in a netlist
+    4) print the number of times each primitive is instanced
+*Note: because the hierarchy function uses recursion, the maximum recursion depth may be exceeded if used for large designs
 
 | For an even simpler display of netlist information, try using these functions with the Minimal Script example.  
 | Also, see JensRestemeier's `github repository <https://github.com/JensRestemeier/EdifTests>`_ for another way to visualize netlists. 
@@ -15,21 +17,19 @@ Some example functions that can be run to display information in a netlist.
 
 import spydrnet as sdn
 
-netlist = sdn.load_example_netlist_by_name("fourBitCounter")
-
 #print the hierarchy of a netlist
 def hierarchy(current_instance,indentation=""):
     print(indentation,current_instance.name," --instance of",current_instance.reference.name,"--")
     for child in current_instance.reference.children:
         hierarchy(child,indentation+"     ")
 
-#prints a list of all libraries and definitions in a netlist
+#print a list of all libraries and definitions in a netlist
 def libraries_definitions(my_netlist):
     for library in my_netlist.libraries:
         definitions = list(definition.name for definition in library.definitions)
         print("DEFINITIONS IN '",library.name,"':",definitions)
 
-#prints the connections in a netlist
+#print the connections in a netlist
 def print_connections(current_netlist):
     print("CONNECTIONS:")
     for instance in current_netlist.get_instances():
@@ -53,8 +53,23 @@ def print_connections(current_netlist):
                             OUT = OUT + ", " + port.name + " of " + str(instance)
             print("\t",OUT,"---->",IN)
 
+#print a list of primitives and the number of times each primitive is instanced in the netlist
+def instance_count(current_netlist):
+    print("Number of times each primitive is instanced:")
+    primitives_library = next(netlist.get_libraries("hdi_primitives"),None)
+    for primitive in primitives_library.get_definitions():
+        i = 0
+        for instance in current_netlist.get_instances():
+            if primitive.name == instance.reference.name:
+                i += 1
+        print('\t',primitive.name,": ",i)
+
+
+
+netlist = sdn.load_example_netlist_by_name("fourBitCounter")
 
 print("HIERARCHY:")
 hierarchy(netlist.top_instance)
 libraries_definitions(netlist)
 print_connections(netlist)
+instance_count(netlist)
