@@ -8,11 +8,11 @@ Some example functions that can be run to display information in a netlist:
     2) print each library with its definitions in a netlist
     3) print wire connections between ports in a netlist
     4) print the number of times each primitive is instanced
-*Note: because the hierarchy function uses recursion, the maximum recursion depth may be exceeded if used for large designs
+Note: because the hierarchy function uses recursion, the maximum recursion depth may be exceeded if used for large designs
 
 | For an even simpler display of netlist information, try using these functions with the Minimal Script example.  
-| Also, see JensRestemeier's `github repository <https://github.com/JensRestemeier/EdifTests>`_ for another way to visualize netlists. 
 
+| Also, JensRestemeier (not affiliated with BYU CCL) created a tool to generate images of netlists. See his `github repository <https://github.com/JensRestemeier/EdifTests>`_.
 """
 
 import spydrnet as sdn
@@ -53,7 +53,7 @@ def print_connections(current_netlist):
                             OUT = OUT + ", " + port.name + " of " + str(instance)
             print("\t",OUT,"---->",IN)
 
-#print a list of primitives and the number of times each primitive is instanced in the netlist
+#print the number of times each primitive is instanced
 def instance_count(current_netlist):
     print("Number of times each primitive is instanced:")
     primitives_library = next(netlist.get_libraries("hdi_primitives"),None)
