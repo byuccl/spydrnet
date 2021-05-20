@@ -58,11 +58,11 @@ def instance_count(current_netlist):
     print("Number of times each primitive is instanced:")
     primitives_library = next(netlist.get_libraries("hdi_primitives"),None)
     for primitive in primitives_library.get_definitions():
-        i = 0
+        count = 0
         for instance in current_netlist.get_instances():
             if primitive.name == instance.reference.name:
-                i += 1
-        print('\t',primitive.name,": ",i)
+                count += 1
+        print('\t',primitive.name,": ",count)
 
 
 
