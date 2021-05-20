@@ -32,7 +32,7 @@ def libraries_definitions(my_netlist):
 #print the connections in a netlist
 def print_connections(current_netlist):
     print("CONNECTIONS:")
-    for instance in current_netlist.get_instances():
+    for instance in current_netlist.get_instances(): 
         print("Instance name:",instance.name)
         for pin in instance.pins:
             IN = "EXTERNAL"
