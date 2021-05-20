@@ -1,6 +1,6 @@
 """
 =====================================
-Display Information Functions
+Display Netlist Information Functions
 =====================================
 
 Some example functions that can be run to display information in a netlist:
