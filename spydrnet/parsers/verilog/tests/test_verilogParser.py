@@ -52,8 +52,8 @@ class TestVerilogParser(unittest.TestCase):
 
         parser.parse_module_header_parameters()
 
-        assert "Verilog.Parameters" in parser.current_definition, "expected parameters in the definition"
-        parameters = parser.current_definition["Verilog.Parameters"]
+        assert "VERILOG.Parameters" in parser.current_definition, "expected parameters in the definition"
+        parameters = parser.current_definition["VERILOG.Parameters"]
         for k, v in expected.items():
             assert k in parameters, "expected to see " + k + " in the definition parameters"
             assert parameters[k] == v, "expected value of k to be " + v + " but got instead " + parameters[k]
@@ -641,7 +641,7 @@ class TestVerilogParser(unittest.TestCase):
             parser.populate_new_cable(cable,name,left,right,cable_type)
             assert cable.name == name
             assert cable.is_downto == (left >= right)
-            assert cable["Verilog.CableType"] == cable_type
+            assert cable["VERILOG.CableType"] == cable_type
             assert cable.lower_index == min(left,right)
 
     def test_parse_variable_instantiation(self):
@@ -680,6 +680,29 @@ class TestVerilogParser(unittest.TestCase):
 
     def test_parse_instantiation(self):
         pass
+
+    def test_parse_empty_port_map(self):
+        parser = VerilogParser()
+        definition = sdn.Definition()
+        parser.current_definition = definition
+        parser.current_instance = definition.create_child()
+        parser.current_instance.reference = parser.blackbox_holder.get_blackbox("definition_name")
+        
+        port_name = "port_name"
+        
+        tokens = [".", port_name, "(", ")"]
+
+        tokenizer = self.TestTokenizer(tokens)
+
+        parser.tokenizer = tokenizer
+
+        parser.parse_port_map_single()
+
+        assert len(parser.current_instance.reference.ports) == 1
+        assert parser.current_instance.reference.ports[0].name == port_name
+        assert len(parser.current_instance.reference.ports[0].pins) == 1
+
+        assert tokenizer.has_next() == False
 
     def test_parse_parameter_map(self):
         parser = VerilogParser()

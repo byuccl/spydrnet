@@ -202,18 +202,21 @@ class VerilogParser:
                     self.parse_module()
                 #go ahead and set the extra metadata that we collected to this point
                 if time_scale is not None:
-                    self.current_definition["Verilog.TimeScale"] = time_scale
+                    self.current_definition["VERILOG.TimeScale"] = time_scale
                 if len(star_properties.keys()) > 0:
-                    self.current_definition["Verilog.StarProperties"] = star_properties
+                    self.current_definition["VERILOG.InlineConstraints"] = star_properties
                     star_properties = dict()
             
             elif token == vt.PRIMITIVE:
-                self.parse_primitive()
-                if time_scale is not None:
-                    self.current_definition["Verilog.TimeScale"] = time_scale
-                if len(star_properties.keys()) > 0:
-                    self.current_definition["Verilog.StarProperties"] = star_properties
-                    star_properties = dict()
+                # self.parse_primitive()
+                # if time_scale is not None:
+                #     self.current_definition["VERILOG.TimeScale"] = time_scale
+                # if len(star_properties.keys()) > 0:
+                #     self.current_definition["VERILOG.InlineConstraints"] = star_properties
+                #     star_properties = dict()
+                star_properties = dict()
+                while token != vt.END_PRIMITIVE:
+                    token = self.next_token()
             
             elif token == vt.DEFINE:
                 assert False, "Currently `define is not supported"
@@ -572,7 +575,7 @@ class VerilogParser:
             if len(port_list) > 1:
                 for p in port_list:
                     port = self.create_or_update_port(p.name, direction = direction)
-                    port["Verilog.StarProperties"] = properties
+                    port["VERILOG.InlineConstraints"] = properties
             else:
                 port = self.create_or_update_port(port_list.pop().name, left_index = left, right_index = right, direction = direction, defining = True)
             
@@ -596,7 +599,7 @@ class VerilogParser:
         name = token
 
         cable = self.create_or_update_cable(name, left_index = left, right_index = right, var_type = var_type)
-        cable["Verilog.StarProperties"] = properties
+        cable["VERILOG.InlineConstraints"] = properties
 
         token = self.next_token()
         assert token == vt.SEMI_COLON, self.error_string(vt.SEMI_COLON, "to end cable declaration", token)
@@ -623,7 +626,7 @@ class VerilogParser:
 
         instance.name = name
         instance.reference = self.blackbox_holder.get_blackbox(def_name)
-        instance["Verilog.StarProperties"] = properties
+        instance["VERILOG.InlineConstraints"] = properties
 
         self.parse_port_mapping()
 
@@ -713,6 +716,8 @@ class VerilogParser:
             token = self.next_token()
 
         else:
+            #consume the )
+            token = self.next_token()
             #the port is intentionally left unconnected.
             self.create_or_update_port_on_instance(port_name, 1)
 
@@ -871,7 +876,7 @@ class VerilogParser:
 
     def set_instance_parameters(self, instance, params):
         for k, v in params.items():
-            self.set_single_parameter(instance.reference, k, None)
+            #self.set_single_parameter(instance.reference, k, None)
             self.set_single_parameter(instance, k, v)
         
     def set_definition_parameters(self, definition, params):
@@ -879,11 +884,11 @@ class VerilogParser:
             self.set_single_parameter(definition, k, v)
     
     def set_single_parameter(self, var, k, v):
-        if "Verilog.Parameters" not in var:
-            var["Verilog.Parameters"] = dict()
+        if "VERILOG.Parameters" not in var:
+            var["VERILOG.Parameters"] = dict()
 
-        if k not in var["Verilog.Parameters"] or var["Verilog.Parameters"][k] is None:
-            var["Verilog.Parameters"][k] = v
+        if k not in var["VERILOG.Parameters"] or var["VERILOG.Parameters"][k] is None:
+            var["VERILOG.Parameters"][k] = v
 
     def get_all_ports_from_wires(self, wires):
         '''gets all ports associated with a set of wires'''
@@ -1010,7 +1015,7 @@ class VerilogParser:
                 self.postpend_wires(cable,postpend)
         
         if var_type:
-            cable["Verilog.CableType"] = var_type
+            cable["VERILOG.CableType"] = var_type
 
         return cable
 
@@ -1032,7 +1037,7 @@ class VerilogParser:
             cable.create_wire()
 
         if var_type:
-            cable["Verilog.CableType"] = var_type
+            cable["VERILOG.CableType"] = var_type
 
         return cable
 

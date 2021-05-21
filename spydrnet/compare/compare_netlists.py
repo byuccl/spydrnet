@@ -108,10 +108,9 @@ class Comparer:
                     continue
                 else:
                     patterns = orig_instance.name
-            try:
-                composer_instance = next(sdn.get_instances(definition_composer, patterns))
-            except Exception:
-                import pdb; pdb.set_trace()
+            
+            composer_instance = next(sdn.get_instances(definition_composer, patterns))
+
             self.compare_instances(orig_instance, composer_instance)
         
         #compare assignemnt statements

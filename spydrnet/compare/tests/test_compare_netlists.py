@@ -63,7 +63,6 @@ class TestCompareNetlists(unittest.TestCase):
                     comparer = Comparer(orig_netlist, composer_netlist)
                     comparer.run()
                 except Exception as e:
-                    import pdb; pdb.set_trace()
                     shutil.copytree(tempdirname, "temp")
                     raise e
 

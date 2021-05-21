@@ -59,8 +59,6 @@ def _bring_to_top(e, add_to_name, top_definition):
         if mod_name_uid == 45773:
             print(e["EDIF.identifier"])
             print(e)
-            import pdb
-            pdb.set_trace()
             good = True
         if isinstance(e, Cable):
             e["EDIF.identifier"] = "cable_" + _get_unique_name_modifier()
