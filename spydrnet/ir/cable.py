@@ -9,7 +9,7 @@ from copy import deepcopy, copy, error
 class Cable(Bundle):
     """Representation of several wires in a collection.
 
-    Much like Ports cable extend the bundle class, giving them indexing ability they represent several wires in a collection or bus that are generally related.
+    Much like ports, cables extend the bundle class, giving them indexing ability. They represent several wires in a collection or bus that are generally related.
     This could be thought of much like vector types in VHDL ie std_logic_vector (7 downto 0)"""
     __slots__ = ['_wires']
 

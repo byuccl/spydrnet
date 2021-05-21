@@ -14,7 +14,7 @@ ir = sdn.load_example_netlist_by_name("fourBitCounter")
 
 print("Netlist stats")
 print("Top instance:", ir.top_instance['EDIF.identifier'])
-print(str(len(ir.libraries)) + " libraies detected")
+print(str(len(ir.libraries)) + " libraries detected")
 # Loop through each library in a design
 for library in ir.libraries:
     # Gets the name of the current library and reports number of definitions

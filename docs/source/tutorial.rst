@@ -124,31 +124,31 @@ SpyDrNet's intermediate representation of netlists (IR) is what sets it apart fo
     This netlist element contains an ordered collection of cell or module definitions associated with a library.
     
 :class:`Definition`
-    A definition outlines the contents of each component that can be instantiated elsewhere in the design. It holds information that is pertinant to all instances of itself including subcomponents ports and connections
+    A Definition outlines the contents of each component that can be instantiated elsewhere in the design. It holds information that is pertinent to all instances of itself including subcomponents ports and connections.
 
 :class:`Instance`
-    This element holds pointers to the definition which it instances, and contains its own set of pins to be connected to within its parent definition.
+    This element holds pointers to the definition which it instances (the reference), and contains its own set of pins to be connected to within the definition that holds the instance (the parent). The instance is also called a "child" of the parent.
 
 :class:`Bundle`
     The Bundle class is a parent class of Ports and Cables because each can be thought of as an array. This class defines the structure that helps us properly represent array objects in netlists including the width, direction (to or downto) and starting index. As a parent class this class is not directly instantiated in netlist.
 
 :class:`Port`
-    The Port element inherits from Bundles and can be thought of as containing the information on how a Definition connects the outside world to the elements it contains.
+    The Port element inherits from the Bundles class and can be thought of as containing the information on how a Definition connects the outside world to the elements it contains.
 
 :class:`Cable`
-    Cables are bundles of connectors between components within a definition. They connect ports to their destination pins
+    Cables are bundles of connectors between components within a definition. They connect ports to their destination pins.
 
 :class:`Pin`
-    The pin class is also a parent class, inherited from by the inner pin and outer pin objects. Unlike the Element and Bundle objects, Pins are useful because they can hide some of the implementation details of the underlying inner pins and outer pins.
+    The Pin class is also a parent class, inherited from by the inner pin and outer pin objects. Unlike the Element and Bundle objects, Pins are useful because they can hide some of the implementation details of the underlying inner pins and outer pins.
 
 :class:`InnerPin`
-    These pins are collected in Ports and are contained on the inside of the definitions. There is one set of inner pins per definition but they could refer to several sets of OuterPins
+    These pins are collected in Ports and are contained on the inside of the definitions. There is one set of inner pins per definition but they could refer to several sets of OuterPins.
 
 :class:`OuterPin`
-    These pins are collected on instances. They let us distinguish between connections to multiple instances of a single definition. These objects remove the need to carefuly track hierarcy while navegating a netlist.
+    These pins are collected on instances. They let us distinguish between connections to multiple instances of a single definition. These objects remove the need to carefuly track hierarchy while navigating a netlist.
 
 :class:`Wire`
-    Wires are grouped inside cables and are elements that help hold connection information between single pins on instances within a definition and within it's ports.
+    Wires are grouped inside cables and are elements that help hold connection information between single pins on instances within a definition and within its ports.
 
    
 More detail on the IR is provided in :ref:`api_summary`.
