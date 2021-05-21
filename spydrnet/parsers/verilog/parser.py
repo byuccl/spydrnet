@@ -1,13 +1,80 @@
+# Copyright 2021 Dallin Skouson, BYU CCL
+# please see the BYU CCl SpyDrNet license file for terms of usage.
+
+
 from spydrnet.parsers.verilog.tokenizer import VerilogTokenizer
+import spydrnet.parsers.verilog.verilog_tokens as vt
 from spydrnet.ir import Netlist, Library, Definition, Port, Cable, Instance, OuterPin
 from spydrnet.plugins import namespace_manager
-from collections import OrderedDict
+import spydrnet as sdn
+
 from functools import reduce
 import re
 
 
 class VerilogParser:
+    '''
+    Parse verilog files into spydrnet.
 
+    Higher level functions will always peek when deciding what lower level function to call.
+    within your own function call next instead to keep the flow moving.
+
+    the first token to expect in a function will be the token that starts that construct.
+    '''
+
+    #########################################################
+    # Note to contributors
+    #########################################################
+    # I have tried to follow the convention that each function
+    # parses all of the construct it is designed to parse
+    # for example the parse module function will call the parse
+    # instance function. It will not consume any of the tokens
+    # that belong to the instance instantations including the
+    # semi colon
+    #
+    # I would suggest following this convention even on constructs
+    # where the first word is always the same.
+    # the small overhead of using the peek function to not consume
+    # the token has been well worth it.
+    # --Dallin
+
+    #########################################################
+    # helper classes
+    #########################################################
+
+    class BlackboxHolder:
+        '''this is an internal class that helps manage
+        modules that are instanced before they are declared'''
+
+        def __init__(self):
+            self.name_lookup = dict()
+            self.defined = set()
+
+        def get_blackbox(self, name):
+            '''creates or returns the black box based on the name'''
+            if name in self.name_lookup:
+                return self.name_lookup[name]
+            else:
+                definition = sdn.Definition()
+                definition.name = name
+                self.name_lookup[name] = definition
+                return definition
+
+        def define(self, name):
+            '''adds the name to the defined set'''
+            self.defined.add(self.name_lookup[name])
+
+        def get_undefined_blackboxes(self):
+            '''return an iterable of all undefined blackboxes'''
+            undef = set()
+            for v in self.name_lookup.values():
+                if v not in self.defined:
+                    undef.add(v)
+            return undef
+
+    #######################################################
+    # setup functions
+    #######################################################
     @staticmethod
     def from_filename(filename):
         parser = VerilogParser()
@@ -17,910 +84,1147 @@ class VerilogParser:
     @staticmethod
     def from_file_handle(file_handle):
         parser = VerilogParser()
-        parser.file_handle = file_handle
+        parser.filename = file_handle
         return parser
 
     def __init__(self):
         self.filename = None
-        self.file_handle = None
-        self.elements = list()
         self.tokenizer = None
+
         self.netlist = None
-        self.primitive_cell = False
-        self.direction_string_map = OrderedDict()
-        self.direction_string_map["input"] = Port.Direction.IN
-        self.direction_string_map["output"] = Port.Direction.OUT
-        self.direction_string_map["inout"] = Port.Direction.INOUT
-        self.direction_string_map[None] = None
-        self._assigner_definition = OrderedDict()
-        self._assigner_library = None
-        self._assignment_instance_uid = 0
-        self.instance_to_port_map = OrderedDict()
-        self._port_rename_in_to_out_dict = OrderedDict()
-        self._port_rename_out_to_in_dict = OrderedDict()
-        self._port_rename_inner_count_dictionary = OrderedDict()
+        self.current_library = None
+        self.current_definition = None
+        self.current_instance = None
 
-    def _create_assigner_definition(self, width):
-        if self._assigner_library == None:
-            self._assigner_library = Library()
-            self._assigner_library.name = "SDN_VERILOG_ASSIGNMENT"
-            self.netlist.add_library(self._assigner_library, 0)
-        definition = self._assigner_library.create_definition()
-        definition.name = "SDN_VERILOG_ASSIGN_" + str(width)
-        cable = definition.create_cable()
-        cable.name = "ASSIGN"
-        porta = definition.create_port()
-        porta.name = "A"
-        portb = definition.create_port()
-        portb.name = "B"
-        porta.direction = Port.Direction.INOUT
-        portb.direction = Port.Direction.INOUT
-        porta.create_pins(width)
-        portb.create_pins(width)
-        cable.create_wires(width)
-        for i in range(width):
-            pa = porta.pins[i]
-            pb = portb.pins[i]
-            w = cable.wires[i]
-            w.connect_pin(pa)
-            w.connect_pin(pb)
-        self._assigner_definition[width] = definition
+        self.primitives = None
+        self.work = None
+        self.assigns = None
+        self.assignment_count = 0
 
-    def _create_assigner_instance(self, width, parent):
-        if width not in self._assigner_definition:
-            self._create_assigner_definition(width)
-        instance = parent.create_child()
-        instance.reference = self._assigner_definition[width]
-        return instance
-
-    def _assigner_get_cable_indicies_from_info(self, cable, info):
-        if info[1] is None:
-            return cable.lower_index, cable.lower_index + len(cable.wires) - 1
-        elif info[2] is None:
-            return int(info[1]), int(info[1])
-        else:
-            return int(info[1]), int(info[2])
-
-    def _create_assigner(self, cable1_info, cable2_info, definition):
-        cable1 = next(definition.get_cables(cable1_info[0]))
-        cable2 = next(definition.get_cables(cable2_info[0]))
-        assert cable1.definition == cable2.definition, "Cannot assign cable from " + \
-            cable1.definition.name + " to a cable from " + cable2.definition.name
-
-        cable1_info1, cable1_info2 = self._assigner_get_cable_indicies_from_info(
-            cable1, cable1_info)
-        cable2_info1, cable2_info2 = self._assigner_get_cable_indicies_from_info(
-            cable2, cable2_info)
-
-        width = min(abs(cable1_info1 - cable1_info2),
-                    abs(cable2_info1 - cable2_info2)) + 1
-
-        assign_instance = self._create_assigner_instance(width, definition)
-        assign_instance.name = "SDN_Assignment_" + \
-            str(self._assignment_instance_uid) + "_" + str(width)
-        porta = assign_instance.reference.ports[0]
-        portb = assign_instance.reference.ports[1]
-        self._assignment_instance_uid += 1
-
-        # 3 general cases to consider
-        # both are none,                                     map the whole wire.
-        # the first is not none and the second is none,      map just the first bit.
-        # the first is not none and the second is not none,  map the bits between the indicies.
-
-        # if cable1_info[1] == None or cable2_info[1] == None:
-
-        # elif cable1_info[2] == None or cable2_info[2] == None:
-        #     ipa = porta.pins[0]
-        #     ipb = portb.pins[0]
-        #     cable1.wires[int(cable1_info[1])-cable1.lower_index].connect_pin(assign_instance.pins[ipa])
-        #     cable2.wires[int(cable2_info[1])-cable2.lower_index].connect_pin(assign_instance.pins[ipb])
-        # else:
-
-        iterations = 0
-        for val in range(min(cable1_info2, cable1_info1), max(cable1_info2, cable1_info1)+1):
-            if iterations >= width:
-                break
-            ipa = porta.pins[iterations]
-            cable1.wires[val -
-                         cable1.lower_index].connect_pin(assign_instance.pins[ipa])
-            iterations += 1
-        iterations = 0
-        for val in range(min(cable2_info2, cable2_info1), max(cable2_info2, cable2_info1)+1):
-            if iterations >= width:
-                break
-            ipb = portb.pins[iterations]
-            cable2.wires[val -
-                         cable2.lower_index].connect_pin(assign_instance.pins[ipb])
-            iterations += 1
-
-    def _port_rename_create_assignment(self, outer_port, i, inner_cable, definition, inner_index=None):
-        cable1_info = [outer_port.name, i, None]
-        cable2_info = [inner_cable.name, inner_index, None]
-        self._create_assigner(cable1_info, cable2_info, definition)
+        self.blackbox_holder = self.BlackboxHolder()
 
     def parse(self):
+        ''' parse a verilog netlist represented by verilog file
+
+            verilog_file can be a filename or stream
+        '''
         self.initialize_tokenizer()
         ns_default = namespace_manager.default
         namespace_manager.default = "DEFAULT"
-        self.netlist = self.parse_verilog()
+        self.parse_verilog()
         namespace_manager.default = ns_default
         self.tokenizer.__del__()
         return self.netlist
 
     def initialize_tokenizer(self):
-        if self.filename:
-            self.tokenizer = VerilogTokenizer.from_filename(self.filename)
-        elif self.file_handle:
-            self.tokenizer = VerilogTokenizer.from_stream(self.file_handle)
+        self.tokenizer = VerilogTokenizer(self.filename)
+
+    def peek_token(self):
+        token = self.peek_token_remove_comments()
+        if token[0] == '`':
+            t_split = token.split(maxsplit=1)
+            if len(t_split) > 1 and t_split[0] in [vt.IFDEF]:
+                while t_split[0] != vt.ENDIF:
+                    token = self.next_token_remove_comments()
+                    t_split = token.split(maxsplit=1)
+                token = self.peek_token_remove_comments()
+            if len(t_split) > 1 and t_split[0] == vt.DEFINE:
+                assert False, self.error_string(
+                    "define not supported", "assumes all macros are undefined", vt.DEFINE)
+        return token
+
+    def next_token(self):
+        token = self.next_token_remove_comments()
+        if token[0] == '`':
+            t_split = token.split(maxsplit=1)
+            if len(t_split) > 1 and t_split[0] in [vt.IFDEF]:
+                while t_split[0] != vt.ENDIF:
+                    token = self.next_token_remove_comments()
+                    t_split = token.split(maxsplit=1)
+                token = self.next_token_remove_comments()
+            if len(t_split) > 1 and t_split[0] == vt.DEFINE:
+                assert False, self.error_string(
+                    "define not supported", "assumes all macros are undefined", vt.DEFINE)
+        return token
+
+    def peek_token_remove_comments(self):
+        '''peeks from the tokenizer this wrapper function exists to skip comment tokens'''
+        token = self.tokenizer.peek()
+        while len(token) >= 2 and token[0] == "/" and (token[1] == "/" or token[1] == "*"):
+            # this is a comment token skip it
+            self.tokenizer.next()
+            token = self.tokenizer.peek()
+        return token
+
+    def next_token_remove_comments(self):
+        '''peeks from the tokenizer this wrapper function exists to skip comment tokens'''
+        token = self.tokenizer.next()
+        while len(token) >= 2 and (token[0:1] == vt.OPEN_LINE_COMMENT or token[0:1] == vt.OPEN_BLOCK_COMMENT):
+            # this is a comment token, skip it
+            token = self.tokenizer.next()
+        return token
+
+    #######################################################
+    # parsing functions
+    #######################################################
 
     def parse_verilog(self):
-        params = OrderedDict()
+        self.netlist = sdn.Netlist()
+        self.netlist.name = "SDN_VERILOG_NETLIST"
+        self.work = self.netlist.create_library("work")
+        self.primitives = self.netlist.create_library("SDN.verilog_primitives")
+        self.current_library = self.work
 
-        token = self.tokenizer.next()
-        line_num = self.tokenizer.line_number
-        self.netlist = Netlist()
-        self.primitive_cell = False
-        top_next = False
-        while token:
+        preprocessor_defines = set()
+        star_properties = dict()
+        time_scale = None
+        primitive_cell = False
 
-            if token == '`celldefine':
-                self.primitive_cell = True
-            elif self.primitive_cell and token == "`endcelldefine":
-                self.primitive_cell = False
+        while self.tokenizer.has_next():
+            token = self.peek_token()
+            if token.split(maxsplit=1)[0] == vt.CELL_DEFINE:
+                primitive_cell = True
+                self.current_library = self.primitives
+                #token = token.split(maxsplit = 1)[1]
+                token = self.next_token()
+            elif token.split(maxsplit=1)[0] == vt.END_CELL_DEFINE:
+                primitive_cell = False
+                self.current_library = self.work
+                #token = token.split(maxsplit = 1)[1]
+                token = self.next_token()
 
-            elif token == "(":
-                token = self.tokenizer.next()
-                assert token == "*", "unexpected ( with out a *" + \
-                    " " + str(self.tokenizer.line_number)
-                k, v = self.parse_star_parameters()
-                if k == "STRUCTURAL_NETLIST":
-                    top_next = True
-                k = "VERILOG.star." + k
-                params[k] = v
+            elif token == vt.MODULE:
+                if primitive_cell:
+                    self.parse_primitive()
+                else:
+                    self.parse_module()
+                # go ahead and set the extra metadata that we collected to this point
+                if time_scale is not None:
+                    self.current_definition["VERILOG.TimeScale"] = time_scale
+                if len(star_properties.keys()) > 0:
+                    self.current_definition["VERILOG.InlineConstraints"] = star_properties
+                    star_properties = dict()
 
-            elif token == "module":
-                definition = self.parse_module(params, self.netlist)
-                # if netlist.top_instance is None:
-                if top_next == True:
-                    instance = Instance()
-                    instance.name = definition.name
-                    instance.reference = definition
-                    self.netlist.top_instance = instance
-                    top_next = False
+            elif token == vt.PRIMITIVE:
+                # self.parse_primitive()
+                # if time_scale is not None:
+                #     self.current_definition["VERILOG.TimeScale"] = time_scale
+                # if len(star_properties.keys()) > 0:
+                #     self.current_definition["VERILOG.InlineConstraints"] = star_properties
+                #     star_properties = dict()
+                star_properties = dict()
+                while token != vt.END_PRIMITIVE:
+                    token = self.next_token()
 
-            elif token[:2] == "//":
-                pass  # comment
+            elif token == vt.DEFINE:
+                assert False, "Currently `define is not supported"
+            elif token == vt.IFDEF:
+                token = self.next_token()
+                token = self.next_token()
+                if token not in preprocessor_defines:
+                    while token != vt.ENDIF:
+                        token = self.next_token()
+            elif token == vt.OPEN_PARENTHESIS:
+                stars = self.parse_star_property()
+                for k, v in stars.items():
+                    star_properties[k] = v
 
-            elif token == "primitive":
-                while token != "endprimitive":
-                    token = self.tokenizer.next()
-
+            elif token.split(maxsplit=1)[0] == vt.TIMESCALE:
+                token = self.next_token()
+                time_scale = token.split(maxsplit=1)[1]
             else:
-                #print("unsorted token", token)
-                pass  # unsorted token
+                pass
+                assert False, self.error_string(
+                    "something at the top level of the file", "got unexpected token", token)
 
-            if self.tokenizer.has_next():
-                token = self.tokenizer.next()
-                line_num = self.tokenizer.line_number
-            else:
-                token = None
+        self.add_blackbox_definitions()
 
-        for instance, port_map in self.instance_to_port_map.items():
-            port_pin_map = OrderedDict()
-            for port in instance.reference.ports:
-                port_pin_map[port] = []
-            for pin in instance.pins:
-                port_pin_map[pin.inner_pin.port].append(pin)
-            definition = instance.parent
-
-            for port_name, cable_list in port_map.items():
-
-                index_offset = 0
-                for cable_name in cable_list:
-                    low = None
-                    high = None
-                    index_offset_initial = index_offset
-                    if cable_name[len(cable_name)-1] == "]" and (cable_name[0] != "\\" or len(cable_name.split(" ")) > 1):
-                        cable_name_real, index = cable_name.split(" ")
-                        indicies = index[1:len(index)-1].split(":")
-                        if len(indicies) == 1:
-                            low = int(indicies[0])
-                            high = None
-                        else:
-                            low = min(int(indicies[0]), int(indicies[1]))
-                            high = max(int(indicies[0]), int(indicies[1]))
-                    else:
-                        cable_name_real = cable_name
-                    cable_def_list = definition.get_cables(cable_name_real)
-                    cable = next(cable_def_list)
-                    port_list = instance.reference.get_ports(port_name)
-                    port = next(port_list)
-                    if low == None and high == None:
-                        if len(cable.wires) == len(port_pin_map[port]):
-                            for i in range(len(cable.wires)):
-                                cable.wires[i].connect_pin(
-                                    port_pin_map[port][i+index_offset_initial])
-                                index_offset += 1
-                        else:
-                            for i in range(min(len(port_pin_map[port]), len(cable.wires))):
-                                cable.wires[i].connect_pin(
-                                    port_pin_map[port][i + index_offset_initial])
-                                index_offset += 1
-                    else:
-                        if high == None:
-                            # try:
-                            cable.wires[low-cable.lower_index].connect_pin(
-                                port_pin_map[port][0 + index_offset_initial])
-                            # except Exception:
-                            #     import pdb; pdb.set_trace()
-                            index_offset += 1
-                        else:
-                            for i in range(low, high+1):
-                                cable.wires[i-cable.lower_index].connect_pin(
-                                    port_pin_map[port][i-low + index_offset_initial])
-                                index_offset += 1
         return self.netlist
 
-    def parse_star_parameters(self):
-        key = self.tokenizer.next()
-        token = self.tokenizer.next()
-        if token == "*":
-            assert self.tokenizer.next() == ")", "expected ) to end the star params" + \
-                " " + str(self.tokenizer.line_number)
-            return key, None
-        assert token == "=", "expected a = character in the key value directive got: " + \
-            token + " line " + str(self.tokenizer.line_number)
-        value = self.tokenizer.next()
-        assert self.tokenizer.next() == "*", "expected * to end star params" + \
-            " " + str(self.tokenizer.line_number)
-        assert self.tokenizer.next() == ")", "expected ) to end the star params" + \
-            " " + str(self.tokenizer.line_number)
-        return key, value
+    def add_blackbox_definitions(self):
+        self.current_library = self.primitives
+        for d in self.blackbox_holder.get_undefined_blackboxes():
+            d["VERILOG.primitive"] = True
+            self.current_library.add_definition(d)
 
-    def parse_module(self, params, netlist):
+    def parse_primitive(self):
+        '''similar to parse module but it will only look for the inputs and outputs to get an idea of how those things look'''
 
-        definition = self.parse_module_header(self.netlist)
-        for k, v in params.items():
-            definition[k] = v
-        if self.primitive_cell:
-            self.parse_primitive_cell_body(definition)
-        else:
-            self.parse_module_body(definition, self.netlist)
-        return definition
+        token = self.next_token()
+        assert token == vt.MODULE or token == vt.PRIMITIVE, self.error_string(
+            vt.MODULE, "to begin module statement", token)
+        token = self.next_token()
+        assert vt.is_valid_identifier(token), self.error_string(
+            "identifier", "not a valid module name", token)
+        name = token
 
-    def parse_primitive_cell_body(self, definition):
-        definition["VERILOG.primative"] = True
-        token = self.tokenizer.next()
-        keywords = set(["input", "output", "inout"])
-        while token != "endmodule" and token != "endprimative":
-            if token in keywords:
-                names, left, right = self.parse_wire()
-                for name in names:
-                    port = self._update_port(definition, name, self.my_minus(self.my_max(left, right), self.my_min(
-                        left, right)), token, self.my_min(left, right), self.my_greater(left, right))
-            elif token == "function":
-                while token != "endfunction":
-                    token = self.tokenizer.next()
-            token = self.tokenizer.next()
+        definition = self.blackbox_holder.get_blackbox(name)
+        self.blackbox_holder.define(name)
+        self.current_library.add_definition(definition)
+        self.current_definition = definition
 
-    def _parse_rename_single(self, name, token):
-        # token = self.tokenizer.next()
-        if token == "[":
-            name += " "
-            while token != "," and token != "}" and token != ')':
-                name += token
-                token = self.tokenizer.next()
-        return name, token
+        # uses the same header parser because the primitives and regular cells have the same header.
+        self.parse_module_header()
 
-    def parse_module_header(self, netlist):
-        name = self.tokenizer.next()
-        definition = self._get_create_definition(self.netlist, name)
-        token = self.tokenizer.next()
+        self.parse_primitive_body()
+
+    def parse_primitive_body(self):
+        ''' just look for port information, skip tasks and functions to help out.'''
+
+        token = self.peek_token()
+
+        while token != vt.END_MODULE and token != vt.END_PRIMITIVE:
+            token = self.peek_token()
+            if token == vt.FUNCTION:  # these constructs may contain input output or inout
+                while token != vt.END_FUNCTION:
+                    token = self.next_token()
+            elif token == vt.TASK:  # these constructs may contain input output or inout
+                while token != vt.END_TASK:
+                    token = self.next_token()
+            elif token in vt.PORT_DIRECTIONS:
+                self.parse_port_declaration(dict())
+            else:
+                token = self.next_token()
+
+    def parse_module(self):
+
+        token = self.next_token()
+        assert token == vt.MODULE, self.error_string(
+            vt.MODULE, "to begin module statement", token)
+        token = self.next_token()
+        assert vt.is_valid_identifier(token), self.error_string(
+            "identifier", "not a valid module name", token)
+        name = token
+
+        definition = self.blackbox_holder.get_blackbox(name)
+        self.blackbox_holder.define(name)
+        self.current_library.add_definition(definition)
+        self.current_definition = definition
+        self.assignment_count = 0
+        if self.netlist.top_instance is None:
+            self.netlist.top_instance = sdn.Instance()
+            self.netlist.top_instance.name = definition.name + "_top"
+            self.netlist.top_instance.reference = definition
+            self.netlist.name = "SDN_VERILOG_NETLIST_" + definition.name
+
+        self.parse_module_header()
+
+        self.parse_module_body()
+
+    def parse_module_header(self):
+        '''parse a module header and add the parameter dictionary and port list to the current_definition'''
+        token = self.peek_token()
         if token == "#":
-            self.parse_parameter_list(definition)
-            token = self.tokenizer.next()
-        d = None
-        if token == "(":
+            self.parse_module_header_parameters()
 
-            while True:
-                verilog_rename = None
-                name_list = []
-                token = self.tokenizer.next()
-                if token == ")":
-                    break
-                if token == ".":
-                    verilog_rename = self.tokenizer.next()
-                    token = self.tokenizer.next()
-                    assert token == "(", "expected ( to create a port alias got " + \
-                        token + " line " + str(self.tokenizer.line_number)
-                    token = self.tokenizer.next()
-                    if token == "{":
-                        while token != "}":
-                            # name = self.tokenizer.next()
-                            # token = self.tokenizer.next()
-                            # if token == "[":
-                            #     name += " "
-                            #     while token != "," and token != "}":
-                            #         name += token
-                            #         token = self.tokenizer.next()
-                            name = self.tokenizer.next()
-                            token = self.tokenizer.next()
-                            name, token = self._parse_rename_single(
-                                name, token)
-                            name_list.append(name)
-                            assert token == "," or token == "}", "syntax error expect , or } got " + \
-                                token + " line " + \
-                                str(self.tokenizer.line_number)
-                    else:
-                        name = token
-                        token = self.tokenizer.peek()
-                        name, token = self._parse_rename_single(name, token)
-                        name_list.append(name)
-                        assert token == ")", "syntax error expect ) got " + \
-                            token + " line " + str(self.tokenizer.line_number)
+        token = self.peek_token()
+        assert token == "(", self.error_string("(", "for port mapping", token)
 
-                    temp = self.tokenizer.next()
-                    assert temp == ")", "expected ) to finish alias got " + \
-                        temp + " line " + str(self.tokenizer.line_number)
-                if token == "input" or token == "output" or token == "inout":
-                    d = token
-                    token = self.tokenizer.next()
-                left = 0
-                right = 0
-                if token == "[":
-                    left = int(self.tokenizer.next())
-                    token = self.tokenizer.next()
-                    assert token == ":", "expected a : to separate the numbers in a port width  got " + \
-                        str(token) + " line " + self.tokenizer.line_number
-                    right = int(self.tokenizer.next())
-                    token = self.tokenizer.next()
-                    assert token == "]", "expected ] to end the port length definition got " + \
-                        str(token) + " line " + self.tokenizer.line_number
-                    token = self.tokenizer.next()
-                if verilog_rename is None:
-                    name = token
-                    port = self._update_port(definition, name, width=self.my_minus(self.my_max(left, right), self.my_min(
-                        left, right)), direction=d, lower_index=self.my_min(left, right), is_downto=self.my_greater(left, right))
-                else:
-                    i = 0
-                    outer_port = self._update_port(
-                        definition, verilog_rename, width=i, direction=d, lower_index=0, is_downto=True)
-                    for name in name_list:
-                        name_split = name.split(" ")
-                        name = name_split[0]
-                        index = None
-                        if len(name_split) > 1:
-                            #raise Exception
-                            index = name_split[1]
-                            if ":" in index:
-                                raise Exception
-                            index = int(index.strip("]").strip("["))
+        self.parse_module_header_ports()
 
-                        # # port = self._update_port(definition, name, width = (max(left,right) - self.my_min(left,right)), direction=d, lower_index = self.my_min(left,right), is_downto = left > right)
-                        # # port["VERILOG.port_rename_member"] = "true"
-                        # # if index is not None:
-                        # #     outer_port["VERILOG.port_rename."+str(i)] = name + " " + index
-                        # # else:
-                        # #     outer_port["VERILOG.port_rename."+str(i)] = name
-                        # in_count = 1
-                        # if name in self._port_rename_inner_count_dictionary:
-                        #     in_count = self._port_rename_inner_count_dictionary[name]
-                        #     self._port_rename_inner_count_dictionary[name] += 1
-                        # else:
-                        #     in_count = 1
-                        #     self._port_rename_inner_count_dictionary[name] = 1
+        token = self.next_token()
+        assert token == vt.CLOSE_PARENTHESIS, self.error_string(
+            vt.CLOSE_PARENTHESIS, "to end the module ports in the header", token)
 
-                        inner_cable = self._update_cable(
-                            definition, name=name, additional_index=index)
-                        # # index_of_interest = 0
-                        # # if index is not None:
-                        # #     index_of_interest = int(index.strip("[").strip("]"))
-                        self._port_rename_in_to_out_dict[name] = outer_port
-                        if outer_port not in self._port_rename_out_to_in_dict:
-                            self._port_rename_out_to_in_dict[outer_port] = []
-                        self._port_rename_out_to_in_dict[outer_port].append(
-                            name)
-                        self._port_rename_create_assignment(
-                            outer_port, i, inner_cable, definition, inner_index=index)
-                        i += 1
-                        outer_port = self._update_port(
-                            definition, verilog_rename, width=i, direction=d, lower_index=0, is_downto=True)
+        token = self.next_token()
+        assert token == vt.SEMI_COLON, self.error_string(
+            vt.SEMI_COLON, "to end the module header section", token)
 
-                token = self.tokenizer.next()
-                if token == ")":
-                    break
-                assert token == ",", "expected a , separater in the port list got " + \
-                    token + " line " + str(self.tokenizer.line_number)
+    def parse_module_header_parameters(self):
+        '''parse a parameter block in a module header, add all parameters to the current definition'''
+        token = self.next_token()
+        assert token == vt.OCTOTHORP, self.error_string(
+            vt.OCTOTHORP, "to begin parameter map", token)
+        token = self.next_token()
+        assert token == vt.OPEN_PARENTHESIS, self.error_string(
+            vt.OPEN_PARENTHESIS, "to begin parameter map", token)
 
-        token = self.tokenizer.next()
-        assert token == ";", "expected ; to finish the port list" + \
-            " " + str(self.tokenizer.line_number)
-        return definition
+        token = self.next_token()
 
-    def parse_parameter_list(self, definition):
-        token = self.tokenizer.next()
-        assert token == "(", "expected a ( following the # for the parameter definitions" + \
-            " " + str(self.tokenizer.line_number)
+        parameter_dictionary = dict()
+
         while token != ")":
-            token = self.tokenizer.next()
-            assert token == "parameter", "expected a parameter in the parameter list" + \
-                " " + str(self.tokenizer.line_number)
-            token = self.tokenizer.next()
+            # this is happening twice for all but the first one.. could simplify
+            assert token == vt.PARAMETER, self.error_string(
+                vt.PARAMETER, "parameter declaration", token)
+
             key = ""
-            if token == "integer":
-                key += "integer "
-                token = self.tokenizer.next()
-            if token == "[":
-                while token != "=":
-                    key += token
-                    token = self.tokenizer.next()
-            else:
-                key = token
-                token = self.tokenizer.next()
-                assert token == "=", "expected a = in the key value pair for the parameter" + \
-                    " " + str(self.tokenizer.line_number)
-            value = self.tokenizer.next()
-            if key not in definition:
-                definition[key] = value
-            token = self.tokenizer.next()
-
-    def parse_module_body(self, definition, netlist):
-        # this is the list of words that could begin a wire list line
-        keywords = set(["input", "output", "inout", "wire", "reg", "assign"])
-        portwords = set(["input", "output", "inout"])
-        token = self.tokenizer.peek()
-        params = OrderedDict()
-        assignment_info = OrderedDict()
-        while token != "endmodule":
-            if token not in keywords:
-                token = self.tokenizer.next()
-                def_name = token
-                if token == ";":
-                    pass
-                elif token == "(":
-                    token = self.tokenizer.next()
-                    assert token == "*", "unexpected ( with out a *" + \
-                        " " + str(self.tokenizer.line_number)
-                    k, v = self.parse_star_parameters()
-                    params["VERILOG.star."+k] = v
+            token = self.peek_token()
+            if token == vt.OPEN_BRACKET:
+                left, right = self.parse_brackets()
+                if right != None:
+                    key = "[" + str(left) + ":" + str(right) + "] "
                 else:
-                    instance = self.parse_single_instance(
-                        self.netlist, definition, def_name, params)
-                    params = OrderedDict()
-            elif token == "assign":
-                _ = self.tokenizer.next()
-                name_left, left_left, right_left = self.parse_wire_in_instance()
-                token = self.tokenizer.next()
-                assert token == "=", "expected = but got " + token
-                name_right, left_right, right_right = self.parse_wire_in_instance()
+                    key = "[" + str(left) + "] "
 
-                assignment_info[(name_left, left_left, right_left)] = (
-                    name_right, left_right, right_right)
+            token = self.next_token()
+            assert vt.is_valid_identifier(token), self.error_string(
+                'identifer', "in parameter list", token)
+            key += token
 
-                #print("left side of the assign", name_left + "["+str(left_left) + ":" + str(right_left) + "]", "right side of the assignment", name_right + "["+str(left_right) + ":" + str(right_right) + "]")
+            token = self.next_token()
+            if key == vt.INTEGER:
+                key += " " + token
+                token = self.next_token()
+
+            assert token == vt.EQUAL, self.error_string(
+                vt.EQUAL, "in parameter list", token)
+
+            token = self.next_token()
+            # not really sure what to assert here.
+            value = token
+
+            parameter_dictionary[key] = value
+            token = self.next_token()
+            if token == vt.COMMA:  # just keep going
+                token = self.next_token()
+                assert token == vt.PARAMETER, self.error_string(
+                    vt.PARAMETER, "after comma in parameter map", token)
             else:
-                token = self.tokenizer.next()
-                names, left, right = self.parse_wire()
-                for name in names:
-                    # check and see what a name lookup on the name yeids for the ports
-                    # go ahead and modify it if it exists.
-                    if token in portwords:
-                        # print(token)
-                        if name in self._port_rename_in_to_out_dict:
-                            # print("unexpected")
-                            outer_port = self._port_rename_in_to_out_dict[name]
-                            name = outer_port.name
-                            direction = outer_port.direction
-                            if direction == Port.Direction.INOUT:
-                                token = "inout"
-                            elif direction == Port.Direction.IN:
-                                if token == "output" or token == "inout":
-                                    token = "inout"
-                            elif direction == Port.Direction.OUT:
-                                if token == "input" or token == "inout":
-                                    token = "inout"
-                            elif direction == Port.Direction.UNDEFINED:
-                                pass
-                            port = self._update_port(
-                                definition, name, direction=token)
-                        else:
-                            port = self._update_port(definition, name, width=self.my_minus(self.my_max(left, right), self.my_min(
-                                left, right)), direction=token, lower_index=self.my_min(left, right), is_downto=self.my_greater(left, right))
-                    else:
-                        cable = self._update_cable(definition, name, width=self.my_minus(self.my_max(left, right), self.my_min(
-                            left, right)), lower_index=self.my_min(left, right), is_downto=self.my_greater(left, right))
-            token = self.tokenizer.peek()
+                assert token == vt.CLOSE_PARENTHESIS, self.error_string(
+                    vt.CLOSE_PARENTHESIS, "to end parameter declarations", token)
 
-        for k, v in assignment_info.items():
-            self._create_assigner(k, v, definition)
+        self.set_definition_parameters(
+            self.current_definition, parameter_dictionary)
 
-        # put in assignment information
+    def parse_module_header_ports(self):
+        '''parse port declarations in the module header and add them to the definition'''
+        token = self.next_token()
+        assert token == vt.OPEN_PARENTHESIS, self.error_string(
+            vt.OPEN_PARENTHESIS, "to begin port declarations", token)
 
-    def parse_wire_in_instance(self):
-        token = self.tokenizer.next()
-        name = token
-        left = None
-        right = None
-        token = self.tokenizer.peek()
-        if token == "[":
-            token = self.tokenizer.next()
-            try:
-                str_left = self.tokenizer.next()
-                left = int(str_left)
-            except ValueError:
-                print("expected an integer value following [ instead got " +
-                      str_left + " line " + str(self.tokenizer.line_number))
-                raise ValueError
-            token = self.tokenizer.next()
-            if token == ":":
-                right = int(self.tokenizer.next())
-                token = self.tokenizer.next()
-            assert token == "]", "expected an end bracket got " + \
-                token + " line " + str(self.tokenizer.line_number)
-            #token = self.tokenizer.next()
-        return name, left, right
+        token = self.peek_token()
 
-    def parse_wire(self):
-        # the next token will be either [ or a letter
-        # if [ then the next is the left then : then right
-        # if a letter then it will just be 0 downto 0
-        name = []
-        token = self.tokenizer.next()
-        left = None
-        right = None
-        verilog_types = ["reg", "wire", "integer"]
-        v_type = "wire"
-        if token in verilog_types:
-            v_type = token  # TODO use this
-            token = self.tokenizer.next()
-        if token == "[":
-            left = int(self.tokenizer.next())
-            assert self.tokenizer.next() == ":", "expected a colon" + \
-                " " + str(self.tokenizer.line_number)
-            right = int(self.tokenizer.next())
-            assert self.tokenizer.next() == "]", "expected an end bracket" + \
-                " " + str(self.tokenizer.line_number)
-            token = self.tokenizer.next()
-        while True:
-            name.append(token)
-            #name, left, right = self.parse_wire_name(self)
-            token = self.tokenizer.next()
-            #assert token == ";", "expected ; got " + token + " line " + str(self.tokenizer.line_number)
-            if token == ";":
-                break
-            elif token == ",":
-                token = self.tokenizer.next()
-            else:
-                print("unexpected token in cable or port list " +
-                      token + " line " + str(self.tokenizer.line_number))
-        return name, left, right
-
-    def parse_single_instance(self, netlist, parent, reference_name, params):
-
-        ref_def = self._get_create_definition(self.netlist, reference_name)
-        instance = parent.create_child()
-        for k, v in params.items():
-            instance[k] = v
-        token = self.tokenizer.next()
-
-        if token == "#":
-            param = self.parse_instance_parameter_list()
-            token = self.tokenizer.next()
-
-            for k, v in param.items():
-                instance["VERILOG.parameters."+k] = v
-
-        name = token
-        instance.name = name
-
-        instance.reference = ref_def
-
-        port_map = self.parse_port_map(instance)
-
-        self.instance_to_port_map[instance] = port_map
-
-        return instance
-
-    def parse_instance_parameter_list(self):
-        params = OrderedDict()
-        token = self.tokenizer.next()
-        assert token == "(", "expected list of attributes to map after #" + \
-            " " + str(self.tokenizer.line_number)
-        token = self.tokenizer.next()
-        while True:
+        while token != ")":
+            # the first token could be a name or input output or inout
             if token == ".":
-                pass
-            elif token == ",":
-                pass
-            elif token == "*":
-                print(".* mapping is unsupported")
-            elif token == ")":
-                break
+                self.parse_module_header_port_alias()
             else:
-                key = token
-                token = self.tokenizer.next()
-                assert token == "(", "expected a ( in parameter mapping " + \
-                    str(self.tokenizer.line_number)
-                value = ""
-                token = self.tokenizer.next()
-                while token != ")":
-                    value += token
-                    token = self.tokenizer.next()
-                params[key] = value
-            token = self.tokenizer.next()
-        return params
+                self.parse_module_header_port()
+            token = self.peek_token()
+            if token != vt.CLOSE_PARENTHESIS:
+                assert token == vt.COMMA, self.error_string(
+                    vt.COMMA, "to separate port declarations", token)
+                token = self.next_token()  # consume the comma token
+                token = self.peek_token()  # setup the next token
 
-    def parse_port_map(self, instance):
-        # extract/create the port that will be wired up to I guess assume the width is the same as the wire?
-        token = self.tokenizer.next()
-        assert token == "(", "expected ( for port mapping but got " + \
-            token + " line " + str(self.tokenizer.line_number)
-        token = self.tokenizer.next()
-        # if token == "{":
-        #     #we have a combinational port map going on... each pin on the port will be mapped individually
-        #     pass
-        port_map = OrderedDict()
-        #import pdb; pdb.set_trace()
-        while True:
-            if token == ")":
-                break
-            elif token == "." or token == ",":
-                pass
-            else:
-                port_name = token
-                token = self.tokenizer.next()
-                assert token == "(", "port needs to be followed by (cable) but got " + \
-                    token + " line " + str(self.tokenizer.line_number)
-                token = self.tokenizer.next()
-                multi_cable = False
-                if token == "{":
-                    multi_cable = True
-                    token = self.tokenizer.next()
+    def parse_module_header_port_alias(self):
+        '''parse the port alias portion of the module header
+        this parses the port alias section so that the port name is only a port and the mapped wires are the cables names that connect to that port.
 
-                while True:
-                    cable_name = token
-                    token = self.tokenizer.next()
-                    if token == "[":  # this will be a slice. for now just put it in the value
-                        cable_name += " " + token
-                        while token != "]":
-                            token = self.tokenizer.next()
-                            cable_name += token
-                        token = self.tokenizer.next()
-                    if port_name not in port_map:
-                        port_map[port_name] = []
-                    port_map[port_name].append(cable_name)
-                    #token = self.tokenizer.next()
-                    if multi_cable and token == "}":
-                        token = self.tokenizer.next()
-                        break
-                    elif multi_cable and token == ",":
-                        token = self.tokenizer.next()
-                    elif token == ")":
-                        break
-                    else:
-                        print("unknown token in port mapping", token)
-                assert token == ")", "cable list should end with ) but ends with " + \
-                    token + " line " + str(self.tokenizer.line_number)
-                #token = self.tokenizer.next()
-            token = self.tokenizer.next()
+        this requires that the cables names be kept in a dictionary to allow for setting the direction when the direction is given to the internal port names.
 
-        assert token == ")", "port list needs to be ended with a ) but ends with " + \
-            token + " line " + str(self.tokenizer.line_number)
+        example syntax
+        .canale({\\canale[3] ,\\canale[2] ,\\canale[1] ,\\canale[0] }),'''
 
-        return port_map
+        token = self.next_token()
+        assert token == vt.DOT, self.error_string(
+            vt.DOT, "for port aliasing", token)
+        token = self.next_token()
+        assert vt.is_valid_identifier(token), self.error_string(
+            "identifier", "for port in port aliasing", token)
+        name = token
 
-    def _get_create_library(self, netlist, library_name=None):
-        if library_name:
-            lib_list = self.netlist.get_libraries(library_name)
-            lib = next(lib_list, None)
-            if not lib:
-                lib = self.netlist.create_library()
-                lib.name = library_name
+        token = self.next_token()
+        assert token == vt.OPEN_PARENTHESIS, self.error_string(
+            vt.OPEN_PARENTHESIS, "parethesis to enclose port aliasing", token)
+
+        token = self.peek_token()
+        if token == vt.OPEN_BRACE:
+            wires = self.parse_cable_concatenation()
         else:
-            lib_list = self.netlist.get_libraries("work")
-            lib = next(lib_list, None)
-            if not lib:
-                lib = self.netlist.create_library()
-                lib.name = "work"
-        return lib
+            cable, left, right = self.parse_variable_instantiation()
+            wires = self.get_wires_from_cable(cable, left, right)
 
-    def _get_create_definition(self, netlist, definition_name, library=None):
-        if library is not None:
-            d = next(library.get_definitions(definition_name), None)
-            if d is None:
-                d = library.create_definition()
-                d.name = definition_name
-            return d
-        else:
-            library = self._get_create_library(self.netlist)
-            d = next(library.get_definitions(definition_name), None)
-            if d is None:
-                d = library.create_definition()
-                d.name = definition_name
-            return d
+        token = self.next_token()
+        assert token == vt.CLOSE_PARENTHESIS, self.error_string(
+            vt.CLOSE_PARENTHESIS, "parethesis to end port aliasing construct", token)
 
-    def _update_instance(self, netlist, definition, name, reference=None, properties=OrderedDict()):
-        # pass in a definition in which to contain the instance as a child
-        # pass in the name of the instance to create/find
-        # pass in the reference of the instance to create/find
-        # can also pass in a dictionary of properties to add to the instance.
-        # return the instance that was created or found
-        inst = definition.get_children(name)
-        if not inst:
-            inst = definition.create_child()
-            inst.name = name
-        if reference is not None:
-            ref = self.netlist.get_definitions(reference)
-            if not ref:
-                lib = self._get_create_library(self.netlist)
-                ref = lib.create_definition()
-                ref.name = reference
-            inst.reference = ref
-        for k, v in properties.items():
-            inst[k] = v
-        return inst
+        port = self.create_or_update_port(
+            name, left_index=len(wires)-1, right_index=0)
 
-    def _update_definition(self, netlist, name, library=None, properties=OrderedDict()):
-        lib = self._get_create_library(self.netlist, library)
-        d_list = self.netlist.get_definitions(name)
-        d = next(d_list, None)
-        if not d:
-            d = lib.create_definition()
-            d.name = name
+        # connect the wires to the pins
 
-        if library is not None:
-            if d.library.name != library:
-                d.library.remove_definition(d)
-                lib.add_definition(d)
-
-        for k, v in properties.items():
-            d[k] = v
-
-        return d
-
-    def _update_port(self, definition, name, width=None,
-                     direction=None, lower_index=None, is_downto=None, properties=OrderedDict()):
-        port_list = definition.get_ports(name)
-        cable_list = definition.get_cables(name)
-
-        direction = self.direction_string_map[direction]
-
-        port = next(port_list, None)
-        cable = next(cable_list, None)
-
-        if port is None:
-            port = definition.create_port()
-            port.name = name
-
-        if cable is None:
-            cable = definition.create_cable()
-            cable.name = name
-
-        if width is None and len(port.pins) == 0:
-            width = 0
-
-        if width is not None:
-            width = width + 1
-            current_p_width = len(port.pins)
-            current_c_width = len(cable.wires)
-
-            if width < current_p_width or width < current_c_width:
-                print(
-                    "updating port width does not support reducing size. a port or wire might be declared twice?")
-                raise NotImplementedError
-            wp = width - current_p_width
-            wc = width - current_c_width
-
-            port.create_pins(wp)
-            cable.create_wires(wc)
-
-        if direction is not None:
-            port.direction = direction
-        if lower_index is not None:
-            port.lower_index = lower_index
-            cable.lower_index = lower_index
-        if is_downto is not None:
-            port.is_downto = is_downto
-            cable.is_downto = is_downto
-
-        for k, v in properties.items():
-            port[k] = v
-            cable[k] = v
+        assert len(port.pins) == len(
+            wires), "Internal Error: the pins in a created port and the number of wires the aliased cable do not match up"
 
         for i in range(len(port.pins)):
-            if port.pins[i].wire == None:
-                cable.wires[i].connect_pin(port.pins[i])
+            wires[i].connect_pin(port.pins[i])
 
-        return port
+    def parse_cable_concatenation(self):
+        '''parse a concatenation structure of cables, create the cables mentioned, and deal with indicies
+        return a list of ordered wires that represents the cable concatenation
+        example syntax
+        {wire1, wire2, wire3, wire4}'''
+        token = self.next_token()
+        assert token == vt.OPEN_BRACE, self.error_string(
+            vt.OPEN_BRACE, "to start cable concatenation", token)
+        token = self.peek_token()
+        wires = []
+        while token != vt.CLOSE_BRACE:
+            cable, left, right = self.parse_variable_instantiation()
+            wires_temp = self.get_wires_from_cable(cable, left, right)
+            for w in wires_temp:
+                wires.append(w)
+            token = self.next_token()
+            if token != vt.COMMA:
+                assert token == vt.CLOSE_BRACE, self.error_string(
+                    vt.CLOSE_BRACE, "to end cable concatenation", token)
 
-    def _update_cable(self, definition, name, width=None,
-                      direction=None, lower_index=None, is_downto=None, properties=OrderedDict(), additional_index=None):
-        # use the additional index to add one index to a cable (expanding to fill any gaps and setting lower index appropriately)
-        # if the index exists then nothing happens
-        # width value is primary and overrides any additional index given.
-        cable_list = definition.get_cables(name)
+        return wires
 
-        direction = self.direction_string_map[direction]
+    def parse_module_header_port(self):
+        '''parse the port declaration in the module header'''
+        token = self.peek_token()
+        direction = None
+        defining = False
+        if token in vt.PORT_DIRECTIONS:
+            token = self.next_token()
+            direction = vt.string_to_port_direction(token)
+            token = self.peek_token()
+            defining = True
 
-        cable = next(cable_list, None)
+        left = None
+        right = None
+        if token == vt.OPEN_BRACKET:
+            left, right = self.parse_brackets()
 
-        if cable is None:
-            cable = definition.create_cable()
-            cable.name = name
+        token = self.next_token()
+        assert vt.is_valid_identifier(token), self.error_string(
+            "identifier", "for port declaration", token)
+        name = token
+        port = self.create_or_update_port(
+            name, left_index=left, right_index=right, direction=direction, defining=defining)
 
-        if additional_index is not None and width is None:
-            if len(cable.wires) == 0:
-                lower_index = additional_index
-                width = 0
-            elif additional_index >= cable.lower_index and additional_index < cable.lower_index + len(cable.wires):
-                pass
+        # get the left and right out of the port (in case we got more information out of an instance?)
+        if left == None and right == None:
+            left = port.lower_index + len(port.pins) - 1
+            right = port.lower_index
+            if not port.is_downto:
+                temp = left
+                left = right
+                right = temp
+
+        cable = self.create_or_update_cable(
+            name, left_index=left, right_index=right, defining=defining)
+
+        # wire together the cables and the port
+        assert len(port.pins) == len(cable.wires), self.error_string(
+            "the pins in a created port and the number of wires in it's cable do not match up", "wires: " + str(len(cable.wires)), "pins: " + str(len(port.pins)))
+        for i in range(len(port.pins)):
+            cable.wires[i].connect_pin(port.pins[i])
+
+    def parse_module_body(self):
+        '''
+        parse through a module body
+
+        module bodies consist of port declarations,
+        wire and reg declarations
+        and instantiations
+
+        expects port declarations to start with the direction and then include the cable type if provided
+        '''
+        direction_tokens = [vt.INPUT, vt.OUTPUT, vt.INOUT]
+        variable_tokens = [vt.WIRE, vt.REG]
+        token = self.peek_token()
+        params = dict()
+        while token != vt.END_MODULE:
+            if token in direction_tokens:
+                self.parse_port_declaration(params)
+                params = dict()
+            elif token in variable_tokens:
+                self.parse_cable_declaration(params)
+                params = dict()
+            elif token == vt.ASSIGN:
+                o_cable, o_left, o_right, i_cable, i_left, i_right = self.parse_assign()
+                self.connect_wires_for_assign(
+                    o_cable, o_left, o_right, i_cable, i_left, i_right)
+            elif vt.is_valid_identifier(token):
+                self.parse_instantiation(params)
+                params = dict()
+            elif token == vt.OPEN_PARENTHESIS:
+                stars = self.parse_star_property()
+                for k, v in stars.items():
+                    params[k] = v
             else:
-                width = len(cable.wires)
-                if additional_index < cable.lower_index:
-                    additional_width = cable.lower_index - additional_index
-                    width = width + additional_width
-                    lower_index = additional_index
-                else:
-                    assert additional_index >= cable.lower_index + \
-                        len(cable.wires)
-                    additional_width = additional_index - \
-                        cable.lower_index - len(cable.wires)
-                    width = width + additional_width
+                assert False, self.error_string(
+                    "direction, reg, wire, star_properties, or instance identifier", "in module body", token)
 
-        if width is None and len(cable.wires) == 0:
-            width = 0
+            token = self.peek_token()
 
-        if width is not None:
-            width = width + 1
-            current_width = len(cable.wires)
+        token = self.next_token()
+        assert token == vt.END_MODULE, self.error_string(
+            vt.END_MODULE, "to end the module body", token)
 
-            if width < current_width:
-                print("updating port width does not support reducing size. a port or wire might be declared twice with different lengths?")
-                raise NotImplementedError
+    def parse_port_declaration(self, properties):
+        '''parse the port declaration post port list.'''
+        token = self.next_token()
+        assert token in vt.PORT_DIRECTIONS, self.error_string(
+            "direction keyword", "to define port", token)
+        direction = vt.string_to_port_direction(token)
 
-            wire_add_count = width - current_width
-            cable.create_wires(wire_add_count)
+        token = self.peek_token()
+        if token in [vt.REG, vt.WIRE]:
+            var_type = token
+            token = self.next_token()
+        else:
+            var_type = None
 
-        if lower_index is not None:
-            cable.lower_index = lower_index
-        if is_downto is not None:
-            cable.is_downto = is_downto
+        token = self.peek_token()
+        if token == vt.OPEN_BRACKET:
+            left, right = self.parse_brackets()
+        else:
+            left = None
+            right = None
 
-        for k, v in properties.items():
-            cable[k] = v
+        token = self.next_token()
+        assert vt.is_valid_identifier(token), self.error_string(
+            "port identifier", "identify port", token)
+        names = []
+        names.append(token)
 
-        # if cable.name == "next_state_i_a2_6":
-        #     print(cable.lower_index)
-        #     import pdb; pdb.set_trace()
+        token = self.next_token()
+        while token == vt.COMMA:
+            token = self.next_token()
+            names.append(token)
+            token = self.next_token()
+
+        assert token == vt.SEMI_COLON, self.error_string(
+            vt.SEMI_COLON, "to end port declaration", token)
+
+        for name in names:
+            cable = self.create_or_update_cable(
+                name, left_index=left, right_index=right, var_type=var_type, defining=True)
+
+            port_list = self.get_all_ports_from_wires(
+                self.get_wires_from_cable(cable, left, right))
+
+            assert len(port_list) > 0, self.error_string(
+                "port name defined in the module header", "to declare a port", cable.name)
+
+            if len(port_list) > 1:
+                for p in port_list:
+                    port = self.create_or_update_port(
+                        p.name, direction=direction)
+                    port["VERILOG.InlineConstraints"] = properties
+            else:
+                port = self.create_or_update_port(port_list.pop(
+                ).name, left_index=left, right_index=right, direction=direction, defining=True)
+
+            if len(cable.wires) > 1:
+                self.connect_resized_port_cable(cable, port)
+
+    def parse_cable_declaration(self, properties):
+        token = self.next_token()
+        assert token in [vt.REG, vt.WIRE], self.error_string(
+            "reg or wire", "for cable declaration", token)
+        var_type = token
+
+        token = self.peek_token()
+        if token == vt.OPEN_BRACKET:
+            left, right = self.parse_brackets()
+        else:
+            left = None
+            right = None
+
+        token = self.next_token()
+        assert vt.is_valid_identifier(token), self.error_string(
+            "valid cable identifier", "identify the cable", token)
+        name = token
+
+        cable = self.create_or_update_cable(
+            name, left_index=left, right_index=right, var_type=var_type)
+        cable["VERILOG.InlineConstraints"] = properties
+
+        token = self.next_token()
+        assert token == vt.SEMI_COLON, self.error_string(
+            vt.SEMI_COLON, "to end cable declaration", token)
+
+    def parse_instantiation(self, properties):
+        token = self.next_token()
+        assert vt.is_valid_identifier(token), self.error_string(
+            "module identifier", "for instantiation", token)
+        def_name = token
+
+        parameter_dict = dict()
+        token = self.peek_token()
+        if token == vt.OCTOTHORP:
+            parameter_dict = self.parse_parameter_mapping()
+
+        token = self.next_token()
+        assert vt.is_valid_identifier(token), self.error_string(
+            "instance name", "for instantiation", token)
+        name = token
+
+        token = self.peek_token()
+        assert token == vt.OPEN_PARENTHESIS, self.error_string(
+            vt.OPEN_PARENTHESIS, "to start port to cable mapping", token)
+
+        instance = self.current_definition.create_child()
+        self.current_instance = instance
+
+        instance.name = name
+        instance.reference = self.blackbox_holder.get_blackbox(def_name)
+        instance["VERILOG.InlineConstraints"] = properties
+
+        self.parse_port_mapping()
+
+        self.set_instance_parameters(instance, parameter_dict)
+
+        token = self.next_token()
+        assert token == vt.SEMI_COLON, self.error_string(
+            vt.SEMI_COLON, "to end instatiation", token)
+
+    def parse_parameter_mapping(self):
+        params = dict()
+        token = self.next_token()
+        assert token == vt.OCTOTHORP, self.error_string(
+            vt.OCTOTHORP, "to begin parameter mapping", token)
+
+        token = self.next_token()
+        assert token == vt.OPEN_PARENTHESIS, self.error_string(
+            vt.OPEN_PARENTHESIS, "after # to begin parameter mapping", token)
+
+        while token != vt.CLOSE_PARENTHESIS:
+            k, v = self.parse_parameter_map_single()
+            params[k] = v
+            token = self.next_token()
+            assert token in [vt.CLOSE_PARENTHESIS, vt.COMMA], self.error_string(
+                vt.COMMA + " or " + vt.CLOSE_PARENTHESIS, "to separate parameters or end parameter mapping", token)
+
+        assert token == vt.CLOSE_PARENTHESIS, self.error_string(
+            vt.CLOSE_PARENTHESIS, "to terminate ", token)
+
+        return params
+
+    def parse_parameter_map_single(self):
+        # syntax looks like .identifier(value)
+        token = self.next_token()
+        assert token == vt.DOT, self.error_string(
+            vt.DOT, "to begin parameter mapping", token)
+
+        token = self.next_token()
+        assert vt.is_valid_identifier(token), self.error_string(
+            "valid parameter identifier", "in parameter mapping", token)
+        k = token
+
+        token = self.next_token()
+        assert token == vt.OPEN_PARENTHESIS, self.error_string(
+            vt.OPEN_PARENTHESIS, "after identifier in parameter mapping", token)
+
+        token = self.next_token()
+        v = token
+
+        token = self.next_token()
+        assert token == vt.CLOSE_PARENTHESIS, self.error_string(
+            vt.CLOSE_PARENTHESIS, "to close the parameter mapping value", token)
+
+        return k, v
+
+    def parse_port_mapping(self):
+        token = self.next_token()
+        assert token == vt.OPEN_PARENTHESIS, self.error_string(
+            vt.OPEN_PARENTHESIS, "to start the port mapping", token)
+
+        while token != vt.CLOSE_PARENTHESIS:
+            self.parse_port_map_single()
+            token = self.next_token()
+            assert token in [vt.COMMA, vt.CLOSE_PARENTHESIS], self.error_string(
+                vt.COMMA + " or " + vt.CLOSE_PARENTHESIS, "between port mapping elements or to end the port mapping", token)
+
+    def parse_port_map_single(self):
+        '''acutally does the mapping of the pins'''
+        token = self.next_token()
+        assert token == vt.DOT, self.error_string(
+            vt.DOT, "to start a port mapping instance", token)
+
+        token = self.next_token()
+        assert vt.is_valid_identifier(token), self.error_string(
+            "valid port identifier", "for port in instantiation port map", token)
+        port_name = token
+
+        token = self.next_token()
+        assert token == vt.OPEN_PARENTHESIS, self.error_string(
+            vt.OPEN_PARENTHESIS, "to encapsulate cable name in port mapping", token)
+
+        token = self.peek_token()
+
+        if token != vt.CLOSE_PARENTHESIS:
+
+            if token == vt.OPEN_BRACE:
+                wires = self.parse_cable_concatenation()
+            else:
+                cable, left, right = self.parse_variable_instantiation()
+                wires = self.get_wires_from_cable(cable, left, right)
+
+            pins = self.create_or_update_port_on_instance(
+                port_name, len(wires))
+
+            assert len(pins) >= len(wires), self.error_string(
+                "pins length to match or exceed cable.wires length", "INTERNAL ERROR", str(len(pins)) + "!=" + str(len(wires)))
+
+            # there can be unconnected pins at the end of the port.
+            for i in range(len(wires)):
+                wires[i].connect_pin(pins[i])
+
+            token = self.next_token()
+
+        else:
+            # consume the )
+            token = self.next_token()
+            # the port is intentionally left unconnected.
+            self.create_or_update_port_on_instance(port_name, 1)
+
+        assert token == vt.CLOSE_PARENTHESIS, self.error_string(
+            vt.CLOSE_PARENTHESIS, "to end cable name in port mapping", token)
+
+    def parse_assign(self):
+        token = self.next_token()
+        assert token == vt.ASSIGN, self.error_string(
+            vt.ASSIGN, "to begin assignment statement", token)
+        l_cable, l_left, l_right = self.parse_variable_instantiation()
+        token = self.next_token()
+        assert token == vt.EQUAL, self.error_string(
+            vt.EQUAL, "in assigment statment", token)
+        r_cable, r_left, r_right = self.parse_variable_instantiation()
+        token = self.next_token()
+        assert token == vt.SEMI_COLON, self.error_string(
+            vt.SEMI_COLON, "to terminate assign statement", token)
+
+        return l_cable, l_left, l_right, r_cable, r_left, r_right
+
+    def parse_variable_instantiation(self):
+        name = self.next_token()
+        token = self.peek_token()
+        left = None
+        right = None
+        if token == vt.OPEN_BRACKET:
+            left, right = self.parse_brackets()
+
+        cable = self.create_or_update_cable(
+            name, left_index=left, right_index=right)
+
+        return cable, left, right
+
+    def parse_brackets(self):
+        '''returns 2 integer values or 1 integer value and none'''
+        token = self.next_token()
+        assert token == vt.OPEN_BRACKET, self.error_string(
+            "[", "to begin array slice", token)
+        token = self.next_token()
+        assert self.is_numeric(token), self.error_string(
+            "number", "after [", token)
+        left = int(token)
+        token = self.next_token()
+        if token == "]":
+            return left, None
+        else:
+            assert(token == vt.COLON), self.error_string(
+                "] or :", "in array slice", token)
+            token = self.next_token()
+            assert(self.is_numeric(token)), self.error_string(
+                "number", "after : in array slice", token)
+            right = int(token)
+            token = self.next_token()
+            assert token == vt.CLOSE_BRACKET, self.error_string(
+                "]", "to terminate array slice", token)
+            return left, right
+
+    def parse_star_property(self):
+        token = self.next_token()
+        assert token == vt.OPEN_PARENTHESIS, self.error_string(
+            vt.OPEN_PARENTHESIS, "to begin star property", token)
+        token = self.next_token()
+        assert token == vt.STAR, self.error_string(
+            vt.STAR, "to begin star property", token)
+        properties_dict = dict()
+        token = self.next_token()
+        while token != vt.STAR:
+            assert vt.is_valid_identifier(token)
+            key = token
+            token = self.next_token()
+            assert token in [vt.EQUAL, vt.STAR, vt.COMMA], self.error_string(
+                vt.EQUAL + " or " + vt.STAR + " or " + vt.COMMA, "to set a star parameter", token)
+            if token == vt.EQUAL:
+                token = self.next_token()
+                value = ""
+                while token != vt.STAR and token != vt.COMMA:
+                    value += token
+                    token = self.next_token()
+            else:
+                value = None
+            properties_dict[key] = value
+            if token != vt.STAR:
+                token = self.next_token()
+        assert token == vt.STAR, self.error_string(
+            vt.STAR, "to start the ending of a star property", token)
+        token = self.next_token()
+        assert token == vt.CLOSE_PARENTHESIS, self.error_string(
+            vt.CLOSE_PARENTHESIS, "to end the star property", token)
+
+        return properties_dict
+
+    #######################################################
+    # assignment helpers
+    #######################################################
+
+    def get_assignment_library(self):
+        '''create or return a previously created assignment library'''
+        if self.assigns == None:
+            self.assigns = self.netlist.create_library(
+                name="SDN_VERILOG_ASSIGNMENT")
+
+        return self.assigns
+
+    def get_assignment_definition(self, width):
+        '''get the definition of the specified width for assignments'''
+        proposed_name = "SDN_VERILOG_ASSIGNMENT_" + str(width)
+        library = self.get_assignment_library()
+        definition = next(library.get_definitions(proposed_name), None)
+        if definition == None:
+            definition = library.create_definition(name=proposed_name)
+            in_port = definition.create_port("i")
+            out_port = definition.create_port("o")
+
+            in_port.create_pins(width)
+            out_port.create_pins(width)
+            in_port.direction = sdn.Port.Direction.IN
+            out_port.direction = sdn.Port.Direction.OUT
+
+            cable = definition.create_cable("through")
+            cable.create_wires(width)
+            for i in range(width):
+                cable.wires[i].connect_pin(in_port.pins[i])
+                cable.wires[i].connect_pin(out_port.pins[i])
+
+        return definition
+
+    def create_assignment_instance(self, width):
+        '''create a new assign instance of the specified width on the current definition'''
+        definition = self.get_assignment_definition(width)
+        instance_name = definition.name + "_" + str(self.assignment_count)
+        self.assignment_count += 1
+        instance = self.current_definition.create_child(instance_name)
+        instance.reference = definition
+        return instance
+
+    def connect_wires_for_assign(self, l_cable, l_left, l_right, r_cable, r_left, r_right):
+        '''connect the wires in r_left to the wires in l_left'''
+
+        out_wires = self.get_wires_from_cable(l_cable, l_left, l_right)
+        in_wires = self.get_wires_from_cable(r_cable, r_left, r_right)
+
+        # min because we don't need extra pins since only what can will assign.
+        width = min(len(out_wires), len(in_wires))
+        instance = self.create_assignment_instance(width)
+
+        in_port = next(instance.reference.get_ports('i'), None)
+        out_port = next(instance.reference.get_ports('o'), None)
+
+        in_pins = self.get_pins_by_port_from_instance(instance, in_port)
+        out_pins = self.get_pins_by_port_from_instance(instance, out_port)
+
+        for i in range(width):
+            out_wires[i].connect_pin(out_pins[i])
+            in_wires[i].connect_pin(in_pins[i])
+
+    #######################################################
+    # helper functions
+    #######################################################
+
+    def get_pins_by_port_from_instance(self, instance, port):
+        pin_lookup = instance.pins
+        pins_out = []
+        for p in port.pins:
+            pins_out.append(pin_lookup[p])
+        return pins_out
+
+    def set_instance_parameters(self, instance, params):
+        for k, v in params.items():
+            #self.set_single_parameter(instance.reference, k, None)
+            self.set_single_parameter(instance, k, v)
+
+    def set_definition_parameters(self, definition, params):
+        for k, v in params.items():
+            self.set_single_parameter(definition, k, v)
+
+    def set_single_parameter(self, var, k, v):
+        if "VERILOG.Parameters" not in var:
+            var["VERILOG.Parameters"] = dict()
+
+        if k not in var["VERILOG.Parameters"] or var["VERILOG.Parameters"][k] is None:
+            var["VERILOG.Parameters"][k] = v
+
+    def get_all_ports_from_wires(self, wires):
+        '''gets all ports associated with a set of wires'''
+        ports = set()
+        for w in wires:
+            for p in w.pins:
+                if isinstance(p, sdn.InnerPin):
+                    ports.add(p.port)
+        return ports
+
+    def get_wires_from_cable(self, cable, left, right):
+        wires = []
+
+        if left != None and right != None:
+            left = left - cable.lower_index
+            right = right - cable.lower_index
+            temp_wires = cable.wires[min(left, right): max(left, right) + 1]
+            if left > right:
+                temp_wires = reversed(temp_wires)
+
+            for w in temp_wires:
+                wires.append(w)
+
+        elif left != None or right != None:
+            if left != None:
+                index = left - cable.lower_index
+            else:
+                index = right - cable.lower_index
+            wires.append(cable.wires[index])
+
+        else:
+            for w in cable.wires:
+                wires.append(w)
+
+        return wires
+
+    def convert_string_to_port_direction(self, token):
+        if token == vt.INPUT:
+            return sdn.Port.Direction.IN
+        if token == vt.INOUT:
+            return sdn.Port.Direction.INOUT
+        if token == vt.OUTPUT:
+            return sdn.Port.Direction.OUT
+        else:
+            return sdn.Port.Direction.UNDEFINED
+
+    ########################################################################################
+    # Port and cable creation and update managment
+    ########################################################################################
+
+    '''I'm handed a few different possible senarios
+
+    module name(port1, port2,...);
+    input [3:0] port1
+    output [3:0] port2
+    endmodule
+
+    or
+
+    module name
+    (
+        input [3:0] port1,
+        output[3:0] port2,
+        ...
+    );
+
+    additionally i need to be aware of the possibility that something like this happens
+
+    module name(.port1({cable1, cable2}));
+    input [1:0] cable1;
+    output [1:0] cable2;
+    '''
+
+    def connect_resized_port_cable(self, resized_cable, resized_port):
+        '''One to one connector. Don't use with alias statements. this expects that the given cable should completely fill the port...
+        after a cable has been updated that is attached to a port it may need to update the port and reconnect the'''
+        assert len(resized_cable.wires) == len(resized_port.pins), self.error_string("cable and port to have same size",
+                                                                                     "to reconnect expanded cables and ports", "wires: " + str(len(resized_cable.wires)) + " pins: " + str(len(resized_port.pins)))
+        for i in range(len(resized_port.pins)):
+            # I think these should be lined up right?
+            if resized_port.pins[i] not in resized_cable.wires[i].pins:
+                resized_cable.wires[i].connect_pin(resized_port.pins[i])
+
+    def create_or_update_cable(self, name, left_index=None, right_index=None, var_type=None, defining=False):
+        cable_generator = self.current_definition.get_cables(name)
+        cable = next(cable_generator, None)
+        if cable == None:
+            cable = self.current_definition.create_cable()
+            self.populate_new_cable(
+                cable, name, left_index, right_index, var_type)
+            return cable
+
+        assert cable.name == name
+
+        cable_lower = cable.lower_index
+        # -1 so that it is the same number if the width is 1
+        cable_upper = cable.lower_index + len(cable.wires) - 1
+
+        if left_index is not None and right_index is not None:
+            in_lower = min(left_index, right_index)
+            in_upper = max(left_index, right_index)
+        elif left_index is not None:
+            in_lower = left_index
+            in_upper = left_index
+        elif right_index is not None:
+            in_upper = right_index
+            in_lower = right_index
+        else:
+            in_upper = None
+            in_lower = None
+
+        if defining and in_lower is not None:  # if the cable width is being defined then recenter the cable
+            cable.lower_index = in_lower
+            cable_lower = cable.lower_index
+            cable_upper = cable.lower_index + len(cable.wires) - 1
+
+        if in_upper is not None and in_lower is not None:
+
+            if in_lower < cable_lower:
+                prepend = cable_lower - in_lower
+                self.prepend_wires(cable, prepend)
+            if in_upper > cable_upper:
+                postpend = in_upper - cable_upper
+                self.postpend_wires(cable, postpend)
+
+        if var_type:
+            cable["VERILOG.CableType"] = var_type
 
         return cable
 
-    def my_max(self, a, b):
-        if a == None:
-            return b
-        elif b == None:
-            return a
+    def populate_new_cable(self, cable, name, left_index, right_index, var_type):
+        cable.name = name
+        if left_index is not None and right_index is not None:
+            cable.is_downto = right_index <= left_index
+            cable.create_wires(max(left_index, right_index) -
+                               min(left_index, right_index) + 1)
+            cable.lower_index = min(left_index, right_index)
+        elif left_index is not None:
+            cable.lower_index = left_index
+            cable.create_wire()
+        elif right_index is not None:
+            cable.lower_index = right_index
+            cable.create_wire()
         else:
-            return max(a, b)
+            cable.lower_index = 0
+            cable.create_wire()
 
-    def my_min(self, a, b):
-        if a == None:
-            return b
-        elif b == None:
-            return a
-        else:
-            return min(a, b)
+        if var_type:
+            cable["VERILOG.CableType"] = var_type
 
-    def my_greater(self, a, b):
-        if a == None:
-            return b
-        elif b == None:
-            return a
-        else:
-            return a > b
+        return cable
 
-    def my_minus(self, a, b):
-        if a == None or b == None:
-            return None
+    def prepend_wires(self, cable, count):
+        orig_count = len(cable.wires)
+        cable.create_wires(count)
+        cable.wires = cable.wires[orig_count:] + cable.wires[:orig_count]
+        cable.lower_index = cable.lower_index - count
+
+    def postpend_wires(self, cable, count):
+        cable.create_wires(count)
+
+    def create_or_update_port_on_instance(self, name, width):
+        '''returns the set of pins associated with the port on the instance'''
+        pins = []
+        port = self.create_or_update_port(
+            name, left_index=width - 1, right_index=0, definition=self.current_instance.reference)
+        for pin in self.current_instance.pins:
+            if pin.inner_pin in port.pins:
+                pins.append(pin)
+        return pins
+
+    def create_or_update_port(self, name, left_index=None, right_index=None, direction=None, definition=None, defining=False):
+        if definition == None:
+            definition = self.current_definition
+
+        port_generator = definition.get_ports(name)
+        port = next(port_generator, None)
+        if port == None:
+            port = definition.create_port()
+            self.populate_new_port(
+                port, name, left_index, right_index, direction)
+            return port
+
+        assert port.name == name
+
+        # figure out what we need to do with the indicies
+
+        port_lower = port.lower_index
+        # -1 so that it is the same number if the width is 1
+        port_upper = port.lower_index + len(port.pins) - 1
+
+        if left_index is not None and right_index is not None:
+            in_lower = min(left_index, right_index)
+            in_upper = max(left_index, right_index)
+        elif left_index is not None:
+            in_lower = left_index
+            in_upper = left_index
+        elif right_index is not None:
+            in_upper = right_index
+            in_lower = right_index
         else:
-            return a - b
+            in_upper = None
+            in_lower = None
+
+        if defining and in_lower is not None:  # if the cable width is being defined then recenter the cable
+            port.lower_index = in_lower
+            port_lower = port.lower_index
+            port_upper = port.lower_index + len(port.pins) - 1
+
+        if in_upper is not None and in_lower is not None:
+
+            if in_lower < port_lower:
+                prepend = port_lower - in_lower
+                self.prepend_pins(port, prepend)
+            if in_upper > port_upper:
+                postpend = in_upper - port_upper
+                self.postpend_pins(port, postpend)
+
+        if direction is not None:
+            port.direction = direction
+
+        return port
+
+    def populate_new_port(self, port, name, left_index, right_index, direction):
+        port.name = name
+        if left_index is not None and right_index is not None:
+            port.is_downto = right_index <= left_index
+            port.create_pins(max(left_index, right_index) -
+                             min(left_index, right_index) + 1)
+            port.lower_index = min(left_index, right_index)
+        elif left_index is not None:
+            port.lower_index = left_index
+            port.create_pin()
+        elif right_index is not None:
+            port.lower_index = right_index
+            port.create_pin()
+        else:
+            port.lower_index = 0
+            port.create_pin()
+
+        if direction is not None:
+            port.direction = direction
+
+        return port
+
+    def prepend_pins(self, port, count):
+        orig_count = len(port.pins)
+        port.create_pins(count)
+        port.pins = port.pins[orig_count:] + port.pins[:orig_count]
+        port.lower_index = port.lower_index - count
+
+    def postpend_pins(self, port, count):
+        port.create_pins(count)
+
+    def is_numeric(self, token):
+        first = True
+        for c in token:
+            if first:
+                first = False
+                if c == "-":
+                    continue
+            if c not in vt.NUMBERS:
+                return False
+        return True
+
+    def is_alphanumeric(self, token):
+        for c in token:
+            if c not in vt.NUMBERS and c not in vt.LETTERS:
+                return False
+        return True
+
+    def error_string(self, expected, why, result):
+        '''put in the expectation and then the reason or location and the actual result'''
+        return "expected " + str(expected) + " " + why + " but got " + str(result) + " Line: " + str(self.tokenizer.line_number)

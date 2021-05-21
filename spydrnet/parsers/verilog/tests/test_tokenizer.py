@@ -2,6 +2,7 @@ import unittest
 
 from spydrnet.parsers.verilog.tokenizer import *
 import spydrnet as sdn
+from io import StringIO
 
 
 class TestVerilogTokenizer(unittest.TestCase):
@@ -23,3 +24,14 @@ class TestVerilogTokenizer(unittest.TestCase):
         while(tokenizer.has_next()):
             #print(tokenizer.next())
             tokenizer.next()
+
+    def test_from_stream(self):
+        stream = StringIO("module empty();endmodule")
+        tokenizer = VerilogTokenizer.from_stream(stream)
+        expected_tokens = ["module", "empty", "(", ")", ";", "endmodule"]
+        tokens = []
+        while(tokenizer.has_next()):
+            tokens.append(tokenizer.next())
+        
+        for i in range(len(expected_tokens)):
+            assert expected_tokens[i] == tokens[i]

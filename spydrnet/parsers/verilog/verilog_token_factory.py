@@ -79,8 +79,13 @@ class TokenFactory():
             token_out = self.buffer
             self.clear()
 
+        elif character == vt.DOT and not self.any_flag_set() and len(self.buffer) != 0 and\
+                not vt.is_numeric(self.buffer):
+            token_out = self.buffer
+            self.clear()
+
         
-        if character not in vt.WHITESPACE:    
+        if character not in vt.WHITESPACE:
             self.buffer = self.buffer + character
         elif self.single_line_comment or self.multi_line_comment or self.string or self.processor_directive:
             self.buffer = self.buffer + character

@@ -44,7 +44,10 @@ class Comparer:
         assert self.get_original_identifier(library_orig) == self.get_original_identifier(library_composer), \
             "Libraries do not have the same original identifier"
         assert len(library_orig.definitions) == len(library_composer.definitions), \
-            "Libraries do not have the same amount of definitions"
+            "Libraries do not have the same amount of definitions " \
+            + str(library_orig) + " " + str(len(library_orig.definitions)) + " " +\
+            str(library_composer) + " " + \
+            str(len(library_composer.definitions))
         # except Exception:
         #     import pdb; pdb.set_trace()
         for orig_definition in library_orig.definitions:
@@ -113,12 +116,10 @@ class Comparer:
                     continue
                 else:
                     patterns = orig_instance.name
-            try:
-                composer_instance = next(
-                    sdn.get_instances(definition_composer, patterns))
-            except Exception:
-                import pdb
-                pdb.set_trace()
+
+            composer_instance = next(
+                sdn.get_instances(definition_composer, patterns))
+
             self.compare_instances(orig_instance, composer_instance)
 
         # compare assignemnt statements
@@ -163,7 +164,8 @@ class Comparer:
         # zip is left here because the order of wires in cables matters.
         for orig_wire, composer_wire in zip(cable_orig.wires, cable_composer.wires):
             assert len(orig_wire.pins) == len(composer_wire.pins), \
-                "wires connect to a different number of pins"
+                "wires connect to a different number of pins " + \
+                orig_wire.cable.name + " " + composer_wire.cable.name
             for orig_pin, composer_pin in zip(orig_wire.pins, composer_wire.pins):
                 assert type(orig_pin) == type(composer_pin), \
                     "pin types do not match up."

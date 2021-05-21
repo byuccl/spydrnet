@@ -96,8 +96,8 @@ class Library(FirstClassElement):
         position - int, (default None) 
             the index in the library list at which to add the definition
         """
-        assert definition.library is not self, "Definition already included in library"
-        assert definition.library is None, "Definition already belongs to a different library"
+        assert definition.library is not self, "Definition " + str(definition) + " already included in library " + str(self)
+        assert definition.library is None, "Definition " + str(definition) + " already belongs to a different library " + str(definition.library)
         global_callback._call_library_add_definition(self, definition)
         if position is not None:
             self._definitions.insert(position, definition)
