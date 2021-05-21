@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="128"
+   height="128"
+   viewBox="0 0 33.866666 33.866668"
+   version="1.1"
+   id="svg8"
+   inkscape:version="1.0.2 (1.0.2+r75+1)"
+   sodipodi:docname="vivado_logo.svg"
+   inkscape:export-filename="/home/benglines/spydrnet_vivado_examples/docs/source/figures/vivado_logo.png"
+   inkscape:export-xdpi="192"
+   inkscape:export-ydpi="192">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.1406553"
+     inkscape:cx="-37.732058"
+     inkscape:cy="73.197189"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     inkscape:document-rotation="0"
+     showgrid="false"
+     inkscape:window-width="1439"
+     inkscape:window-height="1107"
+     inkscape:window-x="417"
+     inkscape:window-y="229"
+     inkscape:window-maximized="0"
+     units="px" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       id="rect28"
+       style="opacity:0.998;fill:#dadc56;fill-opacity:1;fill-rule:evenodd;stroke-width:0.2305"
+       d="M 9.0670201,0 19.56756,5.676446 21.31159,19.269097 10.811049,13.592649 Z"
+       inkscape:export-xdpi="178.5"
+       inkscape:export-ydpi="178.5" />
+    <path
+       id="rect28-7"
+       style="opacity:0.998;fill:#8b8d09;fill-opacity:1;fill-rule:evenodd;stroke-width:0.2305"
+       d="M 10.811049,13.592649 11.203439,25.578355 0.39238955,33.866667 0,21.880961 Z" />
+    <path
+       id="rect28-5"
+       style="opacity:0.998;fill:#e5e792;fill-opacity:1;fill-rule:evenodd;stroke-width:0.2305"
+       d="m 33.866667,24.573437 -10.10815,6.309259 -12.55508,-5.30434 10.108153,-6.309259 z" />
+  </g>
+</svg>
