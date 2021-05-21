@@ -14,10 +14,10 @@
    install
    tutorial
    reference/index
+   auto_examples/index
    developer/index
    license
    credits
-   auto_examples/index
 
 Indices and tables
 ------------------
