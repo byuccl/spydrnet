@@ -4,6 +4,7 @@ from spydrnet.ir.views.outerpinsview import OuterPinsView
 from spydrnet.global_state import global_callback
 from spydrnet.global_state.global_callback import _call_create_instance
 from copy import deepcopy, copy, error
+from collections import OrderedDict
 
 
 class Instance(FirstClassElement):
@@ -16,7 +17,7 @@ class Instance(FirstClassElement):
     :ivar parent: the parent of the object. Parent is the definition that instances another definition.
     :ivar child: the instance itself is the child of the parent.
     :ivar reference: the item of the object. Reference is the definition of the instance.
-    
+
     For example, when writing definition 1, we instance definition 2. Definition 1 is the parent, the instance is the child, and definition 2 is the instance's reference.
 
     """
@@ -34,7 +35,7 @@ class Instance(FirstClassElement):
         super().__init__()
         self._parent = None
         self._reference = None
-        self._pins = dict()
+        self._pins = OrderedDict()
         _call_create_instance(self)
         if name != None:
             self.name = name
@@ -126,7 +127,7 @@ class Instance(FirstClassElement):
         This will replace the reference if affected and replace the inner pins that will be affected as well.
         The instance should not be in the references list of the reference definition
         """
-        new_pins = dict()
+        new_pins = OrderedDict()
         for ip, op in self._pins.items():
             new_pins[memo[ip]] = op
         self._pins = new_pins
@@ -169,7 +170,7 @@ class Instance(FirstClassElement):
          * the instance is orphaned (no longer a child of the definition to which the cloned definition belonged
 
         """
-        c = self._clone(dict())
+        c = self._clone(OrderedDict())
         c._clone_rip()
         return c
 
