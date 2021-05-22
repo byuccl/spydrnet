@@ -210,6 +210,7 @@ epub_exclude_files = ['search.html']
 sphinx_gallery_conf = {
      'examples_dirs': os.path.join('..', '..', 'examples'),   # path to your example scripts
      'gallery_dirs': 'auto_examples',  # path to where to save gallery generated output
+     'remove_config_comments': True,
 }
 
 # -- Extension configuration -------------------------------------------------

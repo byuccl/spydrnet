@@ -3,7 +3,7 @@
 Flattens a netlist
 =====================================
 
-Remove hierarchy from a netlist.
+Remove hierarchy from a netlist. The original hierarchy and new hierarchy (after flattening) will be printed.
 """
 
 import os
@@ -162,12 +162,19 @@ def flatten_definition(definition, top_definition=False):
             print("Finished moving cells from", child['EDIF.identifier'])
     return created
 
+#print the hierarchy of a netlist
+def hierarchy(current_instance,indentation=""):
+    print(indentation,current_instance.name)
+    for child in current_instance.reference.children:
+        hierarchy(child,indentation+"   ")
+
 
 example_name1 = "unique_challenge"
 example_name2 = "three_layer_hierarchy"
 example_name3 = "unique_different_modules"
 example_name = example_name1
 ir = sdn.load_example_netlist_by_name(example_name)
+ir_orig = sdn.load_example_netlist_by_name(example_name) #store the original netlist for display later
 top_def = ir.top_instance.reference
 flatten_definition(top_def, top_definition=True)
 
@@ -177,3 +184,8 @@ with tempfile.TemporaryDirectory() as td:
 
 # sdn.composers.compose("test.edf", ir)
 print()
+
+print("ORIGINAL HIERARCHY")
+hierarchy(ir_orig.top_instance)
+print("\nHIERARCHY AFTER FLATTENING")
+hierarchy(ir.top_instance)

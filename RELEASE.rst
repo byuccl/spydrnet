@@ -1,3 +1,12 @@
+SpyDrNet 1.8.1
+--------------
+May 21, 2021
+
+* improved the verilog parser and composer
+* added vivado exmaples and refined other existing examples
+* this build supports Python 3.5
+  
+
 SpyDrNet 1.8.0
 --------------
 April 23, 2021

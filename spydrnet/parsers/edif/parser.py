@@ -648,7 +648,7 @@ class EdifParser:
         library = self.elements[-3]
         if library['EDIF.identifier'].lower() != library_identifier.lower():
             library = next(environment.get_libraries(library_identifier, key="EDIF.identifier"), None)
-            assert library is not None, "Library not found within netlist by EDIF identifier"
+            assert library is not None, "Library not found within netlist by EDIF identifier " + library_identifier
         self.prefix_pop()
         return library
 

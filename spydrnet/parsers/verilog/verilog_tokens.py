@@ -45,16 +45,23 @@ CELL_DEFINE = "`celldefine"
 END_CELL_DEFINE = "`endcelldefine"
 IFDEF = "`ifdef"
 DEFINE = "`define"
-ENDIF = '`endif'
+ENDIF = "`endif"
 ELSIF = '`elsif'
 TIMESCALE = '`timescale'
 OPEN_BLOCK_COMMENT = "/*"
 CLOSE_BLOCK_COMMENT = "*/"
 OPEN_LINE_COMMENT = "//"
+PRIMITIVE = 'primitive'
+END_PRIMITIVE = 'endprimitive'
+FUNCTION = 'function'
+END_FUNCTION = 'endfunction'
+TASK = 'task'
+END_TASK = 'endtask'
+INTEGER = 'integer'
 
 #SET OF ALL THINGS THAT WILL END AN IDENTIFIER IF THEY ARE NOT ESCAPED.
 #elif ch in {'(', ')', '.', ',', ';', '[', ']', ':', "{", "}", "*", "#", "`"}:
-BREAKER_TOKENS = {SPACE, TAB, NEW_LINE, CARRIAGE_RETURN, FORM_FEED, OPEN_PARENTHESIS, CLOSE_PARENTHESIS, DOT,\
+BREAKER_TOKENS = {SPACE, TAB, NEW_LINE, CARRIAGE_RETURN, FORM_FEED, OPEN_PARENTHESIS, CLOSE_PARENTHESIS,\
     COMMA, SEMI_COLON, OPEN_BRACKET, CLOSE_BRACKET, COLON, OPEN_BRACE, CLOSE_BRACE, STAR, OCTOTHORP,\
         EQUAL, "\\", "\"", "`"} #single quote should not be included here because of 1'b0 type of declarations (these should be one token)
 
@@ -101,10 +108,16 @@ ALL_VERILOG_TOKENS = {
     OPEN_BLOCK_COMMENT,\
     CLOSE_BLOCK_COMMENT,\
     OPEN_LINE_COMMENT,\
+    INTEGER,\
 }
 
 def is_valid_identifier(token):
-    if token[0] == '\\' and token[-1] == " ":
+    if token == "":
+        return False
+    elif token[0] == '\\' and token[-1] == " ":
+        for white in WHITESPACE: #there shouldn't be whitespace before the ending space
+            if white in token[:-1]:
+                return False
         return True
     else:
         if token[0] not in LETTERS and token[0] != "_":
@@ -113,6 +126,14 @@ def is_valid_identifier(token):
             if c not in LETTERS and c not in NUMBERS and c != "_":
                 return False
         return True
+
+def is_numeric(token):
+    if token == "":
+        return False
+    for c in token:
+        if c not in NUMBERS:
+            return False
+    return True
 
 def string_to_port_direction(token):
     if token == INPUT:
