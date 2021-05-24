@@ -1,0 +1,488 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Create Netlist with SpyDrNet &mdash; SpyDrNet 1.8.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Developer’s Guide" href="../../developer/index.html" />
+    <link rel="prev" title="Modify Netlist with SpyDrNet" href="AND_to_OR.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> SpyDrNet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.8
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../index.html#basic">Basic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#special">Special</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#vivado">Vivado</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="vivado_netlist.html">Create/View a Netlist with Vivado</a></li>
+<li class="toctree-l3"><a class="reference internal" href="AND_to_OR.html">Modify Netlist with SpyDrNet</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Create Netlist with SpyDrNet</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../credits.html">Credits</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SpyDrNet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Examples</a> &raquo;</li>
+        
+      <li>Create Netlist with SpyDrNet</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/auto_examples/vivado/LUT_builder.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-vivado-lut-builder-py"><span class="std std-ref">here</span></a>     to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="create-netlist-with-spydrnet">
+<span id="sphx-glr-auto-examples-vivado-lut-builder-py"></span><h1>Create Netlist with SpyDrNet<a class="headerlink" href="#create-netlist-with-spydrnet" title="Permalink to this headline">¶</a></h1>
+<p>Builds a netlist with a lookup table and HDI primitives from scratch ready to be used for a “post-synthesis” project</p>
+<p>This script shows how SpyDrNet is capable of creating a real netlist that can be downloaded to an FPGA development board. This specific design is meant for Digilent development boards with Xilinx FPGAs, but should work for other FPGAs that use the same primitives.</p>
+<p>Using SpyDrNet, this script creates a netlist with a lookup table and the necessary primitive definitions to implement it on a board. The number of inputs to the lookup table and the configuration of the lookup table can be set by changing the <code class="docutils literal notranslate"><span class="pre">LUT_SIZE</span></code> and <code class="docutils literal notranslate"><span class="pre">LUT_CONFIG</span></code> variables. The configuration for the lookup table is simply the output from an n-input truth table in hexadecimal. The lookup table will use however many of the lower switches on the FPGA development board necessary for the specified number of inputs. The output will be displayed on the first LED.</p>
+<p>At the end of the script, the netlist will be composed into an EDIF netlist called <code class="docutils literal notranslate"><span class="pre">`my_LUT.edf`</span></code> that can be added as a design source to a “post-synthesis” project in Vivado. To better visualize what is happening, click on “Open Synthesized Design” and then open the “Schematic” to view the netlist. Once added to the project in Vivado, a simple constraints file must be added (<a class="reference external" href="https://github.com/Digilent/digilent-xdc">Digilent master XDC files can be found here</a>), and then a bitstream that can be downloaded onto a board is generated.</p>
+<p>Below are SystemVerilog modules that will generate a 4-input LUT after synthesis. The netlist created by the included python script generates something very similar to what Vivado will generate.</p>
+<div class="highlight-sv notranslate"><div class="highlight"><pre><span></span><span class="k">module</span> <span class="n">basic_LUT</span><span class="p">(</span>
+    <span class="k">input</span> <span class="k">wire</span> <span class="k">logic</span> <span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">D</span><span class="p">,</span>
+    <span class="k">output</span> <span class="k">logic</span> <span class="n">Q</span>
+    <span class="p">);</span>
+
+    <span class="k">assign</span> <span class="n">Q</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="o">&amp;</span> <span class="n">B</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="n">C</span> <span class="o">&amp;</span> <span class="n">D</span><span class="p">);</span>
+
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+<div class="highlight-sv notranslate"><div class="highlight"><pre><span></span><span class="k">module</span> <span class="n">top_LUT</span><span class="p">(</span>
+    <span class="k">input</span> <span class="k">wire</span> <span class="k">logic</span> <span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">sw</span><span class="p">,</span>
+    <span class="k">output</span> <span class="k">logic</span> <span class="n">led</span>
+<span class="p">);</span>
+
+    <span class="n">basic_LUT</span> <span class="n">my_basic_LUT</span><span class="p">(</span>
+        <span class="p">.</span><span class="n">A</span><span class="p">(</span><span class="n">sw</span><span class="p">[</span><span class="mh">0</span><span class="p">]),.</span><span class="n">B</span><span class="p">(</span><span class="n">sw</span><span class="p">[</span><span class="mh">1</span><span class="p">]),</span> <span class="p">.</span><span class="n">C</span><span class="p">(</span><span class="n">sw</span><span class="p">[</span><span class="mh">2</span><span class="p">]),</span> <span class="p">.</span><span class="n">D</span><span class="p">(</span><span class="n">sw</span><span class="p">[</span><span class="mh">3</span><span class="p">]),</span> <span class="p">.</span><span class="n">Q</span><span class="p">(</span><span class="n">led</span><span class="p">));</span>
+
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+<p>Try adding these modules to a fresh RTL project in Vivado and run synthesis. After synthesis is run, open the schematic from the synthesized design. Besides perhaps some naming differences, it should match what is produced by this Python script.</p>
+<p>Below is an example of a constraints file for the Digilent BASYS3 board. Comment/uncomment the switch lines as needed for the number of inputs.</p>
+<div class="highlight-xdc notranslate"><div class="highlight"><pre><span></span>## LEDs
+set_property PACKAGE_PIN U16 [get_ports {led[0]}]
+    set_property IOSTANDARD LVCMOS33 [get_ports {led[0]}]
+
+## Switches
+set_property PACKAGE_PIN V17 [get_ports { sw[0] }]
+    set_property IOSTANDARD LVCMOS33 [get_ports { sw[0] }]
+set_property PACKAGE_PIN V16 [get_ports {sw[1]}]
+    set_property IOSTANDARD LVCMOS33 [get_ports {sw[1]}]
+set_property PACKAGE_PIN W16 [get_ports {sw[2]}]
+    set_property IOSTANDARD LVCMOS33 [get_ports {sw[2]}]
+set_property PACKAGE_PIN W17 [get_ports {sw[3]}]
+    set_property IOSTANDARD LVCMOS33 [get_ports {sw[3]}]
+#set_property PACKAGE_PIN W15 [get_ports {sw[4]}]
+#   set_property IOSTANDARD LVCMOS33 [get_ports {sw[4]}]
+#set_property PACKAGE_PIN V15 [get_ports {sw[5]}]
+#   set_property IOSTANDARD LVCMOS33 [get_ports {sw[5]}]
+
+
+## Configuration options, can be used for all designs
+set_property CONFIG_VOLTAGE 3.3 [current_design]
+set_property CFGBVS VCCO [current_design]
+</pre></div>
+</div>
+<p>Below is all the python code used to create the netlist from scratch with SpyDrNet</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">spydrnet</span> <span class="k">as</span> <span class="nn">sdn</span>
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="c1"># Specify number of inputs for the lookup-table</span>
+<span class="c1"># Possible sizes for lookup-table: 2, 3, 4, 5, 6. Bigger sizes may not be</span>
+<span class="c1"># supported on the device you are working with.</span>
+<span class="n">LUT_SIZE</span> <span class="o">=</span> <span class="mi">4</span>
+
+<span class="c1"># Configure the LUT with a hex value. Lookup table can be configured easily by</span>
+<span class="c1"># creating a n-input truth table, then converting the output column from</span>
+<span class="c1"># binary to hexadecimal.</span>
+<span class="c1"># 0xF888 refers to the following logic equation: (A * B) + (C * D)</span>
+<span class="n">LUT_CONFIG</span> <span class="o">=</span> <span class="mh">0xF888</span>
+
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">bin</span><span class="p">(</span><span class="n">LUT_CONFIG</span><span class="p">)[</span><span class="mi">2</span><span class="p">:])</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">LUT_SIZE</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;LUT_CONFIG has too many bits for LUT size&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create netlist</span>
+<span class="n">netlist</span> <span class="o">=</span> <span class="n">sdn</span><span class="o">.</span><span class="n">Netlist</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;netlist&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create HDI primitives library within netlist.</span>
+<span class="n">prim_library</span> <span class="o">=</span> <span class="n">netlist</span><span class="o">.</span><span class="n">create_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;hdi_primitives&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create all definitions for the primitives library</span>
+<span class="n">IBUF_def</span> <span class="o">=</span> <span class="n">prim_library</span><span class="o">.</span><span class="n">create_definition</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;IBUF&quot;</span><span class="p">)</span>
+<span class="c1"># Output Buffer definition</span>
+<span class="n">OBUF_def</span> <span class="o">=</span> <span class="n">prim_library</span><span class="o">.</span><span class="n">create_definition</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;OBUF&quot;</span><span class="p">)</span>
+<span class="c1"># Lookup table definition</span>
+<span class="n">prim_LUT_def</span> <span class="o">=</span> <span class="n">prim_library</span><span class="o">.</span><span class="n">create_definition</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;LUT&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">LUT_SIZE</span><span class="p">))</span>
+<span class="c1"># Inverter definition</span>
+<span class="n">INV_def</span> <span class="o">=</span> <span class="n">prim_library</span><span class="o">.</span><span class="n">create_definition</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;INV&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create input/output ports for IBUF and OBUF definition</span>
+<span class="n">IBUF_port_output</span> <span class="o">=</span> <span class="n">IBUF_def</span><span class="o">.</span><span class="n">create_port</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;O&quot;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="n">sdn</span><span class="o">.</span><span class="n">OUT</span><span class="p">)</span>
+<span class="n">IBUF_port_input</span> <span class="o">=</span> <span class="n">IBUF_def</span><span class="o">.</span><span class="n">create_port</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="n">sdn</span><span class="o">.</span><span class="n">IN</span><span class="p">)</span>
+<span class="n">OBUF_port_output</span> <span class="o">=</span> <span class="n">OBUF_def</span><span class="o">.</span><span class="n">create_port</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;O&quot;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="n">sdn</span><span class="o">.</span><span class="n">OUT</span><span class="p">)</span>
+<span class="n">OBUF_port_input</span> <span class="o">=</span> <span class="n">OBUF_def</span><span class="o">.</span><span class="n">create_port</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="n">sdn</span><span class="o">.</span><span class="n">IN</span><span class="p">)</span>
+
+<span class="c1"># Create input/output pins for each port</span>
+<span class="n">IBUF_pin_output</span> <span class="o">=</span> <span class="n">IBUF_port_output</span><span class="o">.</span><span class="n">create_pin</span><span class="p">()</span>
+<span class="n">IBUF_pin_input</span> <span class="o">=</span> <span class="n">IBUF_port_input</span><span class="o">.</span><span class="n">create_pin</span><span class="p">()</span>
+<span class="n">OBUF_pin_output</span> <span class="o">=</span> <span class="n">OBUF_port_output</span><span class="o">.</span><span class="n">create_pin</span><span class="p">()</span>
+<span class="n">OBUF_pin_input</span> <span class="o">=</span> <span class="n">OBUF_port_input</span><span class="o">.</span><span class="n">create_pin</span><span class="p">()</span>
+
+<span class="c1"># Create lookup table output port and accompanying pin</span>
+<span class="n">prim_LUT_port_output</span> <span class="o">=</span> <span class="n">prim_LUT_def</span><span class="o">.</span><span class="n">create_port</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;O&quot;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="n">sdn</span><span class="o">.</span><span class="n">OUT</span><span class="p">)</span>
+<span class="n">prim_LUT_pin_output</span> <span class="o">=</span> <span class="n">prim_LUT_port_output</span><span class="o">.</span><span class="n">create_pin</span><span class="p">()</span>
+
+<span class="c1"># Create lookup table input ports and pins, and store them in lists</span>
+<span class="n">prim_LUT_port_input_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+<span class="n">prim_LUT_pin_input_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">LUT_SIZE</span><span class="p">):</span>
+    <span class="n">prim_LUT_port_input</span> <span class="o">=</span> <span class="n">prim_LUT_def</span><span class="o">.</span><span class="n">create_port</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;I&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="n">sdn</span><span class="o">.</span><span class="n">IN</span>
+    <span class="p">)</span>
+    <span class="n">prim_LUT_port_input_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prim_LUT_port_input</span><span class="p">)</span>
+    <span class="n">prim_LUT_pin_input_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prim_LUT_port_input</span><span class="o">.</span><span class="n">create_pin</span><span class="p">())</span>
+
+<span class="c1"># Create input/output port for inverter</span>
+<span class="n">INV_port_output</span> <span class="o">=</span> <span class="n">INV_def</span><span class="o">.</span><span class="n">create_port</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;O&quot;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="n">sdn</span><span class="o">.</span><span class="n">OUT</span><span class="p">)</span>
+<span class="n">INV_port_input</span> <span class="o">=</span> <span class="n">INV_def</span><span class="o">.</span><span class="n">create_port</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="n">sdn</span><span class="o">.</span><span class="n">IN</span><span class="p">)</span>
+
+<span class="c1"># Create work library</span>
+<span class="n">work_library</span> <span class="o">=</span> <span class="n">netlist</span><span class="o">.</span><span class="n">create_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;work&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create custom LUT definition</span>
+<span class="n">my_LUT_def</span> <span class="o">=</span> <span class="n">work_library</span><span class="o">.</span><span class="n">create_definition</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;my_LUT&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create port and pin for the output of the custom LUT</span>
+<span class="n">my_LUT_port_output</span> <span class="o">=</span> <span class="n">my_LUT_def</span><span class="o">.</span><span class="n">create_port</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Q&quot;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="n">sdn</span><span class="o">.</span><span class="n">OUT</span><span class="p">)</span>
+<span class="n">my_LUT_pin_output</span> <span class="o">=</span> <span class="n">my_LUT_port_output</span><span class="o">.</span><span class="n">create_pin</span><span class="p">()</span>
+
+<span class="c1"># Create ports and pins for the inputs to the custom LUT</span>
+<span class="n">my_prim_LUT_port_input_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+<span class="n">my_LUT_pin_input_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">LUT_SIZE</span><span class="p">):</span>
+    <span class="n">my_LUT_port_input</span> <span class="o">=</span> <span class="n">my_LUT_def</span><span class="o">.</span><span class="n">create_port</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">direction</span><span class="o">=</span><span class="n">sdn</span><span class="o">.</span><span class="n">IN</span>
+    <span class="p">)</span>
+    <span class="n">my_prim_LUT_port_input_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">my_LUT_port_input</span><span class="p">)</span>
+    <span class="n">my_LUT_pin_input_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">my_LUT_port_input</span><span class="o">.</span><span class="n">create_pin</span><span class="p">())</span>
+
+<span class="c1"># Create cables with wires to connect primitive LUT instance to ports</span>
+<span class="n">my_LUT_cable_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+<span class="n">my_LUT_wire_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+<span class="c1"># cables with wires for input ports</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">LUT_SIZE</span><span class="p">):</span>
+    <span class="n">my_LUT_cable</span> <span class="o">=</span> <span class="n">my_LUT_def</span><span class="o">.</span><span class="n">create_cable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">my_LUT_cable_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">my_LUT_cable</span><span class="p">)</span>
+    <span class="n">my_LUT_wire_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">my_LUT_cable</span><span class="o">.</span><span class="n">create_wire</span><span class="p">())</span>
+
+<span class="c1"># cable with wire output port</span>
+<span class="n">my_LUT_cable_Q</span> <span class="o">=</span> <span class="n">my_LUT_def</span><span class="o">.</span><span class="n">create_cable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Q&quot;</span><span class="p">)</span>
+<span class="n">my_LUT_wire_Q</span> <span class="o">=</span> <span class="n">my_LUT_cable_Q</span><span class="o">.</span><span class="n">create_wire</span><span class="p">()</span>
+
+<span class="c1"># Create instance of lookup table primitive</span>
+<span class="n">my_LUT_inst</span> <span class="o">=</span> <span class="n">my_LUT_def</span><span class="o">.</span><span class="n">create_child</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my_LUT_inst&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">prim_LUT_def</span>
+<span class="p">)</span>
+
+<span class="c1"># Modify the lookup table configuration</span>
+<span class="n">my_LUT_inst_properties</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+<span class="n">my_LUT_inst_properties</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+    <span class="p">{</span><span class="s2">&quot;identifier&quot;</span><span class="p">:</span> <span class="s2">&quot;INIT&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;16&#39;h&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="n">LUT_CONFIG</span><span class="p">))[</span><span class="mi">2</span><span class="p">:]}</span>
+<span class="p">)</span>
+<span class="n">my_LUT_inst</span><span class="p">[</span><span class="s2">&quot;EDIF.properties&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">my_LUT_inst_properties</span>
+
+<span class="c1"># Connect pins from LUT instance to ports</span>
+<span class="k">for</span> <span class="n">wire</span><span class="p">,</span> <span class="n">inner_pin</span><span class="p">,</span> <span class="n">outer_pin</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+    <span class="n">my_LUT_wire_list</span><span class="p">,</span> <span class="n">my_LUT_pin_input_list</span><span class="p">,</span> <span class="n">prim_LUT_pin_input_list</span>
+<span class="p">):</span>
+    <span class="n">wire</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">inner_pin</span><span class="p">)</span>
+    <span class="n">wire</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">my_LUT_inst</span><span class="o">.</span><span class="n">pins</span><span class="p">[</span><span class="n">outer_pin</span><span class="p">])</span>
+
+<span class="n">my_LUT_wire_Q</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">my_LUT_inst</span><span class="o">.</span><span class="n">pins</span><span class="p">[</span><span class="n">prim_LUT_pin_output</span><span class="p">])</span>
+<span class="n">my_LUT_wire_Q</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">my_LUT_pin_output</span><span class="p">)</span>
+
+<span class="c1"># Create top-level definition</span>
+<span class="n">top_def</span> <span class="o">=</span> <span class="n">work_library</span><span class="o">.</span><span class="n">create_definition</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;top_LUT&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create ports for top-level definition</span>
+<span class="n">top_port_sw</span> <span class="o">=</span> <span class="n">top_def</span><span class="o">.</span><span class="n">create_port</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;sw&quot;</span><span class="p">,</span> <span class="n">is_downto</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">is_scalar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="n">sdn</span><span class="o">.</span><span class="n">IN</span>
+<span class="p">)</span>
+<span class="n">top_port_led</span> <span class="o">=</span> <span class="n">top_def</span><span class="o">.</span><span class="n">create_port</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;led&quot;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="n">sdn</span><span class="o">.</span><span class="n">OUT</span><span class="p">)</span>
+
+<span class="c1"># instance basic LUT</span>
+<span class="n">my_LUT_inst</span> <span class="o">=</span> <span class="n">top_def</span><span class="o">.</span><span class="n">create_child</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;my_LUT_inst&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">my_LUT_def</span><span class="p">)</span>
+
+<span class="c1"># instance LED output buffer</span>
+<span class="n">top_led_OBUF_inst</span> <span class="o">=</span> <span class="n">top_def</span><span class="o">.</span><span class="n">create_child</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;led_OBUF_inst&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">OBUF_def</span>
+<span class="p">)</span>
+
+<span class="c1"># instance switch input buffers</span>
+<span class="n">top_sw_IBUF_inst_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">LUT_SIZE</span><span class="p">):</span>
+    <span class="n">top_sw_IBUF_inst_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">top_def</span><span class="o">.</span><span class="n">create_child</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;sw_IBUF_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;__inst&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">IBUF_def</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+
+<span class="c1"># connect switches to input of sw_IBUF&#39;s</span>
+<span class="n">top_cables_sw</span> <span class="o">=</span> <span class="n">top_def</span><span class="o">.</span><span class="n">create_cable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;sw&quot;</span><span class="p">)</span>
+<span class="n">top_wires_sw</span> <span class="o">=</span> <span class="n">top_cables_sw</span><span class="o">.</span><span class="n">create_wires</span><span class="p">(</span><span class="n">LUT_SIZE</span><span class="p">)</span>
+<span class="n">top_pins_sw</span> <span class="o">=</span> <span class="n">top_port_sw</span><span class="o">.</span><span class="n">create_pins</span><span class="p">(</span><span class="n">LUT_SIZE</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">instance</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">top_sw_IBUF_inst_list</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">LUT_SIZE</span><span class="p">)):</span>
+    <span class="n">top_wires_sw</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">top_pins_sw</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">top_wires_sw</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">instance</span><span class="o">.</span><span class="n">pins</span><span class="p">[</span><span class="n">IBUF_pin_input</span><span class="p">])</span>
+
+<span class="c1"># connect output of sw_IBUF&#39;s to input of basic LUT</span>
+<span class="n">top_cables_sw_IBUF</span> <span class="o">=</span> <span class="n">top_def</span><span class="o">.</span><span class="n">create_cable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;sw_IBUF&quot;</span><span class="p">)</span>
+<span class="n">top_wires_sw_IBUF</span> <span class="o">=</span> <span class="n">top_cables_sw_IBUF</span><span class="o">.</span><span class="n">create_wires</span><span class="p">(</span><span class="n">LUT_SIZE</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">IBUF_inst</span><span class="p">,</span> <span class="n">my_LUT_pin</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+    <span class="n">top_sw_IBUF_inst_list</span><span class="p">,</span> <span class="n">my_LUT_pin_input_list</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">LUT_SIZE</span><span class="p">)</span>
+<span class="p">):</span>
+    <span class="n">top_wires_sw_IBUF</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">IBUF_inst</span><span class="o">.</span><span class="n">pins</span><span class="p">[</span><span class="n">IBUF_pin_output</span><span class="p">])</span>
+    <span class="n">top_wires_sw_IBUF</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">my_LUT_inst</span><span class="o">.</span><span class="n">pins</span><span class="p">[</span><span class="n">my_LUT_pin</span><span class="p">])</span>
+
+<span class="c1"># connect output of basic LUT to input of led_OBUF</span>
+<span class="n">top_cable_led_OBUF</span> <span class="o">=</span> <span class="n">top_def</span><span class="o">.</span><span class="n">create_cable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;led_OBUF&quot;</span><span class="p">)</span>
+<span class="n">top_wire_led_OBUF</span> <span class="o">=</span> <span class="n">top_cable_led_OBUF</span><span class="o">.</span><span class="n">create_wire</span><span class="p">()</span>
+
+<span class="n">top_wire_led_OBUF</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">top_led_OBUF_inst</span><span class="o">.</span><span class="n">pins</span><span class="p">[</span><span class="n">OBUF_pin_input</span><span class="p">])</span>
+<span class="n">top_wire_led_OBUF</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">my_LUT_inst</span><span class="o">.</span><span class="n">pins</span><span class="p">[</span><span class="n">my_LUT_pin_output</span><span class="p">])</span>
+
+<span class="c1"># connect output of led_OBUF to led</span>
+<span class="n">top_led_cable</span> <span class="o">=</span> <span class="n">top_def</span><span class="o">.</span><span class="n">create_cable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;led&quot;</span><span class="p">)</span>
+<span class="n">top_led_wire</span> <span class="o">=</span> <span class="n">top_led_cable</span><span class="o">.</span><span class="n">create_wire</span><span class="p">()</span>
+<span class="n">top_pin_led</span> <span class="o">=</span> <span class="n">top_port_led</span><span class="o">.</span><span class="n">create_pin</span><span class="p">()</span>
+
+<span class="n">top_led_wire</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">top_led_OBUF_inst</span><span class="o">.</span><span class="n">pins</span><span class="p">[</span><span class="n">OBUF_pin_output</span><span class="p">])</span>
+<span class="n">top_led_wire</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">top_pin_led</span><span class="p">)</span>
+
+<span class="n">netlist</span><span class="o">.</span><span class="n">set_top_instance</span><span class="p">(</span><span class="n">top_def</span><span class="p">,</span> <span class="n">instance_name</span><span class="o">=</span><span class="n">top_def</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+<span class="n">sdn</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span><span class="n">netlist</span><span class="p">,</span> <span class="s2">&quot;my_LUT.edf&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.000 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-vivado-lut-builder-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/a50ec90c9187e1e08c9020493090ac50/LUT_builder.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">LUT_builder.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/887b4e8b7963ad34c537896ff29c6314/LUT_builder.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">LUT_builder.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../../developer/index.html" class="btn btn-neutral float-right" title="Developer’s Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="AND_to_OR.html" class="btn btn-neutral float-left" title="Modify Netlist with SpyDrNet" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Brigham Young Universitiy
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
