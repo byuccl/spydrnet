@@ -1,6 +1,0 @@
-spydrnet.Wire.cable
-===================
-
-.. currentmodule:: spydrnet
-
-.. autoattribute:: Wire.cable

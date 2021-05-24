@@ -1,6 +1,0 @@
-spydrnet.util.HRef.name
-=======================
-
-.. currentmodule:: spydrnet.util
-
-.. autoattribute:: HRef.name

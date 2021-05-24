@@ -1,6 +1,0 @@
-spydrnet.InnerPin.port
-======================
-
-.. currentmodule:: spydrnet
-
-.. autoattribute:: InnerPin.port

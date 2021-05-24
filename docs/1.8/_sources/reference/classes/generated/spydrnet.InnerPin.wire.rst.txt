@@ -1,6 +1,0 @@
-spydrnet.InnerPin.wire
-======================
-
-.. currentmodule:: spydrnet
-
-.. autoattribute:: InnerPin.wire

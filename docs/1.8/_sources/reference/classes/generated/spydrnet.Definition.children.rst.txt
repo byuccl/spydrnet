@@ -1,6 +1,0 @@
-spydrnet.Definition.children
-============================
-
-.. currentmodule:: spydrnet
-
-.. autoattribute:: Definition.children

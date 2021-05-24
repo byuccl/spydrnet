@@ -1,6 +1,0 @@
-spydrnet.Definition.cables
-==========================
-
-.. currentmodule:: spydrnet
-
-.. autoattribute:: Definition.cables

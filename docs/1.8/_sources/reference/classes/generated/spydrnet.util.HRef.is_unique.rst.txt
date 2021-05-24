@@ -1,6 +1,0 @@
-spydrnet.util.HRef.is\_unique
-=============================
-
-.. currentmodule:: spydrnet.util
-
-.. autoattribute:: HRef.is_unique

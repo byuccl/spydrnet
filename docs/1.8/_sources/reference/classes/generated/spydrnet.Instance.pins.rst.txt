@@ -1,6 +1,0 @@
-spydrnet.Instance.pins
-======================
-
-.. currentmodule:: spydrnet
-
-.. autoattribute:: Instance.pins

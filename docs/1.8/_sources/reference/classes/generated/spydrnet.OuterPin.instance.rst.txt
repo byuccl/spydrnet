@@ -1,6 +1,0 @@
-spydrnet.OuterPin.instance
-==========================
-
-.. currentmodule:: spydrnet
-
-.. autoattribute:: OuterPin.instance

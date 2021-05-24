@@ -1,6 +1,0 @@
-spydrnet.Port.pins
-==================
-
-.. currentmodule:: spydrnet
-
-.. autoattribute:: Port.pins

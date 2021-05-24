@@ -1,6 +1,0 @@
-spydrnet.Definition.ports
-=========================
-
-.. currentmodule:: spydrnet
-
-.. autoattribute:: Definition.ports

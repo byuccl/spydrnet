@@ -1,6 +1,0 @@
-spydrnet.Netlist.top\_instance
-==============================
-
-.. currentmodule:: spydrnet
-
-.. autoattribute:: Netlist.top_instance

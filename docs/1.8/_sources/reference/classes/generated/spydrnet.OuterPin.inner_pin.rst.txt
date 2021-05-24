@@ -1,6 +1,0 @@
-spydrnet.OuterPin.inner\_pin
-============================
-
-.. currentmodule:: spydrnet
-
-.. autoattribute:: OuterPin.inner_pin

@@ -1,6 +1,0 @@
-spydrnet.Library.definitions
-============================
-
-.. currentmodule:: spydrnet
-
-.. autoattribute:: Library.definitions

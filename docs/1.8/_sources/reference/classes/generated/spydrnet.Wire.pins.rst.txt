@@ -1,6 +1,0 @@
-spydrnet.Wire.pins
-==================
-
-.. currentmodule:: spydrnet
-
-.. autoattribute:: Wire.pins
