@@ -56,7 +56,7 @@ def print_connections(current_netlist):
 #print the number of times each primitive is instanced
 def instance_count(current_netlist):
     print("Number of times each primitive is instanced:")
-    primitives_library = next(netlist.get_libraries("hdi_primitives"),None)
+    primitives_library = next(current_netlist.get_libraries("hdi_primitives"),None)
     for primitive in primitives_library.get_definitions():
         count = 0
         for instance in current_netlist.get_instances():
