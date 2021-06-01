@@ -5,7 +5,7 @@ class CallbackListener:
     """
     extend this class to create a listener that can be used to make a plugin to spydrnet.
     In this class are all of the functions that are used as callbacks. There are also
-    register functions whos function is to register the callback functions that are present.
+    register methods whos function is to register the callback functions that are present.
 
     callbacks are netlist dependent. If a callback is registered to one netlist it is not automatically registered to all netlists.
     """
