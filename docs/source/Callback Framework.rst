@@ -20,7 +20,7 @@ the following table illustrates the currently implemented capabilities.
 
 \* currently the pins do not have any callbacks implemented
 
-.. list-table:: Verilog vs SpyDrNet naming convention
+.. list-table:: Watched API Methods
    :widths: 33 33 34
    :header-rows: 1
 
@@ -71,3 +71,5 @@ Implementing a call back listner involves creating a class that inherits and ove
 Callbacks are made after sanity checks but before modifications are made to the datastructure. This allows users of the callback framework to prevent unwanted changes from taking place. This is an advantage in cases where an error can be detected before it is applied. Additional callbacks after the application of changes to the datastructure are currently not implemented to try keep the data structure light weight and quicker.
 
 Users of the callback feature must take into account that other users of the callbacks may later deny the modification. The order in which the callbacks are registered should match the order in which the callbacks are made. If it is important that the method succeeds after the callback is made, ensure that that callback listener is registered last or at least not before other callbacks that may prevent the proposed action.
+
+Additionally, since callbacks are made from within the API itself, be cautious when making API calls from within a callback. Infinite loops could be created.

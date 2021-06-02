@@ -1,22 +1,13 @@
+from spydrnet.plugins.namespace_manager.default_namespace import DefaultNamespace
 from spydrnet.ir import Netlist, Library, Definition
 import re
+from spydrnet.plugins.namespace_manager.default_namespace import DefaultNamespace
 
 
-class EdifNamespace:
-    @staticmethod
-    def is_compliant(element):
-        """
-        is_compliant means that the naming of the element is a valid name and that there are no namespace conflicts
-        among its children
-        :param element:
-        :return:
-        """
-        if EdifNamespace.is_name_of_element_valid(element) and EdifNamespace.no_name_conflicts(element):
-            return True
-        return False
+class EdifNamespace(DefaultNamespace):
 
-    @staticmethod
-    def is_name_of_element_valid(element):
+    @classmethod
+    def is_name_of_element_valid(cls, element):
         """
         All names are valid in the default namespace. Always returns true.
         :param element:
@@ -24,17 +15,17 @@ class EdifNamespace:
         """
         if "EDIF.identifier" in element:
             identifier = element["EDIF.identifier"]
-            return EdifNamespace._check_EDIF_identifier(identifier)
+            return cls._check_EDIF_identifier(identifier)
         return True
 
-    @staticmethod
-    def is_name_valid(key, value):
+    @classmethod
+    def is_name_valid(cls, key, value):
         if key == "EDIF.identifier":
-            return EdifNamespace._check_EDIF_identifier(value)
+            return cls._check_EDIF_identifier(value)
         return True
 
-    @staticmethod
-    def _check_EDIF_identifier(identifier):
+    @classmethod
+    def _check_EDIF_identifier(cls, identifier):
         identifier_length = len(identifier)
         starts_with_ampersand = identifier.startswith("&")
         if starts_with_ampersand:
@@ -48,8 +39,8 @@ class EdifNamespace:
                 return False
             return bool(re.match(r"^[0-9A-Za-z_]+$", identifier))
 
-    @staticmethod
-    def no_name_conflicts(element):
+    @classmethod
+    def no_name_conflicts(cls, element):
         """
         Check to see if there are any name conflicts among the children
         :param element:
@@ -128,12 +119,6 @@ class EdifNamespace:
                     else:
                         return False
         return True
-
-    @staticmethod
-    def needs_namespace(element):
-        if isinstance(element, (Netlist, Library, Definition)):
-            return True
-        return False
 
     def __init__(self):
         self.namespaces = dict()
