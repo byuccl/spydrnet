@@ -33,11 +33,15 @@ may mask warnings and errors and ensure the process is smooth.
 
 For the release ensure that both:
 
-`make html`
+>>> make html
 
 and
 
-`make latexpdf`
+>>> make latexpdf
+
+if you are missing packages run:
+
+>>> make install
 
 build the documentation without error as the html version will be put online at 
 the time of release and the pdf should be included in the releases files on
@@ -69,7 +73,7 @@ In the examples below, replace 1.5.0 with the version number you want to release
 
 **To see the current version number**
 
-`git describe`
+>>> git describe
 
 **Creation**
 
@@ -78,6 +82,8 @@ In the examples below, replace 1.5.0 with the version number you want to release
 **Push your changes to the tags**
 
 >>> git push --tags
+
+If you mess up, you can use the following instructions to force update your tag
 
 **Updating**
 
@@ -105,6 +111,8 @@ Make the python archive package:
 The build files will be stored in the following directories 
 
 spydrnet/build and spydrnet/dist
+
+.. _Build:
 
 Building the documentation
 --------------------------
@@ -136,20 +144,52 @@ proper release number.
 A description should be entered as well. It could just be a reiteration of the
 release notes or other relevant information.
 
+Three files should be added as assets to the new release:
+
+Two files will be generated when the repository is pushed to Pypi. A tar.gz file and a .whl file. 
+Uploead these two files after performing the next step of `Publising the packages to Pypi`
+
+Go to docs/latex folder, copy the `spydrnet_reference.pdf` to the assets under the new release,
+and changes its name to `spydrnet_reference-new_release_number.pdf`. If the pdf file doesn't exist, run:
+
+>>> make latexpdf
+
+in the /docs folder
+
 Publishing the packages to Pypi
 -------------------------------
 
-The packages need to be published to Pypi to be installable via pip. On pypi.org
-there is a guide on uploading packages. Follow the instructions there to upload
+The packages need to be published to Pypi to be installable via pip. On the `Pypi website <https://packaging.python.org/tutorials/packaging-projects/>`_
+there is a guide on uploading packages. You will need an account for this. Follow the instructions there to upload
 to the test pip server then the production server.
+
+If you have an account and know what you are doing, use the command below :
+
+>>> python3 -m twine upload dist/*
+
+And then input your username and password for Pypi.
+
+To install the python package to check for success, use:
+
+>>> python3 -m pip install spydrnet
+
+Go to the release on the Pypi website through your account. Download the .whl file and the .tar.gz file.
+Add them as assets to the new release at GitHub.com
 
 Publishing the documentation
 ----------------------------
 
 This is easiest on Linux (or at least not Windows, MacOS works fine as well)
 
+Make sure you are still in the Master branch and that everything in the html folder is up-to-date.
+If not, re-run the instructions in :ref:`Build`.
+
 Checkout the gh-pages branch create a new folder with the release number as the
-name. Copy the `docs/build/html` folder into the newly created folder.
+name. Move the `docs/build/html` folder into the newly created folder. 
+Make sure to delete the html folder after you are finished.
+
+(If html folder doesn't contain the latest pages, it could be that the html folder wasn't deleted from the previous release,
+delete the folder, commit the changes and repeat the steps above)
 
 The documentation is built from the stable link so the stable link will need to
 be updated to point to the newly updated documentation.
