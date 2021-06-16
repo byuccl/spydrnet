@@ -177,7 +177,10 @@ class Composer:
     def _write_module_body_cable(self, cable):
         self._write_star_constraints(cable)
         self.file.write(self.indent_count * vt.SPACE)
-        self.file.write(vt.WIRE)
+        if "VERILOG.CableType" in cable:
+            self.file.write(cable["VERILOG.CableType"])
+        else:
+            self.file.write(vt.WIRE)
         self.file.write(vt.SPACE)
         self._write_brackets_defining(cable)
         self._write_name(cable)
