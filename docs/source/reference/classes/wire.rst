@@ -21,6 +21,7 @@ Methods
    Wire.connect_pin
    Wire.disconnect_pin
    Wire.disconnect_pins_from
+   Wire.index
    Wire.clone
    Wire.get_netlists
    Wire.get_libraries
