@@ -2,7 +2,7 @@ import os
 
 
 def compose(netlist, filename):
-    """To compose a file into a netlit format"""
+    """To compose a file into a netlist format"""
     extension = os.path.splitext(filename)[1]
     extension_lower = extension.lower()
     if extension_lower in {".edf", ".edif"}:
