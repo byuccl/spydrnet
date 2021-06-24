@@ -22,11 +22,11 @@ It can be installed using the ``--user`` to avoid permission issues::
 
     > pip install --user spydrnet
     
-It can be to upgraded to a newer release use the ``--upgrade`` flag::
+It can be to upgraded to a newer release by using the ``--upgrade`` flag::
 
-    > pip install --upgrade networkx
+    > pip install --upgrade spydrnet
     
-It can be installed from source archives or distributions avaiable on `GitHub <https://github.com/byuccl/spydrnet/releases>`_ or
+It can be installed from source archives or distributions available on `GitHub <https://github.com/byuccl/spydrnet/releases>`_ or
 `PyPI <https://pypi.python.org/pypi/spydrnet>`_::
 
     > pip install spydrnet-<version>.tar.gz
@@ -54,7 +54,7 @@ SpyDrNet can be installed in editable mode from within the directory of its repo
 
     > pip install -e .
 
-Editable mode allows modification of the source to be reflected in the use of the module the next time that it is imported into Python. This functionality is convienent for development.
+Editable mode allows modification of the source to be reflected in the use of the module the next time that it is imported into Python. This functionality is convenient for development.
     
 The project repository can be cloned using `Git <https://git-scm.com/>`_. The following commands clone the repository and enter its directory::
 

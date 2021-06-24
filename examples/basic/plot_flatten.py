@@ -1,6 +1,6 @@
 """
 =====================================
-Flattens a netlist
+Flatten A Netlist
 =====================================
 
 Remove hierarchy from a netlist. The original hierarchy and new hierarchy (after flattening) will be printed.

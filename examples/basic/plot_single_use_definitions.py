@@ -1,6 +1,6 @@
 """
 =====================================
-Make Instances unique
+Make Instances Unique
 =====================================
 
 Creates definitions for non-leaf instances so each instance has its own definition. Each library in both the original and the uniquified netlist will be printed along with each's definitions.

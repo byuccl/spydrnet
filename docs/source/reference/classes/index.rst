@@ -22,7 +22,7 @@ The API calls documented here can be used in Python as follows:
 >>> library = netlist.create_library()
 >>>
 
-Similarly if the parser is used the calls can be made in the same way:
+If the parser is used, the calls can be made in the same way:
 
 >>> # parse an edif file in and add an empty library to the netlist.
 >>> import spydrnet as sdn
@@ -54,7 +54,7 @@ Basic object types
    parse
 
 The following three classes are the classes from which the above elements inherit. They are included here for completeness of
-documentation and can be used if needed. if the above types will suffice it may be simpler to use them.
+documentation and can be used if needed. If the above types will suffice it may be simpler to use them.
 
 .. currentmodule:: spydrnet.ir
 .. autosummary::
