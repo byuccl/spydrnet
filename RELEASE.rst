@@ -1,3 +1,11 @@
+SpyDrNet 1.8.2
+--------------
+June 24, 2021
+
+* updated tutorial 
+* improved How To Contribute page
+* general documentation improvements
+
 SpyDrNet 1.8.1
 --------------
 May 21, 2021
