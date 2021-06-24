@@ -3,23 +3,29 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Make Instances unique &mdash; SpyDrNet 1.8.0 documentation</title>
+  <title>Make Instances Unique &mdash; SpyDrNet 1.8.2 documentation</title>
   
 
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
 
   
   
+
   
+  
+
   
 
   
@@ -29,10 +35,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -54,7 +60,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> SpyDrNet
+            <a href="../../index.html" class="icon icon-home"> SpyDrNet
           
 
           
@@ -94,16 +100,16 @@
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Reference</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../index.html#more-advanced">More Advanced</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../index.html#basic">Basic</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="display_info.html">Display Netlist Information Functions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="plot_stat.html">Traversal and Statistics of a Netlist</a></li>
+<li class="toctree-l3"><a class="reference internal" href="display_info.html">Display Netlist Information Functions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="minimal.html">Minimal Script</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Make Instances unique</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Make Instances Unique</a></li>
 <li class="toctree-l3"><a class="reference internal" href="plot_four_to_five_bit_counter.html">Four Bit Counter To Five Bit Counter</a></li>
-<li class="toctree-l3"><a class="reference internal" href="plot_flatten.html">Flattens a netlist</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plot_flatten.html">Flatten A Netlist</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../index.html#special">Special</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#vivado">Vivado</a></li>
 </ul>
 </li>
@@ -150,6 +156,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -158,12 +166,12 @@
         
           <li><a href="../index.html">Examples</a> &raquo;</li>
         
-      <li>Make Instances unique</li>
+      <li>Make Instances Unique</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../_sources/auto_examples/basic/plot_single_use_definitions.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -179,10 +187,11 @@
             
   <div class="sphx-glr-download-link-note admonition note">
 <p class="admonition-title">Note</p>
-<p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-basic-plot-single-use-definitions-py"><span class="std std-ref">here</span></a>     to download the full example code</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-basic-plot-single-use-definitions-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
 </div>
 <div class="sphx-glr-example-title section" id="make-instances-unique">
-<span id="sphx-glr-auto-examples-basic-plot-single-use-definitions-py"></span><h1>Make Instances unique<a class="headerlink" href="#make-instances-unique" title="Permalink to this headline">¶</a></h1>
+<span id="sphx-glr-auto-examples-basic-plot-single-use-definitions-py"></span><h1>Make Instances Unique<a class="headerlink" href="#make-instances-unique" title="Permalink to this headline">¶</a></h1>
 <p>Creates definitions for non-leaf instances so each instance has its own definition. Each library in both the original and the uniquified netlist will be printed along with each’s definitions.</p>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>ORIGINAL
@@ -388,7 +397,7 @@ UNIQUE
 <span class="n">libraries_definitions</span><span class="p">(</span><span class="n">ir</span><span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.188 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.118 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-basic-plot-single-use-definitions-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/263be8184f8682184d723c14a2380cd2/plot_single_use_definitions.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_single_use_definitions.py</span></code></a></p>
@@ -405,37 +414,29 @@ UNIQUE
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="plot_four_to_five_bit_counter.html" class="btn btn-neutral float-right" title="Four Bit Counter To Five Bit Counter" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="minimal.html" class="btn btn-neutral float-left" title="Minimal Script" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="plot_four_to_five_bit_counter.html" class="btn btn-neutral float-right" title="Four Bit Counter To Five Bit Counter" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="minimal.html" class="btn btn-neutral float-left" title="Minimal Script" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2019, Brigham Young Universitiy
+        &#169; Copyright 2019, Brigham Young Universitiy.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

@@ -17,11 +17,64 @@ A collection of examples to introduce the functionality, features, and uses of S
 
 
 
+.. _sphx_glr_auto_examples_advanced:
+
+More Advanced
+-------------
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A connectivity graph is a mathmatical view of the connections between components in a netlist. ...">
+
+.. only:: html
+
+ .. figure:: /auto_examples/advanced/images/thumb/sphx_glr_plot_connectivity_graph_thumb.png
+     :alt: Connectivity Graph
+
+     :ref:`sphx_glr_auto_examples_advanced_plot_connectivity_graph.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/advanced/plot_connectivity_graph
+.. raw:: html
+
+    <div class="sphx-glr-clear"></div>
+
+
+
 .. _sphx_glr_auto_examples_basic:
 
 Basic
 -----
 
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Traverse a netlist and collect statistics on the netlist. ">
+
+.. only:: html
+
+ .. figure:: /auto_examples/basic/images/thumb/sphx_glr_plot_stat_thumb.png
+     :alt: Traversal and Statistics of a Netlist
+
+     :ref:`sphx_glr_auto_examples_basic_plot_stat.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/basic/plot_stat
 
 .. raw:: html
 
@@ -46,28 +99,7 @@ Basic
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Traverse a netlist and collect statistics on the netlist.">
-
-.. only:: html
-
- .. figure:: /auto_examples/basic/images/thumb/sphx_glr_plot_stat_thumb.png
-     :alt: Traversal and Statistics of a Netlist
-
-     :ref:`sphx_glr_auto_examples_basic_plot_stat.py`
-
-.. raw:: html
-
-    </div>
-
-
-.. toctree::
-   :hidden:
-
-   /auto_examples/basic/plot_stat
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Builds a netlist from scratch">
+    <div class="sphx-glr-thumbcontainer" tooltip="Builds a netlist from scratch ">
 
 .. only:: html
 
@@ -93,7 +125,7 @@ Basic
 .. only:: html
 
  .. figure:: /auto_examples/basic/images/thumb/sphx_glr_plot_single_use_definitions_thumb.png
-     :alt: Make Instances unique
+     :alt: Make Instances Unique
 
      :ref:`sphx_glr_auto_examples_basic_plot_single_use_definitions.py`
 
@@ -109,7 +141,7 @@ Basic
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Extend a four bit counter to a 5 bit counter.">
+    <div class="sphx-glr-thumbcontainer" tooltip="Extend a four bit counter to a 5 bit counter. ">
 
 .. only:: html
 
@@ -135,7 +167,7 @@ Basic
 .. only:: html
 
  .. figure:: /auto_examples/basic/images/thumb/sphx_glr_plot_flatten_thumb.png
-     :alt: Flattens a netlist
+     :alt: Flatten A Netlist
 
      :ref:`sphx_glr_auto_examples_basic_plot_flatten.py`
 
@@ -148,38 +180,6 @@ Basic
    :hidden:
 
    /auto_examples/basic/plot_flatten
-.. raw:: html
-
-    <div class="sphx-glr-clear"></div>
-
-
-
-.. _sphx_glr_auto_examples_special:
-
-Special
--------
-
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="A connectivity graph is a mathmatical view of the connections between components in a netlist. ...">
-
-.. only:: html
-
- .. figure:: /auto_examples/special/images/thumb/sphx_glr_plot_connectivity_graph_thumb.png
-     :alt: Connectivity Graph
-
-     :ref:`sphx_glr_auto_examples_special_plot_connectivity_graph.py`
-
-.. raw:: html
-
-    </div>
-
-
-.. toctree::
-   :hidden:
-
-   /auto_examples/special/plot_connectivity_graph
 .. raw:: html
 
     <div class="sphx-glr-clear"></div>

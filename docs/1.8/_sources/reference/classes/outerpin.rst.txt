@@ -19,6 +19,7 @@ Methods
    OuterPin.from_instance_and_inner_pin
    OuterPin.instance
    OuterPin.inner_pin
+   OuterPin.wire
    OuterPin.clone
    OuterPin.get_netlists
    OuterPin.get_libraries

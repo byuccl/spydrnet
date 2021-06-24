@@ -3,23 +3,29 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Introduction &mdash; SpyDrNet 1.8.0 documentation</title>
+  <title>Introduction &mdash; SpyDrNet 1.8.2 documentation</title>
   
 
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
   <link rel="stylesheet" href="../_static/gallery-binder.css" type="text/css" />
   <link rel="stylesheet" href="../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery-rendered-html.css" type="text/css" />
 
   
   
+
   
+  
+
   
 
   
@@ -29,10 +35,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script src="../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -54,7 +60,7 @@
           
 
           
-            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> SpyDrNet
+            <a href="../index.html" class="icon icon-home"> SpyDrNet
           
 
           
@@ -147,6 +153,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -160,7 +168,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../_sources/reference/introduction.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -192,11 +200,11 @@ considered to be the next generation tool for FPGA netlist analysis and transfor
 </pre></div>
 </div>
 <p>SpyDrNet can also be installed from a source archive:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">spydrnet</span><span class="o">-</span><span class="mf">1.0</span><span class="o">.</span><span class="mf">0.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">spydrnet</span><span class="o">-</span><span class="mf">1.0.0</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
 </pre></div>
 </div>
 <p>Or a built distribution:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">spydrnet</span><span class="o">-</span><span class="mf">1.0</span><span class="o">.</span><span class="mi">0</span><span class="o">-</span><span class="n">py3</span><span class="o">-</span><span class="n">none</span><span class="o">-</span><span class="nb">any</span><span class="o">.</span><span class="n">whl</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">spydrnet</span><span class="o">-</span><span class="mf">1.0.0</span><span class="o">-</span><span class="n">py3</span><span class="o">-</span><span class="n">none</span><span class="o">-</span><span class="nb">any</span><span class="o">.</span><span class="n">whl</span>
 </pre></div>
 </div>
 <p>If a development environment is desired, the project can be installed in editable mode from the project directory:</p>
@@ -204,10 +212,10 @@ considered to be the next generation tool for FPGA netlist analysis and transfor
 </pre></div>
 </div>
 <p><strong>Tool Flow</strong></p>
-<p>Netlists flow through SpyDrNet in a three step process (see <a class="reference internal" href="#fig-flow"><span class="std std-numref">Fig. 2</span></a>). First, they are parsed by a <em>parser</em> into an intermediate representation (IR). Second, their IR is analyzed and transformed. Finally, their IR is composed by a <em>composer</em> back into a netlist format that a 3rd-party tool can use. This flow is inspired by <a class="reference external" href="http://www.aosabook.org/en/llvm.html">LLVM</a> and <a class="reference external" href="https://pandoc.org/">Pandoc</a>. LLVM has a similar flow for compiling computer programs and Pandoc has a similar flow for converting document formats. Using this flow, SpyDrNet is designed to be able to work on any netlist.</p>
+<p>Netlists flow through SpyDrNet in a three step process (see <a class="reference internal" href="#fig-flow"><span class="std std-numref">Fig. 4</span></a>). First, they are parsed by a <em>parser</em> into an intermediate representation (IR). Second, their IR is analyzed and transformed. Finally, their IR is composed by a <em>composer</em> back into a netlist format that a 3rd-party tool can use. This flow is inspired by <a class="reference external" href="http://www.aosabook.org/en/llvm.html">LLVM</a> and <a class="reference external" href="https://pandoc.org/">Pandoc</a>. LLVM has a similar flow for compiling computer programs and Pandoc has a similar flow for converting document formats. Using this flow, SpyDrNet is designed to be able to work on any netlist.</p>
 <div class="figure align-center" id="id3">
 <span id="fig-flow"></span><img alt="SpyDrNet Flow" src="../_images/flow.png" />
-<p class="caption"><span class="caption-number">Fig. 2 </span><span class="caption-text">Flow</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-number">Fig. 4 </span><span class="caption-text">Flow</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
 </div>
 <p>SpyDrNet can be used to create a netlist from scratch. Thus, the API can be used to implement a parser and composer for arbitrary formats.</p>
 <p><em>Parsing a netlist</em></p>
@@ -229,10 +237,10 @@ considered to be the next generation tool for FPGA netlist analysis and transfor
 <p>At this point, SpyDrNet features and functionality are accessible via <code class="docutils literal notranslate"><span class="pre">sdn.&lt;function/feature&gt;</span></code>. The abbreviation of
 <code class="docutils literal notranslate"><span class="pre">sdn</span></code> is used throughout code examples to reference the <code class="docutils literal notranslate"><span class="pre">spydrnet</span></code> package.</p>
 <p><strong>Intermediate Representation Basics</strong></p>
-<p>Digital designs for FPGAs are represented as netlists, a list of components and connections. Netlists come from various vendors in many different formats. SpyDrNet allows you to look at and alter a netlist in a language inspecific way. SpyDrNet parses a netlist into an intermediate represention (IR) that is designed to be easily traversed and effortlessly manipulated. SpyDrNet aims to provide the tools you need to accomplish the netlist analysis and transformation tasks you have in mind without having to reinvent the wheel. <a class="reference internal" href="#fig-ir"><span class="std std-numref">Fig. 3</span></a> shows a summary of the SpyDrNet intermediate representation (IR).</p>
+<p>Digital designs for FPGAs are represented as netlists, a list of components and connections. Netlists come from various vendors in many different formats. SpyDrNet allows you to look at and alter a netlist in a language inspecific way. SpyDrNet parses a netlist into an intermediate represention (IR) that is designed to be easily traversed and effortlessly manipulated. SpyDrNet aims to provide the tools you need to accomplish the netlist analysis and transformation tasks you have in mind without having to reinvent the wheel. <a class="reference internal" href="#fig-ir"><span class="std std-numref">Fig. 5</span></a> shows a summary of the SpyDrNet intermediate representation (IR).</p>
 <div class="figure align-center" id="id4">
 <span id="fig-ir"></span><img alt="SpyDrNet Intermediate Representation" src="../_images/IR.png" />
-<p class="caption"><span class="caption-number">Fig. 3 </span><span class="caption-text">Intermediate Representaion</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-number">Fig. 5 </span><span class="caption-text">Intermediate Representaion</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
 </div>
 <p>SpyDrNet’s intermediate representation of netlists (IR) is what sets it apart for other EDA tools. The IR is structured to house netlists in a generic way while allowing for format specific constructs to be preserved.</p>
 <dl class="simple">
@@ -281,37 +289,29 @@ contains an ordered collection of libraries and any data associated with the net
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="element_data.html" class="btn btn-neutral float-right" title="Element Data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="index.html" class="btn btn-neutral float-left" title="Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="element_data.html" class="btn btn-neutral float-right" title="Element Data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2019, Brigham Young Universitiy
+        &#169; Copyright 2019, Brigham Young Universitiy.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

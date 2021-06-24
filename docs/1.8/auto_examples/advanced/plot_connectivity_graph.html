@@ -3,23 +3,29 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Connectivity Graph &mdash; SpyDrNet 1.8.0 documentation</title>
+  <title>Connectivity Graph &mdash; SpyDrNet 1.8.2 documentation</title>
   
 
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
 
   
   
+
   
+  
+
   
 
   
@@ -29,18 +35,18 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Create/View a Netlist with Vivado" href="../vivado/vivado_netlist.html" />
-    <link rel="prev" title="Flattens a netlist" href="../basic/plot_flatten.html" /> 
+    <link rel="next" title="Traversal and Statistics of a Netlist" href="../basic/plot_stat.html" />
+    <link rel="prev" title="Examples" href="../index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -54,7 +60,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> SpyDrNet
+            <a href="../../index.html" class="icon icon-home"> SpyDrNet
           
 
           
@@ -94,11 +100,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Reference</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">Examples</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../index.html#basic">Basic</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../index.html#special">Special</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#more-advanced">More Advanced</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Connectivity Graph</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#basic">Basic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#vivado">Vivado</a></li>
 </ul>
 </li>
@@ -145,6 +151,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -158,8 +166,8 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
-            <a href="../../_sources/auto_examples/special/plot_connectivity_graph.rst.txt" rel="nofollow"> View page source</a>
+          
+            <a href="../../_sources/auto_examples/advanced/plot_connectivity_graph.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -174,10 +182,11 @@
             
   <div class="sphx-glr-download-link-note admonition note">
 <p class="admonition-title">Note</p>
-<p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-special-plot-connectivity-graph-py"><span class="std std-ref">here</span></a>     to download the full example code</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-advanced-plot-connectivity-graph-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
 </div>
 <div class="sphx-glr-example-title section" id="connectivity-graph">
-<span id="sphx-glr-auto-examples-special-plot-connectivity-graph-py"></span><h1>Connectivity Graph<a class="headerlink" href="#connectivity-graph" title="Permalink to this headline">¶</a></h1>
+<span id="sphx-glr-auto-examples-advanced-plot-connectivity-graph-py"></span><h1>Connectivity Graph<a class="headerlink" href="#connectivity-graph" title="Permalink to this headline">¶</a></h1>
 <p>A connectivity graph is a mathmatical view of the connections between components in a netlist. This kind of
 representation enables the use of graph theory algorithms to better understand relations between components. There are
 many different schemes (or configurations) that could be used to generate a connectivity graph. In general, nodes in a
@@ -435,13 +444,13 @@ Total edges in connectivity_graph without top_level_ports 362
 <span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.466 seconds)</p>
-<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-special-plot-connectivity-graph-py">
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.175 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-advanced-plot-connectivity-graph-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
-<p><a class="reference download internal" download="" href="../../_downloads/1922568139b28184679ab5f511e71cbb/plot_connectivity_graph.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_connectivity_graph.py</span></code></a></p>
+<p><a class="reference download internal" download="" href="../../_downloads/d262b80ddd221d6e38d38bf44e9a4961/plot_connectivity_graph.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_connectivity_graph.py</span></code></a></p>
 </div>
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
-<p><a class="reference download internal" download="" href="../../_downloads/e87e1bc9481e48cc6e43ca96a57eb2fb/plot_connectivity_graph.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_connectivity_graph.ipynb</span></code></a></p>
+<p><a class="reference download internal" download="" href="../../_downloads/9a00c865df545224f977c96b2a9b4cf1/plot_connectivity_graph.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_connectivity_graph.ipynb</span></code></a></p>
 </div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
@@ -452,37 +461,29 @@ Total edges in connectivity_graph without top_level_ports 362
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="../vivado/vivado_netlist.html" class="btn btn-neutral float-right" title="Create/View a Netlist with Vivado" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="../basic/plot_flatten.html" class="btn btn-neutral float-left" title="Flattens a netlist" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="../basic/plot_stat.html" class="btn btn-neutral float-right" title="Traversal and Statistics of a Netlist" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../index.html" class="btn btn-neutral float-left" title="Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2019, Brigham Young Universitiy
+        &#169; Copyright 2019, Brigham Young Universitiy.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

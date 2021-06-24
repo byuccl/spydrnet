@@ -3,23 +3,29 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Flattens a netlist &mdash; SpyDrNet 1.8.0 documentation</title>
+  <title>Flatten A Netlist &mdash; SpyDrNet 1.8.2 documentation</title>
   
 
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
 
   
   
+
   
+  
+
   
 
   
@@ -29,17 +35,17 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Connectivity Graph" href="../special/plot_connectivity_graph.html" />
+    <link rel="next" title="Create/View a Netlist with Vivado" href="../vivado/vivado_netlist.html" />
     <link rel="prev" title="Four Bit Counter To Five Bit Counter" href="plot_four_to_five_bit_counter.html" /> 
 </head>
 
@@ -54,7 +60,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> SpyDrNet
+            <a href="../../index.html" class="icon icon-home"> SpyDrNet
           
 
           
@@ -94,16 +100,16 @@
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Reference</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../index.html#more-advanced">More Advanced</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../index.html#basic">Basic</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="display_info.html">Display Netlist Information Functions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="plot_stat.html">Traversal and Statistics of a Netlist</a></li>
+<li class="toctree-l3"><a class="reference internal" href="display_info.html">Display Netlist Information Functions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="minimal.html">Minimal Script</a></li>
-<li class="toctree-l3"><a class="reference internal" href="plot_single_use_definitions.html">Make Instances unique</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plot_single_use_definitions.html">Make Instances Unique</a></li>
 <li class="toctree-l3"><a class="reference internal" href="plot_four_to_five_bit_counter.html">Four Bit Counter To Five Bit Counter</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Flattens a netlist</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Flatten A Netlist</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../index.html#special">Special</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#vivado">Vivado</a></li>
 </ul>
 </li>
@@ -150,6 +156,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -158,12 +166,12 @@
         
           <li><a href="../index.html">Examples</a> &raquo;</li>
         
-      <li>Flattens a netlist</li>
+      <li>Flatten A Netlist</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../_sources/auto_examples/basic/plot_flatten.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -179,10 +187,11 @@
             
   <div class="sphx-glr-download-link-note admonition note">
 <p class="admonition-title">Note</p>
-<p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-basic-plot-flatten-py"><span class="std std-ref">here</span></a>     to download the full example code</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-basic-plot-flatten-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
 </div>
-<div class="sphx-glr-example-title section" id="flattens-a-netlist">
-<span id="sphx-glr-auto-examples-basic-plot-flatten-py"></span><h1>Flattens a netlist<a class="headerlink" href="#flattens-a-netlist" title="Permalink to this headline">¶</a></h1>
+<div class="sphx-glr-example-title section" id="flatten-a-netlist">
+<span id="sphx-glr-auto-examples-basic-plot-flatten-py"></span><h1>Flatten A Netlist<a class="headerlink" href="#flatten-a-netlist" title="Permalink to this headline">¶</a></h1>
 <p>Remove hierarchy from a netlist. The original hierarchy and new hierarchy (after flattening) will be printed.</p>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Need to move cells from a0 that references a
@@ -628,7 +637,7 @@ HIERARCHY AFTER FLATTENING
 <span class="n">hierarchy</span><span class="p">(</span><span class="n">ir</span><span class="o">.</span><span class="n">top_instance</span><span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.169 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.101 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-basic-plot-flatten-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/68eac688acf37f0dbdd4b17dd90231fb/plot_flatten.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_flatten.py</span></code></a></p>
@@ -645,37 +654,29 @@ HIERARCHY AFTER FLATTENING
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="../special/plot_connectivity_graph.html" class="btn btn-neutral float-right" title="Connectivity Graph" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="plot_four_to_five_bit_counter.html" class="btn btn-neutral float-left" title="Four Bit Counter To Five Bit Counter" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="../vivado/vivado_netlist.html" class="btn btn-neutral float-right" title="Create/View a Netlist with Vivado" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="plot_four_to_five_bit_counter.html" class="btn btn-neutral float-left" title="Four Bit Counter To Five Bit Counter" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2019, Brigham Young Universitiy
+        &#169; Copyright 2019, Brigham Young Universitiy.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
