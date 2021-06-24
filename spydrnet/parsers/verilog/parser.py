@@ -27,15 +27,16 @@ class VerilogParser:
     #########################################################
     # I have tried to follow the convention that each function
     # parses all of the construct it is designed to parse
-    # for example the parse module function will call the parse
+    # for example the parse module function will parse the
+    # module keyword and then will call the parse
     # instance function. It will not consume any of the tokens
     # that belong to the instance instantations including the
-    # semi colon
+    # semi colon. (it just uses peek)
     #
     # I would suggest following this convention even on constructs
     # where the first word is always the same.
     # the small overhead of using the peek function to not consume
-    # the token has been well worth it.
+    # the token has been well worth making it easier to maintain.
     # --Dallin
 
     #########################################################
@@ -159,7 +160,7 @@ class VerilogParser:
     def next_token_remove_comments(self):
         '''peeks from the tokenizer this wrapper function exists to skip comment tokens'''
         token = self.tokenizer.next()
-        while len(token) >= 2 and (token[0:1] == vt.OPEN_LINE_COMMENT or token[0:1] == vt.OPEN_BLOCK_COMMENT):
+        while len(token) >= 2 and (token[0:2] == vt.OPEN_LINE_COMMENT or token[0:2] == vt.OPEN_BLOCK_COMMENT):
             # this is a comment token, skip it
             token = self.tokenizer.next()
         return token
@@ -775,6 +776,7 @@ class VerilogParser:
             vt.DOT, "to start a port mapping instance", token)
 
         token = self.next_token()
+        print(token)
         assert vt.is_valid_identifier(token), self.error_string(
             "valid port identifier", "for port in instantiation port map", token)
         port_name = token
@@ -830,7 +832,25 @@ class VerilogParser:
         return l_cable, l_left, l_right, r_cable, r_left, r_right
 
     def parse_variable_instantiation(self):
-        name = self.next_token()
+        '''parse the cable name and its indicies if any
+        if we are in Intel land then 2 other things can happen.
+        the "cable" is a constant, 
+            attach it to the \\<const0> or \\<const1> cable.
+        the cable is inverted,
+            create a new cable and an inverter block similar to the assign but with an inversion in the block
+        '''
+        token = self.next_token()
+
+        if token[0] == "1":
+            assert token[1] == vt.SINGLE_QUOTE, self.error_string(vt.SINGLE_QUOTE, "in the constant token", token)
+            assert token[2] in ["0", "1", "x", "X", "z", "Z"], self.error_string("one of 0, 1, x, X, z, Z", "represent the constant value after '", token)
+            name = "\\<const" + token[2] + "> "
+        elif vt.is_numeric(token[0]):
+            assert False, self.error_string("single bit constant", "multibit constants not supported", token)
+        else:
+            name = token
+        assert vt.is_valid_identifier(name), self.error_string(
+            "valid port identifier", "for port in instantiation port map", name)
         token = self.peek_token()
         left = None
         right = None
