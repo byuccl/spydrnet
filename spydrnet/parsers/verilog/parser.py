@@ -842,8 +842,9 @@ class VerilogParser:
         token = self.next_token()
 
         if token[0] == "1":
-            assert token[1] == vt.SINGLE_QUOTE, self.error_string(vt.SINGLE_QUOTE, "in the constant token", token)
-            assert token[2] in ["0", "1", "x", "X", "z", "Z"], self.error_string("one of 0, 1, x, X, z, Z", "represent the constant value after '", token)
+            assert token[1] == vt.SINGLE_QUOTE, self.error_string(vt.SINGLE_QUOTE, "in the constant", token)
+            assert token[2] == 'b', self.error_string('b', "in the constant", token)
+            assert token[3] in ["0", "1", "x", "X", "z", "Z"], self.error_string("one of 0, 1, x, X, z, Z", "represent the constant value after '", token)
             name = "\\<const" + token[2] + "> "
         elif vt.is_numeric(token[0]):
             assert False, self.error_string("single bit constant", "multibit constants not supported", token)

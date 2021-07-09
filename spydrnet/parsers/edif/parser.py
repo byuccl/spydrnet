@@ -525,6 +525,7 @@ class EdifParser:
                     raise add_exception
             elif self.construct_is(NET):
                 cable = self.parse_net()
+                print(cable.wires[0].pins)
                 definition = self.elements[-1]
                 # is_connected = False
                 # for wire in cable.wires:
@@ -532,7 +533,9 @@ class EdifParser:
                 #         is_connected = True
                 # if is_connected is True:
                 try:
+                    print("multibit? " + cable.name)
                     self.multibit_add_cable(definition, cable)
+                    print("yes")
                 except ValueError as e:
                     # TODO: Add warning about merging nets together
                     existing_cable = next(definition.get_cables(cable.name, key="EDIF.identifier"), None)
@@ -677,6 +680,7 @@ class EdifParser:
         while self.begin_construct():
             if self.construct_is(PORT_REF):
                 pin = self.parse_portRef()
+                print(pin)
                 wire = self.elements[-1].wires[0]
                 wire.connect_pin(pin)
             elif self.construct_is(PORT_LIST):
@@ -932,9 +936,9 @@ class EdifParser:
             index = None
 
         existing_cable = next(definition.get_cables(n_short), None)
-        if existing_cable == None:
+        if existing_cable == None: #maybe the name is in the EDIF.identifier only?
             existing_cable = next(definition.get_cables(e_short, key="EDIF.identifier"), None)
-        if existing_cable is None:
+        if existing_cable is None: #if it is still none after checking both the name and EDIF.identifier...
             if index is None:
                 cable.is_array = False                
                 cable.lower_index = 0
@@ -955,9 +959,11 @@ class EdifParser:
                         w = cable.wires[0]
                         ew = existing_cable.wires[index - existing_cable.lower_index]
                         pins = w.pins
-                        for pin in pins:
-                            w.disconnect_pin(pin)
-                            ew.connect_pin(pin)
+                        print("adding pins:")
+                        while len(pins) > 0:
+                            p = pins[0]
+                            w.disconnect_pin(p)
+                            ew.connect_pin(p)
                     else: # index is outside current cable range
                         existing_cable.create_wires(index - existing_cable.lower_index - len(existing_cable.wires))
                         wire = cable.wires[0]
