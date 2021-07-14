@@ -3,6 +3,11 @@ import spydrnet as sdn
 
 from spydrnet.parsers.edif.parser import EdifParser
 from spydrnet import base_dir
+import os
+import tempfile
+import glob
+import shutil
+
 
 class TestEdifTokenizer(unittest.TestCase):
     def test_multi_bit_add_out_of_order(self):
@@ -43,3 +48,37 @@ class TestEdifTokenizer(unittest.TestCase):
         assert p1 in definition.cables[0].wires[1].pins
         assert p2 in definition.cables[0].wires[1].pins
             
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.dir_of_edif_netlists = os.path.join(sdn.base_dir, "support_files", "EDIF_netlists")
+        cls.edif_files = sorted(glob.glob(os.path.join(cls.dir_of_edif_netlists, "*.edf.zip")), key=os.path.getsize)
+
+    @unittest.skip("Test takes a long time right now.")
+    def test_large_edif(self):
+        for ii, filename in enumerate(self.edif_files):
+            if os.path.getsize(filename) <= 1024 * 10:
+                continue
+            self.ensure_cable_consistency(filename, ii, "edf")
+
+    def test_small_edif_cables(self):
+        for ii, filename in enumerate(self.edif_files):
+            if os.path.getsize(filename) > 1024 * 10:
+                continue
+            self.ensure_cable_consistency(filename, ii, "edf")
+
+    def ensure_cable_consistency(self,filename, ii, target_format_extension = None):
+        with self.subTest(i=ii):
+            if os.path.exists("temp"):
+                shutil.rmtree("temp")
+            print(filename)
+            with tempfile.TemporaryDirectory() as tempdirname:
+                netlist = sdn.parse(filename)
+                for l in netlist.libraries:
+                    for d in l.definitions:
+                        for c in d.cables:
+                            assert c.definition is not None
+
+
+if __name__ == '__main__':
+    unittest.main()
