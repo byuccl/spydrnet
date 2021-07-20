@@ -119,4 +119,8 @@ docs/source/auto_examples/
 # macOS Files
 **/.DS_Store
 
+# unzipped netlist files
+spydrnet/support_files/EDIF_netlists/*.edf
+spydrnet/support_files/verilog_netlists/*.v
+
 .vscode/settings.json
