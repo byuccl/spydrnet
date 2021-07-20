@@ -54,7 +54,7 @@ def parse(filename):
 
 def _parse(filename):
     extension = get_lowercase_extension(filename)
-    if extension in [".edf", ".edif"]:
+    if extension in [".edf", ".edif", ".edn"]:
         from spydrnet.parsers.edif.parser import EdifParser
         parser = EdifParser.from_filename(filename)
     elif extension in [".v", ".vh"]:

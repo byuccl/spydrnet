@@ -1,7 +1,7 @@
 Testing
 =======
 
-SpyDrNet developers strive to provide high quality code that is well tested. To help accomplish this goal, the built-in Python `Unit testing framework <https://docs.python.org/3/library/unittest.html>`_ is used in conjunction with the ``pytest`` `package <https://docs.pytest.org/>`_.
+SpyDrNet developers strive to provide high quality code that is well tested. To help accomplish this goal, the built-in Python `Unit testing framework <https://docs.python.org/3/library/unittest.html>`__ is used in conjunction with the ``pytest`` `package <https://docs.pytest.org/>`__.
 
 Running Tests
 -------------

@@ -12,3 +12,8 @@ Reference
    introduction
    element_data
    classes/index.rst
+   clone
+   uniquify
+   NamespaceManager
+   verilog_support
+   Callback_Framework

@@ -2,20 +2,20 @@ from spydrnet.ir import Netlist, Library, Definition
 
 
 class DefaultNamespace:
-    @staticmethod
-    def is_compliant(element):
+    @classmethod
+    def is_compliant(cls, element):
         """
         is_compliant means that the naming of the element is a valid name and that there are no namespace conflicts
         among its children
         :param element:
         :return:
         """
-        if DefaultNamespace.is_name_of_element_valid(element) and DefaultNamespace.no_name_conflicts(element):
+        if cls.is_name_of_element_valid(element) and cls.no_name_conflicts(element):
             return True
         return False
 
-    @staticmethod
-    def is_name_of_element_valid(element):
+    @classmethod
+    def is_name_of_element_valid(cls, element):
         """
         All names are valid in the default namespace. Always returns true.
         :param element:
@@ -23,12 +23,12 @@ class DefaultNamespace:
         """
         return True
 
-    @staticmethod
-    def is_name_valid(key, value):
+    @classmethod
+    def is_name_valid(cls, key, value):
         return True
 
-    @staticmethod
-    def no_name_conflicts(element):
+    @classmethod
+    def no_name_conflicts(cls, element):
         """
         Check to see if there are any name conflicts among the children
         :param element:
@@ -77,8 +77,8 @@ class DefaultNamespace:
                         return False
         return True
 
-    @staticmethod
-    def needs_namespace(element):
+    @classmethod
+    def needs_namespace(cls, element):
         if isinstance(element, (Netlist, Library, Definition)):
             return True
         return False

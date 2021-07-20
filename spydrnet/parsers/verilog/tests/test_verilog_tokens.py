@@ -13,7 +13,7 @@ class TestVerilogTokens(unittest.TestCase):
             assert vt.is_valid_identifier(i)
 
     def test_invalid_identifier(self):
-        identifiers = ["not valid", "6invalid" "^[0]no_escape...", "\\space in escaped ", ""]
+        identifiers = ["not valid", "6invalid" "^[0]no_escape...", "\\space in escaped ", "", "!"]
         for i in identifiers:
             assert not vt.is_valid_identifier(i)
 

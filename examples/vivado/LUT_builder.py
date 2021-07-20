@@ -40,7 +40,7 @@ Try adding these modules to a fresh RTL project in Vivado and run synthesis. Aft
 
 Below is an example of a constraints file for the Digilent BASYS3 board. Comment/uncomment the switch lines as needed for the number of inputs. 
 
-.. code-block:: xdc
+.. code-block::
 
     ## LEDs 
     set_property PACKAGE_PIN U16 [get_ports {led[0]}]

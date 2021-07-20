@@ -3,7 +3,7 @@
 Connectivity Graph
 ==================
 
-A connectivity graph is a mathmatical view of the connections between components in a netlist. This kind of 
+A connectivity graph is a mathematical view of the connections between components in a netlist. This kind of 
 representation enables the use of graph theory algorithms to better understand relations between components. There are
 many different schemes (or configurations) that could be used to generate a connectivity graph. In general, nodes in a
 connectivity graph represent components in the netlist and edges represent connections between components.

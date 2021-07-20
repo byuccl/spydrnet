@@ -110,7 +110,8 @@ class Instance(FirstClassElement):
 
     @property
     def pins(self):
-        """Get the pins on this instance."""
+        """Get the pins on this instance.
+        Can do instance.pins[<inner_pin>] to get the inner pin's associated outer pins."""
         return OuterPinsView(self._pins)
 
     def _clone_rip_and_replace_in_definition(self, memo):
