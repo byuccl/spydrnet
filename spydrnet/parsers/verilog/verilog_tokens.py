@@ -58,6 +58,9 @@ END_FUNCTION = 'endfunction'
 TASK = 'task'
 END_TASK = 'endtask'
 INTEGER = 'integer'
+TRI0 = 'tri0'
+TRI1 = 'tri1'
+DEFPARAM = 'defparam'
 
 #SET OF ALL THINGS THAT WILL END AN IDENTIFIER IF THEY ARE NOT ESCAPED.
 #elif ch in {'(', ')', '.', ',', ';', '[', ']', ':', "{", "}", "*", "#", "`"}:
@@ -109,6 +112,9 @@ ALL_VERILOG_TOKENS = {
     CLOSE_BLOCK_COMMENT,\
     OPEN_LINE_COMMENT,\
     INTEGER,\
+    TRI0,\
+    TRI1,\
+    DEFPARAM
 }
 
 def is_valid_identifier(token):

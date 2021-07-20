@@ -932,9 +932,9 @@ class EdifParser:
             index = None
 
         existing_cable = next(definition.get_cables(n_short), None)
-        if existing_cable == None:
+        if existing_cable == None: #maybe the name is in the EDIF.identifier only?
             existing_cable = next(definition.get_cables(e_short, key="EDIF.identifier"), None)
-        if existing_cable is None:
+        if existing_cable is None: #if it is still none after checking both the name and EDIF.identifier...
             if index is None:
                 cable.is_array = False                
                 cable.lower_index = 0
@@ -955,9 +955,10 @@ class EdifParser:
                         w = cable.wires[0]
                         ew = existing_cable.wires[index - existing_cable.lower_index]
                         pins = w.pins
-                        for pin in pins:
-                            w.disconnect_pin(pin)
-                            ew.connect_pin(pin)
+                        while len(pins) > 0:
+                            p = pins[0]
+                            w.disconnect_pin(p)
+                            ew.connect_pin(p)
                     else: # index is outside current cable range
                         existing_cable.create_wires(index - existing_cable.lower_index - len(existing_cable.wires))
                         wire = cable.wires[0]

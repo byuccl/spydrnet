@@ -27,15 +27,16 @@ class VerilogParser:
     #########################################################
     # I have tried to follow the convention that each function
     # parses all of the construct it is designed to parse
-    # for example the parse module function will call the parse
+    # for example the parse module function will parse the
+    # module keyword and then will call the parse
     # instance function. It will not consume any of the tokens
     # that belong to the instance instantations including the
-    # semi colon
+    # semi colon. (it just uses peek)
     #
     # I would suggest following this convention even on constructs
     # where the first word is always the same.
     # the small overhead of using the peek function to not consume
-    # the token has been well worth it.
+    # the token has been well worth making it easier to maintain.
     # --Dallin
 
     #########################################################
@@ -159,7 +160,7 @@ class VerilogParser:
     def next_token_remove_comments(self):
         '''peeks from the tokenizer this wrapper function exists to skip comment tokens'''
         token = self.tokenizer.next()
-        while len(token) >= 2 and (token[0:1] == vt.OPEN_LINE_COMMENT or token[0:1] == vt.OPEN_BLOCK_COMMENT):
+        while len(token) >= 2 and (token[0:2] == vt.OPEN_LINE_COMMENT or token[0:2] == vt.OPEN_BLOCK_COMMENT):
             # this is a comment token, skip it
             token = self.tokenizer.next()
         return token
@@ -525,7 +526,7 @@ class VerilogParser:
         expects port declarations to start with the direction and then include the cable type if provided
         '''
         direction_tokens = [vt.INPUT, vt.OUTPUT, vt.INOUT]
-        variable_tokens = [vt.WIRE, vt.REG]
+        variable_tokens = [vt.WIRE, vt.REG, vt.TRI0, vt.TRI1]
         token = self.peek_token()
         params = dict()
         while token != vt.END_MODULE:
@@ -539,6 +540,8 @@ class VerilogParser:
                 o_cable, o_left, o_right, i_cable, i_left, i_right = self.parse_assign()
                 self.connect_wires_for_assign(
                     o_cable, o_left, o_right, i_cable, i_left, i_right)
+            elif token == vt.DEFPARAM:
+                self.parse_defparam_parameters()
             elif vt.is_valid_identifier(token):
                 self.parse_instantiation(params)
                 params = dict()
@@ -616,8 +619,8 @@ class VerilogParser:
 
     def parse_cable_declaration(self, properties):
         token = self.next_token()
-        assert token in [vt.REG, vt.WIRE], self.error_string(
-            "reg or wire", "for cable declaration", token)
+        assert token in [vt.REG, vt.WIRE, vt.TRI0, vt.TRI1], self.error_string(
+            "reg, tri1, tri0, or wire", "for cable declaration", token)
         var_type = token
 
         token = self.peek_token()
@@ -674,6 +677,40 @@ class VerilogParser:
         token = self.next_token()
         assert token == vt.SEMI_COLON, self.error_string(
             vt.SEMI_COLON, "to end instatiation", token)
+
+    def parse_defparam_parameters(self):
+        '''parse a defparam structure and add the parameters to the associated instance
+        
+        this looks like:
+
+        defparam \\avs_s1_readdata[12]~output .bus_hold = "false"; //single backslash to escape name
+
+        and must come after the associated instance (I'm not sure this is the verilog spec but
+        it is the way quartus wrote my example and is much simpler)
+        '''
+        params = dict()
+        token = self.next_token()
+        assert token == vt.DEFPARAM, self.error_string(vt.DEFPARAM, "to being defparam statement", token)
+        token = self.next_token()
+        assert vt.is_valid_identifier(token), self.error_string("valid identifier", "of an instance to apply the defparam to", token)
+        instance_name = token
+        if self.current_instance.name == instance_name:
+            instance = self.current_instance
+        else:
+            instance = next(self.current_definition.get_instances(instance_name), None)
+            assert instance is not None, self.error_string("identifer of existing instance", "within the current definition", instance_name)
+        token = self.next_token()
+        assert token == vt.DOT, self.error_string(vt.DOT, "give separate parameter key from the instance name", token)
+        token = self.next_token()
+        key = token
+        token = self.next_token()
+        assert token == vt.EQUAL, self.error_string(vt.EQUAL, "separate the key from the value in a defparam statement", token)
+        token = self.next_token()
+        value = token
+        token = self.next_token()
+        assert token == vt.SEMI_COLON, self.error_string(vt.SEMI_COLON, "to end the defparam statement", token)
+        self.set_instance_parameters(instance, params)
+        
 
     def parse_parameter_mapping(self):
         params = dict()
@@ -739,6 +776,7 @@ class VerilogParser:
             vt.DOT, "to start a port mapping instance", token)
 
         token = self.next_token()
+        print(token)
         assert vt.is_valid_identifier(token), self.error_string(
             "valid port identifier", "for port in instantiation port map", token)
         port_name = token
@@ -794,7 +832,26 @@ class VerilogParser:
         return l_cable, l_left, l_right, r_cable, r_left, r_right
 
     def parse_variable_instantiation(self):
-        name = self.next_token()
+        '''parse the cable name and its indicies if any
+        if we are in Intel land then 2 other things can happen.
+        the "cable" is a constant, 
+            attach it to the \\<const0> or \\<const1> cable.
+        the cable is inverted,
+            create a new cable and an inverter block similar to the assign but with an inversion in the block
+        '''
+        token = self.next_token()
+
+        if token[0] == "1":
+            assert token[1] == vt.SINGLE_QUOTE, self.error_string(vt.SINGLE_QUOTE, "in the constant", token)
+            assert token[2] == 'b', self.error_string('b', "in the constant", token)
+            assert token[3] in ["0", "1", "x", "X", "z", "Z"], self.error_string("one of 0, 1, x, X, z, Z", "represent the constant value after '", token)
+            name = "\\<const" + token[2] + "> "
+        elif vt.is_numeric(token[0]):
+            assert False, self.error_string("single bit constant", "multibit constants not supported", token)
+        else:
+            name = token
+        assert vt.is_valid_identifier(name), self.error_string(
+            "valid port identifier", "for port in instantiation port map", name)
         token = self.peek_token()
         left = None
         right = None
@@ -1079,7 +1136,7 @@ class VerilogParser:
                 postpend = in_upper - cable_upper
                 self.postpend_wires(cable, postpend)
 
-        if var_type:
+        if var_type is not None:
             cable["VERILOG.CableType"] = var_type
 
         return cable
