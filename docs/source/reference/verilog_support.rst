@@ -55,6 +55,7 @@ Module declarations represent Definitions in SpyDrNet and are parsed as such. In
 
  
 .. code-block:: verilog
+
    module module_name(
      input my_in,
      output [3:0] my_out);
@@ -62,6 +63,7 @@ Module declarations represent Definitions in SpyDrNet and are parsed as such. In
 or with just the names in the header
  
 .. code-block:: verilog
+
    module module_name(
      my_in,
      my_out);

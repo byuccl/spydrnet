@@ -8,6 +8,7 @@ Some example functions that can be run to display information in a netlist:
     2) print each library with its definitions in a netlist
     3) print connections between ports of each instance in a netlist
     4) print the number of times each primitive is instanced
+    
 Note: because the hierarchy function uses recursion, the maximum recursion depth may be exceeded if used for large designs
 
 | For an even simpler display of netlist information, try using these functions with the Minimal Script example.  

@@ -1,3 +1,13 @@
+SpyDrNet 1.8.3
+--------------
+July 20, 2021
+
+* Bug fix in EDIF parser
+* Documentation updates
+* Added support for .edn
+* Added tests
+* Improved vo, vqm parsing
+
 SpyDrNet 1.8.2
 --------------
 June 24, 2021
