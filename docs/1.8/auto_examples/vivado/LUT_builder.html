@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Create Netlist with SpyDrNet &mdash; SpyDrNet 1.8.2 documentation</title>
+  <title>Create Netlist with SpyDrNet &mdash; SpyDrNet 1.8.3 documentation</title>
   
 
   
@@ -100,8 +100,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Reference</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">Examples</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../index.html#more-advanced">More Advanced</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#basic">Basic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#extended">Extended</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../index.html#vivado">Vivado</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="vivado_netlist.html">Create/View a Netlist with Vivado</a></li>
 <li class="toctree-l3"><a class="reference internal" href="AND_to_OR.html">Modify Netlist with SpyDrNet</a></li>
@@ -217,28 +217,28 @@ to download the full example code</p>
 </div>
 <p>Try adding these modules to a fresh RTL project in Vivado and run synthesis. After synthesis is run, open the schematic from the synthesized design. Besides perhaps some naming differences, it should match what is produced by this Python script.</p>
 <p>Below is an example of a constraints file for the Digilent BASYS3 board. Comment/uncomment the switch lines as needed for the number of inputs.</p>
-<div class="highlight-xdc notranslate"><div class="highlight"><pre><span></span>## LEDs
-set_property PACKAGE_PIN U16 [get_ports {led[0]}]
-    set_property IOSTANDARD LVCMOS33 [get_ports {led[0]}]
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">## LEDs</span>
+<span class="n">set_property</span> <span class="n">PACKAGE_PIN</span> <span class="n">U16</span> <span class="p">[</span><span class="n">get_ports</span> <span class="p">{</span><span class="n">led</span><span class="p">[</span><span class="mi">0</span><span class="p">]}]</span>
+    <span class="n">set_property</span> <span class="n">IOSTANDARD</span> <span class="n">LVCMOS33</span> <span class="p">[</span><span class="n">get_ports</span> <span class="p">{</span><span class="n">led</span><span class="p">[</span><span class="mi">0</span><span class="p">]}]</span>
 
-## Switches
-set_property PACKAGE_PIN V17 [get_ports { sw[0] }]
-    set_property IOSTANDARD LVCMOS33 [get_ports { sw[0] }]
-set_property PACKAGE_PIN V16 [get_ports {sw[1]}]
-    set_property IOSTANDARD LVCMOS33 [get_ports {sw[1]}]
-set_property PACKAGE_PIN W16 [get_ports {sw[2]}]
-    set_property IOSTANDARD LVCMOS33 [get_ports {sw[2]}]
-set_property PACKAGE_PIN W17 [get_ports {sw[3]}]
-    set_property IOSTANDARD LVCMOS33 [get_ports {sw[3]}]
-#set_property PACKAGE_PIN W15 [get_ports {sw[4]}]
-#   set_property IOSTANDARD LVCMOS33 [get_ports {sw[4]}]
-#set_property PACKAGE_PIN V15 [get_ports {sw[5]}]
-#   set_property IOSTANDARD LVCMOS33 [get_ports {sw[5]}]
+<span class="c1">## Switches</span>
+<span class="n">set_property</span> <span class="n">PACKAGE_PIN</span> <span class="n">V17</span> <span class="p">[</span><span class="n">get_ports</span> <span class="p">{</span> <span class="n">sw</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">}]</span>
+    <span class="n">set_property</span> <span class="n">IOSTANDARD</span> <span class="n">LVCMOS33</span> <span class="p">[</span><span class="n">get_ports</span> <span class="p">{</span> <span class="n">sw</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">}]</span>
+<span class="n">set_property</span> <span class="n">PACKAGE_PIN</span> <span class="n">V16</span> <span class="p">[</span><span class="n">get_ports</span> <span class="p">{</span><span class="n">sw</span><span class="p">[</span><span class="mi">1</span><span class="p">]}]</span>
+    <span class="n">set_property</span> <span class="n">IOSTANDARD</span> <span class="n">LVCMOS33</span> <span class="p">[</span><span class="n">get_ports</span> <span class="p">{</span><span class="n">sw</span><span class="p">[</span><span class="mi">1</span><span class="p">]}]</span>
+<span class="n">set_property</span> <span class="n">PACKAGE_PIN</span> <span class="n">W16</span> <span class="p">[</span><span class="n">get_ports</span> <span class="p">{</span><span class="n">sw</span><span class="p">[</span><span class="mi">2</span><span class="p">]}]</span>
+    <span class="n">set_property</span> <span class="n">IOSTANDARD</span> <span class="n">LVCMOS33</span> <span class="p">[</span><span class="n">get_ports</span> <span class="p">{</span><span class="n">sw</span><span class="p">[</span><span class="mi">2</span><span class="p">]}]</span>
+<span class="n">set_property</span> <span class="n">PACKAGE_PIN</span> <span class="n">W17</span> <span class="p">[</span><span class="n">get_ports</span> <span class="p">{</span><span class="n">sw</span><span class="p">[</span><span class="mi">3</span><span class="p">]}]</span>
+    <span class="n">set_property</span> <span class="n">IOSTANDARD</span> <span class="n">LVCMOS33</span> <span class="p">[</span><span class="n">get_ports</span> <span class="p">{</span><span class="n">sw</span><span class="p">[</span><span class="mi">3</span><span class="p">]}]</span>
+<span class="c1">#set_property PACKAGE_PIN W15 [get_ports {sw[4]}]</span>
+<span class="c1">#   set_property IOSTANDARD LVCMOS33 [get_ports {sw[4]}]</span>
+<span class="c1">#set_property PACKAGE_PIN V15 [get_ports {sw[5]}]</span>
+<span class="c1">#   set_property IOSTANDARD LVCMOS33 [get_ports {sw[5]}]</span>
 
 
-## Configuration options, can be used for all designs
-set_property CONFIG_VOLTAGE 3.3 [current_design]
-set_property CFGBVS VCCO [current_design]
+<span class="c1">## Configuration options, can be used for all designs</span>
+<span class="n">set_property</span> <span class="n">CONFIG_VOLTAGE</span> <span class="mf">3.3</span> <span class="p">[</span><span class="n">current_design</span><span class="p">]</span>
+<span class="n">set_property</span> <span class="n">CFGBVS</span> <span class="n">VCCO</span> <span class="p">[</span><span class="n">current_design</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>Below is all the python code used to create the netlist from scratch with SpyDrNet</p>

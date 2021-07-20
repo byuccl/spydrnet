@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>How to Contribute &mdash; SpyDrNet 1.8.2 documentation</title>
+  <title>How to Contribute &mdash; SpyDrNet 1.8.3 documentation</title>
   
 
   
@@ -253,8 +253,8 @@ operations. Steps which need more explanation are highlighted below.</p>
 <li><p>Create a pull request with the updated code in the pre-release branch.</p></li>
 <li><p>Update the release notes</p></li>
 <li><p>Update the documentation and ensure it can build properly</p></li>
-<li><p>Commit those changes to the pull request</p></li>
-<li><p>Update the tag</p></li>
+<li><p>Commit and push those changes to the pull request. Accept the pull request when the checks have finished.</p></li>
+<li><p>Checkout to master branch and update the tag</p></li>
 <li><p>Build the python package (this will update the documentation’s version number)</p></li>
 <li><p>Build the documentation</p></li>
 <li><p>Create the release on Github</p></li>
@@ -280,6 +280,7 @@ may mask warnings and errors and ensure the process is smooth.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">make</span> <span class="n">install</span>
 </pre></div>
 </div>
+<p>You may also need to run ‘sudo apt install latexmk’ and ‘apt install texlive-latex-extra’ to be able to create the pdf file.</p>
 <p>build the documentation without error as the html version will be put online at
 the time of release and the pdf should be included in the releases files on
 Github</p>

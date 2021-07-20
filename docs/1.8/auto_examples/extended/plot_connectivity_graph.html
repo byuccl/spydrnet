@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Connectivity Graph &mdash; SpyDrNet 1.8.2 documentation</title>
+  <title>Connectivity Graph &mdash; SpyDrNet 1.8.3 documentation</title>
   
 
   
@@ -45,8 +45,8 @@
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Traversal and Statistics of a Netlist" href="../basic/plot_stat.html" />
-    <link rel="prev" title="Examples" href="../index.html" /> 
+    <link rel="next" title="Create/View a Netlist with Vivado" href="../vivado/vivado_netlist.html" />
+    <link rel="prev" title="Flatten A Netlist" href="plot_flatten.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -100,11 +100,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Reference</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">Examples</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../index.html#more-advanced">More Advanced</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../index.html#basic">Basic</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#extended">Extended</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="plot_single_use_definitions.html">Make Instances Unique</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plot_four_to_five_bit_counter.html">Four Bit Counter To Five Bit Counter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plot_flatten.html">Flatten A Netlist</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Connectivity Graph</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../index.html#basic">Basic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#vivado">Vivado</a></li>
 </ul>
 </li>
@@ -167,7 +170,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../../_sources/auto_examples/advanced/plot_connectivity_graph.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/auto_examples/extended/plot_connectivity_graph.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -182,12 +185,12 @@
             
   <div class="sphx-glr-download-link-note admonition note">
 <p class="admonition-title">Note</p>
-<p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-advanced-plot-connectivity-graph-py"><span class="std std-ref">here</span></a>
+<p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-extended-plot-connectivity-graph-py"><span class="std std-ref">here</span></a>
 to download the full example code</p>
 </div>
 <div class="sphx-glr-example-title section" id="connectivity-graph">
-<span id="sphx-glr-auto-examples-advanced-plot-connectivity-graph-py"></span><h1>Connectivity Graph<a class="headerlink" href="#connectivity-graph" title="Permalink to this headline">¶</a></h1>
-<p>A connectivity graph is a mathmatical view of the connections between components in a netlist. This kind of
+<span id="sphx-glr-auto-examples-extended-plot-connectivity-graph-py"></span><h1>Connectivity Graph<a class="headerlink" href="#connectivity-graph" title="Permalink to this headline">¶</a></h1>
+<p>A connectivity graph is a mathematical view of the connections between components in a netlist. This kind of
 representation enables the use of graph theory algorithms to better understand relations between components. There are
 many different schemes (or configurations) that could be used to generate a connectivity graph. In general, nodes in a
 connectivity graph represent components in the netlist and edges represent connections between components.</p>
@@ -445,12 +448,12 @@ Total edges in connectivity_graph without top_level_ports 362
 </pre></div>
 </div>
 <p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.175 seconds)</p>
-<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-advanced-plot-connectivity-graph-py">
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-extended-plot-connectivity-graph-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
-<p><a class="reference download internal" download="" href="../../_downloads/d262b80ddd221d6e38d38bf44e9a4961/plot_connectivity_graph.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_connectivity_graph.py</span></code></a></p>
+<p><a class="reference download internal" download="" href="../../_downloads/407ab0b005ed6588e6c7e6fd7177505a/plot_connectivity_graph.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_connectivity_graph.py</span></code></a></p>
 </div>
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
-<p><a class="reference download internal" download="" href="../../_downloads/9a00c865df545224f977c96b2a9b4cf1/plot_connectivity_graph.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_connectivity_graph.ipynb</span></code></a></p>
+<p><a class="reference download internal" download="" href="../../_downloads/acdd6e5439ea197429362a1dd02ffacf/plot_connectivity_graph.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_connectivity_graph.ipynb</span></code></a></p>
 </div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
@@ -462,8 +465,8 @@ Total edges in connectivity_graph without top_level_ports 362
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="../basic/plot_stat.html" class="btn btn-neutral float-right" title="Traversal and Statistics of a Netlist" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="../index.html" class="btn btn-neutral float-left" title="Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../vivado/vivado_netlist.html" class="btn btn-neutral float-right" title="Create/View a Netlist with Vivado" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="plot_flatten.html" class="btn btn-neutral float-left" title="Flatten A Netlist" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

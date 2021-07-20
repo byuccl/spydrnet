@@ -8,6 +8,7 @@ Some example functions that can be run to display information in a netlist:
     2) print each library with its definitions in a netlist
     3) print connections between ports of each instance in a netlist
     4) print the number of times each primitive is instanced
+    
 Note: because the hierarchy function uses recursion, the maximum recursion depth may be exceeded if used for large designs
 
 | For an even simpler display of netlist information, try using these functions with the Minimal Script example.  
@@ -19,10 +20,10 @@ import spydrnet as sdn
 from spydrnet.util.selection import Selection
 
 #print the hierarchy of a netlist
-def hierarchy(current_instance,indentation=""):
-    print(indentation,current_instance.name," --instance of",current_instance.reference.name,"--")
+def hierarchy(current_instance,indentation="",level=0):
+    print(indentation,level,'',current_instance.name," --instance of",current_instance.reference.name,"--")
     for child in current_instance.reference.children:
-        hierarchy(child,indentation+"     ")
+        hierarchy(child,indentation+"     ",level+1)
 
 #print a list of all libraries and definitions in a netlist
 def libraries_definitions(my_netlist):
