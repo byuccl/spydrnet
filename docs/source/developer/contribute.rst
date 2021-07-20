@@ -13,7 +13,7 @@ operations. Steps which need more explanation are highlighted below.
 2. Create a pull request with the updated code in the pre-release branch.
 3. Update the release notes
 4. Update the documentation and ensure it can build properly
-5. Commit and push those changes to the pull request
+5. Commit and push those changes to the pull request. Accept the pull request when the checks have finished.
 6. Checkout to master branch and update the tag
 7. Build the python package (this will update the documentation’s version number)
 8. Build the documentation
