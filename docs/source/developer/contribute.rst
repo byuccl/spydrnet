@@ -14,7 +14,7 @@ operations. Steps which need more explanation are highlighted below.
 3. Update the release notes
 4. Update the documentation and ensure it can build properly
 5. Commit those changes to the pull request
-6. Update the tag
+6. Checkout to master branch and update the tag
 7. Build the python package (this will update the documentation’s version number)
 8. Build the documentation
 9. Create the release on Github
@@ -42,6 +42,8 @@ and
 if you are missing packages run:
 
 >>> make install
+
+You may also need to run 'sudo apt install latexmk' and 'apt install texlive-latex-extra' to be able to create the pdf file.
 
 build the documentation without error as the html version will be put online at 
 the time of release and the pdf should be included in the releases files on
