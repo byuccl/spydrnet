@@ -147,3 +147,11 @@ class TestInstance(unittest.TestCase):
         self.assertIsNone(outer_pin1.inner_pin)
         self.assertIsNone(outer_pin2.inner_pin)
 
+    def test_is_top_instance(self):
+        netlist = sdn.load_example_netlist_by_name('toggle')
+        self.assertTrue(netlist.top_instance.is_top_instance)
+        original_top_instance = netlist.top_instance
+        random_instance = next(netlist.get_instances())
+        netlist.top_instance = random_instance
+        self.assertFalse(original_top_instance.is_top_instance)
+        self.assertTrue(random_instance.is_top_instance)
