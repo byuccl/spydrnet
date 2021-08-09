@@ -21,7 +21,7 @@ class Instance(FirstClassElement):
     For example, when writing definition 1, we instance definition 2. Definition 1 is the parent, the instance is the child, and definition 2 is the instance's reference.
 
     """
-    __slots__ = ['_parent', '_reference', '_pins']
+    __slots__ = ['_parent', '_reference', '_pins','_is_top_instance']
 
     def __init__(self, name=None, properties=None):
         """Creates an empty object of type instance.
@@ -36,6 +36,7 @@ class Instance(FirstClassElement):
         self._parent = None
         self._reference = None
         self._pins = OrderedDict()
+        self._is_top_instance = False
         _call_create_instance(self)
         if name != None:
             self.name = name
@@ -208,3 +209,11 @@ class Instance(FirstClassElement):
             rep += 'reference definition.name \'' + self.reference.name + '\''
         rep += '>'
         return rep
+
+    @property
+    def is_top_instance(self):
+        return self._is_top_instance
+
+    @is_top_instance.setter
+    def is_top_instance(self,value):
+        self._is_top_instance = value
