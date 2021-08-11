@@ -776,7 +776,7 @@ class VerilogParser:
             vt.DOT, "to start a port mapping instance", token)
 
         token = self.next_token()
-        print(token)
+        # print(token)
         assert vt.is_valid_identifier(token), self.error_string(
             "valid port identifier", "for port in instantiation port map", token)
         port_name = token

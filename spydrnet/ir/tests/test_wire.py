@@ -2,6 +2,7 @@ import unittest
 
 import spydrnet as sdn
 from spydrnet.ir.first_class_element import FirstClassElement
+from spydrnet.util.selection import Selection
 
 
 class TestWire(unittest.TestCase):
@@ -83,6 +84,15 @@ class TestWire(unittest.TestCase):
         self.assertIsNone(self.instance.pins[self.pin2].wire)
         self.assertTrue(self.pin1 in self.instance.pins and isinstance(self.instance.pins[self.pin2], sdn.OuterPin) and
                         self.instance.pins[self.pin2].inner_pin == self.pin2)
+
+    def test_get_driver(self):
+        netlist = sdn.load_example_netlist_by_name('toggle')
+        instance = next(netlist.get_instances('out_reg'))
+        input_pin = next(netlist.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port.direction is sdn.IN and 'D' in x.inner_pin.port.name))
+        driver = list(x for x in input_pin.wire.get_driver())
+        self.assertTrue(len(driver) == 1)
+        self.assertTrue('out_i_1' in driver[0].instance.name)
+        self.assertTrue(driver[0].inner_pin.port.name is 'O')
 
     @unittest.expectedFailure
     def test_disconnect_inner_pin_from_outside_wire(self):
