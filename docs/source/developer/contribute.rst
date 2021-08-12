@@ -146,10 +146,10 @@ proper release number.
 A description should be entered as well. It could just be a reiteration of the
 release notes or other relevant information.
 
-Three files should be added as assets to the new release:
+Four files should be added as assets to the new release:
 
 Two files will be generated when the repository is pushed to Pypi. A tar.gz file and a .whl file. 
-Uploead these two files after performing the next step of `Publising the packages to Pypi`
+Upload these two files after performing the next step of `Publising the packages to Pypi`
 
 Go to docs/latex folder, copy the `spydrnet_reference.pdf` to the assets under the new release,
 and changes its name to `spydrnet_reference-new_release_number.pdf`. If the pdf file doesn't exist, run:
@@ -157,6 +157,13 @@ and changes its name to `spydrnet_reference-new_release_number.pdf`. If the pdf 
 >>> make latexpdf
 
 in the /docs folder
+
+in the main folder which contains the .pylintrc file, run:
+
+>>> pylint spydrnet > pylint_output.txt
+
+Copy `pylint_output.txt` to the assets under the new release as well. Ideaily the higher the pylint score the better.
+It is highly encouraged to run pylint on the new files/changes added to this current release during development stage so that they are error free.
 
 Publishing the packages to Pypi
 -------------------------------
