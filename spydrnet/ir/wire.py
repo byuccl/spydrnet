@@ -180,7 +180,7 @@ class Wire(Element):
         elif self.cable.name is None:
             rep += 'Contained by Cable whose name is undefined'
         else:
-            rep += 'Cotained by Cable.name \'' + str(self.cable) + '\''
+            rep += 'Contained by Cable.name \'' + str(self.cable.name) + '\' ' + str(self.cable)
         rep += '>'
         return rep
 

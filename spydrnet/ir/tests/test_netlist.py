@@ -76,3 +76,19 @@ class TestNetlist(unittest.TestCase):
         self.assertIsNone(library.netlist)
         self.assertTrue(library_included in self.netlist.libraries)
         self.assertEqual(library_included.netlist, self.netlist)
+
+    def test_top_instance_name(self):
+        netlist = sdn.load_example_netlist_by_name('toggle')
+        self.assertTrue('top_instance.name \'toggle\'' in netlist.__str__())
+
+    def test_set_top_instance_using_instance(self):
+        netlist = sdn.Netlist()
+        instance = sdn.Instance()
+        netlist.set_top_instance(instance)
+        self.assertTrue(netlist.top_instance is instance)
+
+    def test_set_top_instance_using_definition(self):
+        netlist = sdn.Netlist()
+        definition = sdn.Definition()
+        netlist.set_top_instance(definition)
+        self.assertTrue(netlist.top_instance.reference is definition)

@@ -132,7 +132,8 @@ class Netlist(FirstClassElement):
             self.top_instance = top
         else:
             self._top_instance = instance
-            instance.is_top_instance = True
+            if instance:
+                instance.is_top_instance = True
 
     def set_top_instance(self, instance, instance_name='instance'):
         """Sets the top instance of the design.

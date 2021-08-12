@@ -12,7 +12,7 @@
 #support for other vendors
 
 import os
-import SpyDrNet
+import spydrnet as SpyDrNet
 
 VERBOSE = True
 

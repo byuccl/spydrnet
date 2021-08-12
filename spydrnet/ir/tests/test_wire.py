@@ -88,11 +88,20 @@ class TestWire(unittest.TestCase):
     def test_get_driver(self):
         netlist = sdn.load_example_netlist_by_name('toggle')
         instance = next(netlist.get_instances('out_reg'))
-        input_pin = next(netlist.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port.direction is sdn.IN and 'D' in x.inner_pin.port.name))
+        input_pin = next(instance.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port.direction is sdn.IN and 'D' in x.inner_pin.port.name))
         driver = list(x for x in input_pin.wire.get_driver())
         self.assertTrue(len(driver) == 1)
         self.assertTrue('out_i_1' in driver[0].instance.name)
         self.assertTrue(driver[0].inner_pin.port.name is 'O')
+
+    def test_get_driver_2(self):
+        netlist = sdn.load_example_netlist_by_name('adder')
+        instance = next(netlist.get_instances('a'))
+        cable = next(instance.get_cables('a'))
+        wire = cable.wires[0]
+        driver = list(x for x in wire.get_driver())
+        self.assertTrue(len(driver) == 1)
+        self.assertTrue('a[8:0]' in driver[0].port.name)
 
     @unittest.expectedFailure
     def test_disconnect_inner_pin_from_outside_wire(self):
@@ -103,3 +112,12 @@ class TestWire(unittest.TestCase):
     def test_disconnect_outer_pin_from_outside_wire(self):
         outer_pin = sdn.OuterPin()
         self.wire.disconnect_pins_from([outer_pin])
+
+    def test_print_no_cable(self):
+        wire = sdn.Wire()
+        self.assertTrue('Not contained by any Cable' in wire.__str__())
+
+    def test_print_cable_name(self):
+        cable = sdn.Cable('cable')
+        wire = cable.create_wire()
+        self.assertTrue("Contained by Cable.name 'cable'" in wire.__str__())

@@ -155,3 +155,33 @@ class TestInstance(unittest.TestCase):
         netlist.top_instance = random_instance
         self.assertFalse(original_top_instance.is_top_instance)
         self.assertTrue(random_instance.is_top_instance)
+
+    def test_reference_name_is_none(self):
+        definition = sdn.Definition()
+        instance = sdn.Instance()
+        instance.reference = definition
+        self.assertTrue('reference definition.name undefined' in instance.__str__())
+
+    def test_reference_name_is_not_none(self):
+        netlist = sdn.load_example_netlist_by_name('toggle')
+        out_reg = next(netlist.get_instances('*out_reg*'))
+        instance = sdn.Instance()
+        instance.reference = out_reg.reference
+        self.assertTrue('reference definition.name \'FDRE\'' in instance.__str__())
+
+    def test_instance_parent_name_none(self):
+        definition = sdn.Definition()
+        instance = sdn.Instance()
+        definition.add_child(instance)
+        self.assertTrue("parent definition.name undefined" in instance.__str__())
+
+    def test_instance_parent_name_is_not_none(self):
+        netlist = sdn.load_example_netlist_by_name('toggle')
+        out_reg = next(netlist.get_instances('*out_reg*'))
+        instance = sdn.Instance()
+        out_reg.reference.add_child(instance)
+        self.assertTrue('parent definition.name \'FDRE\'' in instance.__str__())
+
+    def test_instance_is_leaf_but_no_reference(self):
+        instance = sdn.Instance()
+        self.assertFalse(instance.is_leaf())

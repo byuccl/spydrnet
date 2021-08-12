@@ -1,7 +1,6 @@
 
 import unittest
-import spydrnet as sdn
-from spydrnet import Netlist, Instance, Definition
+from spydrnet import Netlist, Instance
 from spydrnet.uniquify import uniquify
 
 class TestUniquify(unittest.TestCase):
@@ -10,7 +9,7 @@ class TestUniquify(unittest.TestCase):
         lib = nl.create_library()
         d1 = lib.create_definition()
         d2 = lib.create_definition()
-        d3 = lib.create_definition()
+        d3 = lib.create_definition(name='instance_name')
         i11 = d1.create_child()
         i12 = d1.create_child()
         i13 = d1.create_child()

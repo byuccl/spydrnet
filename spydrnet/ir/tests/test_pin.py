@@ -20,3 +20,7 @@ class TestPin(unittest.TestCase):
     @unittest.expectedFailure
     def test_wire_set(self):
         self.pin.wire = None
+
+    def test_no_wire(self):
+        pin = Pin()
+        self.assertTrue('Wire connected undefined' in pin.__str__())

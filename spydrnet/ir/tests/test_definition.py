@@ -44,6 +44,15 @@ class TestDefinition(unittest.TestCase):
         self.assertFalse(port in self.definition.ports)
         self.assertIsNone(port.definition)
 
+    def test_remove_multiple_ports(self):
+        port = self.definition.create_port()
+        port_2 = self.definition.create_port()
+        self.definition.remove_ports_from([port,port_2])
+        self.assertFalse(port in self.definition.ports)
+        self.assertFalse(port_2 in self.definition.ports)
+        self.assertIsNone(port.definition)
+        self.assertIsNone(port_2.definition)
+
     @unittest.expectedFailure
     def test_remove_ports_from_outside_definition(self):
         port = sdn.Port()
@@ -161,3 +170,11 @@ class TestDefinition(unittest.TestCase):
         self.definition.create_cable()
         self.assertFalse(self.definition.is_leaf()), "Definition with a cable and child instance is considered a leaf" \
                                                      " cell"
+
+    def test_library_name(self):
+        definition = sdn.Definition()
+        library = sdn.Library()
+        library.add_definition(definition)
+        self.assertTrue('Library.name undefined' in definition.__str__())
+        library.name = 'library'
+        self.assertTrue('Library.name \'library\'' in definition.__str__())
