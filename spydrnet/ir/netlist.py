@@ -304,3 +304,14 @@ class Netlist(FirstClassElement):
             rep += 'top_instance.name \'' + self.top_instance.name + '\''
         rep += '>'
         return rep
+
+    def is_unique(self):
+        """
+        checks whether all of the instances in the netlist are unique or not
+        """
+        for instance in self.get_instances():
+            if len(instance.reference.references) == 1 or instance.reference.is_leaf():
+                continue
+            else:
+                return False
+        return True
