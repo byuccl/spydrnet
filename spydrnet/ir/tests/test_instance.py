@@ -185,3 +185,17 @@ class TestInstance(unittest.TestCase):
     def test_instance_is_leaf_but_no_reference(self):
         instance = sdn.Instance()
         self.assertFalse(instance.is_leaf())
+
+    def test_instance_is_unique(self):
+        definition = sdn.Definition(name='a_definition')
+        instance_3 = sdn.Instance()
+        definition.add_child(instance_3)
+        instance_1 = sdn.Instance(name='instance_1')
+        instance_1.reference = definition
+        self.assertTrue(instance_1.is_unique())
+        instance_2 = sdn.Instance(name='instance_2')
+        instance_2.reference = definition
+        self.assertFalse(instance_1.is_unique())
+        self.assertFalse(instance_2.is_unique())
+
+        

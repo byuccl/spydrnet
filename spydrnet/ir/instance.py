@@ -188,6 +188,15 @@ class Instance(FirstClassElement):
             return False
         return True
 
+    def is_unique(self):
+        """
+        Check to see if the instance is unique
+        """
+        if len(self.reference.references) == 1 or self.reference.is_leaf():
+            return True
+        else:
+            return False
+
     def __str__(self):
         """Re-define the print function so it is easier to read"""
         rep = super().__str__()
