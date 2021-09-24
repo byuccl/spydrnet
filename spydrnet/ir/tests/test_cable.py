@@ -48,3 +48,9 @@ class TestCable(unittest.TestCase):
         self.assertIsNone(wire.cable)
         self.assertTrue(wire_included in self.cable.wires)
         self.assertEqual(wire_included.cable, self.cable)
+
+    def test_scalar_false(self):
+        cable = sdn.Cable()
+        cable.create_wire()
+        cable.create_wire()
+        self.assertTrue('is_scalar: False;' in cable.__str__())

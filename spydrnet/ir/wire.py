@@ -1,8 +1,9 @@
+from copy import copy, deepcopy, error
+import spydrnet as sdn
 from spydrnet.ir.element import Element
 from spydrnet.ir.outerpin import OuterPin
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
-from copy import copy, deepcopy, error
 
 
 class Wire(Element):
@@ -152,7 +153,7 @@ class Wire(Element):
         return c
 
     def clone(self):
-        """clone wire in an api safe way. 
+        """clone wire in an api safe way.
 
         The following properties can be expected from the returned element:
          * The wire is not connected to any pins.
@@ -169,7 +170,7 @@ class Wire(Element):
         assert self.cable is not None, "the wire does not belong to a cable"
 
         return self.cable.wires.index(self)
-    
+
     def __str__(self):
         """Re-define the print function so it is easier to read"""
         rep = str(type(self))
@@ -179,6 +180,20 @@ class Wire(Element):
         elif self.cable.name is None:
             rep += 'Contained by Cable whose name is undefined'
         else:
-            rep += 'Cotained by Cable.name \'' + str(self.cable) + '\''
+            rep += 'Contained by Cable.name \'' + str(self.cable.name) + '\' ' + str(self.cable)
         rep += '>'
         return rep
+
+    def get_driver(self):
+        '''
+        returns the driver(s) of the wire
+        '''
+        drivers = []
+        for pin in self._pins:
+            if pin.__class__ is sdn.InnerPin:
+                if pin.port.direction is sdn.IN:
+                    drivers.append(pin)
+            else:
+                if pin.inner_pin.port.direction is sdn.OUT:
+                    drivers.append(pin)
+        return drivers

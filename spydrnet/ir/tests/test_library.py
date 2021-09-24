@@ -59,3 +59,13 @@ class TestLibrary(unittest.TestCase):
         self.assertIsNone(definition.library)
         self.assertTrue(definition_included in self.library.definitions)
         self.assertEqual(definition_included.library, self.library)
+
+    def test_no_parent_netlist(self):
+        library = sdn.Library()
+        self.assertTrue('parent netlist undefined' in library.__str__())
+
+    def test_no_parent_netlist_name(self):
+        netlist = sdn.Netlist()
+        library = sdn.Library()
+        netlist.add_library(library)
+        self.assertTrue('parent netlist.name undefined' in library.__str__())

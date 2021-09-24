@@ -1,7 +1,7 @@
 # Copyright 2020 Dallin Skouson, Andrew Keller, Michael Wirthlin
 
-from spydrnet.ir import *
 from collections import deque
+# from spydrnet.ir import *
 
 """Code to make definitions unique throughout a netlist.
 expected parameters,
@@ -9,13 +9,13 @@ uniqify -- Makes all definitions unique below the top instance. definitions that
 """
 
 
-mod_name_uid = 0
+MOD_NAME_UID = 0
 
 
 def _get_unique_name_modifier():
-    global mod_name_uid
-    str_out = "_sdn_unique_" + str(mod_name_uid)
-    mod_name_uid += 1
+    global MOD_NAME_UID
+    str_out = "_sdn_unique_" + str(MOD_NAME_UID)
+    MOD_NAME_UID += 1
     return str_out
 
 
@@ -25,7 +25,7 @@ def _make_instance_unique(instance):
     lib = instance.reference.library
     index = lib.definitions.index(reference)
     new_def = instance.reference.clone()
-    if instance.reference.name != None:
+    if instance.reference.name is not None:
         name = instance.reference.name
         unique_suffix = _get_unique_name_modifier()
         new_def.name = name + unique_suffix
@@ -47,11 +47,11 @@ def uniquify(netlist):
     Leaf cells are can be instanced unlimited numbers of times. Any netlist elements that are not instantiated by the top instance will not be modified and may retain duplicate instances
     Currently there is no guarantee that the original definition names will be maintained, but it is guaranteed that they will be unique within the scope of all hardware that is below the top instance.
 
-    Renameing is predictable. the string: _sdn_unique_# will be added to the end of the definition names.
+    Renaming is predictable. the string: _sdn_unique_# will be added to the end of the definition names.
 
-    parameter - netlist, the netlist that will be uniquified
+    :param netlist: the netlist that will be uniquified
 
-    returns - no returns
+    :return: void
 
     """
 
