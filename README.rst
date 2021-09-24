@@ -20,7 +20,7 @@ A flexible framework for analyzing and transforming `netlists <https://en.wikipe
 Simple Examples
 ---------------
 
-SpyDrNet can be used to create netlists from scratch. Because it is a low-level framework, manual netlist creation can be tedious (much like writting a high level application in assembly). To assist in rapid productivity, parsers and composers are provided for common netlist formats. Currently only `EDIF <https://en.wikipedia.org/wiki/EDIF>`_ is supported, but the roadmap includes structural Verilog, structural VHDL, Verilog Quartus Mapping Files (`Intel's VQM <https://www.intel.com/content/www/us/en/programmable/quartushelp/17.0/mapIdTopics/mwh1465406414431.htm>`_), and JSON.
+SpyDrNet can be used to create netlists from scratch. Because it is a low-level framework, manual netlist creation can be tedious (much like writting a high level application in assembly). To assist in rapid productivity, parsers and composers are provided for common netlist formats. Currently `EDIF <https://en.wikipedia.org/wiki/EDIF>`_ and structural Verilog are supported, but the roadmap also includes structural VHDL, Verilog Quartus Mapping Files (`Intel's VQM <https://www.intel.com/content/www/us/en/programmable/quartushelp/17.0/mapIdTopics/mwh1465406414431.htm>`_), and JSON.
 
 **Loading Example Netlists**
 
