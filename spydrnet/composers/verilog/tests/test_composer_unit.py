@@ -8,6 +8,7 @@ import unittest
 from unittest.case import expectedFailure
 import spydrnet as sdn
 from spydrnet.composers.verilog.composer import Composer
+from collections import OrderedDict
 
 class TestVerilogComposerUnit(unittest.TestCase):
     
@@ -64,7 +65,7 @@ class TestVerilogComposerUnit(unittest.TestCase):
         return definition
 
     def initialize_instance_parameters(self, instance):
-        instance["VERILOG.Parameters"] = dict()
+        instance["VERILOG.Parameters"] = OrderedDict()
         instance["VERILOG.Parameters"]["key"] = "value"
         instance["VERILOG.Parameters"]["key2"] = "value2"
 
@@ -530,7 +531,7 @@ class TestVerilogComposerUnit(unittest.TestCase):
         composer = self.initialize_tests()
         definition = self.initialize_definition()
         
-        definition["VERILOG.Parameters"] = dict()
+        definition["VERILOG.Parameters"] = OrderedDict()
 
         definition["VERILOG.Parameters"]["key"] = "value"
         definition["VERILOG.Parameters"]["no_default"] = None
