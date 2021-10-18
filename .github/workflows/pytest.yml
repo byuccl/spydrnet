@@ -1,0 +1,30 @@
+on: push
+name: on push
+jobs:
+  SpyDrNetPytest:
+    name: Functional unit tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version:
+          - "3.6"
+          - "3.7"
+          - "3.8"
+          - "3.9"
+          - "3.10"
+    steps:
+    - uses: actions/checkout@master
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: install requirements
+      run: |
+        python --version
+        pip install --upgrade pip
+        pip install -r requirements.txt --user
+        pip freeze
+    - name: Run Pytest for SpyDrNet
+      uses: cclauss/GitHub-Action-for-pytest@master
+      with:
+        args: python -m pytest -v
