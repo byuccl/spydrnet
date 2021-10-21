@@ -680,7 +680,7 @@ class VerilogParser:
 
     def parse_defparam_parameters(self):
         '''parse a defparam structure and add the parameters to the associated instance
-        
+
         this looks like:
 
         defparam \\avs_s1_readdata[12]~output .bus_hold = "false"; //single backslash to escape name
@@ -710,7 +710,7 @@ class VerilogParser:
         token = self.next_token()
         assert token == vt.SEMI_COLON, self.error_string(vt.SEMI_COLON, "to end the defparam statement", token)
         self.set_instance_parameters(instance, params)
-        
+
 
     def parse_parameter_mapping(self):
         params = dict()
@@ -776,7 +776,6 @@ class VerilogParser:
             vt.DOT, "to start a port mapping instance", token)
 
         token = self.next_token()
-        print(token)
         assert vt.is_valid_identifier(token), self.error_string(
             "valid port identifier", "for port in instantiation port map", token)
         port_name = token
@@ -834,7 +833,7 @@ class VerilogParser:
     def parse_variable_instantiation(self):
         '''parse the cable name and its indicies if any
         if we are in Intel land then 2 other things can happen.
-        the "cable" is a constant, 
+        the "cable" is a constant,
             attach it to the \\<const0> or \\<const1> cable.
         the cable is inverted,
             create a new cable and an inverter block similar to the assign but with an inversion in the block
