@@ -1,5 +1,8 @@
 from spydrnet.ir.bundle import Bundle
 from spydrnet.ir.wire import Wire
+from spydrnet.ir.port import Port
+from spydrnet.ir.instance import Instance
+from spydrnet.ir.innerpin import InnerPin
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
 from spydrnet.global_state.global_callback import _call_create_cable
@@ -50,6 +53,11 @@ class Cable(Bundle):
     def _items(self):
         """Overrides the bundle _items function to return wires"""
         return self._wires
+
+    @property
+    def size(self):
+        """ Retruns the size of the cable """
+        return len(self._wires)
 
     @property
     def wires(self):
@@ -142,6 +150,96 @@ class Cable(Bundle):
         """Internal wire removal call. dissociates the wire from the cable"""
         global_callback._call_cable_remove_wire(self, wire)
         wire._cable = None
+
+    def check_concat(self):
+        """
+        Checks if the cable is concatenated while connecting to other ports
+        """
+        assert self.size, "Cable does not contain any wires"
+
+        # get all pins of index 0 wire
+        connected_pins = len(self._wires[0].pins)
+        connected_port = set([p.port for p in self._wires[0].pins])
+        # iterate each wire in cable
+        for wire in self._wires:
+            # If this wire is connected to different number of pins
+            if not connected_pins == len(wire.pins):
+                return False
+            # If this wire is connected to different ports
+            if connected_port.difference([p.port for p in wire.pins]):
+                return False
+            # Sequence of connection is same
+            for pin in wire.pins:
+                if isinstance(pin, InnerPin):
+                    if not pin.port.size == self.size:
+                        return False
+                    if not pin.index() == wire.index():
+                        return False
+                else:
+                    if not pin.inner_pin.port.size == self.size:
+                        return False
+                    if not pin.inner_pin.index() == wire.index():
+                        return False
+        return True
+
+    def connect_instance_port(self, instance, port):
+        """
+        Connect cable to given Instance and Port (Straight connection)
+        """
+        assert isinstance(instance, Instance), \
+            "Argument to connect_port should be port"
+        assert isinstance(port, Port), \
+            "Argument to connect_port should be port"
+        assert port.size, "Port has no pins"
+        assert port.size == self.size, "Port and cable size do not match"
+        assert port in instance.reference.ports, \
+            f"Port {port.name} in not part of instance definition " + \
+            f"{instance.reference.name}"
+
+        for wire in self.wires:
+            if port.is_downto:
+                wire.connect_pin(instance.pins[port.pins[wire.index()]])
+            else:
+                wire.connect_pin(instance.pins[port.pins[-(wire.index()+1)]])
+
+    def disconnect_instance_port(self, instance, port):
+        assert isinstance(instance, Instance), \
+            "Argument to connect_port should be port"
+        assert isinstance(port, Port), \
+            "Argument to connect_port should be port"
+        assert port.size, "Port has no pins"
+        assert port.size == self.size, "Port and cable size do not match"
+        assert port in instance.reference.ports, \
+                f"Port {port.name} in not part of instance definition {instance.reference.name}"
+        for wire in self.wires:
+            if port.is_downto:
+                wire.disconnect_pin(instance.pins[port.pins[wire.index()]])
+            else:
+                wire.disconnect_pin(instance.pins[port.pins[-(wire.index()+1)]])
+
+    def connect_port(self, port):
+        """ Connet cable to port (innerpins connection)"""
+        assert isinstance(port, Port), \
+            "Argument to connect_port should be port"
+        assert port.size, "Port has no pins"
+
+        for wire in self.wires:
+            if port.is_downto:
+                wire.connect_pin(port.pins[wire.index()])
+            else:
+                wire.connect_pin(port.pins[-(wire.index()+1)])
+
+    def merge_cables(self, cables):
+        """ Merges multiple cables to this cable in given sequence """
+        for cable in cables:
+            assert isinstance(cable, Cable), \
+                "All arguments should be cable instance"
+
+        for cable in cables[::-1]:
+            wires = list(cable.wires)
+            for wire in wires[::-1]:
+                cable.remove_wire(wire)
+                self.add_wire(wire)
 
     def _clone_rip_and_replace(self, memo):
         """Remove from its current environment and place it into the new cloned environment with references held in the memo dictionary"""

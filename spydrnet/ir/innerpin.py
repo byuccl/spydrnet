@@ -21,6 +21,13 @@ class InnerPin(Pin):
         This object cannot be modified directly by the end user."""
         return self._port
 
+    def index(self):
+        """if this wire is in a cable, returns the index number of the wire in the parent cable"""
+
+        assert self._port is not None, "the wire does not belong to a cable"
+
+        return self._port.pins.index(self)
+
     def _clone_rip_and_replace(self, memo):
         """Remove from its current environment and place it into the new cloned environment with references held in the memo dictionary"""
         if self._wire != None:

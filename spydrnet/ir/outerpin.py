@@ -44,6 +44,13 @@ class OuterPin(Pin):
         """get the inner pin associated with this outer pin"""
         return self._inner_pin
 
+    @property
+    def port(self):
+        """Return the port that the inner pin is a part of.
+
+        This object cannot be modified directly by the end user."""
+        return self._inner_pin._port
+
     def __eq__(self, other):
         if isinstance(other, OuterPin):
             return self._instance == other._instance and self._inner_pin == other._inner_pin
@@ -59,7 +66,7 @@ class OuterPin(Pin):
             self._wire = memo[self._wire]
 
     def _clone_rip(self):
-        """Remove from its current environmnet. 
+        """Remove from its current environmnet.
 
         This will remove all pin pointers and create a floating stand alone instance.
         """

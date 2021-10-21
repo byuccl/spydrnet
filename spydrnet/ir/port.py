@@ -37,7 +37,7 @@ class Port(Bundle):
 
         name - (str) the name of this instance
         properties - (dict) the dictionary which holds the properties
-        id_downto - (bool) set the downto status. Downto is False if the right index is higher than the left one, True otherwise
+        is_downto - (bool) set the downto status. Downto is False if the right index is higher than the left one, True otherwise
         is_scalar - (bool) set the scalar status. Return True if the item is a scalar False otherwise.
         lower_index - (int) get the value of the lower index of the array.
         direction - (Enum) Define the possible directions for a given port. (UNDEFINED, INOUT, IN, OUT)
@@ -106,6 +106,26 @@ class Port(Bundle):
                 "Type {} cannot be assigned to direction".format(type(value)))
 
     @property
+    def is_input(self):
+        """ Shortcut property"""
+        return self.direction == self.Direction.IN
+
+    @property
+    def is_output(self):
+        """ Shortcut property"""
+        return self.direction == self.Direction.OUT
+
+    @property
+    def is_inout(self):
+        """ Shortcut property"""
+        return self.direction == self.Direction.INOUT
+
+    @property
+    def size(self):
+        """Get a list of the pins that are in the port"""
+        return len(self._pins)
+
+    @property
     def pins(self):
         """Get a list of the pins that are in the port"""
         return ListView(self._pins)
@@ -126,6 +146,18 @@ class Port(Bundle):
         assert len(value_set) == len(value_list) and set(self._pins) == value_set, \
             "Set of values do not match, assignment can only be used to reorder values, values must be unique"
         self._pins = value_list
+
+    @property
+    def inner_wires(self):
+        """ Returns list of internal wires connected to the port """
+        return (p.wire for p in self.pins if p.wire)
+
+    @property
+    def outer_wires(self, instance):
+        """ Returns list of externla wires connected to the port """
+        assert instance.reference == self.definition, \
+            "Port does not belong to given instance definition"
+        return (instance.pins[p].wire for p in self.pins if instance.pins[p].wire)
 
     def create_pins(self, pin_count):
         """Create pin_count pins in the given port a downto style syntax is assumed.
@@ -187,7 +219,7 @@ class Port(Bundle):
         self._pins.remove(pin)
 
     def remove_pins_from(self, pins):
-        """Remove several pins from the port at once. 
+        """Remove several pins from the port at once.
 
         The wires are disconnected from the pins that are removed.
 
@@ -208,7 +240,7 @@ class Port(Bundle):
         self._pins = list(x for x in self._pins if x not in exclude_pins)
 
     def _remove_pin(self, pin):
-        """Internal pin removal function. 
+        """Internal pin removal function.
         Disconnects the wires from the pin and remvoes all the pins reference to other pins."""
         global_callback._call_port_remove_pin(self, pin)
         if self.definition:
