@@ -113,3 +113,11 @@ class TestPort(unittest.TestCase):
     def test_is_array_clear_on_array_bundle(self):
         self.port.create_pins(2)
         self.port.is_array = False
+
+    @unittest.expectedFailure
+    def test_inner_wires(self):
+        self.assertTrue(False)
+
+    @unittest.expectedFailure
+    def test_outer_wires(self):
+        self.assertTrue(False)
