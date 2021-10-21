@@ -15,6 +15,5 @@ def compose(netlist, filename, definition_list=[], write_blackbox=True):
         from spydrnet.composers.verilog.composer import Composer
         composer = Composer(definition_list, write_blackbox)
         composer.run(netlist, file_out=filename)
-        composer.run(netlist, file_out=filename)
     else:
         raise RuntimeError("Extension {} not recognized.".format(extension))
