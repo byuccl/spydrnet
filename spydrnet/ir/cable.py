@@ -193,8 +193,7 @@ class Cable(Bundle):
         assert port.size, "Port has no pins"
         assert port.size == self.size, "Port and cable size do not match"
         assert port in instance.reference.ports, \
-            (f"Port {port.name} in not part of instance definition " + \
-            f"{instance.reference.name}")
+            f"Port {port.name} in not part of instance definition {instance.reference.name}"
 
         for wire in self.wires:
             if port.is_downto:
