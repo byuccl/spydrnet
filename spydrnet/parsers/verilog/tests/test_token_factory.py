@@ -77,6 +77,15 @@ multi line with extra white space
 */
 '''
 
+final_comments = '''
+module synth_th1_slaac
+   (XP_IN);
+  input [7:0]XP_IN;
+
+endmodule
+//* Final design comments
+'''
+
 
 class TestVerilogParser(unittest.TestCase):
 
@@ -95,7 +104,7 @@ class TestVerilogParser(unittest.TestCase):
 
     def test_counts(self):
         to_run = [(very_simple_multi_line, 24, "very_simple_multi_line"), (very_simple, 35, "very_simple"),
-                  (port_remap, 74, "port_remap"), (comments, 11, "comments")]
+                  (port_remap, 74, "port_remap"), (comments, 11, "comments"), (final_comments, 16, "port_remap")]
         for p in to_run:
             s, c, n = p
             assert c == self.run_token_count(
