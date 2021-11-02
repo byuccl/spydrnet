@@ -27,7 +27,9 @@ class TestDefinition(unittest.TestCase):
         self.assertEqual(self.definition.ports, [port2, port1])
 
     def test_create_port(self):
-        port = self.definition.create_port()
+        port = self.definition.create_port("Port1", pins=2)
+        self.assertEqual(port.name, "Port1")
+        self.assertEqual(len(port.pins), 2)
         self.assertTrue(port in self.definition.ports)
         self.assertEqual(port.definition, self.definition)
 
@@ -72,7 +74,9 @@ class TestDefinition(unittest.TestCase):
         self.assertEqual(self.definition.cables, [cable2, cable1])
 
     def test_create_cable(self):
-        cable = self.definition.create_cable()
+        cable = self.definition.create_cable("cable1", wires=2)
+        self.assertEqual(cable.name, "cable1")
+        self.assertEqual(len(cable.wires), 2)
         self.assertTrue(cable in self.definition.cables)
         self.assertEqual(self.definition, cable.definition)
 

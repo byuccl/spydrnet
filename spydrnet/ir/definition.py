@@ -142,7 +142,7 @@ class Definition(FirstClassElement):
             return False
         return True
 
-    def create_port(self, name=None, properties=None, is_downto=None, is_scalar=None, lower_index=None, direction=None):
+    def create_port(self, name=None, properties=None, is_downto=None, is_scalar=None, lower_index=None, direction=None, pins=None):
         """Create a port, add it to the definition, and return that port.
 
         parameters
@@ -154,11 +154,13 @@ class Definition(FirstClassElement):
         is_scalar - (bool) set the scalar status. Return True if the item is a scalar False otherwise.
         lower_index - (int) get the value of the lower index of the array.
         direction - (Enum) Define the possible directions for a given port. (UNDEFINED, INOUT, IN, OUT)
-
+        pins - (int) Create number of pins in the newly created port
         """
         port = Port(name, properties, is_downto,
                     is_scalar, lower_index, direction)
         self.add_port(port)
+        if pins:
+            port.create_pins(pins)
         return port
 
     def add_port(self, port, position=None):
@@ -340,7 +342,7 @@ class Definition(FirstClassElement):
         global_callback._call_definition_remove_child(self, child)
         child._parent = None
 
-    def create_cable(self, name=None, properties=None, is_downto=None, is_scalar=None, lower_index=None):
+    def create_cable(self, name=None, properties=None, is_downto=None, is_scalar=None, lower_index=None, wires=None):
         """Create a cable, add it to the definition, and return the cable.
 
         parameters
@@ -351,9 +353,12 @@ class Definition(FirstClassElement):
         id_downto - (bool) set the downto status. Downto is False if the right index is higher than the left one, True otherwise
         is_scalar - (bool) set the scalar status. Return True if the item is a scalar False otherwise.
         lower_index - (int) get the value of the lower index of the array.
+        wires - (int) Create number of wires in the newly created cable
         """
         cable = Cable(name, properties, is_downto, is_scalar, lower_index)
         self.add_cable(cable)
+        if wires:
+            cable.create_wires(wires)
         return cable
 
     def add_cable(self, cable, position=None):
