@@ -1,3 +1,13 @@
+SpyDrNet 1.9.0
+---------------
+November 17, 2021
+
+* Incorporates Github Actions for automated testing
+* Minor shortcut additions in IR classes
+* Minor documentation updates
+* Improved comment handling in the Verilog parser
+* Enhanced the Verilog composer
+
 SpyDrNet 1.8.3
 --------------
 July 20, 2021
