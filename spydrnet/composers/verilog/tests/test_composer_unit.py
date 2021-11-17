@@ -531,11 +531,6 @@ class TestVerilogComposerUnit(unittest.TestCase):
     def test_write_module_header(self):
         composer = self.initialize_tests()
         definition = self.initialize_definition()
-<<<<<<< HEAD
-        
-=======
-
->>>>>>> origin/ganesh_contributions
         definition["VERILOG.Parameters"] = OrderedDict()
 
         definition["VERILOG.Parameters"]["key"] = "value"
