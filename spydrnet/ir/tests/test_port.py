@@ -39,6 +39,10 @@ class TestPort(unittest.TestCase):
             self.port.direction = direction
             self.assertEqual(self.port.direction, direction)
 
+    def test_direction_2(self):
+        port = sdn.Port(direction=sdn.IN)
+        self.assertTrue(port.direction is sdn.IN)
+
     @unittest.expectedFailure
     def test_direction_set_bad_type(self):
         self.port.direction = list()

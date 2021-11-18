@@ -4,13 +4,15 @@
 #
 #Tests the verilog composers functions and output
 
+from collections import OrderedDict
 import unittest
 from unittest.case import expectedFailure
 import spydrnet as sdn
 from spydrnet.composers.verilog.composer import Composer
+from collections import OrderedDict
 
 class TestVerilogComposerUnit(unittest.TestCase):
-    
+
     class TestFile:
         '''represents a file (has a write function for the composer)
         can be used as a drop in replacement for the composer file.write function
@@ -20,7 +22,7 @@ class TestVerilogComposerUnit(unittest.TestCase):
 
         def write(self, text):
             self.written += text
-        
+
         def clear(self):
             self.written = ""
 
@@ -45,7 +47,7 @@ class TestVerilogComposerUnit(unittest.TestCase):
         composer = Composer()
         composer.file = self.TestFile()
         return composer
-    
+
     def initialize_netlist(self):
         netlist = sdn.Netlist()
         netlist.name = "test_netlist"
@@ -64,7 +66,7 @@ class TestVerilogComposerUnit(unittest.TestCase):
         return definition
 
     def initialize_instance_parameters(self, instance):
-        instance["VERILOG.Parameters"] = dict()
+        instance["VERILOG.Parameters"] = OrderedDict()
         instance["VERILOG.Parameters"]["key"] = "value"
         instance["VERILOG.Parameters"]["key2"] = "value2"
 
@@ -82,13 +84,13 @@ class TestVerilogComposerUnit(unittest.TestCase):
         single_bit_port.create_pin()
         single_bit_port.is_downto = True
         single_bit_port.name = "single_bit_port"
-        
+
         single_bit_cable = definition.create_cable()
         single_bit_cable.name = "single_bit_cable"
         single_bit_cable.is_downto = True
         single_bit_cable.create_wire()
 
-        
+
         multi_bit_port = ref_def.create_port()
         multi_bit_port.is_downto = True
         multi_bit_port.create_pins(4)
@@ -109,7 +111,7 @@ class TestVerilogComposerUnit(unittest.TestCase):
         multi_bit_cable.create_wires(4)
         multi_bit_cable.name = "multi_bit_cable"
         multi_bit_cable.is_downto = True
-        
+
 
         concatenated_port = ref_def.create_port()
         concatenated_port.create_pins(4)
@@ -122,7 +124,7 @@ class TestVerilogComposerUnit(unittest.TestCase):
             cable.is_downto = True
             cable.name = "cc_" + str(i)
             ccs.append(cable)
-    
+
 
         single_bit_cable.wires[0].connect_pin(instance.pins[single_bit_port.pins[0]])
 
@@ -135,9 +137,9 @@ class TestVerilogComposerUnit(unittest.TestCase):
             multi_bit_cable.wires[i].connect_pin(instance.pins[partial_port.pins[i]])
 
         single_bit_expected = "." + single_bit_port.name + "(" + single_bit_cable.name + ")"
-        
+
         multi_bit_expected = "." + multi_bit_port.name + "(" + multi_bit_cable.name + ")"
-        
+
         offset_expected = "." + multi_bit_port_offset.name + "(" + multi_bit_cable.name + ")"
 
         partial_expected = "." + partial_port.name + "(" + multi_bit_cable.name + "[1:0])"
@@ -160,13 +162,13 @@ class TestVerilogComposerUnit(unittest.TestCase):
     def test_write_brackets_single_bit(self):
         #def _write_brackets(self, bundle, low_index, high_index):
         composer = self.initialize_tests()
-        
+
         port = sdn.Port()
         cable = sdn.Cable()
 
         cable_name = "my_cable"
         port_name = "my_port"
-        
+
         port.name = port_name
         cable.name = cable_name
 
@@ -199,17 +201,17 @@ class TestVerilogComposerUnit(unittest.TestCase):
         assert composer.file.compare("")
         composer.file.clear()
         #none of these should write because they are all single bit.
-    
+
     def test_write_brackets_single_bit_offset(self):
         #def _write_brackets(self, bundle, low_index, high_index):
         composer = self.initialize_tests()
-        
+
         port = sdn.Port()
         cable = sdn.Cable()
 
         cable_name = "my_cable"
         port_name = "my_port"
-        
+
         port.name = port_name
         cable.name = cable_name
 
@@ -245,16 +247,16 @@ class TestVerilogComposerUnit(unittest.TestCase):
         assert composer.file.compare("")
         composer.file.clear()
         #none of these should write because they are all single bit.
-        
+
     def test_write_brackets_multi_bit(self):
         composer = self.initialize_tests()
-        
+
         port = sdn.Port()
         cable = sdn.Cable()
 
         cable_name = "my_cable"
         port_name = "my_port"
-        
+
         port.name = port_name
         cable.name = cable_name
 
@@ -300,17 +302,17 @@ class TestVerilogComposerUnit(unittest.TestCase):
         composer._write_brackets(cable, 1, 2)
         assert composer.file.compare("[2:1]")
         composer.file.clear()
-        
+
 
     def test_write_brackets_multi_bit_offset(self):
         composer = self.initialize_tests()
-        
+
         port = sdn.Port()
         cable = sdn.Cable()
 
         cable_name = "my_cable"
         port_name = "my_port"
-        
+
         port.name = port_name
         cable.name = cable_name
 
@@ -363,7 +365,7 @@ class TestVerilogComposerUnit(unittest.TestCase):
         pass #we should add some tests to test out of bounds on the brackets.
 
     def test_write_brackets_defining(self):
-        
+
         composer = self.initialize_tests()
 
         def initialize_bundle(bundle, offset, width):
@@ -391,7 +393,7 @@ class TestVerilogComposerUnit(unittest.TestCase):
         composer._write_brackets_defining(b3)
         assert composer.file.compare("[3:0]")
         composer.file.clear()
-        
+
         composer._write_brackets_defining(b4)
         assert composer.file.compare("[7:4]")
         composer.file.clear()
@@ -405,17 +407,17 @@ class TestVerilogComposerUnit(unittest.TestCase):
             composer._write_name(o)
             assert composer.file.compare(n)
             composer.file.clear()
-    
+
     @unittest.expectedFailure
     def test_write_none_name(self):
         composer = self.initialize_tests()
-        o = sdn.Cable() 
+        o = sdn.Cable()
         composer._write_name(o)
 
     @unittest.expectedFailure
     def test_write_invalid_name(self):
         composer = self.initialize_tests()
-        o = sdn.Cable() 
+        o = sdn.Cable()
         o.name = "\\escaped_no_space"
         composer._write_name(o)
 
@@ -435,11 +437,11 @@ class TestVerilogComposerUnit(unittest.TestCase):
         composer._write_instance_port(instance, single_bit_port)
         assert composer.file.compare(single_bit_expected)
         composer.file.clear()
-        
+
         composer._write_instance_port(instance, multi_bit_port)
         assert composer.file.compare(multi_bit_expected)
         composer.file.clear()
-        
+
         composer._write_instance_port(instance, multi_bit_port_offset)
         assert composer.file.compare(offset_expected)
         composer.file.clear()
@@ -529,8 +531,7 @@ class TestVerilogComposerUnit(unittest.TestCase):
     def test_write_module_header(self):
         composer = self.initialize_tests()
         definition = self.initialize_definition()
-        
-        definition["VERILOG.Parameters"] = dict()
+        definition["VERILOG.Parameters"] = OrderedDict()
 
         definition["VERILOG.Parameters"]["key"] = "value"
         definition["VERILOG.Parameters"]["no_default"] = None
@@ -604,7 +605,7 @@ class TestVerilogComposerUnit(unittest.TestCase):
         port_disconnect = definition.create_port("disconnected")
         port_disconnect.direction = sdn.Port.Direction.INOUT
         port_disconnect.create_pin()
-    
+
         composer._write_module_header_port(port_disconnect)
         assert composer.file.compare(port_disconnect.name)
         composer.file.clear()
@@ -618,7 +619,7 @@ class TestVerilogComposerUnit(unittest.TestCase):
 
         cable = definition.create_cable(name = "test_cable", is_downto = True)
         cable.create_wires(4)
-        
+
         composer._write_module_body_cable(cable)
         assert composer.file.compare("wire [3:0]" + cable.name + ";\n")
 

@@ -123,13 +123,17 @@ class Netlist(FirstClassElement):
         global_callback._call_netlist_top_instance(self, instance)
         # TODO: should We have a DRC that makes sure the instance is of a definition contained in netlist? I think no
         #  but I am open to hear other points of veiw.
-
+        if self.top_instance:
+            self.top_instance.is_top_instance = False
         if isinstance(instance, Definition):
             top = Instance()
             top.reference = instance
+            top.is_top_instance = True
             self.top_instance = top
         else:
             self._top_instance = instance
+            if instance:
+                instance.is_top_instance = True
 
     def set_top_instance(self, instance, instance_name='instance'):
         """Sets the top instance of the design.
@@ -300,3 +304,14 @@ class Netlist(FirstClassElement):
             rep += 'top_instance.name \'' + self.top_instance.name + '\''
         rep += '>'
         return rep
+
+    def is_unique(self):
+        """
+        checks whether all of the instances in the netlist are unique or not
+        """
+        for instance in self.get_instances():
+            if len(instance.reference.references) == 1 or instance.reference.is_leaf():
+                continue
+            else:
+                return False
+        return True

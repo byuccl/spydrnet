@@ -1,7 +1,7 @@
 import os
 
 
-def compose(netlist, filename):
+def compose(netlist, filename, definition_list=[], write_blackbox=True):
     """To compose a file into a netlist format"""
     extension = os.path.splitext(filename)[1]
     extension_lower = extension.lower()
@@ -13,7 +13,7 @@ def compose(netlist, filename):
         composer.run(netlist, filename)
     elif extension_lower in [".v", ".vh"]:
         from spydrnet.composers.verilog.composer import Composer
-        composer = Composer()
+        composer = Composer(definition_list, write_blackbox)
         composer.run(netlist, file_out=filename)
     else:
         raise RuntimeError("Extension {} not recognized.".format(extension))

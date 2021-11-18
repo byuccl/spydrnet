@@ -147,3 +147,55 @@ class TestInstance(unittest.TestCase):
         self.assertIsNone(outer_pin1.inner_pin)
         self.assertIsNone(outer_pin2.inner_pin)
 
+    def test_is_top_instance(self):
+        netlist = sdn.load_example_netlist_by_name('toggle')
+        self.assertTrue(netlist.top_instance.is_top_instance)
+        original_top_instance = netlist.top_instance
+        random_instance = next(netlist.get_instances())
+        netlist.top_instance = random_instance
+        self.assertFalse(original_top_instance.is_top_instance)
+        self.assertTrue(random_instance.is_top_instance)
+
+    def test_reference_name_is_none(self):
+        definition = sdn.Definition()
+        instance = sdn.Instance()
+        instance.reference = definition
+        self.assertTrue('reference definition.name undefined' in instance.__str__())
+
+    def test_reference_name_is_not_none(self):
+        netlist = sdn.load_example_netlist_by_name('toggle')
+        out_reg = next(netlist.get_instances('*out_reg*'))
+        instance = sdn.Instance()
+        instance.reference = out_reg.reference
+        self.assertTrue('reference definition.name \'FDRE\'' in instance.__str__())
+
+    def test_instance_parent_name_none(self):
+        definition = sdn.Definition()
+        instance = sdn.Instance()
+        definition.add_child(instance)
+        self.assertTrue("parent definition.name undefined" in instance.__str__())
+
+    def test_instance_parent_name_is_not_none(self):
+        netlist = sdn.load_example_netlist_by_name('toggle')
+        out_reg = next(netlist.get_instances('*out_reg*'))
+        instance = sdn.Instance()
+        out_reg.reference.add_child(instance)
+        self.assertTrue('parent definition.name \'FDRE\'' in instance.__str__())
+
+    def test_instance_is_leaf_but_no_reference(self):
+        instance = sdn.Instance()
+        self.assertFalse(instance.is_leaf())
+
+    def test_instance_is_unique(self):
+        definition = sdn.Definition(name='a_definition')
+        instance_3 = sdn.Instance()
+        definition.add_child(instance_3)
+        instance_1 = sdn.Instance(name='instance_1')
+        instance_1.reference = definition
+        self.assertTrue(instance_1.is_unique())
+        instance_2 = sdn.Instance(name='instance_2')
+        instance_2.reference = definition
+        self.assertFalse(instance_1.is_unique())
+        self.assertFalse(instance_2.is_unique())
+
+        

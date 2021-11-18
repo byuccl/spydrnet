@@ -2,7 +2,7 @@ import unittest
 
 import spydrnet as sdn
 from spydrnet.ir.first_class_element import FirstClassElement
-
+from spydrnet.uniquify import uniquify
 
 class TestNetlist(unittest.TestCase):
     def setUp(self):
@@ -76,3 +76,26 @@ class TestNetlist(unittest.TestCase):
         self.assertIsNone(library.netlist)
         self.assertTrue(library_included in self.netlist.libraries)
         self.assertEqual(library_included.netlist, self.netlist)
+
+    def test_top_instance_name(self):
+        netlist = sdn.load_example_netlist_by_name('toggle')
+        self.assertTrue('top_instance.name \'toggle\'' in netlist.__str__())
+
+    def test_set_top_instance_using_instance(self):
+        netlist = sdn.Netlist()
+        instance = sdn.Instance()
+        netlist.set_top_instance(instance)
+        self.assertTrue(netlist.top_instance is instance)
+
+    def test_set_top_instance_using_definition(self):
+        netlist = sdn.Netlist()
+        definition = sdn.Definition()
+        netlist.set_top_instance(definition)
+        self.assertTrue(netlist.top_instance.reference is definition)
+
+    def test_is_unique(self):
+        example_name = 'unique_challenge'
+        netlist = sdn.load_example_netlist_by_name(example_name)
+        self.assertFalse(netlist.is_unique())
+        uniquify(netlist)
+        self.assertTrue(netlist.is_unique())
