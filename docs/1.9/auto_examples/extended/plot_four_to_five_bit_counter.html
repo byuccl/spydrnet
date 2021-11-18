@@ -1,0 +1,462 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Four Bit Counter To Five Bit Counter &mdash; SpyDrNet 1.9.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Flatten A Netlist" href="plot_flatten.html" />
+    <link rel="prev" title="Make Instances Unique" href="plot_single_use_definitions.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> SpyDrNet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../index.html#basic">Basic</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#extended">Extended</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="plot_single_use_definitions.html">Make Instances Unique</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Four Bit Counter To Five Bit Counter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plot_flatten.html">Flatten A Netlist</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plot_connectivity_graph.html">Connectivity Graph</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#vivado">Vivado</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../credits.html">Credits</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SpyDrNet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Examples</a> &raquo;</li>
+        
+      <li>Four Bit Counter To Five Bit Counter</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../_sources/auto_examples/extended/plot_four_to_five_bit_counter.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-extended-plot-four-to-five-bit-counter-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="four-bit-counter-to-five-bit-counter">
+<span id="sphx-glr-auto-examples-extended-plot-four-to-five-bit-counter-py"></span><h1>Four Bit Counter To Five Bit Counter<a class="headerlink" href="#four-bit-counter-to-five-bit-counter" title="Permalink to this headline">¶</a></h1>
+<p>Extend a four bit counter to a 5 bit counter.</p>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>The counter is now a five bit counter.
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">spydrnet</span> <span class="k">as</span> <span class="nn">sdn</span>
+
+<span class="c1"># Gets the outer_pin for a given port identifier</span>
+<span class="c1"># instance: sdn.Instance to find the pin on</span>
+<span class="c1"># identifier: The string identifier the the port we want</span>
+<span class="c1"># Returns associated outer_pin or None if instance</span>
+<span class="c1"># Note: Only works with ports of length 1</span>
+
+
+<span class="k">def</span> <span class="nf">get_pin</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">identifier</span><span class="p">):</span>
+    <span class="c1"># Loop through each key-map pair of instance&#39;s pin</span>
+    <span class="k">for</span> <span class="n">inner_pin</span><span class="p">,</span> <span class="n">outer_pin</span> <span class="ow">in</span> <span class="n">instance</span><span class="o">.</span><span class="n">pins</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># Check if the port has the correct identifier</span>
+        <span class="k">if</span> <span class="n">inner_pin</span><span class="o">.</span><span class="n">port</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">identifier</span><span class="p">:</span>
+            <span class="c1"># If port as the right identifier, return the outer_pin</span>
+            <span class="k">return</span> <span class="n">outer_pin</span>
+    <span class="c1"># Return None if instance does not have matching port</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="c1"># Loads the example</span>
+<span class="n">ir</span> <span class="o">=</span> <span class="n">sdn</span><span class="o">.</span><span class="n">load_example_netlist_by_name</span><span class="p">(</span><span class="s2">&quot;fourBitCounter&quot;</span><span class="p">)</span>
+
+<span class="c1"># Retrieves needed libraries and definitions</span>
+<span class="n">primitives_library</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+    <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ir</span><span class="o">.</span><span class="n">libraries</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;hdi_primitives&#39;</span><span class="p">)</span>
+<span class="n">work_library</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ir</span><span class="o">.</span><span class="n">libraries</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;work&#39;</span><span class="p">)</span>
+<span class="n">fdce_definition</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+    <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">primitives_library</span><span class="o">.</span><span class="n">definitions</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;FDCE&#39;</span><span class="p">)</span>
+<span class="n">obuf_definition</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+    <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">primitives_library</span><span class="o">.</span><span class="n">definitions</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;OBUF&#39;</span><span class="p">)</span>
+
+<span class="c1"># The example does not contain a needed primitive definition so we need to create it</span>
+<span class="c1"># Create a new definition and places it in primitives_library</span>
+<span class="n">lut6_definition</span> <span class="o">=</span> <span class="n">primitives_library</span><span class="o">.</span><span class="n">create_definition</span><span class="p">()</span>
+<span class="c1"># Sets the identifier of the primitive</span>
+<span class="n">lut6_definition</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;LUT6&quot;</span>
+<span class="c1"># Create the input ports for the new primitive</span>
+<span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
+    <span class="c1"># Create a new port for the definition</span>
+    <span class="n">input_port</span> <span class="o">=</span> <span class="n">lut6_definition</span><span class="o">.</span><span class="n">create_port</span><span class="p">()</span>
+    <span class="c1"># Sets the direction of the new port</span>
+    <span class="n">input_port</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">sdn</span><span class="o">.</span><span class="n">IN</span>
+    <span class="c1"># Create the pins that the new port will use</span>
+    <span class="n">input_port</span><span class="o">.</span><span class="n">create_pins</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># Sets the identifier for the new port</span>
+    <span class="n">input_port</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;I</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span>
+<span class="c1"># Need to create the output port for the new primitive</span>
+<span class="c1"># Create a new port for the definition</span>
+<span class="n">output_port</span> <span class="o">=</span> <span class="n">lut6_definition</span><span class="o">.</span><span class="n">create_port</span><span class="p">()</span>
+<span class="c1"># Set the direction of the new port</span>
+<span class="n">output_port</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">sdn</span><span class="o">.</span><span class="n">OUT</span>
+<span class="c1"># Create the pins that the new port will use</span>
+<span class="n">output_port</span><span class="o">.</span><span class="n">create_pins</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="c1"># Set the identifier that the new port will use</span>
+<span class="n">output_port</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;O&quot;</span>
+
+<span class="c1"># Gets the definition that represents the top module</span>
+<span class="n">top_def</span> <span class="o">=</span> <span class="n">ir</span><span class="o">.</span><span class="n">top_instance</span><span class="o">.</span><span class="n">reference</span>
+
+<span class="c1"># Create a new flip-flop instance within the top module</span>
+<span class="n">ff</span> <span class="o">=</span> <span class="n">top_def</span><span class="o">.</span><span class="n">create_child</span><span class="p">()</span>
+<span class="c1"># Sets the definition reference for the new instance</span>
+<span class="n">ff</span><span class="o">.</span><span class="n">reference</span> <span class="o">=</span> <span class="n">fdce_definition</span>
+<span class="c1"># Set the identifier for the new instance</span>
+<span class="n">ff</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;out_reg_4_&#39;</span>
+<span class="c1"># Set the original identifier for the new instance (Being use to be consistence with example)</span>
+<span class="n">ff</span><span class="p">[</span><span class="s1">&#39;EDIF.original_identifier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;out_reg[4]&#39;</span>
+<span class="n">properties</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+<span class="c1"># Create properties for the new instance</span>
+<span class="n">properties</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;identifier&#39;</span><span class="p">:</span> <span class="s1">&#39;INIT&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="s2">&quot;1&#39;b0&quot;</span><span class="p">})</span>
+<span class="n">ff</span><span class="p">[</span><span class="s1">&#39;EDIF.properties&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">properties</span>
+
+<span class="c1"># Create a new LUT6 instance within the top module</span>
+<span class="n">lut6</span> <span class="o">=</span> <span class="n">top_def</span><span class="o">.</span><span class="n">create_child</span><span class="p">()</span>
+<span class="c1"># Set the identifier for the new instance</span>
+<span class="n">lut6</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;out_4_lut6&#39;</span>
+<span class="c1"># Set the definition reference for the new instance</span>
+<span class="n">lut6</span><span class="o">.</span><span class="n">reference</span> <span class="o">=</span> <span class="n">lut6_definition</span>
+<span class="c1"># Create properties for the new instance</span>
+<span class="n">properties</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;identifier&#39;</span><span class="p">:</span> <span class="s1">&#39;INIT&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="s2">&quot;64&#39;h7FFF8000FFFE0001&quot;</span><span class="p">}]</span>
+<span class="n">lut6</span><span class="p">[</span><span class="s1">&#39;EDIF.properties&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">properties</span>
+
+<span class="c1"># Create a new OBUF instance within the top module</span>
+<span class="n">myOBUF</span> <span class="o">=</span> <span class="n">top_def</span><span class="o">.</span><span class="n">create_child</span><span class="p">()</span>
+<span class="c1"># Set the definition reference for the new instance</span>
+<span class="n">myOBUF</span><span class="o">.</span><span class="n">reference</span> <span class="o">=</span> <span class="n">obuf_definition</span>
+<span class="c1"># Set the identifier for the new instance</span>
+<span class="n">myOBUF</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;out_OBUF_4__inst&#39;</span>
+<span class="c1"># Set the original identifier for the new instance (Being use to be consistence with example)</span>
+<span class="n">myOBUF</span><span class="p">[</span><span class="s1">&#39;EDIF.original_identifier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;out_OBUF[4]_inst&#39;</span>
+
+<span class="c1"># Create variables to hold cables within the design</span>
+<span class="n">inc_wire</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">out0</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">out1</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">out2</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">out3</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">clk</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">enable</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">rst</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="c1"># Loop through each cable in the top module searching for specific cables</span>
+<span class="k">for</span> <span class="n">cable</span> <span class="ow">in</span> <span class="n">top_def</span><span class="o">.</span><span class="n">cables</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">cable</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;inc_dec_IBUF&#39;</span><span class="p">:</span>
+        <span class="n">inc_wire</span> <span class="o">=</span> <span class="n">cable</span><span class="o">.</span><span class="n">wires</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># elif cable[&#39;EDIF.identifier&#39;] == &#39;out_OBUF_0_&#39;:</span>
+    <span class="c1">#     out0 = cable.wires[0]</span>
+    <span class="c1"># elif cable[&#39;EDIF.identifier&#39;] == &#39;out_OBUF_1_&#39;:</span>
+    <span class="c1">#     out1 = cable.wires[0]</span>
+    <span class="c1"># elif cable[&#39;EDIF.identifier&#39;] == &#39;out_OBUF_2_&#39;:</span>
+    <span class="c1">#     out2 = cable.wires[0]</span>
+    <span class="c1"># elif cable[&#39;EDIF.identifier&#39;] == &#39;out_OBUF_3_&#39;:</span>
+    <span class="c1">#     out3 = cable.wires[0]</span>
+    <span class="k">elif</span> <span class="n">cable</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;out_OBUF&#39;</span><span class="p">:</span>
+        <span class="n">out0</span> <span class="o">=</span> <span class="n">cable</span><span class="o">.</span><span class="n">wires</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">out1</span> <span class="o">=</span> <span class="n">cable</span><span class="o">.</span><span class="n">wires</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">out2</span> <span class="o">=</span> <span class="n">cable</span><span class="o">.</span><span class="n">wires</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">out3</span> <span class="o">=</span> <span class="n">cable</span><span class="o">.</span><span class="n">wires</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+    <span class="k">elif</span> <span class="n">cable</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;clk_IBUF_BUFG&#39;</span><span class="p">:</span>
+        <span class="n">clk</span> <span class="o">=</span> <span class="n">cable</span><span class="o">.</span><span class="n">wires</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">cable</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;enable_IBUF&#39;</span><span class="p">:</span>
+        <span class="n">enable</span> <span class="o">=</span> <span class="n">cable</span><span class="o">.</span><span class="n">wires</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">cable</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;rst_IBUF&#39;</span><span class="p">:</span>
+        <span class="n">rst</span> <span class="o">=</span> <span class="n">cable</span><span class="o">.</span><span class="n">wires</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># Connect exiting cables to the input port of the LUT6 instance</span>
+<span class="n">inc_wire</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">get_pin</span><span class="p">(</span><span class="n">lut6</span><span class="p">,</span> <span class="s1">&#39;I5&#39;</span><span class="p">))</span>
+<span class="n">out0</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">get_pin</span><span class="p">(</span><span class="n">lut6</span><span class="p">,</span> <span class="s1">&#39;I0&#39;</span><span class="p">))</span>
+<span class="n">out1</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">get_pin</span><span class="p">(</span><span class="n">lut6</span><span class="p">,</span> <span class="s1">&#39;I1&#39;</span><span class="p">))</span>
+<span class="n">out2</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">get_pin</span><span class="p">(</span><span class="n">lut6</span><span class="p">,</span> <span class="s1">&#39;I2&#39;</span><span class="p">))</span>
+<span class="n">out3</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">get_pin</span><span class="p">(</span><span class="n">lut6</span><span class="p">,</span> <span class="s1">&#39;I3&#39;</span><span class="p">))</span>
+
+<span class="c1"># Create a new cable for the new flip-flop output</span>
+<span class="n">out4_cable</span> <span class="o">=</span> <span class="n">top_def</span><span class="o">.</span><span class="n">create_cable</span><span class="p">()</span>
+<span class="c1"># Set the identifier for the new cable</span>
+<span class="n">out4_cable</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;out_OBUF_4_&#39;</span>
+<span class="n">out4</span> <span class="o">=</span> <span class="n">out4_cable</span><span class="o">.</span><span class="n">create_wire</span><span class="p">()</span>
+<span class="c1"># Connect the new cable to remaining input port of the LUT6</span>
+<span class="n">out4</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">get_pin</span><span class="p">(</span><span class="n">lut6</span><span class="p">,</span> <span class="s1">&#39;I4&#39;</span><span class="p">))</span>
+<span class="c1"># Connect the new cable to the output of the flip-flop</span>
+<span class="n">out4</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">get_pin</span><span class="p">(</span><span class="n">ff</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">))</span>
+<span class="c1"># Connect the new cable to the new OUBF</span>
+<span class="n">out4</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">get_pin</span><span class="p">(</span><span class="n">myOBUF</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">))</span>
+
+<span class="c1"># Create a new cable for the LUT6 output</span>
+<span class="n">lut_out_cable</span> <span class="o">=</span> <span class="n">top_def</span><span class="o">.</span><span class="n">create_cable</span><span class="p">()</span>
+<span class="c1"># Set the original_identifier to match existing format of similar cables</span>
+<span class="n">lut_out_cable</span><span class="p">[</span><span class="s1">&#39;EDIF.original_identifier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;out[4]_i_1_n_0&#39;</span>
+<span class="c1"># Set the identifier to match the existing format of similar cable</span>
+<span class="n">lut_out_cable</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;out_4__i_1_n_0&#39;</span>
+<span class="n">lut_out</span> <span class="o">=</span> <span class="n">lut_out_cable</span><span class="o">.</span><span class="n">create_wire</span><span class="p">()</span>
+<span class="c1"># Connect the new cable to the output of the LUT6</span>
+<span class="n">lut_out</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">get_pin</span><span class="p">(</span><span class="n">lut6</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">))</span>
+<span class="c1"># Connect the new cable to the data port of the flip-flop</span>
+<span class="n">lut_out</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">get_pin</span><span class="p">(</span><span class="n">ff</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">))</span>
+
+<span class="c1"># Connect the clk cable to the clk pin of the flip-flop</span>
+<span class="n">clk</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">get_pin</span><span class="p">(</span><span class="n">ff</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">))</span>
+<span class="c1"># Connect enable cable to the clock enable pin of the flip-flop</span>
+<span class="n">enable</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">get_pin</span><span class="p">(</span><span class="n">ff</span><span class="p">,</span> <span class="s1">&#39;CE&#39;</span><span class="p">))</span>
+<span class="c1"># Connect the rst cable to the reset pin of the flip-flop</span>
+<span class="n">rst</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">get_pin</span><span class="p">(</span><span class="n">ff</span><span class="p">,</span> <span class="s1">&#39;CLR&#39;</span><span class="p">))</span>
+
+<span class="c1"># Find the output port of the top module</span>
+<span class="n">out_port</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">top_def</span><span class="o">.</span><span class="n">ports</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;out&#39;</span><span class="p">)</span>
+<span class="c1"># Create a another pin for the output</span>
+<span class="n">port_pin</span> <span class="o">=</span> <span class="n">out_port</span><span class="o">.</span><span class="n">create_pin</span><span class="p">()</span>
+<span class="c1"># Rename the port to match number of pins</span>
+<span class="n">out_port</span><span class="p">[</span><span class="s1">&#39;EDIF.original_identifier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;out[4:0]&#39;</span>
+
+<span class="c1"># Create a new cable to drive the new output pin</span>
+<span class="n">out_cable</span> <span class="o">=</span> <span class="n">top_def</span><span class="o">.</span><span class="n">create_cable</span><span class="p">()</span>
+<span class="n">out_cable</span><span class="p">[</span><span class="s1">&#39;EDIF.original_identifier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;out[4]&#39;</span>
+<span class="n">out_cable</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;out_4_&#39;</span>
+<span class="n">out</span> <span class="o">=</span> <span class="n">out_cable</span><span class="o">.</span><span class="n">create_wire</span><span class="p">()</span>
+
+<span class="c1"># Connect the new cable to the output of the new OBUF</span>
+<span class="n">out</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">get_pin</span><span class="p">(</span><span class="n">myOBUF</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">))</span>
+<span class="c1"># Preserve what wire out is</span>
+<span class="n">old_wire</span> <span class="o">=</span> <span class="n">out</span>
+<span class="c1"># Loop through each pin in the output port</span>
+<span class="k">for</span> <span class="n">pin</span> <span class="ow">in</span> <span class="n">out_port</span><span class="o">.</span><span class="n">pins</span><span class="p">:</span>
+    <span class="c1"># Get the wire that is connect to the pin</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="n">pin</span><span class="o">.</span><span class="n">wire</span>
+    <span class="c1"># Check if there is a wire</span>
+    <span class="k">if</span> <span class="n">temp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Disconnect the wire if connected</span>
+        <span class="n">temp</span><span class="o">.</span><span class="n">disconnect_pin</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span>
+    <span class="c1"># Connect the saved wire to the pin</span>
+    <span class="n">old_wire</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span>
+    <span class="c1"># Check if there was a wire</span>
+    <span class="k">if</span> <span class="n">temp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Preserve what the wire was</span>
+        <span class="n">old_wire</span> <span class="o">=</span> <span class="n">temp</span>
+
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The counter is now a five bit counter.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.023 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-extended-plot-four-to-five-bit-counter-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/59baf3d97cbf8c38383fc9972a2bbf1a/plot_four_to_five_bit_counter.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_four_to_five_bit_counter.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/261805ba47232cce936546861b69cbc5/plot_four_to_five_bit_counter.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_four_to_five_bit_counter.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="plot_flatten.html" class="btn btn-neutral float-right" title="Flatten A Netlist" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="plot_single_use_definitions.html" class="btn btn-neutral float-left" title="Make Instances Unique" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019, Brigham Young Universitiy.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

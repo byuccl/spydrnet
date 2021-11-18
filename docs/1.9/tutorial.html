@@ -1,0 +1,451 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Tutorial &mdash; SpyDrNet 1.9.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery-rendered-html.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Reference" href="reference/index.html" />
+    <link rel="prev" title="Install" href="install.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> SpyDrNet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#tool-flow">Tool Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#import-package">Import Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parsing">Parsing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#intermediate-representation-ir-basics">Intermediate Representation (IR) Basics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#netlist">Netlist:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#library">Library:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#definition">Definition:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ports">Ports:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pins">Pins:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#wires">Wires:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cables">Cables:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#instances">Instances:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#other-ir-parts">Other IR Parts</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#modifying-netlists">Modifying Netlists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#composing">Composing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/index.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SpyDrNet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Tutorial</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/tutorial.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="tutorial">
+<h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
+<p>SpyDrNet is a tool for the analysis and transformation of structural netlists. A structural netlist is a static representation of an electronic circuit. A circuit consists of a number of electrical components and their connections. Figure <a class="reference internal" href="#fig-hierarchical-netlist"><span class="std std-numref">Fig. 1</span></a> shows a graphical representation of a netlist.</p>
+<div class="figure align-center" id="id1">
+<span id="fig-hierarchical-netlist"></span><img alt="_images/hierarchical_netlist.png" src="_images/hierarchical_netlist.png" />
+<p class="caption"><span class="caption-number">Fig. 1 </span><span class="caption-text">Hierarchical representation of a Netlist</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+<p>This representation is commonly found in many schematic views of electronic design automation (EDA) or computer aided design (CAD) tools. It presents a top level instance of a definition that in turn instances other definitions. Instances are connected accordingly and connections carry through hierarchical boundaries.</p>
+<div class="section" id="tool-flow">
+<h2>Tool Flow<a class="headerlink" href="#tool-flow" title="Permalink to this headline">¶</a></h2>
+<p>Digital designs for FPGAs are represented as netlists, a list of components and connections. Netlists come from various vendors in many different formats. SpyDrNet allows you to look at and alter a netlist in a language inspecific way.</p>
+<p>Netlists flow through SpyDrNet in a three step process (see figure below). First, SpyDrNet parses a netlist into an intermediate represention (IR) that is designed to be easily traversed and effortlessly manipulated. Afterwards, the netlist is composed back into a netlist format that a 3rd-party tool can use. SpyDrNet aims to provide the tools you need to accomplish the netlist analysis and transformation tasks you have in mind without having to reinvent the wheel.</p>
+<p>This flow is inspired by <a class="reference external" href="http://www.aosabook.org/en/llvm.html">LLVM</a> and <a class="reference external" href="https://pandoc.org/">Pandoc</a>. LLVM has a similar flow for compiling computer programs and Pandoc has a similar flow for converting document formats. Using this flow, SpyDrNet is designed to be able to work on any netlist.</p>
+<div class="figure align-center" id="id2">
+<span id="fig-flow-2"></span><img alt="SpyDrNet Flow" src="_images/flow.png" />
+<p class="caption"><span class="caption-number">Fig. 2 </span><span class="caption-text">Flow of Using SpyDrNet</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</div>
+<p><strong>Note:</strong> VHDL is not yet supported by SpyDrNet</p>
+</div>
+<div class="section" id="import-package">
+<h2>Import Package<a class="headerlink" href="#import-package" title="Permalink to this headline">¶</a></h2>
+<p>To import SpyDrNet to the project, use the following code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">spydrnet</span> <span class="k">as</span> <span class="nn">sdn</span>
+</pre></div>
+</div>
+<p>In this tutorial, we will use ‘sdn’ as a shorcut to access SpyDrNet commands.</p>
+</div>
+<div class="section" id="parsing">
+<h2>Parsing<a class="headerlink" href="#parsing" title="Permalink to this headline">¶</a></h2>
+<p>The SpyDrNet parser will take an EDIF/Verilog file and put the information into the SpyDrNet data structure.</p>
+<p>To parse a file, enter the following command for an EDIF file</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">netlist</span> <span class="o">=</span> <span class="n">sdn</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;&lt;netlist_filename&gt;.edf&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or the following for a Verilog file</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">netlist</span> <span class="o">=</span> <span class="n">sdn</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;&lt;netlist_filename&gt;.v&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>SpyDrNet has built in example netlists. For this tutorial, we will use the example ‘one_counter’. This is the same as if we parsed a netlist named ‘one_counter’.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">netlist</span> <span class="o">=</span> <span class="n">sdn</span><span class="o">.</span><span class="n">load_example_netlist</span><span class="p">(</span><span class="s2">&quot;one_counter&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="intermediate-representation-ir-basics">
+<h2>Intermediate Representation (IR) Basics<a class="headerlink" href="#intermediate-representation-ir-basics" title="Permalink to this headline">¶</a></h2>
+<p>A SpyDrNet netlist has many parts. The following is a short run through the basics.</p>
+<div class="section" id="netlist">
+<h3>Netlist:<a class="headerlink" href="#netlist" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>This class of Python objects is the netlist element with the highest level of organization (a whole netlist). It contains an ordered collection of libraries and any data associated with the netlist as a whole.</p>
+</div></blockquote>
+</div>
+<div class="section" id="library">
+<h3>Library:<a class="headerlink" href="#library" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Contains an ordered collection of definitions</p>
+<blockquote>
+<div><p>Use the following code to see the libraries in our netlist:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">netlist</span><span class="o">.</span><span class="n">libraries</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This returns the library objects. To see the names of the libraries, use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">library</span> <span class="ow">in</span> <span class="n">netlist</span><span class="o">.</span><span class="n">get_libraries</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Library:&quot;</span><span class="p">,</span> <span class="n">library</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>As seen in this example, most objects have a name and can be accessed using ‘.name’</p>
+</div></blockquote>
+</div></blockquote>
+</div>
+<div class="section" id="definition">
+<h3>Definition:<a class="headerlink" href="#definition" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Holds information about an element like its ports, pins, etc. (note: the pins are inner pins…see below). Verilog and System Verilog refer to a definition as a module, VHDL refers to a definition as an entity, and EDIF refers to a definition as a cell.</p>
+<blockquote>
+<div><p>To see the definitions in the first library, use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">netlist</span><span class="o">.</span><span class="n">libraries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">definitions</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>As before, we can use ‘.name’ to see the name of each definition:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">definition</span> <span class="ow">in</span> <span class="n">netlist</span><span class="o">.</span><span class="n">libraries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_definitions</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Definition:&quot;</span><span class="p">,</span> <span class="n">definition</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div></blockquote>
+</div>
+<div class="section" id="ports">
+<h3>Ports:<a class="headerlink" href="#ports" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>The input/output ‘slots’ of each definition (e.g. A,B, and Q of a simple AND gate)</p>
+<blockquote>
+<div><p>To see the ports for the first definition in the first library, run the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">definition_1</span> <span class="o">=</span> <span class="n">netlist</span><span class="o">.</span><span class="n">libraries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">definitions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="n">definition_1</span><span class="o">.</span><span class="n">ports</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Port&quot;</span><span class="p">,</span> <span class="n">port</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div></blockquote>
+</div>
+<div class="section" id="pins">
+<h3>Pins:<a class="headerlink" href="#pins" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Found on ports. There are two types of pins: inner and outer (see the following explanation). Most of the time, you don’t need to worry about what type a pin is because SpyDrNet takes care of it for you.</p>
+<blockquote>
+<div><dl class="simple">
+<dt><strong>InnerPin</strong>:</dt><dd><p>Inner pins are in definitions. Every definition has only one set of inner pins.</p>
+</dd>
+<dt><strong>OuterPin</strong>:</dt><dd><p>Outer pins are on instances. Each instance has a set of outer pins that corresponds to its reference definition’s inner pins. Because of this, a definition may have several sets of outer pins. For example, if a definition is instanced five times, it will have five sets of outer pins.</p>
+</dd>
+</dl>
+<p>Run the following code to see the types of pins for the instances and definitions in your netlist:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">instance</span> <span class="ow">in</span> <span class="n">netlist</span><span class="o">.</span><span class="n">get_instances</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Instance:&quot;</span><span class="p">,</span><span class="n">instance</span><span class="o">.</span><span class="n">name</span><span class="p">,</span><span class="s2">&quot; Reference definition:&quot;</span><span class="p">,</span><span class="n">instance</span><span class="o">.</span><span class="n">reference</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span><span class="s2">&quot;Instance&#39;s pins&#39; types&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">pin</span> <span class="ow">in</span> <span class="n">instance</span><span class="o">.</span><span class="n">pins</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t\t</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">pin</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span><span class="s2">&quot;Definition&#39;s pins&#39; types&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">pin</span> <span class="ow">in</span> <span class="n">instance</span><span class="o">.</span><span class="n">reference</span><span class="o">.</span><span class="n">get_pins</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t\t</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">pin</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div></blockquote>
+</div>
+<div class="section" id="wires">
+<h3>Wires:<a class="headerlink" href="#wires" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Wires connect pins to pins and thus connect elements to each other. Wires can connect to as many pins as desired (not just two).</p>
+</div></blockquote>
+</div>
+<div class="section" id="cables">
+<h3>Cables:<a class="headerlink" href="#cables" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Cables are bundles of wires. Wires are inside cables.</p>
+</div></blockquote>
+</div>
+<div class="section" id="instances">
+<h3>Instances:<a class="headerlink" href="#instances" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>An instance of a definition. It holds pointers to the definition which it instances (its reference), and contains its own set of pins (outer pins, specifically).</p>
+<p>An instance is also known as a <strong>‘child’</strong>.
+The definition instanced is the <strong>‘reference’</strong>.
+The definition that instances the other definition is the <strong>‘parent’</strong>.</p>
+<blockquote>
+<div><p>To see the instances in the ‘work’ library, or library[2], use the following code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">instance</span> <span class="ow">in</span> <span class="n">netlist</span><span class="o">.</span><span class="n">libraries</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">get_instances</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Instance:&quot;</span><span class="p">,</span> <span class="n">instance</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Instance&#39;s Parent:&quot;</span><span class="p">,</span><span class="n">instance</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Instance&#39;s Reference Definition:&quot;</span><span class="p">,</span><span class="n">instance</span><span class="o">.</span><span class="n">reference</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>In the previous code, we saw that the definition ‘<em>counter</em>’ instances the definition ‘<em>MUXCY_L</em>’ as ‘<em>count_cry[0]</em>’.
+So ‘<em>counter</em>’ is the <strong>parent</strong>, ‘<em>MUXCY_L</em>’ is the <strong>reference</strong>, and ‘<em>count_cry[0]</em>’ is the <strong>instance</strong> and <strong>child</strong> of ‘counter’.</p>
+</div></blockquote>
+<div class="figure align-center" id="id3">
+<span id="fig-ir-2"></span><img alt="SpyDrNet Intermediate Representation" src="_images/IR.png" />
+<p class="caption"><span class="caption-number">Fig. 3 </span><span class="caption-text">Summary of the SpyDrNet IR</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</div>
+</div>
+<div class="section" id="other-ir-parts">
+<h3>Other IR Parts<a class="headerlink" href="#other-ir-parts" title="Permalink to this headline">¶</a></h3>
+<dl class="simple">
+<dt><strong>Element</strong></dt><dd><p>Most IR classes inherit from this Python class. Objects of this class are referred to as netlist elements. A netlist
+element contains a dictionary for storing data specific to itself. This is accomplished using Python get/set item
+functions, (see <a class="reference internal" href="reference/element_data.html#sec-element-data"><span class="std std-ref">Element Data</span></a>).</p>
+</dd>
+<dt><strong>Bundle</strong></dt><dd><p>The Bundle class is a parent class of ports and cables. This class defines the structure that helps us properly represent array objects in netlists including the width, direction (to or downto) and starting index. As a parent class this class is not directly instantiated in netlist.</p>
+</dd>
+</dl>
+<p>More detail on the IR is provided in <a class="reference internal" href="reference/classes/index.html#api-summary"><span class="std std-ref">API Summary</span></a>.</p>
+</div>
+</div>
+<div class="section" id="modifying-netlists">
+<h2>Modifying Netlists<a class="headerlink" href="#modifying-netlists" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>Modifying netlists is made possible through SpyDrNet.</p>
+<p><strong>Renaming</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">definition_1</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;a_new_name&quot;</span>
+</pre></div>
+</div>
+<dl>
+<dt><strong>Creating</strong>:</dt><dd><p>The following creates a new library in our netlist and then creates a new definition inside that library.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">new_library</span> <span class="o">=</span> <span class="n">netlist</span><span class="o">.</span><span class="n">create_library</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;new_library&quot;</span><span class="p">)</span>
+<span class="n">new_library</span><span class="o">.</span><span class="n">create_definition</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;new_definition&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt><strong>Changing Values:</strong></dt><dd><p>From the example <a class="reference internal" href="auto_examples/vivado/AND_to_OR.html#sphx-glr-auto-examples-vivado-and-to-or-py"><span class="std std-ref">Modify Netlist with SpyDrNet</span></a> in the examples tab, the following line of code “[changes] the value in the properties of the LUT2 instance”</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">properties</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;4&#39;h&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="n">LUT_CONFIG</span><span class="p">))</span><span class="o">.</span><span class="n">upper</span><span class="p">()[</span><span class="mi">2</span><span class="p">:]</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<p><strong>See</strong> <a class="reference internal" href="auto_examples/index.html#sphx-glr-auto-examples"><span class="std std-ref">Examples</span></a> <strong>for more examples of modifying and viewing netlists.</strong></p>
+</div></blockquote>
+</div>
+<div class="section" id="composing">
+<h2>Composing<a class="headerlink" href="#composing" title="Permalink to this headline">¶</a></h2>
+<p>To compose a file from a SpyDrNet netlist, enter the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sdn</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span><span class="n">netlist</span><span class="p">,</span> <span class="s1">&#39;&lt;filename&gt;.edf&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A new EDIF file named ‘&lt;filename&gt;.edf’ will be generated in the working directory.
+To compose a Verilog file, replace ‘edf’ with ‘v’.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="reference/index.html" class="btn btn-neutral float-right" title="Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="install.html" class="btn btn-neutral float-left" title="Install" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019, Brigham Young Universitiy.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

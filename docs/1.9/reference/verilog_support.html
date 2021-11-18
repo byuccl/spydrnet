@@ -1,0 +1,385 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Verilog Language Support &mdash; SpyDrNet 1.9.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery-rendered-html.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Callback Framework" href="Callback_Framework.html" />
+    <link rel="prev" title="Namespace Manager" href="NamespaceManager.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> SpyDrNet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="element_data.html">Element Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classes/index.html">API Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clone.html">Clone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="uniquify.html">Uniquify</a></li>
+<li class="toctree-l2"><a class="reference internal" href="NamespaceManager.html">Namespace Manager</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Verilog Language Support</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#structural-verilog">Structural Verilog?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#terminology-between-verilog-and-spydrnet">Terminology between Verilog and SpyDrNet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#supported-constructs">Supported Constructs</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ports">Ports</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#wire-reg-module-instatiations">Wire/Reg, Module, Instatiations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#celldefine">`celldefine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#assign">Assign</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#port-remapping-in-module-headers">Port Remapping in Module headers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inline-constraints">Inline Constraints</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#escaped-identifiers">Escaped Identifiers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#preprocessor-macros">Preprocessor Macros</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Callback_Framework.html">Callback Framework</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../auto_examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SpyDrNet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Reference</a> &raquo;</li>
+        
+      <li>Verilog Language Support</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/reference/verilog_support.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="verilog-language-support">
+<h1>Verilog Language Support<a class="headerlink" href="#verilog-language-support" title="Permalink to this headline">¶</a></h1>
+<p>Structural Verilog support has been added to SpyDrNet, and as of the 1.8.1 release has become much more stable. There are many constructs that are supported and some that aren’t feel free to read through this to understand what Structural Verilog support means for SpyDrNet.</p>
+<p>If you need a new feature added to the verilog parser or composer feel free to let us know in an issue, with an example file (simplest possible that shows the issue) and the intended meaning. Otherwise feel free to fork add the feature and pull request to the SpyDrNet repository. As of version 1.8.1 our testing was done against verilog generated with Xilinx Vivado’s write_verilog command in the tcl console. We would love to add more support for constructs written by other vendors, example netlists that fail help us out a ton!</p>
+<div class="section" id="structural-verilog">
+<h2>Structural Verilog?<a class="headerlink" href="#structural-verilog" title="Permalink to this headline">¶</a></h2>
+<p>We use the terms Structural Verilog and Verilog netlists interchangeably for the most part. In a pure sense though, a Verilog netlist is a file that describes a netlist written in Structural Verilog, Structural verilog is in turn, a subset of Verilog that represents modules, instantiations, and the connections between these instances.</p>
+<p>When parsing with SpyDrNet, more complex behavioral or datapath operations will cause an error or perhaps do something unexpected. The intermediate representation is intended to represent and modify netlists, and currently does not and likely never will have a sythesis step. Always blocks, if, case statements are some examples of things that will likely never be supported.</p>
+</div>
+<div class="section" id="terminology-between-verilog-and-spydrnet">
+<h2>Terminology between Verilog and SpyDrNet<a class="headerlink" href="#terminology-between-verilog-and-spydrnet" title="Permalink to this headline">¶</a></h2>
+<p>Sturctural verilog and SpyDrNet have a similar structure. The following table is intended to help draw parallels between the two formats and let users get an idea of how they can expect their verilog netlists to show up in SpyDrNet</p>
+<p>See the additional sections in the Supported Constructs for more information about how these are represented and maintained in SpyDrNet.</p>
+<table class="colwidths-given docutils align-default" id="id1">
+<caption><span class="caption-number">Table 1 </span><span class="caption-text">Verilog vs SpyDrNet naming convention</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Verilog name/description</p></th>
+<th class="head"><p>SpyDrNet name/description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>module</p></td>
+<td><p>Definitionm</p></td>
+</tr>
+<tr class="row-odd"><td><p>wire/reg</p></td>
+<td><p>Cable</p></td>
+</tr>
+<tr class="row-even"><td><p>wire/reg index (bus[0])</p></td>
+<td><p>Wire</p></td>
+</tr>
+<tr class="row-odd"><td><p>input/output/inout</p></td>
+<td><p>Port</p></td>
+</tr>
+<tr class="row-even"><td><p>module instantiation</p></td>
+<td><p>Instance</p></td>
+</tr>
+<tr class="row-odd"><td><p>assign</p></td>
+<td><p>instance (in and out connected)</p></td>
+</tr>
+<tr class="row-even"><td><p>constraints “(* const *)”</p></td>
+<td><p>metadata “VERILOG.InlineConstraints”</p></td>
+</tr>
+<tr class="row-odd"><td><p>parameters</p></td>
+<td><p>metadata “VERILOG.Parameters”</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="supported-constructs">
+<h2>Supported Constructs<a class="headerlink" href="#supported-constructs" title="Permalink to this headline">¶</a></h2>
+<p>There are several features that are currently supported by the Verilog Parser and Composer pair</p>
+<div class="section" id="ports">
+<h3>Ports<a class="headerlink" href="#ports" title="Permalink to this headline">¶</a></h3>
+<p>Module declarations represent Definitions in SpyDrNet and are parsed as such. Inputs and outputs can be declared in the header in two main ways. Both are supported by SpyDrNet:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span> <span class="n">module_name</span><span class="p">(</span>
+  <span class="k">input</span> <span class="n">my_in</span><span class="p">,</span>
+  <span class="k">output</span> <span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">my_out</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>or with just the names in the header</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span> <span class="n">module_name</span><span class="p">(</span>
+  <span class="n">my_in</span><span class="p">,</span>
+  <span class="n">my_out</span><span class="p">);</span>
+<span class="k">input</span> <span class="n">my_in</span><span class="p">;</span>
+<span class="k">output</span> <span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">my_out</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Input output and inout are supported port directions.</p>
+<p>When declared either way a SpyDrNet cable is created that will have the same name as the port. This cable is used to connect the ports to other modules instantiated in the module body. A notable exception exists. see the section on Port Remapping in Module headers</p>
+<p>It is presumed that all of these ports are of type wire by default even if another default is declared by a preprocessor macro. See the section on preprocessor macros.</p>
+<p>Ports are also listed when creating an instance. When creating an instance that was not previously defined with a module definition (no definition exists in the netlist yet), the parser will create a new definition with ports of undefined direction which defaults to inout on write. These ports will assume the minimum length needed to attach the cable defined in the definition. Later when the definition is found an update is made.</p>
+<p>Currently there is not really a sanity check if the ports on an instance do not match up with the defined module. The port may end up larger if the widths do not match up.  The ports should not end up smaller than they are defined in the module though.</p>
+</div>
+<div class="section" id="wire-reg-module-instatiations">
+<h3>Wire/Reg, Module, Instatiations<a class="headerlink" href="#wire-reg-module-instatiations" title="Permalink to this headline">¶</a></h3>
+<p>Verilog Wire and Reg declarations are supported. These declarations will be converted to SpyDrNet cables. Modules are converted to SpyDrNet Definitions and instantiations will create SpyDrNet instances.</p>
+</div>
+<div class="section" id="celldefine">
+<h3>`celldefine<a class="headerlink" href="#celldefine" title="Permalink to this headline">¶</a></h3>
+<p>The `celldefine directive is used by SpyDrNet to know which modules are primitives. Most Vivado generated netlsits include a list of primitives that include simulation behavior. When the `celldefine is encountered a primitive flag is set when the `endcelldefine is encountered the flag is unset.</p>
+<p>Any modules parsed while the primitive flag is set will ignore the module body and simply look for port information. Note that the keyword input output or inout in constructs similar to functions or tasks but not functions or tasks could cause issues. (the error will likely be, expected port name defined in the module header to declare a port with the name and line number) If this happens let us know what construct caused the problem and we can add a skip to it so that the keyword in these functions is ignored.</p>
+</div>
+<div class="section" id="assign">
+<h3>Assign<a class="headerlink" href="#assign" title="Permalink to this headline">¶</a></h3>
+<p>Verilog’s assign statement <cite>assign output = input;</cite> is supported if nothing other than a straight wire/reg to wire/reg assignment is happening. <cite>&amp;</cite>, <cite>|</cite>, <cite>^</cite>, <cite>+</cite>, <cite>-</cite> … and concatenations are currently not supported.</p>
+<p>Internal to SpyDrNet Assignments are represented as instances with an in port out port and a single cable that connects the 2 ports. The value on the right hand side of the = is attached to the in port. The value on the left is attached to the out port.</p>
+<p>All Definitions representing various widths of assignments are stored in a library named SDN_VERILOG_ASSIGNMENT. The definitions generated with <cite>“SDN_VERILOG_ASSIGNMENT_” + str(width)</cite>
+and the instances have the same name as the definitions with a <cite>“_” + str(UID)</cite> added to the end where UID is a counter that starts at 0 and counts up.</p>
+<p>Assignment Defintions have two ports, <cite>i</cite> and <cite>o</cite>. the <cite>i</cite> port is input and attached to the cable on the right of the assignment while the <cite>o</cite> port is output, attached to the cable on the left hand side of the assignment.</p>
+<p>The assignment instances are not written out to a verilog file in the same way other instances are, instead they are swapped out with an assign statement to mimic the original file.</p>
+</div>
+<div class="section" id="port-remapping-in-module-headers">
+<h3>Port Remapping in Module headers<a class="headerlink" href="#port-remapping-in-module-headers" title="Permalink to this headline">¶</a></h3>
+<p>Vivado occasionally will write a verilog file with a construct in the module port declaration region that looks like the following.</p>
+<p>In SpyDrNet terminology,  the cable or wires (from multiple cables) in the concatenation are exclusively used internally, while the port name which is preceded by the . is used exclusively outside the module. In these cases, the port is created with the each of the wires listed in the concatenation attached to a pin on the port.</p>
+<p>Currently only single bit breakouts are supported and having more than one bit in a cable in the concatenation will result in only the first bit being connected. The port is also assumed to have a width equal to the number of cables in the concatenation.</p>
+</div>
+<div class="section" id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h3>
+<p>SpyDrNet currently supports parameters in the metadata. This allows users to parser, set and write parameters to and from Verilog Netlists. Parameters include essential information about instances and modules(SpyDrNet definitions)</p>
+<p>These constructs are parsed into a dictionary that will be associated with a Definition or Instance. All constraints that are in the definition will not be automatically included in the instance. Instead constraints in the instances are generated independently and on a need basis.</p>
+<p>Included are examples of good syntax for both module and instantiation parameters.</p>
+<p>Module</p>
+<p>Instantiation</p>
+<p>The parameters on a parsed verilog file can be found in the metadata in instances and definitions as “VERILOG.Parameters” this stores a dictionary of all of the parameters that were included in the module (SpyDrNet Definition) or module instantiation (SpyDrNet instance). The key in the dictionary is to the left of the equal sign the text to the right of the equal sign is the value. These are always stored as strings even if the input data is numeric</p>
+<p>There is currently no check to ensure that a constraint on an instance is actually on the module. The composer will write all constraints present to the file as though they are on the module too.</p>
+</div>
+<div class="section" id="inline-constraints">
+<h3>Inline Constraints<a class="headerlink" href="#inline-constraints" title="Permalink to this headline">¶</a></h3>
+<p>SpyDrNet will parse and store Inline verilog constraints using the Vivado format. Below are examples of a few supported constraint constructs in verilog</p>
+<p><code class="docutils literal notranslate"><span class="pre">(*</span> <span class="pre">key</span> <span class="pre">=</span> <span class="pre">value</span> <span class="pre">*)</span> <span class="pre">//as</span> <span class="pre">a</span> <span class="pre">key</span> <span class="pre">value</span> <span class="pre">pair</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">(*</span> <span class="pre">no_value</span> <span class="pre">*)</span> <span class="pre">//as</span> <span class="pre">a</span> <span class="pre">single</span> <span class="pre">key</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">(*</span> <span class="pre">no_value,</span> <span class="pre">no_value_2,</span> <span class="pre">key</span> <span class="pre">=</span> <span class="pre">value</span> <span class="pre">*)</span> <span class="pre">//either</span> <span class="pre">or</span> <span class="pre">both</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">above</span> <span class="pre">as</span> <span class="pre">a</span> <span class="pre">set</span></code></p>
+<p>All of these are supported ways of representing constraints. Multiple sets of constraints can exist before constructs. Currently, Modules, instantiations, wires/regs all allow for constraints to be defined. The constraints are unused in SpyDrNet but will be written on the compose step. When writing all constraints will be combined into a single set.</p>
+<p>Constraints are included in Definitions, Instances and Cables in a dictionary that can be found in the meta dictionary with the key “VERILOG.InlineConstraints”. All keys and values are strings.</p>
+<p>Currently constraints from an XDC constraints file or other external file are not supported directly in the library. Users can add this functionality if desired. If you do add this functionality and want to share feel free to pull request or let us know in an issue.</p>
+</div>
+<div class="section" id="escaped-identifiers">
+<h3>Escaped Identifiers<a class="headerlink" href="#escaped-identifiers" title="Permalink to this headline">¶</a></h3>
+<p>Occasionally a generated Verilog construct identifier will begin with a in these cases the name can contain any non-whitespace character. These names are always terminated with a whitespace character. internal to SpyDrNet the names include both the and the whitespace at the end this helps make composing simpler as the name can always be written as is.</p>
+</div>
+<div class="section" id="preprocessor-macros">
+<h3>Preprocessor Macros<a class="headerlink" href="#preprocessor-macros" title="Permalink to this headline">¶</a></h3>
+<p>SpyDrNet does not currently have a preprocessor to handle defines and ifdef elseif endif etc. all of these constructs are skipped, from if to endif else is also skipped and ifndef is skipped as well. So putting your code in any of these constructs will cause the SpyDrNet parser to just skip it.</p>
+<p>One notable exception to this rule is the `celldefine and `endcelldefine directives. These directives indicate that a module is a primitive module. See the section on `celldefine</p>
+<p>There is rudimentary support for storing the details of a `timescale and other macros in the metadata for a definition. This is not tested well and may have some unexpected behavior. The composer ignores these constructs and they will not be written to the resulting file.</p>
+<p><strong>Note to developers about macro handling :</strong>
+The tokenizer splits tokens beginning with ` into only two tokens even if the line has whitespace. example `timescale 1 ps / 1 ps is split into a token of “`timescale” and one of “1 ps / 1 ps” looking for the endline to end the second token. Single word directives will be one token.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="Callback_Framework.html" class="btn btn-neutral float-right" title="Callback Framework" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="NamespaceManager.html" class="btn btn-neutral float-left" title="Namespace Manager" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019, Brigham Young Universitiy.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

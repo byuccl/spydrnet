@@ -1,0 +1,278 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>spydrnet.Port.add_pin &mdash; SpyDrNet 1.9.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery-rendered-html.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="spydrnet.Port.remove_pin" href="spydrnet.Port.remove_pin.html" />
+    <link rel="prev" title="spydrnet.Port.create_pin" href="spydrnet.Port.create_pin.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> SpyDrNet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.9
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../element_data.html">Element Data</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">API Summary</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#basic-object-types">Basic object types</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../netlist.html">Netlist</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../library.html">Library</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../definition.html">Definition</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../instance.html">Instance</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../port.html">Port</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../innerpin.html">InnerPin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../outerpin.html">OuterPin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../cable.html">Cable</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../wire.html">Wire</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../href.html">HRef</a></li>
+<li class="toctree-l4"><a class="reference internal" href="spydrnet.parse.html">spydrnet.parse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="spydrnet.ir.Pin.html">spydrnet.ir.Pin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="spydrnet.ir.Bundle.html">spydrnet.ir.Bundle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="spydrnet.ir.Element.html">spydrnet.ir.Element</a></li>
+<li class="toctree-l4"><a class="reference internal" href="spydrnet.ir.FirstClassElement.html">spydrnet.ir.FirstClassElement</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#getter-functions">Getter Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#other-functions">Other Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#shortcuts">Shortcuts</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../clone.html">Clone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../uniquify.html">Uniquify</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../NamespaceManager.html">Namespace Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../verilog_support.html">Verilog Language Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../Callback_Framework.html">Callback Framework</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../credits.html">Credits</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SpyDrNet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Reference</a> &raquo;</li>
+        
+          <li><a href="../index.html">API Summary</a> &raquo;</li>
+        
+          <li><a href="../port.html">Port</a> &raquo;</li>
+        
+      <li>spydrnet.Port.add_pin</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../../_sources/reference/classes/generated/spydrnet.Port.add_pin.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="spydrnet-port-add-pin">
+<h1>spydrnet.Port.add_pin<a class="headerlink" href="#spydrnet-port-add-pin" title="Permalink to this headline">¶</a></h1>
+<dl class="py method">
+<dt class="sig sig-object py" id="spydrnet.Port.add_pin">
+<span class="sig-prename descclassname"><span class="pre">Port.</span></span><span class="sig-name descname"><span class="pre">add_pin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/spydrnet/ir/port.html#Port.add_pin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spydrnet.Port.add_pin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a pin to the port at the given position.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pin - (Pin) the pin to be added to the port.</strong></p></li>
+<li><p><strong>position - (int, default None) the index at which to add the pin</strong></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="spydrnet.Port.remove_pin.html" class="btn btn-neutral float-right" title="spydrnet.Port.remove_pin" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="spydrnet.Port.create_pin.html" class="btn btn-neutral float-left" title="spydrnet.Port.create_pin" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019, Brigham Young Universitiy.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
