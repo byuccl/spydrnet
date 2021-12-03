@@ -37,7 +37,7 @@ def enable_file_logging(LOG_LEVEL=None):
     LOG_LEVEL = logging.getLevelName(LOG_LEVEL or "INFO")
     file_handler = logging.FileHandler("_spydrnet.log", mode='w')
     file_handler.setFormatter(logging.Formatter(LOG_FORMAT))
-    file_handler.setLevel(LOG_LEVEL))
+    file_handler.setLevel(LOG_LEVEL)
     logger.addHandler(file_handler)
     return file_handler
 
