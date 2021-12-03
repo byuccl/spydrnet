@@ -1,8 +1,8 @@
 on: push
 name: on push
 jobs:
-  SpyDrNetPytest:
-    name: Functional unit tests
+  SpyDrNet_push:
+    name: SpyDrNet Push
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -22,3 +22,6 @@ jobs:
       uses: cclauss/GitHub-Action-for-pytest@master
       with:
         args: python -m pytest -v
+    - name: Analysing the code with pylint
+      run: |
+        pylint --rcfile=.pylintrc spydrnet/
