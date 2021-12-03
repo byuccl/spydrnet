@@ -57,7 +57,7 @@ logger.debug("Installed Plugins", discovered_plugins.keys())
 def get_active_plugins():
     active_plugins = {}
     config_file = None
-    config_file_home = os.path.join(pathlib.Path.home(), ".spydrnet")
+    config_file_home = os.path.join(str(pathlib.Path.home()), ".spydrnet")
     if os.path.isfile(config_file_home):
         config_file = config_file_home
     config_file_local = os.path.join(".", ".spydrnet")
