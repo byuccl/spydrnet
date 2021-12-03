@@ -10,7 +10,7 @@ class Wire(Element):
     """
     Represents a wire object
     """
-    __slots__ = ['_cable', '_pins', '__weakref__']
+    __slots__ = ['_cable', '_pins']
 
     def __init__(self):
         self._cable = None
