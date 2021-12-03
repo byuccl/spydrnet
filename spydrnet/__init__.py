@@ -56,16 +56,20 @@ logger.debug("Installed Plugins", discovered_plugins.keys())
 
 def get_active_plugins():
     active_plugins = {}
-    config_file = os.path.join(".", ".spydrnet") or \
-        os.path.join(pathlib.Path.home(), ".spydrnet")
-    if os.path.isfile(config_file):
+    config_file = None
+    config_file_home = os.path.join(pathlib.Path.home(), ".spydrnet")
+    if os.path.isfile(config_file_home):
+        config_file = config_file_home
+    config_file_local = os.path.join(".", ".spydrnet")
+    if os.path.isfile(config_file_local):
+        config_file = config_file_local
+    if config_file:
         for plugin in open(config_file, "r").read().split():
             if discovered_plugins.get(plugin, None):
                 active_plugins.update({plugin: discovered_plugins[plugin]})
             else:
                 logger.debug("Plugin %s is not installed " % plugin)
-    else:
-        active_plugins.update(discovered_plugins)
+
     return active_plugins
 
 
