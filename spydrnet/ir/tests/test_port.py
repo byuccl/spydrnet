@@ -1,7 +1,7 @@
 import unittest
 
 import spydrnet as sdn
-from spydrnet.ir.bundle import Bundle
+from spydrnet.ir import Bundle
 
 
 class TestPort(unittest.TestCase):

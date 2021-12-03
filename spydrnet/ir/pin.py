@@ -1,4 +1,4 @@
-from spydrnet.ir.element import Element
+from spydrnet.ir import Element
 
 
 class Pin(Element):

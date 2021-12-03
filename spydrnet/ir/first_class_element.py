@@ -1,5 +1,5 @@
 import sys
-from spydrnet.ir.element import Element
+from spydrnet.ir import Element
 from spydrnet.ir.views.dictview import DictView
 from spydrnet.global_state import global_callback
 

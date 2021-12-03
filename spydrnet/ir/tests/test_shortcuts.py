@@ -1,19 +1,15 @@
-# from spydrnet.ir.first_class_element import FirstClassElement
-# from spydrnet.ir.instance import Instance
-# from spydrnet.ir.definition import Definition
-# from spydrnet.ir.netlist import Netlist
 import unittest
 
 
-from spydrnet.ir.first_class_element import FirstClassElement
-from spydrnet.ir.instance import Instance
-from spydrnet.ir.definition import Definition
-from spydrnet.ir.netlist import Netlist
-from spydrnet.ir.cable import Cable
-from spydrnet.ir.wire import Wire
+from spydrnet.ir import FirstClassElement
+from spydrnet.ir import Instance
+from spydrnet.ir import Definition
+from spydrnet.ir import Netlist
+from spydrnet.ir import Cable
+from spydrnet.ir import Wire
 from spydrnet.util.hierarchical_reference import HRef
-from spydrnet.ir.library import Library
-from spydrnet.ir.port import Port
+from spydrnet.ir import Library
+from spydrnet.ir import Port
 
 class TestShortcuts(unittest.TestCase):
     def test_hRef_shortcut(self):
@@ -21,14 +17,14 @@ class TestShortcuts(unittest.TestCase):
         def2 = Definition("Hello")
         item.reference = def2
         hr = HRef(item)
-        self.assertEqual(hr.item.name,item.name,'Href item shorcut error') 
+        self.assertEqual(hr.item.name,item.name,'Href item shorcut error')
 
 
     def test_netlist_top_instance_definition_shortcut(self):
         top_definition = Definition('this is my name')
         netlist = Netlist()
         netlist.top_instance = top_definition
-        self.assertEqual(netlist.top_instance.reference.name,top_definition.name,'Netlist\'s top instance\'s shorcut error') 
+        self.assertEqual(netlist.top_instance.reference.name,top_definition.name,'Netlist\'s top instance\'s shorcut error')
 
     def test_if_leaf_shortcut(self):
         instance = Instance()
@@ -94,7 +90,7 @@ class TestShortcuts(unittest.TestCase):
         self.assertEqual(p2.lower_index, 0, 'Port lower_index init shorcut error')
 
     def test_properties_init_shortcut(self):
-        
+
         d = Definition('d_name',{'key1':1, 'key2':'value2' })
         self.assertEqual(d['key1'], 1, 'Definition properties init shorcut error')
 

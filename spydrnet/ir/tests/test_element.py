@@ -1,6 +1,6 @@
 import unittest
 
-from spydrnet.ir.first_class_element import FirstClassElement
+from spydrnet.ir import FirstClassElement
 
 
 class TestElement(unittest.TestCase):
