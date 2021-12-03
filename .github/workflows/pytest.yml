@@ -22,6 +22,3 @@ jobs:
       uses: cclauss/GitHub-Action-for-pytest@master
       with:
         args: python -m pytest -v
-    - name: Analysing the code with pylint
-      run: |
-        pylint --rcfile=.pylintrc spydrnet/
