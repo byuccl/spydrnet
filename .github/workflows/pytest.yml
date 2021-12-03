@@ -1,5 +1,7 @@
-on: push
-name: on push
+name: Pytest
+
+on: [push]
+
 jobs:
   SpyDrNet_push:
     name: SpyDrNet Push
