@@ -9,3 +9,4 @@ Developer's Guide
     contribute
     repository
     testing
+    linting
