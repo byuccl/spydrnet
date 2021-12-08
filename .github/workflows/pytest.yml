@@ -4,6 +4,7 @@ on: [push]
 
 jobs:
   SpyDrNet_push:
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/next_release'
     name: SpyDrNet Push
     runs-on: ubuntu-latest
     strategy:
