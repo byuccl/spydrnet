@@ -68,7 +68,7 @@ def get_active_plugins():
             if discovered_plugins.get(plugin, None):
                 if (plugin not in sys.modules) and (plugin not in dir()): # prevents reimporting over and over again
                     active_plugins.update({plugin: importlib.import_module(plugin)})
-                    print("imported ", plugin)
+                    # print("imported", plugin)
                 else: 
                     active_plugins.update({plugin:sys.modules[plugin]})
             else:
