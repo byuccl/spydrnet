@@ -45,5 +45,6 @@ for filename, eachModule in RegisterModule:
             cls_bases = (ext_cls, cls)
             locals()[eachModule] = type(cls.__name__, cls_bases, {})
             cls = locals()[eachModule]
+            # print("extended", eachModule, "with ",name )
         except ModuleNotFoundError:
             pass

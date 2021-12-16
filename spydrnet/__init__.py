@@ -46,7 +46,7 @@ def enable_file_logging(LOG_LEVEL=None):
 #  Setup Extension Discovery
 # =============================
 discovered_plugins = {
-    name: importlib.import_module(name)
+    name: name
     for finder, name, ispkg
     in pkgutil.iter_modules()
     if name.startswith('spydrnet_')
@@ -66,7 +66,11 @@ def get_active_plugins():
     if config_file:
         for plugin in open(config_file, "r").read().split():
             if discovered_plugins.get(plugin, None):
-                active_plugins.update({plugin: discovered_plugins[plugin]})
+                if (plugin not in sys.modules) and (plugin not in dir()): # prevents reimporting over and over again
+                    active_plugins.update({plugin: importlib.import_module(plugin)})
+                    print("imported ", plugin)
+                else: 
+                    active_plugins.update({plugin:sys.modules[plugin]})
             else:
                 logger.debug("Plugin %s is not installed " % plugin)
 
