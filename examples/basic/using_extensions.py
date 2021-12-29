@@ -40,6 +40,7 @@ We can also simply print lists of the attributes and methods found in each class
     print("FirstClassElement: ",list(attribute for attribute in dir(FirstClassElement)))
     print("FirstClassElementExtended: ",list(attribute for attribute in dir(FirstClassElementExtended)))
 
+**See full source code below**
 """
 from spydrnet.ir.element import Element
 from spydrnet.ir.first_class_element import FirstClassElement
