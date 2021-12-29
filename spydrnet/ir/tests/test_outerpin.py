@@ -1,7 +1,7 @@
 import unittest
 
 import spydrnet as sdn
-from spydrnet.ir.pin import Pin
+from spydrnet.ir import Pin
 
 
 class TestOuterPin(unittest.TestCase):

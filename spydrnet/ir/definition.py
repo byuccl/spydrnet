@@ -1,13 +1,10 @@
-from spydrnet.ir.first_class_element import FirstClassElement
-from spydrnet.ir.port import Port
-from spydrnet.ir.cable import Cable
-from spydrnet.ir.instance import Instance
-from spydrnet.ir.outerpin import OuterPin
-from spydrnet.ir.views.listview import ListView
-from spydrnet.ir.views.setview import SetView
+from copy import copy, deepcopy, error
+
 from spydrnet.global_state import global_callback
 from spydrnet.global_state.global_callback import _call_create_definition
-from copy import deepcopy, copy, error
+from spydrnet.ir import Cable, FirstClassElement, Instance, OuterPin, Port
+from spydrnet.ir.views.listview import ListView
+from spydrnet.ir.views.setview import SetView
 
 
 class Definition(FirstClassElement):
@@ -463,7 +460,8 @@ class Definition(FirstClassElement):
         clone leaving all references in tact.
         the element can then either be ripped or ripped and replaced"""
         assert self not in memo, "the object should not have been copied twice in this pass"
-        c = Definition()
+        from spydrnet.ir import Definition as DefinitionExtended
+        c = DefinitionExtended()
         memo[self] = c
         c._data = deepcopy(self._data)
         c._library = None

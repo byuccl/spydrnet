@@ -41,14 +41,14 @@ To import SpyDrNet to the project, use the following code:
 
     import spydrnet as sdn
 
-In this tutorial, we will use 'sdn' as a shorcut to access SpyDrNet commands.
+In this tutorial, we will use 'sdn' as a shortcut to access SpyDrNet commands.
 
 Parsing
 -------
 
 The SpyDrNet parser will take an EDIF/Verilog file and put the information into the SpyDrNet data structure. 
 
-To parse a file, enter the following command for an EDIF file
+To parse a file, enter the following command for an EDIF file (note: .edf and .edn are both supported)
 
 .. code-block::
 
@@ -73,7 +73,7 @@ A SpyDrNet netlist has many parts. The following is a short run through the basi
 
 Netlist:
 ^^^^^^^^
-    This class of Python objects is the netlist element with the highest level of organization (a whole netlist). It contains an ordered collection of libraries and any data associated with the netlist as a whole.
+    This class is the highest level of organization (it's a whole netlist). It contains an ordered collection of libraries and any data associated with the netlist as a whole.
 
 Library:
 ^^^^^^^^
@@ -85,7 +85,7 @@ Library:
 
             print(netlist.libraries)
 
-        This returns the library objects. To see the names of the libraries, use:
+        This returns a list of the library objects. To see the names of the libraries, use:
         
         .. code-block::
 
@@ -113,7 +113,7 @@ Definition:
 
 Ports:
 ^^^^^^
-    The input/output ‘slots’ of each definition (e.g. A,B, and Q of a simple AND gate)
+    The input/output "slots" of each definition (e.g. A,B, and Q of a simple AND gate)
 
         To see the ports for the first definition in the first library, run the following:
         
@@ -157,9 +157,9 @@ Instances:
 ^^^^^^^^^^
     An instance of a definition. It holds pointers to the definition which it instances (its reference), and contains its own set of pins (outer pins, specifically).
 
-    An instance is also known as a **'child'**.
-    The definition instanced is the **'reference'**.
-    The definition that instances the other definition is the **'parent'**. 
+    An instance is also known as a **"child"**.
+    The definition instanced is the **"reference"**.
+    The definition that instances the other definition is the **"parent"**. 
         
         To see the instances in the 'work' library, or library[2], use the following code:
         
@@ -168,19 +168,27 @@ Instances:
                 for instance in netlist.libraries[2].get_instances():
                     print("Instance:", instance.name)
                     print("Instance's Parent:",instance.parent.name)
-                    print("Instance's Reference Definition:",instance.reference.name)
-                    print('\n')
+                    print("Instance's Reference Definition:",instance.reference.name,"\n")
 
     In the previous code, we saw that the definition '*counter*' instances the definition '*MUXCY_L*' as '*count_cry[0]*'.
     So '*counter*' is the **parent**, '*MUXCY_L*' is the **reference**, and '*count_cry[0]*' is the **instance** and **child** of 'counter'.
 
+
+**See the following two figures to aid in understanding the SpyDrNet IR:**
 
 .. _fig:IR_2:
 .. figure:: /figures/IR.*
     :align: center
     :alt: SpyDrNet Intermediate Representation
 
-    Summary of the SpyDrNet IR
+    Summary of the SpyDrNet IR 1
+
+.. _fig:IR_3:
+.. figure:: /figures/spydrnet_api_elements.png
+    :align: center
+    :alt: SpyDrNet Intermediate Representation
+
+    Summary of the SpyDrNet IR 2
 
 Other IR Parts
 ^^^^^^^^^^^^^^^
@@ -214,19 +222,19 @@ Modifying Netlists
             new_library = netlist.create_library(name="new_library")
             new_library.create_definition(name="new_definition")
 
-    **Changing Values:**
+    **Changing Properties:**
         From the example :ref:`sphx_glr_auto_examples_vivado_AND_to_OR.py` in the examples tab, the following line of code "[changes] the value in the properties of the LUT2 instance"
         
         .. code-block::
 
             properties[0]["value"] = "4'h" + str(hex(LUT_CONFIG)).upper()[2:]
 
-    **See** :ref:`sphx_glr_auto_examples` **for more examples of modifying and viewing netlists.**
+    **See** :ref:`sphx_glr_auto_examples` **for more examples of creating, modifying, and viewing netlists.**
 
 Composing
 ---------
 
-To compose a file from a SpyDrNet netlist, enter the following command:
+To compose a netlist file from a SpyDrNet netlist, enter the following command:
 
 .. code-block::
 

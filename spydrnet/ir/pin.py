@@ -1,11 +1,11 @@
-from spydrnet.ir.element import Element
+from spydrnet.ir import Element
 
 
 class Pin(Element):
     """Pin connects to a single wire.
 
     This class is extended by InnerPin and OuterPin"""
-    __slots__ = ['_wire', '__weakref__']
+    __slots__ = ['_wire',]
 
     def __init__(self):
         self._wire = None

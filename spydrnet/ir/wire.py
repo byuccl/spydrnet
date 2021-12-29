@@ -1,16 +1,16 @@
-from copy import copy, deepcopy, error
+from copy import copy
+
 import spydrnet as sdn
-from spydrnet.ir.element import Element
-from spydrnet.ir.outerpin import OuterPin
-from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
+from spydrnet.ir import Element, OuterPin
+from spydrnet.ir.views.listview import ListView
 
 
 class Wire(Element):
     """
     Represents a wire object
     """
-    __slots__ = ['_cable', '_pins', '__weakref__']
+    __slots__ = ['_cable', '_pins']
 
     def __init__(self):
         self._cable = None
@@ -145,7 +145,8 @@ class Wire(Element):
         clone leaving all references in tact.
         the element can then either be ripped or ripped and replaced"""
         assert self not in memo, "the object should not have been copied twice in this pass"
-        c = Wire()
+        from spydrnet.ir import Wire as ExtendedWire
+        c = ExtendedWire()
         memo[self] = c
         c._cable = None
         # shallow copy the list so that it retains its pin references

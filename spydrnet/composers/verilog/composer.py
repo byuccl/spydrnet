@@ -1,6 +1,6 @@
 from collections import deque, OrderedDict
-from spydrnet.ir.port import Port
-from spydrnet.ir.cable import Cable
+from spydrnet.ir import Port
+from spydrnet.ir import Cable
 import spydrnet.parsers.verilog.verilog_tokens as vt
 
 

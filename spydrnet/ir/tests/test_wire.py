@@ -1,9 +1,8 @@
 import unittest
 
 import spydrnet as sdn
-from spydrnet.ir.first_class_element import FirstClassElement
+from spydrnet.ir import FirstClassElement
 from spydrnet.util.selection import Selection
-
 
 class TestWire(unittest.TestCase):
     def setUp(self):
@@ -92,7 +91,7 @@ class TestWire(unittest.TestCase):
         driver = list(x for x in input_pin.wire.get_driver())
         self.assertTrue(len(driver) == 1)
         self.assertTrue('out_i_1' in driver[0].instance.name)
-        self.assertTrue(driver[0].inner_pin.port.name is 'O')
+        self.assertEqual(driver[0].inner_pin.port.name, 'O')
 
     def test_get_driver_2(self):
         netlist = sdn.load_example_netlist_by_name('adder')

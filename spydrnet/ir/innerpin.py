@@ -1,4 +1,4 @@
-from spydrnet.ir.pin import Pin
+from spydrnet.ir import Pin
 from copy import deepcopy, copy, error
 
 
@@ -37,7 +37,8 @@ class InnerPin(Pin):
         Clone leaving all references in tact.
         the element can then either be ripped or ripped and replaced"""
         assert self not in memo, "the object should not have been copied twice in this pass"
-        c = InnerPin()
+        from spydrnet.ir import InnerPin as InnerPinExtended
+        c = InnerPinExtended()
         memo[self] = c
         c._wire = self._wire
         c._port = None

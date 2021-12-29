@@ -3,7 +3,7 @@
 Install
 =======
 
-SpyDrNet requires Python 3.5 or newer. Please ensure that this prerequisite has been met before proceeding.
+SpyDrNet requires Python 3.6 or newer. Please ensure that this prerequisite has been met before proceeding.
 
 This guide shows how to install SpyDrNet in the default Python environment (from the `Python website <https://python.org>`_). If a different environment is used, adapt these instructions as necessary. For all ``pip`` installations, make sure ``pip`` is up-to-date by executing the following command::
 
@@ -74,4 +74,4 @@ To install SpyDrNet with all optional packages, execute the following command::
 
     $ pip install spydrnet[all]
 
-Optional packages can also be installed seperately.
+Optional packages can also be installed separately.

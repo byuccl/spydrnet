@@ -1,5 +1,5 @@
 import sys
-from spydrnet.ir.element import Element
+from spydrnet.ir import Element
 from spydrnet.ir.views.dictview import DictView
 from spydrnet.global_state import global_callback
 
@@ -27,7 +27,7 @@ class FirstClassElement(Element):
     The only key that is reserved is 'NAME'. It is the primary name of the element. NAME may be undefined or inferred,
     for example, a pin on a port may be nameless, but infer its name for its parent port and position.
     """
-    __slots__ = ['_data', '__weakref__']
+    __slots__ = ['_data',]
 
     def __init__(self):
         """Initialize an element with an empty data dictionary."""
