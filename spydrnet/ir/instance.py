@@ -1,14 +1,14 @@
-from spydrnet.ir.first_class_element import FirstClassElement
-from spydrnet.ir.outerpin import OuterPin
+from spydrnet.ir import FirstClassElement
+from spydrnet.ir import OuterPin
 from spydrnet.ir.views.outerpinsview import OuterPinsView
 from spydrnet.global_state import global_callback
 from spydrnet.global_state.global_callback import _call_create_instance
-from copy import deepcopy, copy, error
+from copy import deepcopy
 from collections import OrderedDict
 
 
 class Instance(FirstClassElement):
-    """Netlist instance of a netlist definition. 
+    """Netlist instance of a netlist definition.
 
     Instances are literally instances of definitions and they reside inside other definitions.
     Function names have been set to prevent potential confusion that could arise because instances have both a parent definition and definitions which they reference.
@@ -96,8 +96,7 @@ class Instance(FirstClassElement):
             else:
                 for port in value.ports:
                     for pin in port.pins:
-                        self._pins[pin] = OuterPin.from_instance_and_inner_pin(
-                            self, pin)
+                        self._pins[pin] = OuterPin(self, pin)
             value._references.add(self)
         self._reference = value
 
@@ -116,7 +115,7 @@ class Instance(FirstClassElement):
         return OuterPinsView(self._pins)
 
     def _clone_rip_and_replace_in_definition(self, memo):
-        """Slide the outerpins references into a new context. 
+        """Slide the outerpins references into a new context.
 
         The instance still references something outside of what has been cloned.
         """
@@ -124,7 +123,7 @@ class Instance(FirstClassElement):
             op._clone_rip_and_replace(memo)
 
     def _clone_rip_and_replace_in_library(self, memo):
-        """Move the instance into a new library/netlist. 
+        """Move the instance into a new library/netlist.
 
         This will replace the reference if affected and replace the inner pins that will be affected as well.
         The instance should not be in the references list of the reference definition
@@ -135,7 +134,7 @@ class Instance(FirstClassElement):
         self._pins = new_pins
 
     def _clone_rip(self):
-        """Remove the instance from its current environmnet. 
+        """Remove the instance from its current environmnet.
 
         This will remove the instance from any wires but it will add it in to the references set on the definition which it instantiates.
         """
@@ -149,7 +148,8 @@ class Instance(FirstClassElement):
         The instance can then either be ripped or ripped and replaced
         """
         assert self not in memo, "the object should not have been copied twice in this pass"
-        c = Instance()
+        from spydrnet.ir import Instance as InstanceExtended
+        c = InstanceExtended()
         memo[self] = c
         c._parent = None
         for inner_pin, outer_pin in self._pins.items():
@@ -179,7 +179,7 @@ class Instance(FirstClassElement):
     def is_leaf(self):
         """Check to see if the definition that this instance contains represents a leaf cell.
 
-        Leaf cells are cells with no children instances or no children cables. 
+        Leaf cells are cells with no children instances or no children cables.
         Blackbox cells are considered leaf cells as well as direct pass through cells with cables only
         """
         if self._reference is None:

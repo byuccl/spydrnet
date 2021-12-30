@@ -1,11 +1,11 @@
-from spydrnet.ir.first_class_element import FirstClassElement
-from spydrnet.ir.library import Library
-from spydrnet.ir.instance import Instance
+from spydrnet.ir import FirstClassElement
+from spydrnet.ir import Library
+from spydrnet.ir import Instance
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
 from spydrnet.global_state.global_callback import _call_create_netlist
 from copy import deepcopy, copy, error
-from spydrnet.ir.definition import Definition
+from spydrnet.ir import Definition
 
 
 class Netlist(FirstClassElement):
@@ -175,7 +175,7 @@ class Netlist(FirstClassElement):
         return library
 
     def add_library(self, library, position=None):
-        """add an already existing library to the netlist. 
+        """add an already existing library to the netlist.
 
         This library should not belong to another netlist. Use
         remove_library from other netlists before adding
@@ -256,7 +256,8 @@ class Netlist(FirstClassElement):
         The element can then either be ripped or ripped and replaced.
         """
         assert self not in memo, "the object should not have been copied twice in this pass"
-        c = Netlist()
+        from spydrnet.ir import Netlist as NetlistExtended
+        c = NetlistExtended()
         memo[self] = c
         c._data = deepcopy(self._data)
 

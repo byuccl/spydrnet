@@ -1,3 +1,12 @@
+SpyDrNet 1.10.0
+---------------
+December 29, 2021
+
+* Introduces support for loading other modules to extend IR classes
+* Drops support for Python 3.5 and adds support for Python 3.9 and 3.10
+* Adds Pylint to Github Actions
+* Various documentation updates
+
 SpyDrNet 1.9.0
 ---------------
 November 17, 2021

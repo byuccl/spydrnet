@@ -17,3 +17,4 @@ Reference
    NamespaceManager
    verilog_support
    Callback_Framework
+   extensions

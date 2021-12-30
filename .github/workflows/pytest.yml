@@ -1,16 +1,19 @@
-on: push
-name: on push
+name: Pytest
+
+on: [push]
+
 jobs:
-  SpyDrNetPytest:
-    name: Functional unit tests
+  SpyDrNet_push:
+    name: SpyDrNet Push
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version:
-          - "3.5"
           - "3.6"
           - "3.7"
           - "3.8"
+          - "3.9"
+          - "3.10"
     steps:
     - uses: actions/checkout@master
     - name: Set up Python ${{ matrix.python-version }}

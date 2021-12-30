@@ -1,4 +1,4 @@
-from spydrnet.ir.pin import Pin
+from spydrnet.ir import Pin
 from copy import deepcopy, copy, error
 
 
@@ -19,7 +19,8 @@ class OuterPin(Pin):
         instance - (Instance) the instance to associate with this pin
 
         inner_pin - (InnerPin) the inner pin with which to associate this outer pin"""
-        return OuterPin(instance, inner_pin)
+        from spydrnet.ir import OuterPin as OuterPinExtended
+        return OuterPinExtended(instance, inner_pin)
 
     def __init__(self, instance=None, inner_pin=None):
         """create an OuterPin.
@@ -59,7 +60,7 @@ class OuterPin(Pin):
             self._wire = memo[self._wire]
 
     def _clone_rip(self):
-        """Remove from its current environmnet. 
+        """Remove from its current environmnet.
 
         This will remove all pin pointers and create a floating stand alone instance.
         """
@@ -72,7 +73,8 @@ class OuterPin(Pin):
         clone leaving all references in tact.
         the element can then either be ripped or ripped and replaced"""
         assert self not in memo, "the object should not have been copied twice in this pass"
-        c = OuterPin()
+        from spydrnet.ir import OuterPin as OuterPinExtended
+        c = OuterPinExtended()
         memo[self] = c
         c._instance = None
         c._inner_pin = self._inner_pin

@@ -1,4 +1,4 @@
-from spydrnet.ir.outerpin import OuterPin
+from spydrnet.ir import OuterPin
 import spydrnet as sdn
 
 

@@ -1,6 +1,6 @@
-from spydrnet.ir.bundle import Bundle
-from spydrnet.ir.innerpin import InnerPin
-from spydrnet.ir.outerpin import OuterPin
+from spydrnet.ir import Bundle
+from spydrnet.ir import InnerPin
+from spydrnet.ir import OuterPin
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
 from spydrnet.global_state.global_callback import _call_create_port
@@ -145,7 +145,8 @@ class Port(Bundle):
         return:
         the inner_pin created
         """
-        pin = InnerPin()
+        from spydrnet.ir import InnerPin as InnerPinExtended
+        pin = InnerPinExtended()
         self.add_pin(pin)
         if self.definition:
             for reference in self.definition.references:
@@ -187,7 +188,7 @@ class Port(Bundle):
         self._pins.remove(pin)
 
     def remove_pins_from(self, pins):
-        """Remove several pins from the port at once. 
+        """Remove several pins from the port at once.
 
         The wires are disconnected from the pins that are removed.
 
@@ -208,7 +209,7 @@ class Port(Bundle):
         self._pins = list(x for x in self._pins if x not in exclude_pins)
 
     def _remove_pin(self, pin):
-        """Internal pin removal function. 
+        """Internal pin removal function.
         Disconnects the wires from the pin and remvoes all the pins reference to other pins."""
         global_callback._call_port_remove_pin(self, pin)
         if self.definition:
@@ -241,7 +242,8 @@ class Port(Bundle):
         The element can then either be ripped or ripped and replaced.
         """
         assert self not in memo, "the object should not have been copied twice in this pass"
-        c = Port()
+        from spydrnet.ir import Port as PortExtended
+        c = PortExtended()
         memo[self] = c
         c._direction = deepcopy(self._direction)
         new_pins = list()
