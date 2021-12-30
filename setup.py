@@ -7,10 +7,10 @@ if sys.argv[-1] == "setup.py":
     print("To install, run 'python setup.py install'")
     print()
 
-if sys.version_info[:2] < (3, 5):
+if sys.version_info[:2] < (3, 6):
     python_version = "{}.{}".format(sys.version_info[0], sys.version_info[1])
     msg = (
-        "SpyDrNet 1.0+ requires Python 3.5 or later ({} detected).\n\n".format(python_version)
+        "SpyDrNet 1.0+ requires Python 3.6 or later ({} detected).\n\n".format(python_version)
     )
     sys.stderr.write(msg + "\n")
     sys.exit(1)
@@ -59,6 +59,6 @@ if __name__ == "__main__":
         package_data={ 'spydrnet': ['VERSION'] + example_edif_files},
         packages=setuptools.find_packages(),
         extras_require=extras_require,
-        python_requires='>=3.5',
+        python_requires='>=3.6',
         zip_safe=False
     )
