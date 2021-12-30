@@ -1,0 +1,345 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Port &mdash; SpyDrNet 1.10.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="spydrnet.Port.__init__" href="generated/spydrnet.Port.__init__.html" />
+    <link rel="prev" title="spydrnet.Instance.get_hwires" href="generated/spydrnet.Instance.get_hwires.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> SpyDrNet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.10
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../introduction.html">Introduction (Old Version)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../element_data.html">Element Data</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">API Summary</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#basic-object-types">Basic object types</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="netlist.html">Netlist</a></li>
+<li class="toctree-l4"><a class="reference internal" href="library.html">Library</a></li>
+<li class="toctree-l4"><a class="reference internal" href="definition.html">Definition</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instance.html">Instance</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Port</a></li>
+<li class="toctree-l4"><a class="reference internal" href="innerpin.html">InnerPin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="outerpin.html">OuterPin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cable.html">Cable</a></li>
+<li class="toctree-l4"><a class="reference internal" href="wire.html">Wire</a></li>
+<li class="toctree-l4"><a class="reference internal" href="href.html">HRef</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/spydrnet.ir.Pin.html">spydrnet.ir.Pin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/spydrnet.ir.Bundle.html">spydrnet.ir.Bundle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/spydrnet.ir.Element.html">spydrnet.ir.Element</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/spydrnet.ir.FirstClassElement.html">spydrnet.ir.FirstClassElement</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#getter-functions">Getter Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#other-functions">Other Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#shortcuts">Shortcuts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#in-summary">In Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../clone.html">Clone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../uniquify.html">Uniquify</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../NamespaceManager.html">Namespace Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../verilog_support.html">Verilog Language Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Callback_Framework.html">Callback Framework</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extensions.html">Extensions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../auto_examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../credits.html">Credits</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SpyDrNet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Reference</a> &raquo;</li>
+        
+          <li><a href="index.html">API Summary</a> &raquo;</li>
+        
+      <li>Port</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../_sources/reference/classes/port.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="port">
+<span id="id1"></span><h1>Port<a class="headerlink" href="#port" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="spydrnet.Port">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">spydrnet.</span></span><span class="sig-name descname"><span class="pre">Port</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_downto</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_scalar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spydrnet.Port" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Port.__init__.html#spydrnet.Port.__init__" title="spydrnet.Port.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Port.__init__</span></code></a>([name, properties, is_downto, …])</p></td>
+<td><p>Setup an empty port</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Port.direction.html#spydrnet.Port.direction" title="spydrnet.Port.direction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Port.direction</span></code></a></p></td>
+<td><p>Gets the direction of the port.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Port.pins.html#spydrnet.Port.pins" title="spydrnet.Port.pins"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Port.pins</span></code></a></p></td>
+<td><p>Get a list of the pins that are in the port</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Port.create_pin.html#spydrnet.Port.create_pin" title="spydrnet.Port.create_pin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Port.create_pin</span></code></a>()</p></td>
+<td><p>Create a pin and add it to the port.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Port.add_pin.html#spydrnet.Port.add_pin" title="spydrnet.Port.add_pin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Port.add_pin</span></code></a>(pin[, position])</p></td>
+<td><p>Add a pin to the port at the given position.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Port.remove_pin.html#spydrnet.Port.remove_pin" title="spydrnet.Port.remove_pin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Port.remove_pin</span></code></a>(pin)</p></td>
+<td><p>Remove the given pin from the port.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Port.remove_pins_from.html#spydrnet.Port.remove_pins_from" title="spydrnet.Port.remove_pins_from"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Port.remove_pins_from</span></code></a>(pins)</p></td>
+<td><p>Remove several pins from the port at once.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Port.clone.html#spydrnet.Port.clone" title="spydrnet.Port.clone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Port.clone</span></code></a>()</p></td>
+<td><p>Clone the port in an api safe way.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Port.get_netlists.html#spydrnet.Port.get_netlists" title="spydrnet.Port.get_netlists"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Port.get_netlists</span></code></a>(…)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_netlists.html#spydrnet.get_netlists" title="spydrnet.get_netlists"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_netlists()</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Port.get_libraries.html#spydrnet.Port.get_libraries" title="spydrnet.Port.get_libraries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Port.get_libraries</span></code></a>(…)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_libraries.html#spydrnet.get_libraries" title="spydrnet.get_libraries"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_libraries()</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Port.get_definitions.html#spydrnet.Port.get_definitions" title="spydrnet.Port.get_definitions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Port.get_definitions</span></code></a>(…)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_definitions.html#spydrnet.get_definitions" title="spydrnet.get_definitions"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_definitions()</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Port.get_instances.html#spydrnet.Port.get_instances" title="spydrnet.Port.get_instances"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Port.get_instances</span></code></a>(…)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_instances.html#spydrnet.get_instances" title="spydrnet.get_instances"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_instances()</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Port.get_ports.html#spydrnet.Port.get_ports" title="spydrnet.Port.get_ports"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Port.get_ports</span></code></a>(…)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_ports.html#spydrnet.get_ports" title="spydrnet.get_ports"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_ports()</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Port.get_pins.html#spydrnet.Port.get_pins" title="spydrnet.Port.get_pins"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Port.get_pins</span></code></a>(…)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_pins.html#spydrnet.get_pins" title="spydrnet.get_pins"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_pins()</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Port.get_cables.html#spydrnet.Port.get_cables" title="spydrnet.Port.get_cables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Port.get_cables</span></code></a>(…)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_cables.html#spydrnet.get_cables" title="spydrnet.get_cables"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_cables()</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Port.get_wires.html#spydrnet.Port.get_wires" title="spydrnet.Port.get_wires"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Port.get_wires</span></code></a>(…)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_wires.html#spydrnet.get_wires" title="spydrnet.get_wires"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_wires()</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Port.get_hinstances.html#spydrnet.Port.get_hinstances" title="spydrnet.Port.get_hinstances"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Port.get_hinstances</span></code></a>(…)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_hinstances.html#spydrnet.get_hinstances" title="spydrnet.get_hinstances"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_hinstances()</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Port.get_hports.html#spydrnet.Port.get_hports" title="spydrnet.Port.get_hports"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Port.get_hports</span></code></a>(…)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_hports.html#spydrnet.get_hports" title="spydrnet.get_hports"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_hports()</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Port.get_hpins.html#spydrnet.Port.get_hpins" title="spydrnet.Port.get_hpins"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Port.get_hpins</span></code></a>(…)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_hpins.html#spydrnet.get_hpins" title="spydrnet.get_hpins"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_hpins()</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Port.get_hcables.html#spydrnet.Port.get_hcables" title="spydrnet.Port.get_hcables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Port.get_hcables</span></code></a>(…)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_hcables.html#spydrnet.get_hcables" title="spydrnet.get_hcables"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_hcables()</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Port.get_hwires.html#spydrnet.Port.get_hwires" title="spydrnet.Port.get_hwires"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Port.get_hwires</span></code></a>(…)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_hwires.html#spydrnet.get_hwires" title="spydrnet.get_hwires"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_hwires()</span></code></a>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="generated/spydrnet.Port.__init__.html" class="btn btn-neutral float-right" title="spydrnet.Port.__init__" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="generated/spydrnet.Instance.get_hwires.html" class="btn btn-neutral float-left" title="spydrnet.Instance.get_hwires" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019, Brigham Young Universitiy.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

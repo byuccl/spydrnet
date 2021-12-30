@@ -1,0 +1,18 @@
+
+:orphan:
+
+.. _sphx_glr_auto_examples_extended_sg_execution_times:
+
+Computation times
+=================
+**00:00.499** total execution time for **auto_examples_extended** files:
+
++----------------------------------------------------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr_auto_examples_extended_plot_connectivity_graph.py` (``plot_connectivity_graph.py``)             | 00:00.203 | 0.0 MB |
++----------------------------------------------------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr_auto_examples_extended_plot_single_use_definitions.py` (``plot_single_use_definitions.py``)     | 00:00.172 | 0.0 MB |
++----------------------------------------------------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr_auto_examples_extended_plot_flatten.py` (``plot_flatten.py``)                                   | 00:00.108 | 0.0 MB |
++----------------------------------------------------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr_auto_examples_extended_plot_four_to_five_bit_counter.py` (``plot_four_to_five_bit_counter.py``) | 00:00.016 | 0.0 MB |
++----------------------------------------------------------------------------------------------------------------+-----------+--------+

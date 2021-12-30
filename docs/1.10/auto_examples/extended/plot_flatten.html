@@ -1,0 +1,698 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Flatten A Netlist &mdash; SpyDrNet 1.10.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Connectivity Graph" href="plot_connectivity_graph.html" />
+    <link rel="prev" title="Four Bit Counter To Five Bit Counter" href="plot_four_to_five_bit_counter.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> SpyDrNet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.10
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../index.html#basic">Basic</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#extended">Extended</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="plot_single_use_definitions.html">Make Instances Unique</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plot_four_to_five_bit_counter.html">Four Bit Counter To Five Bit Counter</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Flatten A Netlist</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plot_connectivity_graph.html">Connectivity Graph</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#vivado">Vivado</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../credits.html">Credits</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SpyDrNet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Examples</a> &raquo;</li>
+        
+      <li>Flatten A Netlist</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../_sources/auto_examples/extended/plot_flatten.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-extended-plot-flatten-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="flatten-a-netlist">
+<span id="sphx-glr-auto-examples-extended-plot-flatten-py"></span><h1>Flatten A Netlist<a class="headerlink" href="#flatten-a-netlist" title="Permalink to this headline">¶</a></h1>
+<p>Remove hierarchy from a netlist. The original hierarchy and new hierarchy (after flattening) will be printed.</p>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Need to move cells from a0 that references a
+Need to move cells from b0 that references b
+Need to move cells from c0 that references c
+Finished moving cells from c0
+Need to move cells from c1 that references c
+Finished moving cells from c1
+Need to move cells from c2 that references c
+Finished moving cells from c2
+Finished moving cells from b0
+Need to move cells from b1 that references b
+Finished moving cells from b1
+Need to move cells from b2 that references b
+Finished moving cells from b2
+Finished moving cells from a0
+Need to move cells from a1 that references a
+Finished moving cells from a1
+Need to move cells from a2 that references a
+Finished moving cells from a2
+
+ORIGINAL HIERARCHY
+ top
+    a0
+       b0
+          c0
+             beta_INST_0
+          c1
+             beta_INST_0
+          c2
+             beta_INST_0
+          delta_INST_0
+       b1
+          c0
+             beta_INST_0
+          c1
+             beta_INST_0
+          c2
+             beta_INST_0
+          delta_INST_0
+       b2
+          c0
+             beta_INST_0
+          c1
+             beta_INST_0
+          c2
+             beta_INST_0
+          delta_INST_0
+       zeta_INST_0
+    a1
+       b0
+          c0
+             beta_INST_0
+          c1
+             beta_INST_0
+          c2
+             beta_INST_0
+          delta_INST_0
+       b1
+          c0
+             beta_INST_0
+          c1
+             beta_INST_0
+          c2
+             beta_INST_0
+          delta_INST_0
+       b2
+          c0
+             beta_INST_0
+          c1
+             beta_INST_0
+          c2
+             beta_INST_0
+          delta_INST_0
+       zeta_INST_0
+    a2
+       b0
+          c0
+             beta_INST_0
+          c1
+             beta_INST_0
+          c2
+             beta_INST_0
+          delta_INST_0
+       b1
+          c0
+             beta_INST_0
+          c1
+             beta_INST_0
+          c2
+             beta_INST_0
+          delta_INST_0
+       b2
+          c0
+             beta_INST_0
+          c1
+             beta_INST_0
+          c2
+             beta_INST_0
+          delta_INST_0
+       zeta_INST_0
+    eta_IBUF[0]_inst
+    eta_IBUF[10]_inst
+    eta_IBUF[11]_inst
+    eta_IBUF[12]_inst
+    eta_IBUF[13]_inst
+    eta_IBUF[14]_inst
+    eta_IBUF[15]_inst
+    eta_IBUF[16]_inst
+    eta_IBUF[17]_inst
+    eta_IBUF[18]_inst
+    eta_IBUF[19]_inst
+    eta_IBUF[1]_inst
+    eta_IBUF[20]_inst
+    eta_IBUF[21]_inst
+    eta_IBUF[22]_inst
+    eta_IBUF[23]_inst
+    eta_IBUF[24]_inst
+    eta_IBUF[25]_inst
+    eta_IBUF[26]_inst
+    eta_IBUF[27]_inst
+    eta_IBUF[28]_inst
+    eta_IBUF[29]_inst
+    eta_IBUF[2]_inst
+    eta_IBUF[30]_inst
+    eta_IBUF[31]_inst
+    eta_IBUF[32]_inst
+    eta_IBUF[33]_inst
+    eta_IBUF[34]_inst
+    eta_IBUF[35]_inst
+    eta_IBUF[36]_inst
+    eta_IBUF[37]_inst
+    eta_IBUF[38]_inst
+    eta_IBUF[39]_inst
+    eta_IBUF[3]_inst
+    eta_IBUF[40]_inst
+    eta_IBUF[41]_inst
+    eta_IBUF[42]_inst
+    eta_IBUF[43]_inst
+    eta_IBUF[44]_inst
+    eta_IBUF[45]_inst
+    eta_IBUF[46]_inst
+    eta_IBUF[47]_inst
+    eta_IBUF[48]_inst
+    eta_IBUF[49]_inst
+    eta_IBUF[4]_inst
+    eta_IBUF[50]_inst
+    eta_IBUF[51]_inst
+    eta_IBUF[52]_inst
+    eta_IBUF[53]_inst
+    eta_IBUF[5]_inst
+    eta_IBUF[6]_inst
+    eta_IBUF[7]_inst
+    eta_IBUF[8]_inst
+    eta_IBUF[9]_inst
+    theta_OBUF_inst
+    theta_OBUF_inst_i_1
+
+HIERARCHY AFTER FLATTENING
+ top
+    eta_IBUF[0]_inst
+    eta_IBUF[10]_inst
+    eta_IBUF[11]_inst
+    eta_IBUF[12]_inst
+    eta_IBUF[13]_inst
+    eta_IBUF[14]_inst
+    eta_IBUF[15]_inst
+    eta_IBUF[16]_inst
+    eta_IBUF[17]_inst
+    eta_IBUF[18]_inst
+    eta_IBUF[19]_inst
+    eta_IBUF[1]_inst
+    eta_IBUF[20]_inst
+    eta_IBUF[21]_inst
+    eta_IBUF[22]_inst
+    eta_IBUF[23]_inst
+    eta_IBUF[24]_inst
+    eta_IBUF[25]_inst
+    eta_IBUF[26]_inst
+    eta_IBUF[27]_inst
+    eta_IBUF[28]_inst
+    eta_IBUF[29]_inst
+    eta_IBUF[2]_inst
+    eta_IBUF[30]_inst
+    eta_IBUF[31]_inst
+    eta_IBUF[32]_inst
+    eta_IBUF[33]_inst
+    eta_IBUF[34]_inst
+    eta_IBUF[35]_inst
+    eta_IBUF[36]_inst
+    eta_IBUF[37]_inst
+    eta_IBUF[38]_inst
+    eta_IBUF[39]_inst
+    eta_IBUF[3]_inst
+    eta_IBUF[40]_inst
+    eta_IBUF[41]_inst
+    eta_IBUF[42]_inst
+    eta_IBUF[43]_inst
+    eta_IBUF[44]_inst
+    eta_IBUF[45]_inst
+    eta_IBUF[46]_inst
+    eta_IBUF[47]_inst
+    eta_IBUF[48]_inst
+    eta_IBUF[49]_inst
+    eta_IBUF[4]_inst
+    eta_IBUF[50]_inst
+    eta_IBUF[51]_inst
+    eta_IBUF[52]_inst
+    eta_IBUF[53]_inst
+    eta_IBUF[5]_inst
+    eta_IBUF[6]_inst
+    eta_IBUF[7]_inst
+    eta_IBUF[8]_inst
+    eta_IBUF[9]_inst
+    theta_OBUF_inst
+    theta_OBUF_inst_i_1
+    a0/b0/c0/beta_INST_0
+    a0/b0/c1/beta_INST_0
+    a0/b0/c2/beta_INST_0
+    a0/b0/delta_INST_0
+    a0/b1/delta_INST_0
+    a0/b1/c0/beta_INST_0
+    a0/b1/c1/beta_INST_0
+    a0/b1/c2/beta_INST_0
+    a0/b2/delta_INST_0
+    a0/b2/c0/beta_INST_0
+    a0/b2/c1/beta_INST_0
+    a0/b2/c2/beta_INST_0
+    a0/zeta_INST_0
+    a1/zeta_INST_0
+    a1/b0/c0/beta_INST_0
+    a1/b0/c1/beta_INST_0
+    a1/b0/c2/beta_INST_0
+    a1/b0/delta_INST_0
+    a1/b1/delta_INST_0
+    a1/b1/c0/beta_INST_0
+    a1/b1/c1/beta_INST_0
+    a1/b1/c2/beta_INST_0
+    a1/b2/delta_INST_0
+    a1/b2/c0/beta_INST_0
+    a1/b2/c1/beta_INST_0
+    a1/b2/c2/beta_INST_0
+    a2/zeta_INST_0
+    a2/b0/c0/beta_INST_0
+    a2/b0/c1/beta_INST_0
+    a2/b0/c2/beta_INST_0
+    a2/b0/delta_INST_0
+    a2/b1/delta_INST_0
+    a2/b1/c0/beta_INST_0
+    a2/b1/c1/beta_INST_0
+    a2/b1/c2/beta_INST_0
+    a2/b2/delta_INST_0
+    a2/b2/c0/beta_INST_0
+    a2/b2/c1/beta_INST_0
+    a2/b2/c2/beta_INST_0
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">spydrnet</span> <span class="k">as</span> <span class="nn">sdn</span>
+
+
+<span class="c1"># Check if given instance is a black box</span>
+<span class="c1"># instance: std.Instance to check</span>
+<span class="c1"># Return True if instance is a black box</span>
+<span class="c1"># (defined by no listed cables or child within child&#39;s reference), else return False</span>
+<span class="k">def</span> <span class="nf">is_black_box</span><span class="p">(</span><span class="n">instance</span><span class="p">):</span>
+    <span class="n">definition</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">reference</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">definition</span><span class="o">.</span><span class="n">cables</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">definition</span><span class="o">.</span><span class="n">children</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span>
+
+
+<span class="c1"># Creates a copy of a instance</span>
+<span class="c1"># parent_instance: The instance that contains the instance be copy (used to keep hierarchical naming)</span>
+<span class="c1"># instance: The original instance to make the copy of</span>
+<span class="c1"># new_instance: The instance that will be the copy</span>
+<span class="c1"># Returns: None</span>
+<span class="k">def</span> <span class="nf">copy_instance</span><span class="p">(</span><span class="n">parent_instance</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">new_instance</span><span class="p">):</span>
+    <span class="c1"># Copy all the data from instance into new_instance</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">instance</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">new_instance</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="c1"># Change new_instance EDIF.identifier to represent its hierarchical name</span>
+    <span class="n">new_instance</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parent_instance</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">+</span> \
+        <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">new_instance</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span>
+    <span class="c1"># Determine if parent_instance and instance have .NAME in it data</span>
+    <span class="c1"># Uses .NAME if available, else used EDIF.identifier to generate</span>
+    <span class="c1"># .NAME for new_instance</span>
+    <span class="k">if</span> <span class="s1">&#39;.NAME&#39;</span> <span class="ow">in</span> <span class="n">parent_instance</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;.NAME&#39;</span> <span class="ow">in</span> <span class="n">instance</span><span class="p">:</span>
+            <span class="n">new_instance</span><span class="p">[</span><span class="s1">&#39;.NAME&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parent_instance</span><span class="p">[</span><span class="s1">&#39;.NAME&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> \
+                <span class="o">+</span> <span class="n">instance</span><span class="p">[</span><span class="s1">&#39;.NAME&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_instance</span><span class="p">[</span><span class="s1">&#39;.NAME&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parent_instance</span><span class="p">[</span><span class="s1">&#39;.NAME&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> \
+                <span class="o">+</span> <span class="n">instance</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;.NAME&#39;</span> <span class="ow">in</span> <span class="n">instance</span><span class="p">:</span>
+            <span class="n">new_instance</span><span class="p">[</span><span class="s1">&#39;.NAME&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parent_instance</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> \
+                <span class="o">+</span> <span class="n">instance</span><span class="p">[</span><span class="s1">&#39;.NAME&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_instance</span><span class="p">[</span><span class="s1">&#39;.NAME&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parent_instance</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> \
+                <span class="o">+</span> <span class="n">instance</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span>
+    <span class="c1"># Have new_instance reference the same definition as instance</span>
+    <span class="n">new_instance</span><span class="o">.</span><span class="n">reference</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">reference</span>
+
+
+<span class="c1"># Removes a newly created cable in favor of using the cable that connected to the outside of the instance</span>
+<span class="c1"># new_cable: Cable that was connecting the new pins instance&#39;s parent</span>
+<span class="c1"># old_cable: Cable that was connecting the old pins in instance</span>
+<span class="c1"># instance: The instance that is being flatten</span>
+<span class="c1"># Return: None</span>
+<span class="k">def</span> <span class="nf">use_outside_cable</span><span class="p">(</span><span class="n">new_cable</span><span class="p">,</span> <span class="n">old_cable</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+    <span class="n">wire</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># Need to find the wire that connects to the outside of the port that old_cable does</span>
+    <span class="c1"># Check each pin that old_cable is connected to to find the inside pin for the instance</span>
+    <span class="k">for</span> <span class="n">pin</span> <span class="ow">in</span> <span class="n">old_cable</span><span class="o">.</span><span class="n">wires</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">pins</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">pin</span> <span class="ow">in</span> <span class="n">instance</span><span class="o">.</span><span class="n">pins</span><span class="p">:</span>
+            <span class="c1"># Get the wire that connects to the outer pin that corresponds to the found inner pin</span>
+            <span class="n">wire</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">pins</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span><span class="o">.</span><span class="n">wire</span>
+            <span class="k">break</span>
+    <span class="c1"># Loop through each wire in new_cable</span>
+    <span class="k">for</span> <span class="n">new_wire</span> <span class="ow">in</span> <span class="n">new_cable</span><span class="o">.</span><span class="n">wires</span><span class="p">:</span>
+        <span class="c1"># Loop through is pin the wire connects to</span>
+        <span class="k">for</span> <span class="n">pin</span> <span class="ow">in</span> <span class="n">new_wire</span><span class="o">.</span><span class="n">pins</span><span class="p">:</span>
+            <span class="c1"># Disconnect the new_wire from the pin and connect wire to that pin instead</span>
+            <span class="n">new_wire</span><span class="o">.</span><span class="n">disconnect_pin</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span>
+            <span class="n">wire</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span>
+    <span class="c1"># Removes new_cable from the definition that holds it</span>
+    <span class="n">new_cable</span><span class="o">.</span><span class="n">definition</span><span class="o">.</span><span class="n">remove_cable</span><span class="p">(</span><span class="n">new_cable</span><span class="p">)</span>
+
+
+<span class="c1"># Remove instances that have been flatten</span>
+<span class="c1"># instance: std.Instance to be removed</span>
+<span class="c1"># Returns None</span>
+<span class="k">def</span> <span class="nf">clean_up</span><span class="p">(</span><span class="n">instance</span><span class="p">):</span>
+    <span class="c1"># Loop through each outside pin and disconnect it from its wire</span>
+    <span class="k">for</span> <span class="n">pin</span> <span class="ow">in</span> <span class="n">instance</span><span class="o">.</span><span class="n">pins</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">pin</span><span class="o">.</span><span class="n">wire</span><span class="o">.</span><span class="n">disconnect_pin</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span>
+    <span class="c1"># Remove instances from its parent definition</span>
+    <span class="n">instance</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">remove_child</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+
+
+<span class="c1"># Recursively flatten a given definition</span>
+<span class="c1"># definition: std.Definition to flatten</span>
+<span class="c1"># top_definition: Bool saying the given definition is the top definition of the IR</span>
+<span class="c1"># Returns: list of created instances</span>
+<span class="k">def</span> <span class="nf">flatten_definition</span><span class="p">(</span><span class="n">definition</span><span class="p">,</span> <span class="n">top_definition</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="c1"># Create a copy of the list of children</span>
+    <span class="n">children</span> <span class="o">=</span> <span class="n">definition</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">created</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="c1"># Loop through each pre-existing child of the definition</span>
+    <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">children</span><span class="p">:</span>
+        <span class="n">leaf_grandchildren</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">child_reference</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">reference</span>
+        <span class="c1"># Create a copy of the list of the children for the current child reference</span>
+        <span class="n">grandchildren</span> <span class="o">=</span> <span class="n">child_reference</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="nb">map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="c1"># Check if progress information should be printed</span>
+        <span class="k">if</span> <span class="n">top_definition</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_black_box</span><span class="p">(</span><span class="n">child</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Need to move cells from&quot;</span><span class="p">,</span> <span class="n">child</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">],</span>
+                  <span class="s2">&quot;that references&quot;</span><span class="p">,</span> <span class="n">child</span><span class="o">.</span><span class="n">reference</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">])</span>
+        <span class="c1"># Loop through each grandchild of definition</span>
+        <span class="k">for</span> <span class="n">grandchild</span> <span class="ow">in</span> <span class="n">grandchildren</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_black_box</span><span class="p">(</span><span class="n">grandchild</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Need to move cells from&quot;</span><span class="p">,</span> <span class="n">grandchild</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">],</span>
+                      <span class="s2">&quot;that references&quot;</span><span class="p">,</span> <span class="n">grandchild</span><span class="o">.</span><span class="n">reference</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">])</span>
+                <span class="c1"># Flatten any children if they contain non_leaf grandchildren</span>
+                <span class="c1"># Keep track of grandchildren that are leaf nodes</span>
+                <span class="n">leaf_grandchildren</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">flatten_definition</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">reference</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Finished moving cells from&quot;</span><span class="p">,</span>
+                      <span class="n">grandchild</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Keep track of grandchildren that are leaf nodes</span>
+                <span class="n">leaf_grandchildren</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">grandchild</span><span class="p">)</span>
+        <span class="c1"># Loop though each grandchild that is also a leaf including newly created grandchildren</span>
+        <span class="k">for</span> <span class="n">grandchild</span> <span class="ow">in</span> <span class="n">leaf_grandchildren</span><span class="p">:</span>
+            <span class="c1"># Create a new child inside of definition</span>
+            <span class="n">new_instance</span> <span class="o">=</span> <span class="n">definition</span><span class="o">.</span><span class="n">create_child</span><span class="p">()</span>
+            <span class="c1"># Copy data from the grandchild into the new instance</span>
+            <span class="n">copy_instance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">grandchild</span><span class="p">,</span> <span class="n">new_instance</span><span class="p">)</span>
+            <span class="c1"># Create a key, value relationship between grandchild and new_instance</span>
+            <span class="nb">map</span><span class="p">[</span><span class="n">grandchild</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_instance</span>
+            <span class="c1"># Add the new_instances to the list of created instances</span>
+            <span class="n">created</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_instance</span><span class="p">)</span>
+        <span class="c1"># Create a list of the original cables that the child has</span>
+        <span class="n">cables</span> <span class="o">=</span> <span class="n">child_reference</span><span class="o">.</span><span class="n">cables</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">cable</span> <span class="ow">in</span> <span class="n">cables</span><span class="p">:</span>
+            <span class="n">name_cable</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">new_cable</span> <span class="o">=</span> <span class="n">definition</span><span class="o">.</span><span class="n">create_cable</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">wire</span> <span class="ow">in</span> <span class="n">cable</span><span class="o">.</span><span class="n">wires</span><span class="p">:</span>
+                <span class="n">new_wire</span> <span class="o">=</span> <span class="n">new_cable</span><span class="o">.</span><span class="n">create_wire</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">pin</span> <span class="ow">in</span> <span class="n">wire</span><span class="o">.</span><span class="n">pins</span><span class="p">:</span>
+                    <span class="c1"># If the pin is connected to a port of the child, we should use an outside cable instead</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pin</span><span class="p">,</span> <span class="n">sdn</span><span class="o">.</span><span class="n">InnerPin</span><span class="p">):</span>
+                        <span class="n">name_cable</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="k">continue</span>
+                    <span class="c1"># Connect the new wire to pins on new instances that correspond pins on the original instances</span>
+                    <span class="n">new_wire</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="nb">map</span><span class="p">[</span><span class="n">pin</span><span class="o">.</span><span class="n">instance</span><span class="p">]</span><span class="o">.</span><span class="n">pins</span><span class="p">[</span><span class="n">pin</span><span class="o">.</span><span class="n">inner_pin</span><span class="p">])</span>
+            <span class="c1"># Check if we should name the cable or should use the outside cable</span>
+            <span class="k">if</span> <span class="n">name_cable</span><span class="p">:</span>
+                <span class="n">new_cable</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">child</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">+</span> \
+                    <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">cable</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span>
+                <span class="n">new_cable</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">new_cable</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">use_outside_cable</span><span class="p">(</span><span class="n">new_cable</span><span class="p">,</span> <span class="n">cable</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+        <span class="c1"># Remove any original children that is not a leaf</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_black_box</span><span class="p">(</span><span class="n">child</span><span class="p">):</span>
+            <span class="n">clean_up</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+        <span class="c1"># Check if progress information should be printed</span>
+        <span class="k">if</span> <span class="n">top_definition</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_black_box</span><span class="p">(</span><span class="n">child</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Finished moving cells from&quot;</span><span class="p">,</span> <span class="n">child</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">created</span>
+
+<span class="c1">#print the hierarchy of a netlist</span>
+<span class="k">def</span> <span class="nf">hierarchy</span><span class="p">(</span><span class="n">current_instance</span><span class="p">,</span><span class="n">indentation</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">indentation</span><span class="p">,</span><span class="n">current_instance</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">current_instance</span><span class="o">.</span><span class="n">reference</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+        <span class="n">hierarchy</span><span class="p">(</span><span class="n">child</span><span class="p">,</span><span class="n">indentation</span><span class="o">+</span><span class="s2">&quot;   &quot;</span><span class="p">)</span>
+
+
+<span class="n">example_name1</span> <span class="o">=</span> <span class="s2">&quot;unique_challenge&quot;</span>
+<span class="n">example_name2</span> <span class="o">=</span> <span class="s2">&quot;three_layer_hierarchy&quot;</span>
+<span class="n">example_name3</span> <span class="o">=</span> <span class="s2">&quot;unique_different_modules&quot;</span>
+<span class="n">example_name</span> <span class="o">=</span> <span class="n">example_name1</span>
+<span class="n">ir</span> <span class="o">=</span> <span class="n">sdn</span><span class="o">.</span><span class="n">load_example_netlist_by_name</span><span class="p">(</span><span class="n">example_name</span><span class="p">)</span>
+<span class="n">ir_orig</span> <span class="o">=</span> <span class="n">sdn</span><span class="o">.</span><span class="n">load_example_netlist_by_name</span><span class="p">(</span><span class="n">example_name</span><span class="p">)</span> <span class="c1">#store the original netlist for display later</span>
+<span class="n">top_def</span> <span class="o">=</span> <span class="n">ir</span><span class="o">.</span><span class="n">top_instance</span><span class="o">.</span><span class="n">reference</span>
+<span class="n">flatten_definition</span><span class="p">(</span><span class="n">top_def</span><span class="p">,</span> <span class="n">top_definition</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">td</span><span class="p">:</span>
+    <span class="n">file_name</span> <span class="o">=</span> <span class="n">example_name</span> <span class="o">+</span> <span class="s1">&#39;_flat.edf&#39;</span>
+    <span class="n">sdn</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span><span class="n">ir</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">td</span><span class="p">,</span> <span class="n">file_name</span><span class="p">))</span>
+
+<span class="c1"># sdn.composers.compose(&quot;test.edf&quot;, ir)</span>
+<span class="nb">print</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ORIGINAL HIERARCHY&quot;</span><span class="p">)</span>
+<span class="n">hierarchy</span><span class="p">(</span><span class="n">ir_orig</span><span class="o">.</span><span class="n">top_instance</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">HIERARCHY AFTER FLATTENING&quot;</span><span class="p">)</span>
+<span class="n">hierarchy</span><span class="p">(</span><span class="n">ir</span><span class="o">.</span><span class="n">top_instance</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.108 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-extended-plot-flatten-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/7d2ef718da19d6c4be08e8443619201f/plot_flatten.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_flatten.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/8a982295ba7253763b99b4ef589ef345/plot_flatten.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_flatten.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="plot_connectivity_graph.html" class="btn btn-neutral float-right" title="Connectivity Graph" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="plot_four_to_five_bit_counter.html" class="btn btn-neutral float-left" title="Four Bit Counter To Five Bit Counter" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019, Brigham Young Universitiy.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
