@@ -4,34 +4,48 @@
 Creating a Release
 ==================
 
-So you have code that works and improves SpyDrNet. Now you want to make it 
-publically available. This section aims to help you do just that. The steps
-are listed in what appears to us at this time to be the best order of
-operations. Steps which need more explanation are highlighted below.
+This section aims to help you do a spydrnet release, meaning you make the latest code and documentation available. The steps are listed in what seems to be the best order of operation. Steps which need more explanation are highlighted below.
 
-1. run `git merge master` while the pre-release branch is checked out.
-2. Create a pull request with the updated code in the pre-release branch.
-3. Update the release notes
-4. Update the documentation and ensure it can build properly
-5. Commit and push those changes to the pull request. Accept the pull request when the checks have finished.
-6. Checkout to master branch and update the tag
-7. Build the python package (this will update the documentation’s version number)
-8. Build the documentation
-9. Create the release on Github
-10. Publish the packages
-11. Publish the documentation
+1. Merge each contributors' branches into one branch (the 'next_release' branch)
+2. run `git merge master` while the next-release branch is checked out.
+3. :ref:`update_release_notes`
+4. :ref:`update_documentation` and ensure it can build properly
+5. On Github, create a pull request with the updated code in the next_release branch.
+6. Accept and merge the pull request when the checks have finished.
+7. Move to the master branch using `git checkout master`
+8. :ref:`create_and_update_tag`
+9. :ref:`build_documentation`
+10. :ref:`build_package` (this will update the documentation’s version number)
+11. :ref:`publish_packages`
+12. :ref:`github_release`
+13. :ref:`publish_documentation`
 
-Updating the documentation
+.. _update_release_notes:
+
+Update the Release Notes
+-------------------------
+
+The release notes file called RELEASE.rst should be updated to outline what has
+been acomplished. The date and version number should be included and other 
+information as needed can be entered as well.
+
+SpyDrNet uses a Major.Minor.Bug versioning scheme where minor 
+version updates do not break the existing API and major version updates may
+break it. Bug fixes do not add substantial new functionality, but rather fix 
+broken functionality.
+
+.. _update_documentation:
+
+Update the Documentation
 --------------------------
 
 The documentation pulls from doc strings as well as .rst files in the build so
 this step is important. The documentation is built using a makefile in the docs
 folder.
 
-Before building the documentation run a `make clean` to clear away files that 
-may mask warnings and errors and ensure the process is smooth.
+Before building the documentation run `make clean` to clear away the old files.
 
-For the release ensure that both:
+Before proceeding, ensure that both of the following are successful (make they execute without errors. Try to minimize the warnings as well):
 
 >>> make html
 
@@ -45,39 +59,22 @@ if you are missing packages run:
 
 You may also need to run 'sudo apt install latexmk' and 'apt install texlive-latex-extra' to be able to create the pdf file.
 
-build the documentation without error as the html version will be put online at 
-the time of release and the pdf should be included in the releases files on
-Github
+The generated files can be found in the build folder. Take a look at them and make sure everything looks good. Later, these commands will be run again, and the html files put online and pdf files added to the Github release files.
 
-The output in the build folder can be examined to ensure that everything looks
-good.
+.. _create_and_update_tag:
 
-Updating the Release Notes
+Create and Update the Tag
 --------------------------
 
-The release notes file called RELEASE.rst should be updated to outline what has
-been acomplished. The date and version number should be included and other 
-information as needed can be entered as well.
+Be sure you are on the master branch.
 
-SpyDrNet uses a Major.Minor.Bug versioning scheme where minor 
-version updates do not break the existing API and major version updates may
-break it. Bug fixes do not add substantial new functionality, but rather fix 
-broken functionality.
-
-Creating and updating the tag
------------------------------
-
-Tags are used to put a label on the release, the tag is used when building the
-documentation. If a new commit is pushed to the branch the tag will be left
-on the previous commit. In these cases the tag can be updated.
-
-In the examples below, replace 1.5.0 with the version number you want to release
+Tags are used to label the release. When all changes are merged into the main branch, create a new tag. In the examples below, replace 1.5.0 with the version number you are releasing.
 
 **To see the current version number**
 
 >>> git describe
 
-**Creation**
+**Create the tag**
 
 >>> git tag -a v1.5.0 -m "SpyDrNet 1.5.0"
 
@@ -93,10 +90,29 @@ If you mess up, you can use the following instructions to force update your tag
 
 >>> git push --tags -f
 
-Building the python package
----------------------------
+.. _build_documentation:
 
-Refer to pypi.org They have a tutorial called “uploading packages”
+Build the Documentation
+------------------------
+
+Make sure you are in the docs directory
+
+>>> cd docs
+
+then run the following:
+
+>>> make clean
+>>> make latexpdf
+>>> make html
+
+Make sure that each one executes without errors. Try to minimize warnings as well, although the most important thing is that the documentation looks the way you want it to.
+
+.. _build_package:
+
+Build the Python Package
+-------------------------
+
+Refer to pypi.org if necessary. They have a tutorial called “uploading packages”
 
 Upgrade pip if needed.
 
@@ -114,56 +130,12 @@ The build files will be stored in the following directories
 
 spydrnet/build and spydrnet/dist
 
-.. _Build:
+.. _publish_packages:
 
-Building the documentation
---------------------------
+Publish the Packages to Pypi
+-----------------------------
 
-Make sure you are in the docs directory
-
->>> cd docs
-
-then run the followings:
-
->>> make clean
->>> make latexpdf
->>> make html
-
-Make sure that each one executes and doesn't have errors. It's also nice if 
-the warnings are minimized as well, of course the most important thing is that the
-documentation looks the way you want.
-
-Creating a Github Release
--------------------------
-
-Releases can be created on github. On the releases tab you can draft a new
-release. You can then select the existing tag with the release number you want
-to release.
-
-The release should be named `SpyDrNet 1.5.0` where 1.5.0 is replaced with the
-proper release number.
-
-A description should be entered as well. It could just be a reiteration of the
-release notes or other relevant information.
-
-Three files should be added as assets to the new release:
-
-Two files will be generated when the repository is pushed to Pypi. A tar.gz file and a .whl file. 
-Uploead these two files after performing the next step of `Publising the packages to Pypi`
-
-Go to docs/latex folder, copy the `spydrnet_reference.pdf` to the assets under the new release,
-and changes its name to `spydrnet_reference-new_release_number.pdf`. If the pdf file doesn't exist, run:
-
->>> make latexpdf
-
-in the /docs folder
-
-Publishing the packages to Pypi
--------------------------------
-
-The packages need to be published to Pypi to be installable via pip. On the `Pypi website <https://packaging.python.org/tutorials/packaging-projects/>`_
-there is a guide on uploading packages. You will need an account for this. Follow the instructions there to upload
-to the test pip server then the production server.
+The packages need to be published to Pypi in order to be installable via pip. On the `Pypi website <https://packaging.python.org/tutorials/packaging-projects/>`_ there is a guide on uploading packages. You will need an account for this. Follow the instructions there to upload to the test pip server and then the production server.
 
 If you have an account and know what you are doing, use the command below :
 
@@ -175,41 +147,59 @@ To install the python package to check for success, use:
 
 >>> python3 -m pip install spydrnet
 
-Go to the release on the Pypi website through your account. Download the .whl file and the .tar.gz file.
-Add them as assets to the new release at GitHub.com
+Then go to the release on the Pypi website through your account. Download the .whl file and the .tar.gz file. These will be used in the next step.
 
-Publishing the documentation
-----------------------------
+.. _github_release:
+
+Create a Github Release
+------------------------
+
+Releases can be created on Github. On the releases tab you can draft a new
+release. You can then select the existing tag with the release number you want
+to release.
+
+The release should be named `SpyDrNet 1.5.0` where 1.5.0 is replaced with the
+proper release number.
+
+Enter a description–it could just be a reiteration of the release notes or other relevant information.
+
+Three files should be added as assets to the new release:
+    1. The .tar.gz file from the previous step
+    2. The .whl file from the previous step
+    3. The spydrnet_reference pdf document created in the :ref:`build_documentation` step. Go to docs/latex folder, change the `spydrnet_reference.pdf` name to `spydrnet_reference-new_release_number.pdf`, and then copy it to the assets under the new release.
+
+.. _publish_documentation:
+
+Publish the Documentation
+--------------------------
 
 This is easiest on Linux (or at least not Windows, MacOS works fine as well)
 
-Make sure you are still in the Master branch and that everything in the html folder is up-to-date.
-If not, re-run the instructions in :ref:`Build`.
+Make sure you are still on the Master branch and that everything in the html folder is up-to-date.
+If not, re-run the instructions in :ref:`build_documentation`.
 
-Checkout the gh-pages branch create a new folder with the release number as the
-name. Move the `docs/build/html` folder into the newly created folder. 
-Make sure to delete the html folder after you are finished.
+Move to the gh-pages branch using
 
-(If html folder doesn't contain the latest pages, it could be that the html folder wasn't deleted from the previous release,
-delete the folder, commit the changes and repeat the steps above)
+>>> git checkout gh-pages
 
-The documentation is built from the stable link so the stable link will need to
-be updated to point to the newly updated documentation.
+Create a new folder with the release number as the name. Move the contents of the `docs/build/html` folder into the newly created folder. Then delete the html folder (which should be empty).
+
+(If html folder doesn't contain the latest pages, it could be that the html folder wasn't deleted from the previous release, delete the folder, commit the changes and repeat the steps above)
+
+The documentation is built from a stable link which will need to be updated to point to the new documentation.
 
 Check which version of the documentation the stable link points to
 
 >>> ls -lha
 
-to update the stable link remove it first (watch syntax here very carefully, a
+To update the stable link, remove it first (watch syntax here very carefully, a
 terminating \ could make the command delete the folder's contents instead of the
 link)
 
 >>> rm stable
 
-then create a link to the new folder
+Then create a link to the new folder
 
 >>> ln -s version.number stable
 
-run git add to add the newly created folder and the stable link
-
-push your changes to the git repository, just to the ghpages branch.
+Then add, commit, and push the newly created folder and the updated stable link to the git repository, just to the gh-pages branch.
