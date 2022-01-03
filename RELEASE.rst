@@ -1,3 +1,10 @@
+SpyDrNet 1.10.1
+----------------
+January 1, 2022
+
+* Fixes some parts that did not fully detail dropping support for Python 3.5
+* Improvements to documentation about doing a release
+
 SpyDrNet 1.10.0
 ---------------
 December 29, 2021
