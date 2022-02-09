@@ -1,11 +1,9 @@
-from random import randint
-from select import select
-from eblif_tokens import *
-from eblif_tokenizer import Tokenizer
+from spydrnet.parsers.eblif.eblif_tokens import *
+from spydrnet.parsers.eblif.eblif_tokenizer import Tokenizer
 from spydrnet.ir import Netlist
 from spydrnet.ir import Instance
 from spydrnet.ir import Definition
-from spydrnet.ir.port import Port
+from spydrnet.ir import Port
 from spydrnet.ir import InnerPin
 from spydrnet.ir import Wire
 from spydrnet.util.selection import Selection
@@ -13,8 +11,27 @@ import spydrnet as sdn
 from spydrnet.ir.outerpin import OuterPin
 
 class EBLIFParser:
-    def __init__(self,file):
-        self.tokenizer = self.createTokenizer(file)
+    """
+    ADD NOTES HERE
+    """
+    #######################################################
+    # setup functions
+    #######################################################
+    @staticmethod
+    def from_filename(filename):
+        parser = EBLIFParser()
+        parser.file_name = filename
+        return parser
+
+    @staticmethod
+    def from_file_handle(file_handle):
+        parser = EBLIFParser()
+        parser.file_name = file_handle
+        return parser
+
+    def __init__(self):
+        self.file_name = None
+        self.tokenizer = None
         self.netlist = None
         self.current_instance_info = dict()
         self.top_instance = None
@@ -29,10 +46,18 @@ class EBLIFParser:
         self.comments = list() 
         self.current_model = None
 
-    def createTokenizer(self,file):
-        return Tokenizer(file)
+    def createTokenizer(self):
+        self.tokenizer = Tokenizer(self.file_name)
 
+    #######################################################
+    # parse functions
+    #######################################################
     def parse(self):
+        self.createTokenizer()
+        self.parse_eblif()
+        return self.netlist
+    
+    def parse_eblif(self):
         while(self.tokenizer.has_next()):
             token = self.tokenizer.next()
             if token == COMMENT:
@@ -45,7 +70,6 @@ class EBLIFParser:
             else:
                 None
         self.insert_comments_into_netlist_data()
-        return self.netlist
 
     def parse_top_model(self):
         netlist = Netlist()
@@ -57,7 +81,35 @@ class EBLIFParser:
 
     def parse_other_model(self):
         name = self.tokenizer.next()
+        try:
+            self.definitions[name]
+        except KeyError:
+            print("Error, no definition found")
+        definition = self.definitions[name]
+        self.tokenizer.next()
+        self.expect(INPUTS)
+        self.tokenizer.next()
+        while (self.tokenizer.token is not NEW_LINE):
+            port_name, index = self.get_port_name_and_index(self.tokenizer.token)
+            index = int(index)
+            port = next(definition.get_ports(filter=lambda x: x.name == port_name))
+            port.direction = sdn.IN
+            # print(port_name+" is "+port.name+" and is direction in")
+            self.tokenizer.next()
         
+        self.expect(OUTPUTS)
+        self.tokenizer.next()
+        while (self.tokenizer.token is not NEW_LINE):
+            port_name, index = self.get_port_name_and_index(self.tokenizer.token)
+            port = next(definition.get_ports(filter=lambda x: x.name == port_name))
+            port.direction = sdn.OUT
+            self.tokenizer.next()
+        while (True):
+            self.tokenizer.next()
+            if (self.tokenizer.token == BLACKBOX):
+                definition[".blackbox"] = True
+            elif self.tokenizer.token == END:
+                break        
     
     def parse_model_helper(self):
          while(self.tokenizer.has_next()):
@@ -493,47 +545,3 @@ class EBLIFParser:
             pin.wire.disconnect_pin(pin)
             new_wire.connect_pin(pin)
         wire_two.cable.remove_wire(wire_two)
-
-
-
-# file = "files_to_look_at/toggle_conn.eblif"
-file = "files_to_look_at/toggle_with_blackbox.eblif"
-# file = "files_to_look_at/example.eblif" 
-parser = EBLIFParser(file)
-netlist = parser.parse()
-# for cable in netlist.get_cables():
-#     print(cable.name)
-#     for wire in cable.wires:
-#         print("\tWire "+str(wire.index())+" connects to "+str(list(x.instance.name if x.__class__ is sdn.OuterPin else x.port.name +" of " +x.port.definition.name for x in wire.pins)))
-
-# print(netlist.data)
-# for port in netlist.get_hports():
-#     print(port.name+" has "+str(len(port.item.pins))+ " pins")
-
-# for instance in netlist.get_instances():
-    # print(instance.name+" " +str(instance.data))
-# print(netlist.data)
-    # try:
-    #     # instance['.names']
-    #     print(instance.name+" " +str(instance['.names']))
-    # except KeyError:
-    #     None
-
-# print(netlist.data)
-# for instance in netlist.top_instance.get_instances():
-#     print(instance.name)
-    
-
-# for port in netlist.get_hports():
-#     print(port.name+" has "+str(len(port.item.pins))+" pins")
-# for cable in netlist.get_cables():
-#     print(cable.name)
-#     for wire in cable.wires:
-#         print(list(x.instance.name if x.__class__ is sdn.OuterPin else x.port.definition.name for x in wire.pins))
-    # for pin in instance.get_pins(selection=Selection.OUTSIDE):
-    #     print('\t'+pin.inner_pin.port.name)
-    # print("\tTHEN")
-    # for port in instance.get_ports():
-    #     print('\t\t'+port.name)
-    #     for pin in port.pins:
-    #         print('\t\t\tPin:'+str(pin))

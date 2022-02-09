@@ -60,6 +60,9 @@ def _parse(filename):
     elif extension in [".v", ".vh"]:
         from spydrnet.parsers.verilog.parser import VerilogParser
         parser = VerilogParser.from_filename(filename)
+    elif extension in [".eblif",".blif"]:
+        from spydrnet.parsers.eblif.eblif_parser import EBLIFParser
+        parser = EBLIFParser.from_filename(filename)
     else:
         raise RuntimeError("Extension {} not recognized.".format(extension))
     parser.parse()
