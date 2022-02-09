@@ -4,13 +4,15 @@ import os
 from matplotlib.pyplot import connect
 from spydrnet.util.selection import Selection
 import spydrnet as sdn
-# from spydrnet.ir.port import Direction
-
 
 class EBLIFComposer:
-    def __init__(self,netlist,out_file="out.eblif"):
-        self.netlist = netlist
-        self.open_file = self.prepare_file(out_file)
+    def __init__(self):
+        self.netlist = None
+        self.open_file = None
+
+    def run(self, ir, file_out):
+        self.open_file = self.prepare_file(file_out)
+        self._compose(ir)
     
     def prepare_file(self,out_file):
         if (os.path.exists(out_file)):
@@ -25,8 +27,9 @@ class EBLIFComposer:
     def clean_up(self):
         self.open_file.close()
 
-    def compose(self):
-        print("Composing...")
+    def _compose(self,ir):
+        self.netlist = ir
+        # print("Composing...")
         self.compose_comments()
         self.compose_top_model()
         self.clean_up()
@@ -45,6 +48,7 @@ class EBLIFComposer:
         self.compose_default_wires()
         self.compose_instances()
         self.compose_end()
+        self.compose_blackboxes()
 
     def compose_top_level_ports(self):
         to_write = ".inputs "
@@ -84,8 +88,6 @@ class EBLIFComposer:
             self.compose_subcircuits(categories[".names"])
         if ".latch" in categories.keys():
             self.compose_subcircuits(categories[".latch"])
-        # for type,instance_list in categories.items():
-        #     print(type)
     
     def separate_by_type(self):
         dict_by_types = dict()
@@ -93,8 +95,8 @@ class EBLIFComposer:
             try:
                 instance["TYPE"]
             except KeyError:
-                print("Error, no type found")
-                # instance["TYPE"] = "other"
+                # print("Error, no type found")
+                instance["TYPE"] = "other"
             type = instance["TYPE"]
             try:
                 dict_by_types[type]
@@ -182,9 +184,7 @@ class EBLIFComposer:
             port_list = list(x for x in latch_instance.get_ports())
             # ['input', 'output', 'type', 'control', 'init-val'] is the specific order of ports
             for port_type in ['input', 'output', 'type', 'control', 'init-val']:
-                # print(port_type)
                 # current_port = next(port for port in port_list if port.name == port_type)
-                # print(current_port.name)
                 for pin in latch_instance.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port.name == port_type):
                     connection_name = None
                     if pin.wire:
@@ -210,7 +210,6 @@ class EBLIFComposer:
         return string_to_return
 
     def find_and_write_additional_instance_info(self,instance):
-        # print(instance.data)
         to_write = ""
         if "EBLIF.cname" in instance.data:
             to_write+=".cname "+instance["EBLIF.cname"]+'\n'
@@ -222,22 +221,19 @@ class EBLIFComposer:
                 to_write+=".attr "+key+" "+value+'\n'
         self.write_out(to_write)
     
+    def compose_blackboxes(self):
+        for definition in self.netlist.get_definitions():
+            if ".blackbox" in definition.data.keys():
+                to_write = "\n.model "+definition.name
+                to_write+="\n.inputs"
+                for port in definition.get_ports(filter=lambda x: x.direction is sdn.IN):
+                    to_write+=" "+port.name
+                to_write+="\n.outputs"
+                for port in definition.get_ports(filter=lambda x: x.direction is sdn.OUT):
+                    to_write+=" "+port.name
+                self.write_out(to_write+"\n")
+                self.write_out(".blackbox\n")
+                self.compose_end()
+
     def compose_end(self):
-        self.write_out(".end")
-
-
-
-from eblif_parser import EBLIFParser
-file = "files_to_look_at/toggle_with_blackbox.eblif" 
-parser = EBLIFParser(file)
-netlist = parser.parse()
-composer = EBLIFComposer(netlist)
-composer.compose()
-# for instance in netlist.get_instances():
-#     if instance.reference.name == "IBUF":
-#         for port in instance.get_ports():
-#             print(port.pins)
-#         for port in instance.reference.get_ports():
-#             print(port.pins)
-
-# TODO compose .names and .latch next
+        self.write_out(".end\n")

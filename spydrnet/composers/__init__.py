@@ -15,5 +15,10 @@ def compose(netlist, filename, definition_list=[], write_blackbox=True):
         from spydrnet.composers.verilog.composer import Composer
         composer = Composer(definition_list, write_blackbox)
         composer.run(netlist, file_out=filename)
+    elif extension_lower in [".eblif",".blif"]:
+        from spydrnet.composers.eblif.eblif_composer import EBLIFComposer
+        composer = EBLIFComposer()
+        composer.run(netlist,filename)
+        None
     else:
         raise RuntimeError("Extension {} not recognized.".format(extension))
