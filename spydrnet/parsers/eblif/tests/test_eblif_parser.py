@@ -30,6 +30,7 @@ class TestEBLIFParser(unittest.TestCase):
         for instance in self.netlist.get_instances():
             self.assertTrue(instance.reference.name in self.definition_list)
             self.assertTrue(self.netlist_is_own_netlist(instance))
+            self.assertEqual(instance["TYPE"],".subckt")
 
     def test_top_level_ports(self):
         input_port_list = ["clk","reset"]
@@ -43,10 +44,11 @@ class TestEBLIFParser(unittest.TestCase):
                 self.assertTrue(self.netlist_is_own_netlist(port))
 
     def test_cables(self):
-        None
-
-    def test_wire_and_pin_connections(self):
-        None
+        count = 0
+        for cable in self.netlist.get_cables():
+            self.assertTrue(self.netlist_is_own_netlist(cable))
+            count+=1
+        self.assertEqual(count,9)
 
     def netlist_is_own_netlist(self,object):
         netlist_list = list(x for x in object.get_netlists())
@@ -55,5 +57,4 @@ class TestEBLIFParser(unittest.TestCase):
         return False
         
 
-# file = os.path.join(base_dir, 'support_files', 'eblif_netlists', "toggle.eblif.zip")
-# netlist = sdn.parse(file)
+    # TODO add wire and connections tests
