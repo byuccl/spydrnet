@@ -1,7 +1,4 @@
-from asyncore import write
-from nis import cat
 import os
-from matplotlib.pyplot import connect
 from spydrnet.util.selection import Selection
 import spydrnet as sdn
 

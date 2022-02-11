@@ -133,7 +133,7 @@ class EBLIFParser:
         # Libraries aren't in blif, so just create a single library
         library = self.netlist.create_library(name="library_1")
         top_instance_def = library.create_definition(name=self.netlist.name)
-        top_instance = Instance(name=top_instance_def.name+"_top_instance")
+        top_instance = Instance(name=top_instance_def.name)
         top_instance.reference = top_instance_def
         self.netlist.set_top_instance(top_instance)
         self.current_model = top_instance
