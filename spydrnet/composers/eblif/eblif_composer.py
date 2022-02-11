@@ -84,9 +84,9 @@ class EBLIFComposer:
         if ".other" in categories.keys():
             self.compose_subcircuits(categories[".other"])
         if ".names" in categories.keys():
-            self.compose_subcircuits(categories[".names"])
+            self.compose_names(categories[".names"])
         if ".latch" in categories.keys():
-            self.compose_subcircuits(categories[".latch"])
+            self.compose_latches(categories[".latch"])
     
     def separate_by_type(self):
         dict_by_types = dict()
@@ -134,7 +134,6 @@ class EBLIFComposer:
     
     def compose_names(self,list_of_names):
         for name_instance in list_of_names:
-            print(name_instance.name)
             to_write = ".names "
             init_values = list()
             for pin in name_instance.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port.direction is sdn.IN):
@@ -142,6 +141,8 @@ class EBLIFComposer:
                 if pin.wire:
                     to_write+=pin.wire.cable.name+" "
                     connection_name=pin.wire.cable.name
+                    if len(pin.wire.cable.wires) > 1: # if a multi bit wire, add the index
+                        connection_name+="["+str(pin.wire.cable.wires.index(pin.wire))+"]"
                 else:
                     to_write+="unconn "
                     connection_name="unconn"
@@ -180,22 +181,20 @@ class EBLIFComposer:
     def compose_latches(self,latch_list):
         for latch_instance in latch_list:
             to_write = ".latch "
-            port_list = list(x for x in latch_instance.get_ports())
-            # ['input', 'output', 'type', 'control', 'init-val'] is the specific order of ports
-            for port_type in ['input', 'output', 'type', 'control', 'init-val']:
+            # port_list = list(x for x in latch_instance.get_ports())
+            for port_type in ['input', 'output', 'type', 'control', 'init-val']: # this is the specific order of ports
                 # current_port = next(port for port in port_list if port.name == port_type)
                 for pin in latch_instance.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port.name == port_type):
-                    connection_name = None
+                    # connection_name = None
                     if pin.wire:
                         to_write+=pin.wire.cable.name
                         if (len(pin.wire.cable.wires)>1):
                             to_write+="["+str(pin.wire.index())+"]"
                         to_write+=" "
-                        # TODO get the index too
-                        connection_name=pin.wire.cable.name
+                        # connection_name=pin.wire.cable.name
                     else:
                         to_write+="unconn "
-                        connection_name="unconn"
+                        # connection_name="unconn"
             to_write+='\n'
             self.write_out(to_write)
             self.find_and_write_additional_instance_info(latch_instance)

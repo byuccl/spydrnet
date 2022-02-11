@@ -193,8 +193,11 @@ class EBLIFParser:
         try:
             cable.wires[wire_index]
         except IndexError:
-            wire = Wire()
-            cable.add_wire(wire,wire_index)
+            while (len(cable.wires)-1 < wire_index): # add wires to cable until we get the right index
+                wire = Wire()
+                cable.add_wire(wire,wire_index)
+            # wire = Wire()
+            # cable.add_wire(wire,wire_index)
         wire = cable.wires[wire_index]
         wire.connect_pin(pin)
 
