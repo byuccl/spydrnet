@@ -17,7 +17,7 @@ def compose(netlist, filename, definition_list=[], write_blackbox=True):
         composer.run(netlist, file_out=filename)
     elif extension_lower in [".eblif",".blif"]:
         from spydrnet.composers.eblif.eblif_composer import EBLIFComposer
-        composer = EBLIFComposer()
+        composer = EBLIFComposer(write_blackbox)
         composer.run(netlist,filename)
         None
     else:

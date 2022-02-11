@@ -3,9 +3,10 @@ from spydrnet.util.selection import Selection
 import spydrnet as sdn
 
 class EBLIFComposer:
-    def __init__(self):
+    def __init__(self,write_blackbox):
         self.netlist = None
         self.open_file = None
+        self.write_blackbox = write_blackbox
 
     def run(self, ir, file_out):
         self.open_file = self.prepare_file(file_out)
@@ -45,7 +46,8 @@ class EBLIFComposer:
         self.compose_default_wires()
         self.compose_instances()
         self.compose_end()
-        self.compose_blackboxes()
+        if (self.write_blackbox):
+            self.compose_blackboxes()
 
     def compose_top_level_ports(self):
         to_write = ".inputs "

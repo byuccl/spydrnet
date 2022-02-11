@@ -12,8 +12,11 @@ class TestEBLIFComposer(unittest.TestCase):
         self.netlist_1 = sdn.parse(os.path.join(base_dir, 'support_files', 'eblif_netlists', "toggle.eblif.zip"))
         self.definition_list = ["INV","BUFG","FDRE","IBUF","OBUF","toggle"]
         sdn.compose(self.netlist_1,"temp_for_composer_test.eblif")
+        sdn.compose(self.netlist_1,"temp_for_composer_test_no_blackbox.eblif",write_blackbox=False)
         self.netlist_2 = sdn.parse("temp_for_composer_test.eblif")
+        self.netlist_3 = sdn.parse("temp_for_composer_test_no_blackbox.eblif")
         os.remove("temp_for_composer_test.eblif")
+        os.remove("temp_for_composer_test_no_blackbox.eblif")
     
     def test_netlist_name(self):
         self.assertEqual(self.netlist_1.name,self.netlist_2.name)
@@ -38,6 +41,12 @@ class TestEBLIFComposer(unittest.TestCase):
         cables_2 = list(cable.name for cable in self.netlist_2.get_cables())
         self.assertEqual(cables_1,cables_2)
         self.assertEqual(len(cables_1),len(cables_2))
+    
+    def test_no_blackbox_netlist(self):
+        for definition in self.netlist_1.get_definitions(filter=lambda x: x is not self.netlist_1.top_instance.reference):
+            self.assertTrue(".blackbox" in definition.data.keys(),definition.name+" is not a blackbox"+str(definition.data))
+        for definition in self.netlist_3.get_definitions(filter=lambda x: x is not self.netlist_3.top_instance.reference):
+            self.assertFalse(".blackbox" in definition.data,definition.name+" is a blackbox"+str(definition.data))
 
     # TODO add wires and connections tests
         
