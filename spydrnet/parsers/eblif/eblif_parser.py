@@ -270,7 +270,7 @@ class EBLIFParser:
                     instance[UNCONN]
                 except KeyError:
                     instance[UNCONN] = list()
-                instance[UNCONN].append(port_name)
+                instance[UNCONN].append(port_name+"["+str(pin_index)+"]")
                 continue
             pin = next(instance.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port.name == port_name and x.inner_pin is x.inner_pin.port.pins[pin_index]))
             self.connect_top_level_port(pin,cable_name,cable_index)
