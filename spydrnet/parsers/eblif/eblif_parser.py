@@ -1,18 +1,21 @@
+import spydrnet as sdn
 from spydrnet.parsers.eblif.eblif_tokens import *
 from spydrnet.parsers.eblif.eblif_tokenizer import Tokenizer
 from spydrnet.ir import Netlist
-from spydrnet.ir import Instance
 from spydrnet.ir import Definition
+from spydrnet.ir import Instance
 from spydrnet.ir import Port
 from spydrnet.ir import InnerPin
+from spydrnet.ir.outerpin import OuterPin
 from spydrnet.ir import Wire
 from spydrnet.util.selection import Selection
-import spydrnet as sdn
-from spydrnet.ir.outerpin import OuterPin
 
 class EBLIFParser:
     """
-    ADD NOTES HERE
+    Parse BLIF and EBLIF files into SpyDrNet
+
+    The first model is considered the netlist's top instance. Any model that follows is used as information for the definitions (aka primitive information)
+
     """
     #######################################################
     # setup functions
@@ -34,10 +37,10 @@ class EBLIFParser:
         self.tokenizer = None
         self.netlist = None
         self.current_instance_info = dict()
-        self.top_instance = None
+        # self.top_instance = None
         self.current_instance = None
-        self.latest_definition = None
-        self.information = dict()
+        # self.latest_definition = None
+        # self.information = dict()
         self.definitions = dict()
         self.cables = dict()
         self.default_names = dict()
@@ -156,7 +159,7 @@ class EBLIFParser:
                 self.netlist.top_instance.reference.add_port(port)
                 self.top_level_input_ports[port_name] = port
                 pin = port.create_pin()
-            self.connect_top_level_port(pin,port_name,index)
+            self.connect_pins_to_wires(pin,port_name,index)
             self.tokenizer.next()
         
         self.expect(OUTPUTS)
@@ -174,7 +177,7 @@ class EBLIFParser:
                 self.netlist.top_instance.reference.add_port(port)
                 self.top_level_output_ports[port_name] = port
                 pin = port.create_pin()
-            self.connect_top_level_port(pin,port_name,index)
+            self.connect_pins_to_wires(pin,port_name,index)
             self.tokenizer.next()
 
     def create_top_level_port(self,port_direction,port_name):
@@ -182,7 +185,7 @@ class EBLIFParser:
         port.name = port_name
         return port
     
-    def connect_top_level_port(self, pin, cable_name, wire_index):
+    def connect_pins_to_wires(self, pin, cable_name, wire_index):
         # connect the port to a wire in a cable named after it
         cable = None
         if (cable_name in self.cables.keys()):
@@ -234,7 +237,7 @@ class EBLIFParser:
             # Note: if a definition is created, instance information is automatically collected
         else:
             definition = self.definitions[reference_model]
-            self.collect_instance_information()
+            self.collect_subcircuit_information()
         instance = self.netlist.top_instance.reference.create_child(reference = definition)
         self.current_instance = instance
         instance["TYPE"] = ".subckt"
@@ -251,7 +254,7 @@ class EBLIFParser:
         self.definitions[definition.name] = definition
         return definition
 
-    def collect_instance_information(self):
+    def collect_subcircuit_information(self):
         self.tokenizer.next()
         while (self.tokenizer.token is not NEW_LINE):
             token = self.tokenizer.token
@@ -273,7 +276,7 @@ class EBLIFParser:
                 instance[UNCONN].append(port_name+"["+str(pin_index)+"]")
                 continue
             pin = next(instance.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port.name == port_name and x.inner_pin is x.inner_pin.port.pins[pin_index]))
-            self.connect_top_level_port(pin,cable_name,cable_index)
+            self.connect_pins_to_wires(pin,cable_name,cable_index)
 
     def parse_comment(self):
         token = self.tokenizer.next()
@@ -386,7 +389,6 @@ class EBLIFParser:
                 for key,i in zip(port_nets.keys(),list(i for i in range(len(input_values)))):
                     port_nets[key].append(input_values[i])
                 self.tokenizer.next()
-        # print(port_nets)
 
         # then make/get def called LUT_names_# where # is the # of ports-1
         name = "logic-gate_"+str(len(port_nets.keys())-1)
@@ -498,8 +500,6 @@ class EBLIFParser:
         cable_two_name,cable_two_index = self.get_port_name_and_index(cable_two_info)
         wire_one,wire_two = self.get_connected_wires(cable_one_name,cable_one_index,cable_two_name,cable_two_index)
         self.merge_wires(wire_one,wire_two)
-        # print(self.get_port_name_and_index(cable_one))
-        # print(self.get_port_name_and_index(cable_two))
 
     def get_connected_wires(self,cable_one_name,index_one,cable_two_name,index_two):
         cable_one = None
