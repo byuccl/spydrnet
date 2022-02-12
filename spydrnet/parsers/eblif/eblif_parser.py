@@ -100,7 +100,7 @@ class EBLIFParser:
         while (True):
             self.tokenizer.next()
             if (self.tokenizer.token == BLACKBOX):
-                definition[".blackbox"] = True
+                definition["EBLIF.blackbox"] = True
             elif self.tokenizer.token == END:
                 break   
     
@@ -154,11 +154,12 @@ class EBLIFParser:
     
     def parse_top_level_ports(self):
         while(self.tokenizer.peek() == INPUTS):
-            # print("parsing inputs")
             self.parse_top_level_inputs()
         while(self.tokenizer.peek() == OUTPUTS):
-            # print("parsing outputs")
             self.parse_top_level_outputs()
+
+        while(self.tokenizer.peek() == CLOCK):
+            self.parse_top_level_clock()
     
     def parse_top_level_inputs(self):
         self.expect(INPUTS)
@@ -196,6 +197,17 @@ class EBLIFParser:
                 self.top_level_output_ports[port_name] = port
                 pin = port.create_pin()
             self.connect_pins_to_wires(pin,port_name,index)
+            self.tokenizer.next()
+    
+    def parse_top_level_clock(self):
+        self.expect(CLOCK)
+        self.tokenizer.next()
+        try:
+            self.netlist.top_instance["EBLIF.clock"]
+        except KeyError:
+            self.netlist.top_instance["EBLIF.clock"] = list()
+        while (self.tokenizer.token is not NEW_LINE):
+            self.netlist.top_instance["EBLIF.clock"].append(self.tokenizer.token)
             self.tokenizer.next()
 
     def create_top_level_port(self,port_direction,port_name):

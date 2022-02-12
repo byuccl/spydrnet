@@ -43,6 +43,7 @@ class EBLIFComposer:
         to_write = ".model "+top_instance.reference.name+"\n"
         self.write_out(to_write)
         self.compose_top_level_ports()
+        self.compose_top_level_clocks()
         self.compose_default_wires()
         self.compose_instances()
         self.compose_end()
@@ -52,15 +53,30 @@ class EBLIFComposer:
     def compose_top_level_ports(self):
         to_write = ".inputs "
         for port in self.netlist.top_instance.get_ports(filter = lambda x: x.direction is sdn.Port.Direction.IN):
-            to_write+=port.name+" "
+            if len(port.pins) > 1:
+                for i in range(len(port.pins)):
+                    to_write+=port.name+"["+str(i)+"] "
+            else:
+                to_write+=port.name+" "
         to_write+="\n"
         self.write_out(to_write)
 
         to_write = ".outputs "
         for port in self.netlist.top_instance.get_ports(filter = lambda x: x.direction is sdn.Port.Direction.OUT):
-            to_write+=port.name+" "
+            if len(port.pins) > 1:
+                for i in range(len(port.pins)):
+                    to_write+=port.name+"["+str(i)+"] "
+            else:
+                to_write+=port.name+" "
         to_write+="\n"
         self.write_out(to_write)
+    
+    def compose_top_level_clocks(self):
+        if "EBLIF.clock" in self.netlist.top_instance.data:
+            to_write = ".clock "
+            for clock in self.netlist.top_instance["EBLIF.clock"]:
+                to_write+=clock+" "
+            self.write_out(to_write+"\n")
     
     def compose_default_wires(self):
         default_wires = list()
@@ -221,7 +237,7 @@ class EBLIFComposer:
     
     def compose_blackboxes(self):
         for definition in self.netlist.get_definitions():
-            if ".blackbox" in definition.data.keys():
+            if "EBLIF.blackbox" in definition.data.keys():
                 to_write = "\n.model "+definition.name
                 to_write+="\n.inputs"
                 for port in definition.get_ports(filter=lambda x: x.direction is sdn.IN):

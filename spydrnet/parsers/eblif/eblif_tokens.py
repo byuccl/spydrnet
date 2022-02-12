@@ -1,6 +1,7 @@
 ATTRIBUTE = ".attr"
 BACKSLASH = "\\"
 BLACKBOX = ".blackbox"
+CLOCK = ".clock"
 CNAME = ".cname"
 COMMENT = "#"
 CONN = ".conn"
