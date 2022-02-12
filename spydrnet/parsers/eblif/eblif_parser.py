@@ -90,6 +90,21 @@ class EBLIFParser:
             print("Error, no definition found")
         definition = self.definitions[name]
         self.tokenizer.next()
+
+        while(self.tokenizer.peek() == INPUTS):
+            self.parse_other_model_input_ports(definition)
+        
+        while(self.tokenizer.peek() == OUTPUTS):
+            self.parse_other_model_output_ports(definition)
+
+        while (True):
+            self.tokenizer.next()
+            if (self.tokenizer.token == BLACKBOX):
+                definition[".blackbox"] = True
+            elif self.tokenizer.token == END:
+                break   
+    
+    def parse_other_model_input_ports(self,definition):
         self.expect(INPUTS)
         self.tokenizer.next()
         while (self.tokenizer.token is not NEW_LINE):
@@ -97,9 +112,9 @@ class EBLIFParser:
             index = int(index)
             port = next(definition.get_ports(filter=lambda x: x.name == port_name))
             port.direction = sdn.IN
-            # print(port_name+" is "+port.name+" and is direction in")
             self.tokenizer.next()
-        
+    
+    def parse_other_model_output_ports(self,definition):
         self.expect(OUTPUTS)
         self.tokenizer.next()
         while (self.tokenizer.token is not NEW_LINE):
@@ -107,12 +122,6 @@ class EBLIFParser:
             port = next(definition.get_ports(filter=lambda x: x.name == port_name))
             port.direction = sdn.OUT
             self.tokenizer.next()
-        while (True):
-            self.tokenizer.next()
-            if (self.tokenizer.token == BLACKBOX):
-                definition[".blackbox"] = True
-            elif self.tokenizer.token == END:
-                break        
     
     def parse_model_helper(self):
          while(self.tokenizer.has_next()):
@@ -144,6 +153,14 @@ class EBLIFParser:
         self.parse_top_level_ports()
     
     def parse_top_level_ports(self):
+        while(self.tokenizer.peek() == INPUTS):
+            # print("parsing inputs")
+            self.parse_top_level_inputs()
+        while(self.tokenizer.peek() == OUTPUTS):
+            # print("parsing outputs")
+            self.parse_top_level_outputs()
+    
+    def parse_top_level_inputs(self):
         self.expect(INPUTS)
         self.tokenizer.next()
         while (self.tokenizer.token is not NEW_LINE):
@@ -161,7 +178,8 @@ class EBLIFParser:
                 pin = port.create_pin()
             self.connect_pins_to_wires(pin,port_name,index)
             self.tokenizer.next()
-        
+    
+    def parse_top_level_outputs(self):
         self.expect(OUTPUTS)
         self.tokenizer.next()
         while (self.tokenizer.token is not NEW_LINE):
@@ -203,7 +221,6 @@ class EBLIFParser:
             # cable.add_wire(wire,wire_index)
         wire = cable.wires[wire_index]
         wire.connect_pin(pin)
-
     
     def parse_definition_port(self,definition):
         port = Port()
@@ -297,7 +314,7 @@ class EBLIFParser:
         index_specified = (string[len(string)-1] == "]")
         if index_specified:
             open_bracket = string.rfind("[")
-            if open_bracket is -1:
+            if open_bracket == -1:
                 return string, 0
             else:
                 close_bracket = string.find("]",open_bracket)
@@ -416,6 +433,7 @@ class EBLIFParser:
         for port in definition.get_ports():
             self.current_instance_info[port.name] = list_of_nets[i]
             i+=1
+        # instance.name = list_of_nets[i-1] # by convention, the name of the instance is the name of the driven net
 
         # then connect the nets to the ports
         self.connect_instance_pins(instance)
@@ -472,7 +490,7 @@ class EBLIFParser:
             definition = self.netlist.libraries[0].create_definition(name=name)
             self.definitions[name] = definition
             for order in port_info.keys() :
-                if order is not "output":
+                if order != "output":
                     port = self.create_names_port(order,Port.Direction.IN)
                     definition.add_port(port)
                 else:
