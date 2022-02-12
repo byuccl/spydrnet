@@ -44,9 +44,9 @@ class TestEBLIFComposer(unittest.TestCase):
     
     def test_no_blackbox_netlist(self):
         for definition in self.netlist_1.get_definitions(filter=lambda x: x is not self.netlist_1.top_instance.reference):
-            self.assertTrue(".blackbox" in definition.data.keys(),definition.name+" is not a blackbox"+str(definition.data))
+            self.assertTrue("EBLIF.blackbox" in definition.data.keys(),definition.name+" is not a blackbox"+str(definition.data))
         for definition in self.netlist_3.get_definitions(filter=lambda x: x is not self.netlist_3.top_instance.reference):
-            self.assertFalse(".blackbox" in definition.data,definition.name+" is a blackbox"+str(definition.data))
+            self.assertFalse("EBLIF.blackbox" in definition.data,definition.name+" is a blackbox"+str(definition.data))
 
     # TODO add wires and connections tests
         
