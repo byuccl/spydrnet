@@ -72,6 +72,7 @@ class EBLIFParser:
                     self.parse_top_model()
             else:
                 None
+        self.set_subcircuit_names_by_convention()
         self.insert_comments_into_netlist_data()
 
     def parse_top_model(self):
@@ -233,7 +234,33 @@ class EBLIFParser:
             # cable.add_wire(wire,wire_index)
         wire = cable.wires[wire_index]
         wire.connect_pin(pin)
-    
+
+    def parse_sub_circuit(self):
+        self.current_instance_info.clear()
+        reference_model = self.tokenizer.next()
+        definition = None
+        if reference_model not in list(key for key in self.definitions.keys()):  # if the reference model is not found in the netlist, create it
+            definition = self.create_new_definition()
+            # Note: if a definition is created, instance information is automatically collected
+        else:
+            definition = self.definitions[reference_model]
+            self.collect_subcircuit_information()
+        instance = self.netlist.top_instance.reference.create_child(reference = definition)
+        self.current_instance = instance
+        instance["EBLIF.type"] = "EBLIF.subckt"
+        self.assign_instance_a_default_name(instance)
+        self.connect_instance_pins(instance)
+        self.check_for_and_add_more_instance_info()
+
+    def create_new_definition(self):
+        definition = self.netlist.libraries[0].create_definition(name = self.tokenizer.token)
+        self.tokenizer.next()
+        while (self.tokenizer.token is not NEW_LINE):
+            self.parse_definition_port(definition)
+            self.tokenizer.next()
+        self.definitions[definition.name] = definition
+        return definition
+
     def parse_definition_port(self,definition):
         port = Port()
         token = self.tokenizer.token
@@ -256,32 +283,6 @@ class EBLIFParser:
             definition.add_port(new_port)
             # port.create_pin()
         # return port
-
-    def parse_sub_circuit(self):
-        self.current_instance_info.clear()
-        reference_model = self.tokenizer.next()
-        definition = None
-        if reference_model not in list(key for key in self.definitions.keys()):  # if the reference model is not found in the netlist, create it
-            definition = self.create_new_definition()
-            # Note: if a definition is created, instance information is automatically collected
-        else:
-            definition = self.definitions[reference_model]
-            self.collect_subcircuit_information()
-        instance = self.netlist.top_instance.reference.create_child(reference = definition)
-        self.current_instance = instance
-        instance["TYPE"] = ".subckt"
-        self.assign_instance_a_default_name(instance)
-        self.connect_instance_pins(instance)
-        self.check_for_and_add_more_instance_info()
-
-    def create_new_definition(self):
-        definition = self.netlist.libraries[0].create_definition(name = self.tokenizer.token)
-        self.tokenizer.next()
-        while (self.tokenizer.token is not NEW_LINE):
-            self.parse_definition_port(definition)
-            self.tokenizer.next()
-        self.definitions[definition.name] = definition
-        return definition
 
     def collect_subcircuit_information(self):
         self.tokenizer.next()
@@ -316,7 +317,7 @@ class EBLIFParser:
         self.comments.append(comment)
     
     def insert_comments_into_netlist_data(self):
-        self.netlist["COMMENT"] = self.comments
+        self.netlist["EBLIF.comment"] = self.comments
 
     def expect(self, token):
         self.tokenizer.next()
@@ -435,9 +436,9 @@ class EBLIFParser:
         # then create an instance of it
         instance = self.netlist.top_instance.reference.create_child()
         instance.reference = definition
-        self.assign_instance_a_default_name(instance)
+        # self.assign_instance_a_default_name(instance)
         self.current_instance = instance
-        instance["TYPE"] = ".names"
+        instance["EBLIF.type"] = "EBLIF.names"
 
         # fill the current_instance_info dictionary with each port name and the key
         list_of_nets = list(key for key in port_nets.keys())
@@ -445,14 +446,13 @@ class EBLIFParser:
         for port in definition.get_ports():
             self.current_instance_info[port.name] = list_of_nets[i]
             i+=1
-        # instance.name = list_of_nets[i-1] # by convention, the name of the instance is the name of the driven net
+        instance.name = list_of_nets[i-1] # by convention, the name of the instance is the name of the driven net
 
         # then connect the nets to the ports
         self.connect_instance_pins(instance)
 
         # then add the info to the metadata dictionary
-        instance[".names"] = port_nets
-        # print("next token is " +self.tokenizer.next_token)
+        instance["EBLIF.names"] = port_nets
         self.check_for_and_add_more_instance_info()
 
     def check_if_init_values(self,string):
@@ -465,10 +465,10 @@ class EBLIFParser:
     def look_for_true_false_undef(self):
         if self.tokenizer.token in [TRUE_WIRE,FALSE_WIRE,UNDEF_WIRE]:
             try:
-                self.netlist["default_wires"]
+                self.netlist["EBLIF.default_wires"]
             except KeyError:
-                self.netlist["default_wires"] = list()
-            self.netlist["default_wires"].append(self.tokenizer.token)
+                self.netlist["EBLIF.default_wires"] = list()
+            self.netlist["EBLIF.default_wires"].append(self.tokenizer.token)
             if (self.tokenizer.token is TRUE_WIRE):
                 self.tokenizer.next()
                 self.tokenizer.next()
@@ -513,9 +513,10 @@ class EBLIFParser:
         # create an instance of it
         instance = self.netlist.top_instance.reference.create_child()
         instance.reference = definition
-        self.assign_instance_a_default_name(instance)
+        # self.assign_instance_a_default_name(instance)
+        instance.name = port_info["output"] # by convention, the latch name is the name of the net it drives
         self.current_instance = instance
-        instance["TYPE"] = ".latch"
+        instance["EBLIF.type"] = "EBLIF.latch"
 
         # then connect the nets to the ports
         for port, net in port_info.items():
@@ -578,3 +579,15 @@ class EBLIFParser:
             pin.wire.disconnect_pin(pin)
             new_wire.connect_pin(pin)
         wire_two.cable.remove_wire(wire_two)
+
+    def set_subcircuit_names_by_convention(self): # by convention, the instance names are defined by the net they drive
+        for instance in self.netlist.get_instances(): 
+            if instance["EBLIF.type"] == "EBLIF.subckt":
+                if "EBLIF.cname" not in instance.data:
+                    pin = next(instance.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port.direction is sdn.OUT),None)
+                    if pin:
+                        if pin.wire:
+                            name = pin.wire.cable.name
+                            if len(pin.wire.cable.wires) > 1:
+                                name+="_"+pin.wire.cable.wires.index(pin.wire)
+                            instance.name = name

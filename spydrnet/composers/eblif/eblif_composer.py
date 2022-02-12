@@ -33,7 +33,7 @@ class EBLIFComposer:
         self.clean_up()
     
     def compose_comments(self):
-        for comment in self.netlist["COMMENT"]:
+        for comment in self.netlist["EBLIF.comment"]:
             to_write = "# "+comment+"\n"
             self.write_out(to_write)
         self.write_out("\n")
@@ -81,8 +81,8 @@ class EBLIFComposer:
     def compose_default_wires(self):
         default_wires = list()
         try:
-            self.netlist["default_wires"]
-            default_wires = self.netlist['default_wires']
+            self.netlist["EBLIF.default_wires"]
+            default_wires = self.netlist['EBLIF.default_wires']
         except KeyError:
             None
         if "$false" in default_wires:
@@ -95,24 +95,24 @@ class EBLIFComposer:
     
     def compose_instances(self):
         categories = self.separate_by_type()
-        if ".subckt" in categories.keys():
-            self.compose_subcircuits(categories[".subckt"])
-        if ".other" in categories.keys():
-            self.compose_subcircuits(categories[".other"])
-        if ".names" in categories.keys():
-            self.compose_names(categories[".names"])
-        if ".latch" in categories.keys():
-            self.compose_latches(categories[".latch"])
+        if "EBLIF.subckt" in categories.keys():
+            self.compose_subcircuits(categories["EBLIF.subckt"])
+        if "EBLIF.other" in categories.keys():
+            self.compose_subcircuits(categories["EBLIF.other"])
+        if "EBLIF.names" in categories.keys():
+            self.compose_names(categories["EBLIF.names"])
+        if "EBLIF.latch" in categories.keys():
+            self.compose_latches(categories["EBLIF.latch"])
     
     def separate_by_type(self):
         dict_by_types = dict()
         for instance in self.netlist.get_instances():
             try:
-                instance["TYPE"]
+                instance["EBLIF.type"]
             except KeyError:
                 # print("Error, no type found")
-                instance["TYPE"] = "other"
-            type = instance["TYPE"]
+                instance["EBLIF.type"] = "EBLIF.other"
+            type = instance["EBLIF.type"]
             try:
                 dict_by_types[type]
             except KeyError:
@@ -163,7 +163,7 @@ class EBLIFComposer:
                     to_write+="unconn "
                     connection_name="unconn"
                 # get the init values for that pin and throw each one into a list
-                pin_init_values = name_instance[".names"][connection_name]
+                pin_init_values = name_instance["EBLIF.names"][connection_name]
                 for i in range(len(pin_init_values)):
                     try:
                         init_values[i]
@@ -180,7 +180,7 @@ class EBLIFComposer:
                     to_write+="unconn "
                     connection_name="unconn"
                 # get the init values for that pin and throw each one into a list
-                pin_init_values = name_instance[".names"][connection_name]
+                pin_init_values = name_instance["EBLIF.names"][connection_name]
                 for i in range(len(pin_init_values)):
                     try:
                         init_values[i]

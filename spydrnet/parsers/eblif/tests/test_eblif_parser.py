@@ -30,7 +30,7 @@ class TestEBLIFParser(unittest.TestCase):
         for instance in self.netlist.get_instances():
             self.assertTrue(instance.reference.name in self.definition_list)
             self.assertTrue(self.netlist_is_own_netlist(instance))
-            self.assertEqual(instance["TYPE"],".subckt")
+            self.assertEqual(instance["EBLIF.type"],"EBLIF.subckt")
 
     def test_top_level_ports(self):
         input_port_list = ["clk","reset"]
