@@ -157,17 +157,26 @@ class EBLIFComposer:
         for name_instance in list_of_names:
             to_write = ".names "
             init_values = list()
-            for pin in name_instance.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port.direction is sdn.IN):
+            in_pin_list = list(x for x in name_instance.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port.direction is sdn.IN))
+            in_pin_list.reverse()
+            for pin in in_pin_list:
+            # for pin in name_instance.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port.direction is sdn.IN):
                 connection_name = None
                 if pin.wire:
-                    to_write+=pin.wire.cable.name+" "
+                    to_write+=pin.wire.cable.name
                     connection_name=pin.wire.cable.name
                     if len(pin.wire.cable.wires) > 1: # if a multi bit wire, add the index
                         connection_name+="["+str(pin.wire.cable.wires.index(pin.wire))+"]"
+                        to_write+="["+str(pin.wire.cable.wires.index(pin.wire))+"]"
                 else:
                     to_write+="unconn "
                     connection_name="unconn"
+                to_write+=" "
                 # get the init values for that pin and throw each one into a list
+                try:
+                    name_instance["EBLIF.names"][connection_name]
+                except KeyError: # although only single wire cable, index still needed
+                    connection_name+="[0]"
                 pin_init_values = name_instance["EBLIF.names"][connection_name]
                 for i in range(len(pin_init_values)):
                     try:

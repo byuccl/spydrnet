@@ -406,9 +406,12 @@ class EBLIFParser:
         if self.look_for_true_false_undef():
             return
         port_nets = dict() # first collect the information
+        # port_num = 0
         while (self.tokenizer.token is not NEW_LINE):
             port_nets[self.tokenizer.token] = list()
+            # port_nets[str(port_num)+"."+self.tokenizer.token] = list() # add port_num + . to give each port_net uniqueness
             self.tokenizer.next()
+            # port_num += 1
         # next_token = self.tokenizer.peek()
         while (self.check_if_init_values(self.tokenizer.peek())): # make sure next token is init values
             # print(next_token)
@@ -446,8 +449,9 @@ class EBLIFParser:
         self.current_instance = instance
         instance["EBLIF.type"] = "EBLIF.names"
 
-        # fill the current_instance_info dictionary with each port name and the key
-        list_of_nets = list(key for key in port_nets.keys())
+        # fill the current_instance_info dictionary with each port name and the key (with the unique number removed)
+        # list_of_nets = list(key[key.find(".")+1:] for key in port_nets.keys())         
+        list_of_nets = list(key for key in port_nets.keys())        
         i = 0
         for port in definition.get_ports():
             self.current_instance_info[port.name] = list_of_nets[i]
