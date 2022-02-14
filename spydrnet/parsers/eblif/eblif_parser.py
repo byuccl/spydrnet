@@ -48,6 +48,7 @@ class EBLIFParser:
         self.top_level_output_ports = dict()       
         self.comments = list() 
         self.current_model = None
+        # self.last_net = None
 
     def createTokenizer(self):
         self.tokenizer = Tokenizer(self.file_name)
@@ -131,6 +132,8 @@ class EBLIFParser:
                 self.parse_comment()
             elif token == SUBCIRCUIT:
                 self.parse_sub_circuit()
+            elif token == GATE:
+                self.parse_sub_circuit(is_gate=True)
             elif token == LATCH:
                 self.parse_latch()
             elif token == NAMES:
@@ -235,7 +238,7 @@ class EBLIFParser:
         wire = cable.wires[wire_index]
         wire.connect_pin(pin)
 
-    def parse_sub_circuit(self):
+    def parse_sub_circuit(self,is_gate=False):
         self.current_instance_info.clear()
         reference_model = self.tokenizer.next()
         definition = None
@@ -247,7 +250,10 @@ class EBLIFParser:
             self.collect_subcircuit_information()
         instance = self.netlist.top_instance.reference.create_child(reference = definition)
         self.current_instance = instance
-        instance["EBLIF.type"] = "EBLIF.subckt"
+        if is_gate:
+            instance["EBLIF.type"] = "EBLIF.gate"
+        else:
+            instance["EBLIF.type"] = "EBLIF.subckt"
         self.assign_instance_a_default_name(instance)
         self.connect_instance_pins(instance)
         self.check_for_and_add_more_instance_info()
@@ -582,7 +588,7 @@ class EBLIFParser:
 
     def set_subcircuit_names_by_convention(self): # by convention, the instance names are defined by the net they drive
         for instance in self.netlist.get_instances(): 
-            if instance["EBLIF.type"] == "EBLIF.subckt":
+            if instance["EBLIF.type"] in ["EBLIF.subckt","EBLIF.gate"]:
                 if "EBLIF.cname" not in instance.data:
                     pin = next(instance.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port.direction is sdn.OUT),None)
                     if pin:

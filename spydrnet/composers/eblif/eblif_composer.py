@@ -97,6 +97,8 @@ class EBLIFComposer:
         categories = self.separate_by_type()
         if "EBLIF.subckt" in categories.keys():
             self.compose_subcircuits(categories["EBLIF.subckt"])
+        if "EBLIF.gate" in categories.keys():
+            self.compose_subcircuits(categories["EBLIF.gate"],is_gate=True)
         if "EBLIF.other" in categories.keys():
             self.compose_subcircuits(categories["EBLIF.other"])
         if "EBLIF.names" in categories.keys():
@@ -120,10 +122,13 @@ class EBLIFComposer:
             dict_by_types[type].append(instance)
         return dict_by_types
     
-    def compose_subcircuits(self,list_of_subcircuits):
+    def compose_subcircuits(self,list_of_subcircuits,is_gate=False):
         for subckt in list_of_subcircuits:
             to_add = ""
-            to_write = ".subckt "+ subckt.reference.name+" "
+            if is_gate:
+                to_write = ".gate "+ subckt.reference.name+" "
+            else:
+                to_write = ".subckt "+ subckt.reference.name+" "
             amount_of_ports_to_write = 0
             for port in subckt.get_ports():
                 for pin in port.pins:
