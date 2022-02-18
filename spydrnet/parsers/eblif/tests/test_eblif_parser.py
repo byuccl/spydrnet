@@ -2,7 +2,7 @@ import unittest
 import os
 import spydrnet as sdn
 from spydrnet import base_dir
-from spydrnet.parsers.eblif.eblif_parser import EBLIFParser
+from spydrnet.util.selection import Selection
 
 """
 Test the EBLIFParser by parsing in a simple netlist and making sure that:
@@ -20,8 +20,7 @@ class TestEBLIFParser(unittest.TestCase):
     def test_definitions(self):
         count = 0
         for definition in self.netlist.get_definitions():
-            self.assertTrue(definition.name in self.definition_list,definition.name +" not found in list")
-            self.assertTrue(definition)
+            self.assertTrue(definition.name in self.definition_list, definition.name + " not found in list")
             count+=1
         self.assertEqual(count,6)
     
@@ -56,5 +55,13 @@ class TestEBLIFParser(unittest.TestCase):
             return True
         return False
         
+    def test_flip_flop_connections(self):
+        instance = next(self.netlist.get_instances(filter=lambda x: x.reference.name == "FDRE"))
+        pin_connections = {"C":"clk"}
+        for input_pin in instance.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port.direction is sdn.IN):
+            self.assertTrue(input_pin.wire is not None, input_pin.inner_pin.port.name + " does not have a wire")
+            # driver_pin = next(pin for pin in input_pin.wire.pins)
+            # get the driver
+            # make sure it's the right driver
 
     # TODO add wire and connections tests

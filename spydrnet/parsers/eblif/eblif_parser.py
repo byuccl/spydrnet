@@ -406,22 +406,16 @@ class EBLIFParser:
         if self.look_for_true_false_undef():
             return
         port_nets = list()
-        port_num = 0
         while (self.tokenizer.token is not NEW_LINE):
             port_nets.append(self.tokenizer.token)
             self.tokenizer.next()
-            port_num += 1
         single_output_covers = list()
         while (self.check_if_init_values(self.tokenizer.peek())): # make sure next token is init values
+            single_output_cover=self.tokenizer.next()
+            single_output_cover+=" "+self.tokenizer.next()
             self.tokenizer.next()
-            single_output_cover = ""
-            while (self.tokenizer.token is not NEW_LINE):
-                single_output_cover+=self.tokenizer.token
-                single_output_cover+=" "+self.tokenizer.next()
-                self.tokenizer.next()
             single_output_covers.append(single_output_cover)
     
-
         # then make/get def called LUT_names_# where # is the # of ports-1
         name = "logic-gate_"+str(len(port_nets)-1)
         try:
@@ -443,17 +437,11 @@ class EBLIFParser:
         self.current_instance = instance
         instance["EBLIF.type"] = "EBLIF.names"
      
-        i = 0
-        for port in definition.get_ports():
-            self.current_instance_info[port.name] = port_nets[i]
-            i+=1
-        instance.name = port_nets[i-1] # by convention, the name of the instance is the name of the driven net
+        for port, net in zip(definition.get_ports(),port_nets):
+            self.current_instance_info[port.name] = net
+        instance.name = port_nets[len(port_nets)-1] # by convention, the name of the instance is the name of the driven net
 
-        # then connect the nets to the ports
         self.connect_instance_pins(instance)
-
-        # then add the info to the metadata dictionary
-        instance["EBLIF.names"] = port_nets
         self.check_for_and_add_more_instance_info()
 
     def check_if_init_values(self,string):
