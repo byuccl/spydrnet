@@ -405,38 +405,31 @@ class EBLIFParser:
         self.tokenizer.next()
         if self.look_for_true_false_undef():
             return
-        port_nets = dict() # first collect the information
-        # port_num = 0
+        port_nets = list()
+        port_num = 0
         while (self.tokenizer.token is not NEW_LINE):
-            port_nets[self.tokenizer.token] = list()
-            # port_nets[str(port_num)+"."+self.tokenizer.token] = list() # add port_num + . to give each port_net uniqueness
+            port_nets.append(self.tokenizer.token)
             self.tokenizer.next()
-            # port_num += 1
-        # next_token = self.tokenizer.peek()
+            port_num += 1
+        single_output_covers = list()
         while (self.check_if_init_values(self.tokenizer.peek())): # make sure next token is init values
-            # print(next_token)
             self.tokenizer.next()
+            single_output_cover = ""
             while (self.tokenizer.token is not NEW_LINE):
-                input_values = list()
-                if len(self.tokenizer.token) > 1: # this token is a jumble of all the inputs to the LUT get them and separate them
-                    input_values = list(num for num in self.tokenizer.token)
-                    input_values.append(self.tokenizer.next())
-                else:
-                    input_values.append(self.tokenizer.token)
-                if (self.tokenizer.peek().isdigit()):
-                    input_values.append(self.tokenizer.next())
-                for key,i in zip(port_nets.keys(),list(i for i in range(len(input_values)))):
-                    port_nets[key].append(input_values[i])
+                single_output_cover+=self.tokenizer.token
+                single_output_cover+=" "+self.tokenizer.next()
                 self.tokenizer.next()
+            single_output_covers.append(single_output_cover)
+    
 
         # then make/get def called LUT_names_# where # is the # of ports-1
-        name = "logic-gate_"+str(len(port_nets.keys())-1)
+        name = "logic-gate_"+str(len(port_nets)-1)
         try:
             self.definitions[name]
         except KeyError:
             definition = self.netlist.libraries[0].create_definition(name=name)
             self.definitions[name] = definition
-            for i in range(len(port_nets.keys())-1):
+            for i in range(len(port_nets)-1):
                 port = self.create_names_port("in_"+str(i),Port.Direction.IN)
                 definition.add_port(port)
             definition.add_port(self.create_names_port("out",Port.Direction.OUT))
@@ -445,18 +438,16 @@ class EBLIFParser:
         # then create an instance of it
         instance = self.netlist.top_instance.reference.create_child()
         instance.reference = definition
+        instance["EBLIF.output_covers"] = single_output_covers
         # self.assign_instance_a_default_name(instance)
         self.current_instance = instance
         instance["EBLIF.type"] = "EBLIF.names"
-
-        # fill the current_instance_info dictionary with each port name and the key (with the unique number removed)
-        # list_of_nets = list(key[key.find(".")+1:] for key in port_nets.keys())         
-        list_of_nets = list(key for key in port_nets.keys())        
+     
         i = 0
         for port in definition.get_ports():
-            self.current_instance_info[port.name] = list_of_nets[i]
+            self.current_instance_info[port.name] = port_nets[i]
             i+=1
-        instance.name = list_of_nets[i-1] # by convention, the name of the instance is the name of the driven net
+        instance.name = port_nets[i-1] # by convention, the name of the instance is the name of the driven net
 
         # then connect the nets to the ports
         self.connect_instance_pins(instance)

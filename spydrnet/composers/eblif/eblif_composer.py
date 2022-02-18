@@ -156,55 +156,29 @@ class EBLIFComposer:
     def compose_names(self,list_of_names):
         for name_instance in list_of_names:
             to_write = ".names "
-            init_values = list()
             in_pin_list = list(x for x in name_instance.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port.direction is sdn.IN))
             in_pin_list.reverse()
             for pin in in_pin_list:
             # for pin in name_instance.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port.direction is sdn.IN):
-                connection_name = None
                 if pin.wire:
                     to_write+=pin.wire.cable.name
-                    connection_name=pin.wire.cable.name
                     if len(pin.wire.cable.wires) > 1: # if a multi bit wire, add the index
-                        connection_name+="["+str(pin.wire.cable.wires.index(pin.wire))+"]"
                         to_write+="["+str(pin.wire.cable.wires.index(pin.wire))+"]"
                 else:
-                    to_write+="unconn "
-                    connection_name="unconn"
+                    to_write+="unconn"
                 to_write+=" "
-                # get the init values for that pin and throw each one into a list
-                try:
-                    name_instance["EBLIF.names"][connection_name]
-                except KeyError: # although only single wire cable, index still needed
-                    connection_name+="[0]"
-                pin_init_values = name_instance["EBLIF.names"][connection_name]
-                for i in range(len(pin_init_values)):
-                    try:
-                        init_values[i]
-                    except IndexError:
-                        init_values.append(list())
-                    init_values[i].append(pin_init_values[i])
-
             for pin in name_instance.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port.direction is sdn.OUT):
-                connection_name = None
                 if pin.wire:
                     to_write+=pin.wire.cable.name+" "
-                    connection_name=pin.wire.cable.name
                 else:
                     to_write+="unconn "
-                    connection_name="unconn"
-                # get the init values for that pin and throw each one into a list
-                pin_init_values = name_instance["EBLIF.names"][connection_name]
-                for i in range(len(pin_init_values)):
-                    try:
-                        init_values[i]
-                    except IndexError:
-                        init_values.append(list())
-                    init_values[i].append(" ")
-                    init_values[i].append(pin_init_values[i])
             to_write+="\n"
-            for value_list in init_values:
-                to_write+="".join(value_list)+"\n"
+            try:
+                name_instance["EBLIF.output_covers"]
+                for output_cover in name_instance["EBLIF.output_covers"]:
+                    to_write+=output_cover+"\n"
+            except KeyError:
+                None
             self.write_out(to_write)
             self.find_and_write_additional_instance_info(name_instance)
 
