@@ -1,4 +1,5 @@
 import os
+from re import sub
 from spydrnet.util.selection import Selection
 import spydrnet as sdn
 
@@ -7,6 +8,7 @@ class EBLIFComposer:
         self.netlist = None
         self.open_file = None
         self.write_blackbox = write_blackbox
+        self.blackboxes_to_compose = set()
 
     def run(self, ir, file_out):
         self.open_file = self.prepare_file(file_out)
@@ -125,6 +127,7 @@ class EBLIFComposer:
     
     def compose_subcircuits(self,list_of_subcircuits,is_gate=False):
         for subckt in list_of_subcircuits:
+            self.blackboxes_to_compose.add(subckt.reference.name)
             to_add = ""
             if is_gate:
                 to_write = ".gate "+ subckt.reference.name+" "
@@ -229,17 +232,18 @@ class EBLIFComposer:
     
     def compose_blackboxes(self):
         for definition in self.netlist.get_definitions():
-            if "EBLIF.blackbox" in definition.data.keys():
-                to_write = "\n.model "+definition.name
-                to_write+="\n.inputs"
-                for port in definition.get_ports(filter=lambda x: x.direction is sdn.IN):
-                    to_write+=" "+port.name
-                to_write+="\n.outputs"
-                for port in definition.get_ports(filter=lambda x: x.direction is sdn.OUT):
-                    to_write+=" "+port.name
-                self.write_out(to_write+"\n")
-                self.write_out(".blackbox\n")
-                self.compose_end()
+            if definition.name in self.blackboxes_to_compose:
+                if "EBLIF.blackbox" in definition.data.keys():
+                    to_write = "\n.model "+definition.name
+                    to_write+="\n.inputs"
+                    for port in definition.get_ports(filter=lambda x: x.direction is sdn.IN):
+                        to_write+=" "+port.name
+                    to_write+="\n.outputs"
+                    for port in definition.get_ports(filter=lambda x: x.direction is sdn.OUT):
+                        to_write+=" "+port.name
+                    self.write_out(to_write+"\n")
+                    self.write_out(".blackbox\n")
+                    self.compose_end()
 
     def compose_end(self):
         self.write_out(".end\n")

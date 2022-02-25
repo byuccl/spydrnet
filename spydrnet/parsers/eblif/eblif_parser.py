@@ -89,7 +89,8 @@ class EBLIFParser:
         try:
             self.definitions[name]
         except KeyError:
-            print("Error, no definition found")
+            # print("Error, no definition found")
+            self.definitions[name] = self.create_new_definition()
         definition = self.definitions[name]
         self.tokenizer.next()
 
