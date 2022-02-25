@@ -169,9 +169,12 @@ class EBLIFComposer:
                 to_write+=" "
             for pin in name_instance.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port.direction is sdn.OUT):
                 if pin.wire:
-                    to_write+=pin.wire.cable.name+" "
+                    to_write+=pin.wire.cable.name
+                    if len(pin.wire.cable.wires) > 1: # if a multi bit wire, add the index
+                        to_write+="["+str(pin.wire.cable.wires.index(pin.wire))+"]"
                 else:
-                    to_write+="unconn "
+                    to_write+="unconn"
+                to_write+=" "
             to_write+="\n"
             try:
                 name_instance["EBLIF.output_covers"]

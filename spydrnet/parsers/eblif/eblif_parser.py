@@ -239,6 +239,7 @@ class EBLIFParser:
         wire.connect_pin(pin)
 
     def parse_sub_circuit(self,is_gate=False):
+        # print(self.tokenizer.token)
         self.current_instance_info.clear()
         reference_model = self.tokenizer.next()
         definition = None
@@ -255,12 +256,15 @@ class EBLIFParser:
         else:
             instance["EBLIF.type"] = "EBLIF.subckt"
         self.assign_instance_a_default_name(instance)
+        # print(self.current_instance_info)
         self.connect_instance_pins(instance)
         self.check_for_and_add_more_instance_info()
 
     def create_new_definition(self):
         definition = self.netlist.libraries[0].create_definition(name = self.tokenizer.token)
+        # print("GONNA MAKE DEFINITION: " + self.tokenizer.token)
         self.tokenizer.next()
+        # print("now token is "+self.tokenizer.token)
         while (self.tokenizer.token is not NEW_LINE):
             self.parse_definition_port(definition)
             self.tokenizer.next()
@@ -311,6 +315,8 @@ class EBLIFParser:
                     instance[UNCONN] = list()
                 instance[UNCONN].append(port_name+"["+str(pin_index)+"]")
                 continue
+            # print(port_name)
+            # print(list(x.inner_pin.port.name for x in instance.get_pins(selection=Selection.OUTSIDE)))
             pin = next(instance.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port.name == port_name and x.inner_pin is x.inner_pin.port.pins[pin_index]))
             self.connect_pins_to_wires(pin,cable_name,cable_index)
 
