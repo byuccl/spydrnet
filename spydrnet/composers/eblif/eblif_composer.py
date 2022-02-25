@@ -218,12 +218,12 @@ class EBLIFComposer:
         to_write = ""
         if "EBLIF.cname" in instance.data:
             to_write+=".cname "+instance["EBLIF.cname"]+'\n'
-        if "EBLIF.param" in instance.data:
-            for key, value in instance.data["EBLIF.param"].items():
-                to_write+=".param "+key+" "+value+'\n'
         if "EBLIF.attr" in instance.data:
             for key, value in instance.data["EBLIF.attr"].items():
                 to_write+=".attr "+key+" "+value+'\n'
+        if "EBLIF.param" in instance.data:
+            for key, value in instance.data["EBLIF.param"].items():
+                to_write+=".param "+key+" "+value+'\n'
         self.write_out(to_write)
     
     def compose_blackboxes(self):

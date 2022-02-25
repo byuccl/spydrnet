@@ -409,8 +409,8 @@ class EBLIFParser:
     def parse_name(self):
         self.current_instance_info.clear()
         self.tokenizer.next()
-        if self.look_for_true_false_undef():
-            return
+        # if self.look_for_true_false_undef():
+        #     return
         port_nets = list()
         while (self.tokenizer.token is not NEW_LINE):
             port_nets.append(self.tokenizer.token)
