@@ -4,10 +4,11 @@ from spydrnet.util.selection import Selection
 import spydrnet as sdn
 
 class EBLIFComposer:
-    def __init__(self,write_blackbox):
+    def __init__(self,write_blackbox, write_cname=True):
         self.netlist = None
         self.open_file = None
         self.write_blackbox = write_blackbox
+        self.write_cname = write_cname
         self.blackboxes_to_compose = set()
 
     def run(self, ir, file_out):
@@ -220,8 +221,9 @@ class EBLIFComposer:
 
     def find_and_write_additional_instance_info(self,instance):
         to_write = ""
-        if "EBLIF.cname" in instance.data:
-            to_write+=".cname "+instance["EBLIF.cname"]+'\n'
+        if self.write_cname:
+            if "EBLIF.cname" in instance.data:
+                to_write+=".cname "+instance["EBLIF.cname"]+'\n'
         if "EBLIF.attr" in instance.data:
             for key, value in instance.data["EBLIF.attr"].items():
                 to_write+=".attr "+key+" "+value+'\n'
