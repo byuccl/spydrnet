@@ -446,7 +446,10 @@ class EBLIFParser:
      
         for port, net in zip(definition.get_ports(),port_nets):
             self.current_instance_info[port.name] = net
-        instance.name = port_nets[len(port_nets)-1] # by convention, the name of the instance is the name of the driven net
+        if "unconn" in port_nets[len(port_nets)-1]:
+            self.assign_instance_a_default_name(instance)
+        else:
+            instance.name = port_nets[len(port_nets)-1] # by convention, the name of the instance is the name of the driven net
 
         self.connect_instance_pins(instance)
         self.check_for_and_add_more_instance_info()
