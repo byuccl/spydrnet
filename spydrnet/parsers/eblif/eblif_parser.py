@@ -585,5 +585,5 @@ class EBLIFParser:
                         if pin.wire:
                             name = pin.wire.cable.name
                             if len(pin.wire.cable.wires) > 1:
-                                name+="_"+pin.wire.cable.wires.index(pin.wire)
+                                name+="_"+str(pin.wire.cable.wires.index(pin.wire))
                             instance.name = name
