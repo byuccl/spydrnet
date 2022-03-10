@@ -116,11 +116,11 @@ base_dir = os.path.dirname(os.path.abspath(__file__))
 
 import glob
 
-edif_example_netlist_names = list()
+example_netlist_names = list()
 for filename in glob.glob(os.path.join(base_dir, 'support_files', 'EDIF_netlists', "*")):
     basename = os.path.basename(filename)
-    edif_example_netlist_names.append(basename[:basename.index('.')])
-edif_example_netlist_names.sort()
+    example_netlist_names.append(basename[:basename.index('.')])
+example_netlist_names.sort()
 
 verilog_example_netlist_names = list()
 for filename in glob.glob(os.path.join(base_dir, 'support_files', 'verilog_netlists', "*")):
@@ -136,7 +136,7 @@ eblif_example_netlist_names.sort()
 
 def load_example_netlist_by_name(name, format=EDIF):
     if format is EDIF:
-        assert name in edif_example_netlist_names, "Example netlist not found"
+        assert name in example_netlist_names, "Example netlist not found"
         return parse(os.path.join(base_dir, 'support_files', 'EDIF_netlists', name + ".edf.zip"))
     elif format is VERILOG:
         assert name in verilog_example_netlist_names, "Example netlist not found"
@@ -145,5 +145,5 @@ def load_example_netlist_by_name(name, format=EDIF):
         assert name in eblif_example_netlist_names, "Example netlist not found"
         return parse(os.path.join(base_dir, 'support_files', 'eblif_netlists', name + ".eblif.zip"))
     else: # if no version is recognized, default to edif
-        assert name in edif_example_netlist_names, "Example netlist not found"
+        assert name in example_netlist_names, "Example netlist not found"
         return parse(os.path.join(base_dir, 'support_files', 'EDIF_netlists', name + ".edf.zip"))
