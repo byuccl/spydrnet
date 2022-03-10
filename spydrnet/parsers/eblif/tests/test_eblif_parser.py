@@ -12,7 +12,7 @@ Test the EBLIFParser by parsing in a simple netlist and making sure that:
 class TestEBLIFParser(unittest.TestCase):
     def setUp(self):
         self.netlist = sdn.parse(os.path.join(base_dir, 'support_files', 'eblif_netlists', "toggle.eblif.zip"))
-        self.definition_list = ["INV","BUFG","FDRE","IBUF","OBUF","toggle"]
+        self.definition_list = ["INV","BUFG","FDRE","IBUF","OBUF","toggle", "logic-gate_0"]
 
     def test_name(self):
         self.assertEqual(self.netlist.name,"toggle")
@@ -22,14 +22,17 @@ class TestEBLIFParser(unittest.TestCase):
         for definition in self.netlist.get_definitions():
             self.assertTrue(definition.name in self.definition_list, definition.name + " not found in list")
             count+=1
-        self.assertEqual(count,6)
+        self.assertEqual(count,len(self.definition_list))
     
     def test_instances(self):
         self.assertEqual(self.netlist.top_instance.name,"toggle")
         for instance in self.netlist.get_instances():
             self.assertTrue(instance.reference.name in self.definition_list)
             self.assertTrue(self.netlist_is_own_netlist(instance))
-            self.assertEqual(instance["EBLIF.type"],"EBLIF.subckt")
+            if "logic-gate_0" in instance.reference.name:
+                self.assertEqual(instance["EBLIF.type"],"EBLIF.names")
+            else:
+                self.assertEqual(instance["EBLIF.type"],"EBLIF.subckt")
 
     def test_top_level_ports(self):
         input_port_list = ["clk","reset"]
@@ -47,7 +50,7 @@ class TestEBLIFParser(unittest.TestCase):
         for cable in self.netlist.get_cables():
             self.assertTrue(self.netlist_is_own_netlist(cable))
             count+=1
-        self.assertEqual(count,9)
+        self.assertEqual(count,10)
 
     def netlist_is_own_netlist(self,object):
         netlist_list = list(x for x in object.get_netlists())
