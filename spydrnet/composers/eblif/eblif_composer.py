@@ -224,6 +224,8 @@ class EBLIFComposer:
         if self.write_cname:
             if "EBLIF.cname" in instance.data:
                 to_write+=".cname "+instance["EBLIF.cname"]+'\n'
+            else:
+                to_write+=".cname "+instance.name+'\n'
         if "EBLIF.attr" in instance.data:
             for key, value in instance.data["EBLIF.attr"].items():
                 to_write+=".attr "+key+" "+value+'\n'
