@@ -64,7 +64,7 @@ SpyDrNet has built in example netlists. For this tutorial, we will use the examp
 
 .. code-block::
 
-    netlist = sdn.load_example_netlist("one_counter")
+    netlist = sdn.load_example_netlist_by_name("one_counter")
 
 Intermediate Representation (IR) Basics
 ---------------------------------------
