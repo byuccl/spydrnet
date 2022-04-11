@@ -1,3 +1,9 @@
+SpyDrNet 1.11.0
+---------------
+April 9, 2022
+
+* Initial support for parsing and composing EBLIF netlists.
+
 SpyDrNet 1.10.1
 ----------------
 January 1, 2022
