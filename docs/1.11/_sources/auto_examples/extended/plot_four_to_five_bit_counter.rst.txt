@@ -252,7 +252,7 @@ Extend a four bit counter to a 5 bit counter.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.015 seconds)
+   **Total running time of the script:** ( 0 minutes  0.019 seconds)
 
 
 .. _sphx_glr_download_auto_examples_extended_plot_four_to_five_bit_counter.py:

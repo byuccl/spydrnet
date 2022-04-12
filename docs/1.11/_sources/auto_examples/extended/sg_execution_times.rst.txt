@@ -5,14 +5,14 @@
 
 Computation times
 =================
-**00:00.914** total execution time for **auto_examples_extended** files:
+**00:00.456** total execution time for **auto_examples_extended** files:
 
 +----------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_extended_plot_connectivity_graph.py` (``plot_connectivity_graph.py``)             | 00:00.674 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_extended_plot_connectivity_graph.py` (``plot_connectivity_graph.py``)             | 00:00.165 | 0.0 MB |
 +----------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_extended_plot_single_use_definitions.py` (``plot_single_use_definitions.py``)     | 00:00.120 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_extended_plot_flatten.py` (``plot_flatten.py``)                                   | 00:00.144 | 0.0 MB |
 +----------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_extended_plot_flatten.py` (``plot_flatten.py``)                                   | 00:00.105 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_extended_plot_single_use_definitions.py` (``plot_single_use_definitions.py``)     | 00:00.128 | 0.0 MB |
 +----------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_extended_plot_four_to_five_bit_counter.py` (``plot_four_to_five_bit_counter.py``) | 00:00.015 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_extended_plot_four_to_five_bit_counter.py` (``plot_four_to_five_bit_counter.py``) | 00:00.019 | 0.0 MB |
 +----------------------------------------------------------------------------------------------------------------+-----------+--------+
