@@ -3,7 +3,7 @@ import zipfile
 import tempfile
 
 """
-Init for Spydrnet. the funcitons below can be called directly
+Init for Spydrnet. The functions below can be called directly
 
 """
 
