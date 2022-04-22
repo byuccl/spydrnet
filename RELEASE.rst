@@ -1,3 +1,9 @@
+SpyDrNet 1.11.1
+---------------
+April 20, 2022
+
+* Bug Fix. Now EBLIF support should actually be included.
+
 SpyDrNet 1.11.0
 ---------------
 April 9, 2022
