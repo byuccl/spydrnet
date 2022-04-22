@@ -8,7 +8,7 @@ Init for Spydrnet. The functions below can be called directly
 """
 
 
-def parse(filename):
+def parse(filename, **kwArgs):
     """
     The parse function is able to parse an EDIF (.edf) file, a Verilog file (.v), or an EBLIF file (.eblif).
 
@@ -50,15 +50,15 @@ def parse(filename):
                 zip.extract(basename_less_final_extension, tempdirname)
                 filename = os.path.join(
                     tempdirname, basename_less_final_extension)
-                return _parse(filename)
-    return _parse(filename)
+                return _parse(filename, **kwArgs)
+    return _parse(filename, **kwArgs)
 
 
-def _parse(filename):
+def _parse(filename, **kwArgs):
     extension = get_lowercase_extension(filename)
     if extension in [".edf", ".edif", ".edn"]:
         from spydrnet.parsers.edif.parser import EdifParser
-        parser = EdifParser.from_filename(filename)
+        parser = EdifParser.from_filename(filename, **kwArgs)
     elif extension in [".v", ".vh"]:
         from spydrnet.parsers.verilog.parser import VerilogParser
         parser = VerilogParser.from_filename(filename)
