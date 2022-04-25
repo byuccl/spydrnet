@@ -245,7 +245,7 @@ Creates definitions for non-leaf instances so each instance has its own definiti
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.128 seconds)
+   **Total running time of the script:** ( 0 minutes  0.168 seconds)
 
 
 .. _sphx_glr_download_auto_examples_extended_plot_single_use_definitions.py:
