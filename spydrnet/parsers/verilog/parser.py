@@ -707,6 +707,7 @@ class VerilogParser:
         assert token == vt.EQUAL, self.error_string(vt.EQUAL, "separate the key from the value in a defparam statement", token)
         token = self.next_token()
         value = token
+        params[key] = value
         token = self.next_token()
         assert token == vt.SEMI_COLON, self.error_string(vt.SEMI_COLON, "to end the defparam statement", token)
         self.set_instance_parameters(instance, params)
