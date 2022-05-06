@@ -113,7 +113,10 @@ class EBLIFParser:
         while (self.tokenizer.token is not NEW_LINE):
             port_name, index = self.get_port_name_and_index(self.tokenizer.token)
             index = int(index)
-            port = next(definition.get_ports(filter=lambda x: x.name == port_name))
+            port = next(definition.get_ports(filter=lambda x: x.name == port_name), None)
+            if port is None:
+                new_port = definition.create_port(name=port_name)
+                port = new_port
             port.direction = sdn.IN
             self.tokenizer.next()
     
