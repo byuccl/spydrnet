@@ -617,11 +617,12 @@ class VerilogParser:
             if len(cable.wires) > 1:
                 self.connect_resized_port_cable(cable, port)
 
-    def parse_cable_declaration(self, properties):
-        token = self.next_token()
-        assert token in [vt.REG, vt.WIRE, vt.TRI0, vt.TRI1], self.error_string(
-            "reg, tri1, tri0, or wire", "for cable declaration", token)
-        var_type = token
+    def parse_cable_declaration(self, properties, var_type = None):
+        if not var_type:
+            token = self.next_token()
+            assert token in [vt.REG, vt.WIRE, vt.TRI0, vt.TRI1], self.error_string(
+                "reg, tri1, tri0, or wire", "for cable declaration", token)
+            var_type = token
 
         token = self.peek_token()
         if token == vt.OPEN_BRACKET:
@@ -640,8 +641,11 @@ class VerilogParser:
         cable["VERILOG.InlineConstraints"] = properties
 
         token = self.next_token()
-        assert token == vt.SEMI_COLON, self.error_string(
-            vt.SEMI_COLON, "to end cable declaration", token)
+        if token == vt.COMMA: # continue listing wires
+            self.parse_cable_declaration(dict(), var_type)
+        else:
+            assert token == vt.SEMI_COLON, self.error_string(
+                vt.SEMI_COLON, "to end cable declaration", token)
 
     def parse_instantiation(self, properties):
         token = self.next_token()
