@@ -6,7 +6,7 @@ import spydrnet.parsers.verilog.verilog_tokens as vt
 
 class Composer:
 
-    def __init__(self, definition_list=None, write_blackbox=False):
+    def __init__(self, definition_list=None, write_blackbox=False, defparam = False):
         """ Write a verilog netlist from SDN netlist
 
         parameters
@@ -25,6 +25,7 @@ class Composer:
         self.indent_count = 4  # set the indentation level for various components
         self.write_blackbox = write_blackbox
         self.definition_list = definition_list
+        self.defparam = defparam
 
 
     def run(self, ir, file_out="out.v"):
@@ -158,13 +159,21 @@ class Composer:
         self.file.write(self.indent_count * vt.SPACE)
         self._write_name(instance.reference)
         self.file.write(vt.SPACE)
-        if "VERILOG.Parameters" in instance:
-            self._write_instance_parameters(instance)
-            self.file.write(self.indent_count * vt.SPACE)
+        if not self.defparam:
+            if "VERILOG.Parameters" in instance:
+                self._write_instance_parameters(instance)
+                self.file.write(self.indent_count * vt.SPACE)
         self._write_name(instance)
         self.file.write(vt.NEW_LINE)
         self._write_instance_ports(instance)
         self.file.write(vt.NEW_LINE)
+        if self.defparam:
+            if "VERILOG.Parameters" in instance:
+                for key, value in instance["VERILOG.Parameters"].items():
+                    to_write = (self.indent_count * vt.SPACE) + vt.DEFPARAM + vt.SPACE
+                    to_write += instance.name + vt.DOT + key + vt.EQUAL
+                    to_write += value + vt.SEMI_COLON + vt.NEW_LINE
+                    self.file.write(to_write)
 
     def _write_module_body_ports(self, definition):
         for p in definition.ports:
