@@ -14,6 +14,7 @@ class Composer:
 
         definition_list - (list[str]) list of defintions to write
         write_blackbox - (bool) Skips writing black boxes/verilog primitives
+        defparam - (bool) Compose parameters in *defparam* statements instead of using #()
         """
         self.file = None
         self.direction_string_map = dict()
