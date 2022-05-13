@@ -772,7 +772,6 @@ class VerilogParser:
         assert token == vt.OPEN_PARENTHESIS, self.error_string(
             vt.OPEN_PARENTHESIS, "to start the port mapping", token)
 
-<<<<<<< HEAD
         peeked_token = self.peek_token()
         if peeked_token != vt.DOT: # the ports are implicitly mapped
             token_list = list()
@@ -787,28 +786,6 @@ class VerilogParser:
                 token = self.next_token()
         assert token in [vt.COMMA, vt.CLOSE_PARENTHESIS], self.error_string(
             vt.COMMA + " or " + vt.CLOSE_PARENTHESIS, "between port mapping elements or to end the port mapping", token)
-=======
-        while token != vt.CLOSE_PARENTHESIS:
-            peek_token = self.peek_token()
-            if peek_token == vt.DOT:
-                self.parse_port_map_single()
-                token = self.next_token()
-            else: 
-                # the ports are not mapped, so store the tokens in a dictionary to add later
-                try: 
-                    self.implicit_map_port_info[self.current_instance]
-                except KeyError:
-                    self.implicit_map_port_info[self.current_instance] = list()
-                current_list = self.implicit_map_port_info[self.current_instance]
-                while(self.peek_token() != vt.CLOSE_PARENTHESIS):
-                    current_token = self.next_token()
-                    current_list.append(current_token)
-                current_list.append(self.peek_token())
-                token = self.next_token()
-
-            assert token in [vt.COMMA, vt.CLOSE_PARENTHESIS], self.error_string(
-                                vt.COMMA + " or " + vt.CLOSE_PARENTHESIS, "between port mapping elements or to end the port mapping", token)
->>>>>>> 43b9732f3bb8bcdb445e76fce2ad64be059e44ce
 
     def parse_port_map_single(self):
         '''acutally does the mapping of the pins'''
