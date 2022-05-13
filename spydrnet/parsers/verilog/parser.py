@@ -2,7 +2,7 @@
 # please see the BYU CCl SpyDrNet license file for terms of usage.
 
 
-from spydrnet.parsers.verilog.tokenizer import VerilogTokenizer
+from spydrnet.parsers.verilog.tokenizer import VerilogTokenizer, VerilogTokenizerSimple
 import spydrnet.parsers.verilog.verilog_tokens as vt
 from spydrnet.ir import Netlist, Library, Definition, Port, Cable, Instance, OuterPin
 from spydrnet.plugins import namespace_manager
@@ -103,6 +103,8 @@ class VerilogParser:
         self.assignment_count = 0
 
         self.blackbox_holder = self.BlackboxHolder()
+
+        self.implicitly_mapped_ports = dict()
 
     def parse(self):
         ''' parse a verilog netlist represented by verilog file
@@ -239,6 +241,7 @@ class VerilogParser:
                     "something at the top level of the file", "got unexpected token", token)
 
         self.add_blackbox_definitions()
+        self.connect_implicitly_mapped_ports()
 
         return self.netlist
 
@@ -768,11 +771,20 @@ class VerilogParser:
         assert token == vt.OPEN_PARENTHESIS, self.error_string(
             vt.OPEN_PARENTHESIS, "to start the port mapping", token)
 
-        while token != vt.CLOSE_PARENTHESIS:
-            self.parse_port_map_single()
-            token = self.next_token()
-            assert token in [vt.COMMA, vt.CLOSE_PARENTHESIS], self.error_string(
-                vt.COMMA + " or " + vt.CLOSE_PARENTHESIS, "between port mapping elements or to end the port mapping", token)
+        peeked_token = self.peek_token()
+        if peeked_token != vt.DOT: # the ports are implicitly mapped
+            token_list = list()
+            while (token != vt.CLOSE_PARENTHESIS):
+                token_list.append(token)
+                token = self.next_token()
+            token_list.append(token)
+            self.implicitly_mapped_ports[self.current_instance] = token_list
+        else: # the ports are explicitly mapped
+            while token != vt.CLOSE_PARENTHESIS:
+                self.parse_port_map_single()
+                token = self.next_token()
+        assert token in [vt.COMMA, vt.CLOSE_PARENTHESIS], self.error_string(
+            vt.COMMA + " or " + vt.CLOSE_PARENTHESIS, "between port mapping elements or to end the port mapping", token)
 
     def parse_port_map_single(self):
         '''acutally does the mapping of the pins'''
@@ -819,6 +831,53 @@ class VerilogParser:
 
         assert token == vt.CLOSE_PARENTHESIS, self.error_string(
             vt.CLOSE_PARENTHESIS, "to end cable name in port mapping", token)
+
+    def connect_implicitly_mapped_ports(self):
+        for instance, token_list in self.implicitly_mapped_ports.items():
+            self.current_instance = instance
+            self.current_definition = instance.parent
+            port_list = list(x for x in instance.reference.get_ports())
+            self.tokenizer = VerilogTokenizerSimple(token_list)
+
+            token = self.next_token()
+            assert token == vt.OPEN_PARENTHESIS, self.error_string(
+                vt.OPEN_PARENTHESIS, "to encapsulate cable name in port mapping", token)
+            
+            index = 0
+            while (token != vt.CLOSE_PARENTHESIS):
+                token = self.peek_token()
+
+                if token == vt.OPEN_BRACE:
+                    wires = self.parse_cable_concatenation()
+                else:
+                    cable, left, right = self.parse_variable_instantiation()
+                    wires = self.get_wires_from_cable(cable, left, right)
+
+                if (index > len(port_list) - 1): # no port exists yet i.e. no module information in netlist
+                    # print("Not enough ports for "+ instance.name)
+                    port = instance.reference.create_port()
+                    self.populate_new_port(port, None, len(wires)-1, 0, None)
+                else:
+                    port = port_list[index]
+
+                pins = list()
+                for pin in self.current_instance.pins:
+                    if pin.inner_pin in port.pins:
+                        pins.append(pin)
+
+                assert len(pins) >= len(wires), self.error_string(
+                    "pins length to match or exceed cable.wires length", "INTERNAL ERROR", str(len(pins)) + "!=" + str(len(wires)))
+
+
+                # there can be unconnected pins at the end of the port.
+                for i in range(len(wires)):
+                    wires[i].connect_pin(pins[i])
+
+                token = self.next_token()
+                index += 1
+
+            assert token == vt.CLOSE_PARENTHESIS, self.error_string(
+                vt.CLOSE_PARENTHESIS, "to end cable name in port mapping", token)
 
     def parse_assign(self):
         token = self.next_token()

@@ -105,3 +105,46 @@ class VerilogTokenizer:
     def close(self):
         if self.input_stream:
             self.input_stream.close()
+
+
+class VerilogTokenizerSimple():
+    def __init__(self, token_list):
+        self.token = None
+        self.next_token = None
+        self.line_number = 0
+        self.token_list = token_list
+        self.generator = self.generate_tokens()
+
+    def __del__(self):
+        if hasattr(self, "input_stream"):
+            self.close()
+
+    def generate_tokens(self):
+        for token in self.token_list:
+            yield token
+
+    def has_next(self):
+        try:
+            self.peek()
+            return True
+        except StopIteration:
+            return False
+
+    def next(self):
+        if self.next_token is not None:
+            self.token = self.next_token
+            self.next_token = None
+        else:
+            self.token = next(self.generator)
+        return self.token
+
+    def peek(self):
+        if self.next_token is not None:
+            return self.next_token
+        else:
+            token = next(self.generator)
+            while len(token) >= 2 and (token[0:2] == vt.OPEN_LINE_COMMENT
+                                       or token[0:2] == vt.OPEN_BLOCK_COMMENT):
+                token = next(self.generator)
+            self.next_token = token
+            return self.next_token

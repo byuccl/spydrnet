@@ -6,6 +6,7 @@ import spydrnet as sdn
 from spydrnet.parsers.verilog.parser import VerilogParser
 import spydrnet.parsers.verilog.verilog_tokens as vt
 from spydrnet import parsers
+from spydrnet.util.selection import Selection
 import os
 
 class TestVerilogParser(unittest.TestCase):
@@ -814,6 +815,33 @@ class TestVerilogParser(unittest.TestCase):
             w_pins.append(w.pins[0])
         for p in parser.current_instance.pins:
             assert p in w_pins
+
+    def test_parse_implicitly_mapped_ports(self):
+        # create dummy netlist
+        to_write = "module top (input clk, output out);\n"
+        to_write += "\twire clk_c, VCC_net, out;\n"
+        to_write += "\tINST my_inst (clk_c, VCC_net, out);\n"
+        to_write += "endmodule\n\n"
+        to_write += "module INST (input port_0, input port_1, output port_2);\n"
+        to_write += "endmodule"
+        f = open("test_netlist", "x")
+        f.write(to_write)
+        f.close()
+
+        parser = VerilogParser.from_filename("test_netlist")
+        parser.parse()
+        netlist = parser.netlist
+
+        instance = next(netlist.get_instances("my_inst"))
+        self.assertEqual(instance.name, "my_inst")
+        connections = ["clk_c", "VCC_net", "out"]
+        for i in range(0,2):
+            port = next(instance.get_ports("port_"+str(i)))
+            self.assertEqual(len(port.pins), 1)
+            for pin in port.get_pins(selection=Selection.OUTSIDE):
+                self.assertEqual(pin.wire.cable.name, connections[i])
+
+        os.remove("test_netlist")
 
     ############################################################################
     ##Port creation and modification
