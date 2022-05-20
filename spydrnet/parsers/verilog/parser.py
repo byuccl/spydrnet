@@ -667,6 +667,19 @@ class VerilogParser:
             "instance name", "for instantiation", token)
         name = token
 
+        # the current definition is instancing the current top instance, so a change needs to be made
+        if def_name == self.netlist.top_instance.reference.name:
+            old_top_instance = self.netlist.top_instance
+            self.netlist.top_instance = sdn.Instance()
+            self.netlist.top_instance.name = self.current_definition.name + "_top"
+            self.netlist.top_instance.reference = self.current_definition
+            self.netlist.name = "SDN_VERILOG_NETLIST_" + self.current_definition.name
+
+            # this instance should just go away. It was created to be the top instance but we don't want that 
+            # it has no parent. And now with no reference, it should have no ties to the netlist.
+            old_top_instance.reference = None
+
+
         token = self.peek_token()
         assert token == vt.OPEN_PARENTHESIS, self.error_string(
             vt.OPEN_PARENTHESIS, "to start port to cable mapping", token)

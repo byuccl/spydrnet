@@ -824,11 +824,11 @@ class TestVerilogParser(unittest.TestCase):
         to_write += "endmodule\n\n"
         to_write += "module INST (input port_0, input port_1, output port_2);\n"
         to_write += "endmodule"
-        f = open("test_netlist", "x")
+        f = open("test_netlist.v", "x")
         f.write(to_write)
         f.close()
 
-        parser = VerilogParser.from_filename("test_netlist")
+        parser = VerilogParser.from_filename("test_netlist.v")
         parser.parse()
         netlist = parser.netlist
 
@@ -841,7 +841,7 @@ class TestVerilogParser(unittest.TestCase):
             for pin in port.get_pins(selection=Selection.OUTSIDE):
                 self.assertEqual(pin.wire.cable.name, connections[i])
 
-        os.remove("test_netlist")
+        os.remove("test_netlist.v")
 
     ############################################################################
     ##Port creation and modification
@@ -1279,6 +1279,33 @@ class TestVerilogParser(unittest.TestCase):
         assert "DONT_TOUCH" in stars2
         assert stars2["DONT_TOUCH"] == None
         
+    ############################################
+    ##test hierarchy
+    ############################################
+
+    def test_hierarchy_fixing(self):
+        # create dummy netlist with the top instance coming after the lower instance
+        to_write = "module INST (input port_0, input port_1, output port_2);\n"
+        to_write += "endmodule\n\n"
+        to_write += "module top (input clk, output out);\n"
+        to_write += "\twire clk_c, VCC_net, out;\n"
+        to_write += "\tINST my_inst (clk_c, VCC_net, out);\n"
+        to_write += "endmodule\n"
+        f = open("test_netlist.v", "x")
+        f.write(to_write)
+        f.close()
+
+        parser = VerilogParser.from_filename("test_netlist.v")
+        parser.parse()
+        netlist = parser.netlist
+
+        self.assertEqual(netlist.top_instance.name, "top_top")
+        instance = next(netlist.get_instances("my_inst"))
+        self.assertTrue(instance.parent is netlist.top_instance.reference)
+        self.assertTrue(instance in netlist.top_instance.reference.children)
+        self.assertEqual(len(instance.reference.references), 1)
+
+        os.remove("test_netlist.v")
 
 
     ############################################
