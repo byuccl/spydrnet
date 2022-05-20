@@ -669,11 +669,29 @@ class VerilogParser:
 
         # the current definition is instancing the current top instance, so a change needs to be made
         if def_name == self.netlist.top_instance.reference.name:
+            # print(self.current_definition.name + " is instancing the current top instance (" + name+ " which is a "+ self.netlist.top_instance.reference.name+")")
             old_top_instance = self.netlist.top_instance
+
+            new_level = self.current_definition
+            # we know the current top is not right. So now we can move it up a level.
+            # But double check to make sure nothing is instancing the potential new top.
+            # Move up levels until we reach a new top
+            if (len(self.current_definition.references) > 0):
+                current_level = list(x for x in self.current_definition.references)[0]
+                while(True):
+                    current_level = current_level.parent
+                    try:
+                        current_level.parent
+                    except AttributeError:
+                        new_level = current_level
+                        break;
+
             self.netlist.top_instance = sdn.Instance()
-            self.netlist.top_instance.name = self.current_definition.name + "_top"
-            self.netlist.top_instance.reference = self.current_definition
-            self.netlist.name = "SDN_VERILOG_NETLIST_" + self.current_definition.name
+            self.netlist.top_instance.name = new_level.name + "_top"
+            self.netlist.top_instance.reference = new_level
+            self.netlist.name = "SDN_VERILOG_NETLIST_" + new_level.name
+
+            # print("New top instance is "+ self.netlist.top_instance.name)
 
             # this instance should just go away. It was created to be the top instance but we don't want that 
             # it has no parent. And now with no reference, it should have no ties to the netlist.
