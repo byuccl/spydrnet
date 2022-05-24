@@ -1,6 +1,7 @@
 import spydrnet as sdn
 from spydrnet.ir import Library
 from spydrnet.parsers.verilog.parser import VerilogParser
+import spydrnet.parsers.verilog.verilog_tokens as vt
 
 MODULE = "module"
 END_MODULE = "endmodule"
@@ -13,20 +14,22 @@ A class to extract primitive port information from a Verilog file and insert it 
 
 parameters
 ----------
-input_file - the name of the verilog file to be parsed
-netlist_defs - a map of each definition name to the corresponding definition.
+architecture - the targeted architecture. Must be a type from spydrnet.util.architecture
+netlist - the current netlist
 """
 
-class ModuleInformationFiller():
-    def __init__(self, input_file, netlist_defs):
-        self.input_file = input_file
-        self.netlist_defs = netlist_defs
+class PrimitiveLibraryReader():
+    def __init__(self, architecture, netlist):
+        self.input_file = architecture
+        self.netlist = netlist
+        self.netlist_defs = dict()
         self.parsed_defs = dict()
         self.parser = None
     
     def run(self):
         self.initialize()
         while(self.parser.tokenizer.has_next()):
+            self.get_past_comments()
             self.parser.parse_primitive()
             definition = self.parser.current_definition
             self.parsed_defs[definition.name] = definition
@@ -37,6 +40,18 @@ class ModuleInformationFiller():
         self.parser = VerilogParser.from_filename(self.input_file)
         self.parser.initialize_tokenizer()
         self.parser.current_library = Library()
+        self.create_defintiion_dict()
+
+    def get_past_comments(self):
+        token = self.parser.peek_token()
+        while(token != vt.MODULE and token != vt.PRIMITIVE):
+            # print(token)
+            self.parser.next_token()
+            token = self.parser.peek_token()
+
+    def create_defintiion_dict(self):
+        for definition in self.netlist.get_definitions():
+            self.netlist_defs[definition.name] = definition
 
     def insert_info(self):
         cnt = 0

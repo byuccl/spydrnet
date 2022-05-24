@@ -1,6 +1,7 @@
 import os
 import zipfile
 import tempfile
+from spydrnet.parsers.primitive_library_reader import PrimitiveLibraryReader
 
 """
 Init for Spydrnet. The functions below can be called directly
@@ -8,7 +9,7 @@ Init for Spydrnet. The functions below can be called directly
 """
 
 
-def parse(filename):
+def parse(filename, architecture=None):
     """
     The parse function is able to parse an EDIF (.edf) file, a Verilog file (.v), or an EBLIF file (.eblif).
 
@@ -51,10 +52,10 @@ def parse(filename):
                 filename = os.path.join(
                     tempdirname, basename_less_final_extension)
                 return _parse(filename)
-    return _parse(filename)
+    return _parse(filename, architecture)
 
 
-def _parse(filename):
+def _parse(filename, architecture=None):
     extension = get_lowercase_extension(filename)
     if extension in [".edf", ".edif", ".edn"]:
         from spydrnet.parsers.edif.parser import EdifParser
@@ -68,6 +69,9 @@ def _parse(filename):
     else:
         raise RuntimeError("Extension {} not recognized.".format(extension))
     parser.parse()
+
+    if architecture:
+        read_primitive_library(architecture, parser.netlist)
     return parser.netlist
 
 
@@ -75,3 +79,7 @@ def get_lowercase_extension(filename):
     extension = os.path.splitext(filename)[1]
     extension_lower = extension.lower()
     return extension_lower
+
+def read_primitive_library(architecture, netlist):
+    reader = PrimitiveLibraryReader(architecture, netlist)
+    reader.run()
