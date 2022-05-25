@@ -9,16 +9,16 @@ INPUT = "input"
 OUTPUT = "output"
 PARAMETER = "parameter"
 
-"""
-A class to extract primitive port information from a Verilog file and insert it into the netlist. The input file is parsed using the Verilog Parser and if any module information is found for a definition in netlist_defs, the port information (i.e. directions) is added.
-
-parameters
-----------
-architecture - the targeted architecture. Must be a type from spydrnet.util.architecture
-netlist - the current netlist
-"""
-
 class PrimitiveLibraryReader():
+    """
+    A class to extract primitive port information from a Verilog file and insert it into the netlist. The input file is parsed using the Verilog Parser and if any module information is found for a definition in the given netlist, the port information (i.e. directions) is added.
+
+    parameters
+    ----------
+    architecture - the targeted architecture. Must be a type from spydrnet.util.architecture
+    netlist - the current netlist
+    """
+
     def __init__(self, architecture, netlist):
         self.input_file = architecture
         self.netlist = netlist
