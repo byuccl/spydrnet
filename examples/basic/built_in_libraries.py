@@ -5,7 +5,7 @@ Using Built-In Primitive Libraries
 
 A simple example to demonstrate using SpyDrNet's built in primitive libraries.
 
-The b13 example netlist is used. However, because the primitives are defined in the netlist, we must first compose it out to a new netlist that does not define the primitives.
+The b13 example netlist is targeted towards the Xilinx 7 Series family. However, because the primitives are defined in the netlist, we must first compose it out to a new netlist that does not define the primitives.
 
 netlist_1 is parsed in without using the built in primitive library. The output shows that the port directions are undefined.
 
