@@ -22,6 +22,7 @@ class PrimitiveLibraryReader():
     def __init__(self, architecture, netlist):
         self.input_file = architecture
         self.netlist = netlist
+        self.definition_list = list()
         self.netlist_defs = dict()
         self.parsed_defs = dict()
         self.parser = None
@@ -30,9 +31,10 @@ class PrimitiveLibraryReader():
         self.initialize()
         while(self.parser.tokenizer.has_next()):
             self.get_past_comments()
-            self.parser.parse_primitive()
+            self.parser.parse_primitive(definition_list=self.definition_list)
             definition = self.parser.current_definition
-            self.parsed_defs[definition.name] = definition
+            if definition:
+                self.parsed_defs[definition.name] = definition
         cnt = self.insert_info()
         print("Found information for %d definitions" % cnt)
     
@@ -52,6 +54,7 @@ class PrimitiveLibraryReader():
     def create_defintiion_dict(self):
         for definition in self.netlist.get_definitions():
             self.netlist_defs[definition.name] = definition
+            self.definition_list.append(definition.name)
 
     def insert_info(self):
         cnt = 0

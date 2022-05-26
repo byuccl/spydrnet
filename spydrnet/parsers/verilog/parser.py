@@ -252,9 +252,13 @@ class VerilogParser:
             d["VERILOG.primitive"] = True
             self.current_library.add_definition(d)
 
-    def parse_primitive(self):
-        '''similar to parse module but it will only look for the inputs and outputs to get an idea of how those things look'''
+    def parse_primitive(self, definition_list = []):
+        '''
+        similar to parse module but it will only look for the inputs and outputs to get an idea of how those things look
 
+        definition_list is an optional parameter that is used by primitive_library_reader as primitive libraries are parsed. If the primitive name is not
+        in the definition list, it is not needed and will be skipped.
+        '''
         token = self.next_token()
         assert token == vt.MODULE or token == vt.PRIMITIVE, self.error_string(
             vt.MODULE, "to begin module statement", token)
@@ -262,6 +266,13 @@ class VerilogParser:
         assert vt.is_valid_identifier(token), self.error_string(
             "identifier", "not a valid module name", token)
         name = token
+        
+        if definition_list:
+            if name not in definition_list: # we don't need this primitive info
+                while(token != vt.END_MODULE):
+                    token = self.next_token()
+                # self.next_token()
+                return
 
         definition = self.blackbox_holder.get_blackbox(name)
         self.blackbox_holder.define(name)
