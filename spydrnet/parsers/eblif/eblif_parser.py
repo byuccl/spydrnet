@@ -308,10 +308,13 @@ class EBLIFParser:
             self.tokenizer.next()
 
     def connect_instance_pins(self,instance):
+        # print(self.current_instance_info)
         for key in self.current_instance_info.keys():
+            # print(key)
             cable_info = self.current_instance_info[key]
             cable_name,cable_index = self.get_port_name_and_index(cable_info) # get connected cable name and wire index
             port_name, pin_index = self.get_port_name_and_index(key) # get own port name and pin index
+            # print("Cable: " + cable_name + " Index: " + str(cable_index))
             if (cable_name == UNCONN):  # intentionally disconnected so put that into metadata
                 try:
                     instance[UNCONN]
@@ -321,7 +324,12 @@ class EBLIFParser:
                 continue
             # print(port_name)
             # print(list(x.inner_pin.port.name for x in instance.get_pins(selection=Selection.OUTSIDE)))
-            pin = next(instance.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port.name == port_name and x.inner_pin is x.inner_pin.port.pins[pin_index]))
+            port = next(instance.get_ports(port_name))
+            pin = None
+            if len(port.pins) < pin_index+1: # multibit port that isn't yet multibit
+                pin = port.create_pin()
+            else:
+                pin = next(instance.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port.name == port_name and x.inner_pin is x.inner_pin.port.pins[pin_index]))
             self.connect_pins_to_wires(pin,cable_name,cable_index)
 
     def parse_comment(self):
