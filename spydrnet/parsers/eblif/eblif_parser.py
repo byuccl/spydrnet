@@ -77,6 +77,8 @@ class EBLIFParser:
 
     def parse_model(self):
         model_name = self.tokenizer.next()
+        self.cables = dict()
+        self.default_names = dict()
         self.parse_model_header(model_name)
         self.parse_model_helper()
 
@@ -140,11 +142,13 @@ class EBLIFParser:
                 self.parse_name()
             elif token == CONN:
                 self.parse_conn()
+            elif token == BLACKBOX:
+                self.make_blackbox()
             elif token == END:
                 break
             else:
                 None
-    
+
     def parse_model_header(self, model_name):
         # Libraries aren't in blif, so just create a single library
         # print("Model name: " + model_name)
@@ -162,6 +166,7 @@ class EBLIFParser:
             parent_instance = Instance(name=parent_instance_def.name)
             parent_instance.reference = parent_instance_def
             self.netlist.set_top_instance(parent_instance)
+            self.netlist.name = parent_instance_def.name
         self.current_model = parent_instance_def
         self.tokenizer.next() # should be end of line so proceed to next line
         self.parse_top_level_ports()
@@ -656,3 +661,7 @@ class EBLIFParser:
                             if len(pin.wire.cable.wires) > 1:
                                 name+="_"+str(pin.wire.cable.wires.index(pin.wire))
                             instance.name = name
+
+    def make_blackbox(self):
+        self.current_model["EBLIF.blackbox"] = True
+        self.current_model.remove_cables_from(self.current_model.cables)
