@@ -62,26 +62,22 @@ class EBLIFParser:
         return self.netlist
     
     def parse_eblif(self):
+        netlist = Netlist()
+        self.netlist = netlist
         while(self.tokenizer.has_next()):
             token = self.tokenizer.next()
             if token == COMMENT:
                 self.parse_comment()
             elif token == MODEL:
-                if self.netlist:
-                    self.parse_other_model()
-                else:
-                    self.parse_top_model()
+                self.parse_model()
             else:
                 None
         self.set_subcircuit_names_by_convention()
         self.insert_comments_into_netlist_data()
 
-    def parse_top_model(self):
-        netlist = Netlist()
-        name = self.tokenizer.next()
-        netlist.name = name
-        self.netlist = netlist
-        self.parse_top_instance()
+    def parse_model(self):
+        model_name = self.tokenizer.next()
+        self.parse_model_header(model_name)
         self.parse_model_helper()
 
     def parse_other_model(self):
@@ -149,18 +145,30 @@ class EBLIFParser:
             else:
                 None
     
-    def parse_top_instance(self):
+    def parse_model_header(self, model_name):
         # Libraries aren't in blif, so just create a single library
-        library = self.netlist.create_library(name="library_1")
-        top_instance_def = library.create_definition(name=self.netlist.name)
-        top_instance = Instance(name=top_instance_def.name)
-        top_instance.reference = top_instance_def
-        self.netlist.set_top_instance(top_instance)
-        self.current_model = top_instance
+        # print("Model name: " + model_name)
+        if len(self.netlist.libraries) == 0:
+            library = self.netlist.create_library(name="library_1")
+        else:
+            library = next(self.netlist.get_libraries())
+        parent_instance_def = next(self.netlist.get_definitions(model_name), None)
+        if not parent_instance_def:
+            parent_instance_def = library.create_definition(name=model_name)
+            self.definitions[parent_instance_def.name] = parent_instance_def
+        
+        
+        if not self.netlist.top_instance:
+            parent_instance = Instance(name=parent_instance_def.name)
+            parent_instance.reference = parent_instance_def
+            self.netlist.set_top_instance(parent_instance)
+        self.current_model = parent_instance_def
         self.tokenizer.next() # should be end of line so proceed to next line
         self.parse_top_level_ports()
     
     def parse_top_level_ports(self):
+        self.top_level_input_ports = dict()
+        self.top_level_output_ports = dict()
         while(self.tokenizer.peek() == INPUTS):
             self.parse_top_level_inputs()
         while(self.tokenizer.peek() == OUTPUTS):
@@ -177,12 +185,20 @@ class EBLIFParser:
             index = int(index)
             port = None
             pin = None
+            existing_port_list = list(x.name for x in self.current_model.get_ports())
             if (port_name in self.top_level_input_ports.keys()):
-                port= self.top_level_input_ports[port_name]
+                port = self.top_level_input_ports[port_name]
                 pin = port.create_pin()
+            elif port_name in existing_port_list:
+                port = next(self.current_model.get_ports(port_name))
+                port.direction = sdn.IN
+                if len(port.pins) < index+1:
+                    pin = port.create_pin()
+                else:
+                    pin = port.pins[index]
             else:
                 port = self.create_top_level_port(sdn.Port.Direction.IN,port_name)
-                self.netlist.top_instance.reference.add_port(port)
+                self.current_model.add_port(port)
                 self.top_level_input_ports[port_name] = port
                 pin = port.create_pin()
             self.connect_pins_to_wires(pin,port_name,index)
@@ -196,12 +212,20 @@ class EBLIFParser:
             index = int(index)
             port = None
             pin = None
+            existing_port_list = list(x.name for x in self.current_model.get_ports())
             if (port_name in self.top_level_output_ports.keys()):
                 port= self.top_level_output_ports[port_name]
                 pin = port.create_pin()
+            elif port_name in existing_port_list:
+                port = next(self.current_model.get_ports(port_name))
+                port.direction = sdn.OUT
+                if len(port.pins) < index+1:
+                    pin = port.create_pin()
+                else:
+                    pin = port.pins[index]
             else:
                 port = self.create_top_level_port(sdn.Port.Direction.OUT,port_name)
-                self.netlist.top_instance.reference.add_port(port)
+                self.current_model.add_port(port)
                 self.top_level_output_ports[port_name] = port
                 pin = port.create_pin()
             self.connect_pins_to_wires(pin,port_name,index)
@@ -211,11 +235,11 @@ class EBLIFParser:
         self.expect(CLOCK)
         self.tokenizer.next()
         try:
-            self.netlist.top_instance["EBLIF.clock"]
+            self.current_model["EBLIF.clock"]
         except KeyError:
-            self.netlist.top_instance["EBLIF.clock"] = list()
+            self.current_model["EBLIF.clock"] = list()
         while (self.tokenizer.token is not NEW_LINE):
-            self.netlist.top_instance["EBLIF.clock"].append(self.tokenizer.token)
+            self.current_model["EBLIF.clock"].append(self.tokenizer.token)
             self.tokenizer.next()
 
     def create_top_level_port(self,port_direction,port_name):
@@ -229,7 +253,7 @@ class EBLIFParser:
         if (cable_name in self.cables.keys()):
             cable = self.cables[cable_name]
         else:
-            cable = self.netlist.top_instance.reference.create_cable(name=cable_name)
+            cable = self.current_model.create_cable(name=cable_name)
             self.cables[cable_name] = cable
         try:
             cable.wires[wire_index]
@@ -246,6 +270,7 @@ class EBLIFParser:
         # print(self.tokenizer.token)
         self.current_instance_info.clear()
         reference_model = self.tokenizer.next()
+        self.check_hierarchy(reference_model)
         definition = None
         if reference_model not in list(key for key in self.definitions.keys()):  # if the reference model is not found in the netlist, create it
             definition = self.create_new_definition()
@@ -253,7 +278,7 @@ class EBLIFParser:
         else:
             definition = self.definitions[reference_model]
             self.collect_subcircuit_information()
-        instance = self.netlist.top_instance.reference.create_child(reference = definition)
+        instance = self.current_model.create_child(reference = definition)
         self.current_instance = instance
         if is_gate:
             instance["EBLIF.type"] = "EBLIF.gate"
@@ -263,6 +288,36 @@ class EBLIFParser:
         # print(self.current_instance_info)
         self.connect_instance_pins(instance)
         self.check_for_and_add_more_instance_info()
+
+    def check_hierarchy(self, child_definition_name):
+        if child_definition_name == self.netlist.top_instance.reference.name:
+            # print(self.current_definition.name + " is instancing the current top instance (" + name+ " which is a "+ self.netlist.top_instance.reference.name+")")
+            old_top_instance = self.netlist.top_instance
+
+            new_level = self.current_model
+            # we know the current top is not right. So now we can move it up a level.
+            # But double check to make sure nothing is instancing the potential new top.
+            # Move up levels until we reach a new top
+            if (len(self.current_model.references) > 0):
+                current_level = list(x for x in self.current_model.references)[0]
+                while(True):
+                    current_level = current_level.parent
+                    try:
+                        current_level.parent
+                    except AttributeError:
+                        new_level = current_level
+                        break;
+
+            self.netlist.top_instance = sdn.Instance()
+            self.netlist.top_instance.name = new_level.name
+            self.netlist.top_instance.reference = new_level
+            self.netlist.name = new_level.name
+
+            # print("New top instance is "+ self.netlist.top_instance.name)
+
+            # this instance should just go away. It was created to be the top instance but we don't want that 
+            # it has no parent. And now with no reference, it should have no ties to the netlist.
+            old_top_instance.reference = None
 
     def create_new_definition(self):
         definition = self.netlist.libraries[0].create_definition(name = self.tokenizer.token)
@@ -427,7 +482,10 @@ class EBLIFParser:
         single_output_covers = list()
         while (self.check_if_init_values(self.tokenizer.peek())): # make sure next token is init values
             single_output_cover=self.tokenizer.next()
-            single_output_cover+=" "+self.tokenizer.next()
+            single_output_cover+=" "
+            possible_next = self.tokenizer.next()
+            if possible_next != NEW_LINE:
+                single_output_cover+=possible_next
             self.tokenizer.next()
             single_output_covers.append(single_output_cover)
     
@@ -445,7 +503,7 @@ class EBLIFParser:
         definition = self.definitions[name]
 
         # then create an instance of it
-        instance = self.netlist.top_instance.reference.create_child()
+        instance = self.current_model.create_child()
         instance.reference = definition
         instance["EBLIF.output_covers"] = single_output_covers
         # self.assign_instance_a_default_name(instance)
@@ -518,7 +576,7 @@ class EBLIFParser:
         definition = self.definitions[name]
 
         # create an instance of it
-        instance = self.netlist.top_instance.reference.create_child()
+        instance = self.current_model.create_child()
         instance.reference = definition
         # self.assign_instance_a_default_name(instance)
         instance.name = port_info["output"] # by convention, the latch name is the name of the net it drives
@@ -545,7 +603,7 @@ class EBLIFParser:
         if (cable_one_name in self.cables.keys()):
             cable_one = self.cables[cable_one_name]
         else:
-            cable_one = self.netlist.top_instance.reference.create_cable(name=cable_one_name)
+            cable_one = self.current_model.create_cable(name=cable_one_name)
             self.cables[cable_one_name] = cable_one
         try:
             cable_one.wires[index_one]
@@ -557,7 +615,7 @@ class EBLIFParser:
         if (cable_two_name in self.cables.keys()):
             cable_two = self.cables[cable_two_name]
         else:
-            cable_two = self.netlist.top_instance.reference.create_cable(name=cable_two_name)
+            cable_two = self.current_model.create_cable(name=cable_two_name)
             self.cables[cable_two_name] = cable_two
         try:
             cable_two.wires[index_two]
