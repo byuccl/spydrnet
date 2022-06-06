@@ -142,7 +142,8 @@ class EBLIFComposer:
     
     def compose_subcircuits(self,list_of_subcircuits,is_gate=False):
         for subckt in list_of_subcircuits:
-            self.blackboxes_to_compose.add(subckt.reference.name)
+            if (subckt.is_leaf()):
+                self.blackboxes_to_compose.add(subckt.reference.name)
             to_add = ""
             if is_gate:
                 to_write = ".gate "+ subckt.reference.name+" "
