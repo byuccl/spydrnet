@@ -47,10 +47,6 @@ class EBLIFComposer:
     def compose_models(self):
         self.compose_model(self.netlist.top_instance.reference)
         for model in self.netlist.get_hinstances(recursive=True, filter=lambda x: (x.item.is_leaf()==False)):
-            print(model.name + " is not a leaf. He's a " + model.item.reference.name)
-            print(list(x.name for x in model.item.reference.children))
-            print("His children number is " + str(len(model.item.reference.children)))
-            print("His cable number is " + str(len(model.item.reference.cables)))
             model = model.item.reference
             if "EBLIF.blackbox" not in model.data.keys():
                 self.compose_model(model)
