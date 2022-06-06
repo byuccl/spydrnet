@@ -308,13 +308,10 @@ class EBLIFParser:
             self.tokenizer.next()
 
     def connect_instance_pins(self,instance):
-        # print(self.current_instance_info)
         for key in self.current_instance_info.keys():
-            # print(key)
             cable_info = self.current_instance_info[key]
             cable_name,cable_index = self.get_port_name_and_index(cable_info) # get connected cable name and wire index
             port_name, pin_index = self.get_port_name_and_index(key) # get own port name and pin index
-            # print("Cable: " + cable_name + " Index: " + str(cable_index))
             if (cable_name == UNCONN):  # intentionally disconnected so put that into metadata
                 try:
                     instance[UNCONN]
