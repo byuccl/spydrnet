@@ -384,9 +384,8 @@ class EBLIFParser:
             port = next(instance.get_ports(port_name))
             pin = None
             if len(port.pins) < pin_index+1: # multibit port that isn't yet multibit
-                pin = port.create_pin()
-            else:
-                pin = next(instance.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port.name == port_name and x.inner_pin is x.inner_pin.port.pins[pin_index]))
+                inner_pin = port.create_pin()
+            pin = next(instance.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port.name == port_name and x.inner_pin is x.inner_pin.port.pins[pin_index]))
             self.connect_pins_to_wires(pin,cable_name,cable_index)
 
     def parse_comment(self):
@@ -417,7 +416,7 @@ class EBLIFParser:
                 if ":" in index:
                     old_index = index
                     index = index[:index.find(':')]
-                    print("Index was: "+old_index+". To avoid an error, it was changed to "+index)
+                    print("EBLIFParser: Index was: "+old_index+". To avoid an error, it was changed to "+index)
                 return name, int(index)
         else:
             return string, 0
@@ -654,13 +653,18 @@ class EBLIFParser:
         for instance in self.netlist.get_instances(): 
             if instance["EBLIF.type"] in ["EBLIF.subckt","EBLIF.gate"]:
                 if "EBLIF.cname" not in instance.data:
-                    pin = next(instance.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port.direction is sdn.OUT),None)
-                    if pin:
-                        if pin.wire:
-                            name = pin.wire.cable.name
-                            if len(pin.wire.cable.wires) > 1:
-                                name+="_"+str(pin.wire.cable.wires.index(pin.wire))
-                            instance.name = name
+                    iterator = instance.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port.direction is sdn.OUT)
+                    while(True):
+                        pin = next(iterator, None)
+                        if pin:
+                            if pin.wire:
+                                name = pin.wire.cable.name
+                                if len(pin.wire.cable.wires) > 1:
+                                    name+="_"+str(pin.wire.cable.wires.index(pin.wire))
+                                instance.name = name
+                                break
+                        else:
+                            break
 
     def make_blackbox(self):
         self.current_model["EBLIF.blackbox"] = True
