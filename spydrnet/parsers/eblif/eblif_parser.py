@@ -634,7 +634,7 @@ class EBLIFParser:
         name_one = wire_one.cable.name+"_"+str(wire_one.index())
         name_two = wire_two.cable.name+"_"+str(wire_two.index())
         new_cable_name = name_one+"_"+name_two
-        new_cable = self.current_model.reference.create_cable(name=new_cable_name)
+        new_cable = self.current_model.create_cable(name=new_cable_name)
         new_wire = new_cable.create_wire()
 
         wire_one_pins = wire_one.pins.copy()
