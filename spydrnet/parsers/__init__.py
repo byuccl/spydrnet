@@ -1,7 +1,6 @@
 import os
 import zipfile
 import tempfile
-from spydrnet.parsers.primitive_library_reader import PrimitiveLibraryReader
 
 """
 Init for Spydrnet. The functions below can be called directly
@@ -81,5 +80,6 @@ def get_lowercase_extension(filename):
     return extension_lower
 
 def read_primitive_library(architecture, netlist):
+    from spydrnet.parsers.primitive_library_reader import PrimitiveLibraryReader
     reader = PrimitiveLibraryReader(architecture, netlist)
     reader.run()
