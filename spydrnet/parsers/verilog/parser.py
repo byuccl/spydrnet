@@ -252,7 +252,7 @@ class VerilogParser:
             d["VERILOG.primitive"] = True
             self.current_library.add_definition(d)
 
-    def parse_primitive(self, definition_list = []):
+    def parse_primitive(self, definition_list = [], bypass_name_check=False):
         '''
         similar to parse module but it will only look for the inputs and outputs to get an idea of how those things look
 
@@ -263,8 +263,9 @@ class VerilogParser:
         assert token == vt.MODULE or token == vt.PRIMITIVE, self.error_string(
             vt.MODULE, "to begin module statement", token)
         token = self.next_token()
-        assert vt.is_valid_identifier(token), self.error_string(
-            "identifier", "not a valid module name", token)
+        if not bypass_name_check:
+            assert vt.is_valid_identifier(token), self.error_string(
+                "identifier", "not a valid module name", token)
         name = token
         
         if definition_list:

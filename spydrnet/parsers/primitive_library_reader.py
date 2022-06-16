@@ -30,8 +30,8 @@ class PrimitiveLibraryReader():
     def run(self):
         self.initialize()
         while(self.parser.tokenizer.has_next()):
-            self.get_past_comments()
-            self.parser.parse_primitive(definition_list=self.definition_list)
+            self.progress_past_comments()
+            self.parser.parse_primitive(definition_list=self.definition_list, bypass_name_check=True)
             definition = self.parser.current_definition
             if definition:
                 self.parsed_defs[definition.name] = definition
@@ -44,7 +44,7 @@ class PrimitiveLibraryReader():
         self.parser.current_library = Library()
         self.create_defintiion_dict()
 
-    def get_past_comments(self):
+    def progress_past_comments(self):
         token = self.parser.peek_token()
         while(token != vt.MODULE and token != vt.PRIMITIVE):
             # print(token)
