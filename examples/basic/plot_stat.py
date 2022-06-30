@@ -24,7 +24,7 @@ for library in ir.libraries:
     for definition in library.definitions:
         # Gets the name of the current definition and how many times its been used
         print("\tDefinition name:", definition['EDIF.identifier'])
-        print("\t\t", "Defintion used", str(len(definition.references)), "times")
+        print("\t\t", "Definition used", str(len(definition.references)), "times")
         # Gets the number of Ports in definition
         print("\t\t", str(len(definition.ports)), "ports detected")
         # Loop through each port for the current definition
