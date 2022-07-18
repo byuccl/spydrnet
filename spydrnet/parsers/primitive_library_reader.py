@@ -64,6 +64,9 @@ class PrimitiveLibraryReader():
                 port_dict = self.create_port_dict(match)
                 # print(definition.name + " " + str(port_dict))
                 for port in definition.get_ports():
+                    if port.name is None: # no port name, so assume it's the only port.
+                        port.name = next(key for key in port_dict.keys())
+                        # print("Port name was None so changed to " + port.name)
                     port.direction = port_dict[port.name]
                 cnt+=1
         return cnt
