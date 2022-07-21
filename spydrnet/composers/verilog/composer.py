@@ -6,7 +6,7 @@ import spydrnet.parsers.verilog.verilog_tokens as vt
 
 class Composer:
 
-    def __init__(self, definition_list=None, write_blackbox=False):
+    def __init__(self, definition_list=None, write_blackbox=False, defparam = False):
         """ Write a verilog netlist from SDN netlist
 
         parameters
@@ -14,6 +14,7 @@ class Composer:
 
         definition_list - (list[str]) list of defintions to write
         write_blackbox - (bool) Skips writing black boxes/verilog primitives
+        defparam - (bool) Compose parameters in *defparam* statements instead of using #()
         """
         self.file = None
         self.direction_string_map = dict()
@@ -25,6 +26,7 @@ class Composer:
         self.indent_count = 4  # set the indentation level for various components
         self.write_blackbox = write_blackbox
         self.definition_list = definition_list
+        self.defparam = defparam
 
 
     def run(self, ir, file_out="out.v"):
@@ -158,13 +160,21 @@ class Composer:
         self.file.write(self.indent_count * vt.SPACE)
         self._write_name(instance.reference)
         self.file.write(vt.SPACE)
-        if "VERILOG.Parameters" in instance:
-            self._write_instance_parameters(instance)
-            self.file.write(self.indent_count * vt.SPACE)
+        if not self.defparam:
+            if "VERILOG.Parameters" in instance:
+                self._write_instance_parameters(instance)
+                self.file.write(self.indent_count * vt.SPACE)
         self._write_name(instance)
         self.file.write(vt.NEW_LINE)
         self._write_instance_ports(instance)
         self.file.write(vt.NEW_LINE)
+        if self.defparam:
+            if "VERILOG.Parameters" in instance:
+                for key, value in instance["VERILOG.Parameters"].items():
+                    to_write = (self.indent_count * vt.SPACE) + vt.DEFPARAM + vt.SPACE
+                    to_write += instance.name + vt.DOT + key + vt.EQUAL
+                    to_write += value + vt.SEMI_COLON + vt.NEW_LINE
+                    self.file.write(to_write)
 
     def _write_module_body_ports(self, definition):
         for p in definition.ports:
@@ -358,12 +368,48 @@ class Composer:
             if not first:
                 self.file.write(vt.COMMA)
                 self.file.write(vt.NEW_LINE)
-            self._write_instance_port(instance, p)
+            if p.name:
+                self._write_instance_port(instance, p)
+            else:
+                self._write_implicitly_mapped__instance_port(instance, p)
             first = False
         self.file.write(vt.NEW_LINE)
         self.file.write(self.indent_count * vt.SPACE)
         self.file.write(vt.CLOSE_PARENTHESIS)
         self.file.write(vt.SEMI_COLON)
+
+    def _write_implicitly_mapped__instance_port(self, instance, port):
+        '''Ports that have no name must be implicitly mapped. E.g. inst(VCC_net) rather than inst(.p(VCC_net))'''
+        self.file.write(2*self.indent_count * vt.SPACE)
+        # self.file.write(vt.DOT)
+        # self._write_name(port)
+        # self.file.write(vt.OPEN_PARENTHESIS)
+        pins = []
+        for p in port.pins:
+            pins.append(instance.pins[p])
+        if pins[0].wire is not None:
+            name = pins[0].wire.cable.name
+        else:
+            name = None
+        concatenated = self._is_pinset_concatenated(pins, name)
+        wires = []
+        for p in pins:
+            wires.append(p.wire)
+        if concatenated:
+            self._write_concatenation(wires)
+        else:
+            if pins[0].wire is not None:
+                last = -1
+                wl = wires[last]
+                wr = wires[0]
+                while wl is None:  # get the last named non none wire.
+                    last = last - 1
+                    wl = wires[last]
+                il = self._index_of_wire_in_cable(wl)
+                ir = self._index_of_wire_in_cable(wr)
+                self._write_bundle_with_indicies(wl.cable, ir, il)
+
+        # self.file.write(vt.CLOSE_PARENTHESIS)
 
     def _write_instance_port(self, instance, port):
         self.file.write(2*self.indent_count * vt.SPACE)

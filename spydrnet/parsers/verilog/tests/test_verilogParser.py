@@ -6,6 +6,7 @@ import spydrnet as sdn
 from spydrnet.parsers.verilog.parser import VerilogParser
 import spydrnet.parsers.verilog.verilog_tokens as vt
 from spydrnet import parsers
+from spydrnet.util.selection import Selection
 import os
 
 class TestVerilogParser(unittest.TestCase):
@@ -815,6 +816,33 @@ class TestVerilogParser(unittest.TestCase):
         for p in parser.current_instance.pins:
             assert p in w_pins
 
+    def test_parse_implicitly_mapped_ports(self):
+        # create dummy netlist
+        to_write = "module top (input clk, output out);\n"
+        to_write += "\twire clk_c, VCC_net, out;\n"
+        to_write += "\tINST my_inst (clk_c, VCC_net, out);\n"
+        to_write += "endmodule\n\n"
+        to_write += "module INST (input port_0, input port_1, output port_2);\n"
+        to_write += "endmodule"
+        f = open("test_netlist.v", "x")
+        f.write(to_write)
+        f.close()
+
+        parser = VerilogParser.from_filename("test_netlist.v")
+        parser.parse()
+        netlist = parser.netlist
+
+        instance = next(netlist.get_instances("my_inst"))
+        self.assertEqual(instance.name, "my_inst")
+        connections = ["clk_c", "VCC_net", "out"]
+        for i in range(0,2):
+            port = next(instance.get_ports("port_"+str(i)))
+            self.assertEqual(len(port.pins), 1)
+            for pin in port.get_pins(selection=Selection.OUTSIDE):
+                self.assertEqual(pin.wire.cable.name, connections[i])
+
+        os.remove("test_netlist.v")
+
     ############################################################################
     ##Port creation and modification
     ############################################################################
@@ -1251,6 +1279,33 @@ class TestVerilogParser(unittest.TestCase):
         assert "DONT_TOUCH" in stars2
         assert stars2["DONT_TOUCH"] == None
         
+    ############################################
+    ##test hierarchy
+    ############################################
+
+    def test_hierarchy_fixing(self):
+        # create dummy netlist with the top instance coming after the lower instance
+        to_write = "module INST (input port_0, input port_1, output port_2);\n"
+        to_write += "endmodule\n\n"
+        to_write += "module top (input clk, output out);\n"
+        to_write += "\twire clk_c, VCC_net, out;\n"
+        to_write += "\tINST my_inst (clk_c, VCC_net, out);\n"
+        to_write += "endmodule\n"
+        f = open("test_netlist.v", "x")
+        f.write(to_write)
+        f.close()
+
+        parser = VerilogParser.from_filename("test_netlist.v")
+        parser.parse()
+        netlist = parser.netlist
+
+        self.assertEqual(netlist.top_instance.name, "top_top")
+        instance = next(netlist.get_instances("my_inst"))
+        self.assertTrue(instance.parent is netlist.top_instance.reference)
+        self.assertTrue(instance in netlist.top_instance.reference.children)
+        self.assertEqual(len(instance.reference.references), 1)
+
+        os.remove("test_netlist.v")
 
 
     ############################################
