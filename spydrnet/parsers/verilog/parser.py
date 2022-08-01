@@ -774,12 +774,15 @@ class VerilogParser:
         assert token == vt.OPEN_PARENTHESIS, self.error_string(
             vt.OPEN_PARENTHESIS, "after # to begin parameter mapping", token)
 
-        while token != vt.CLOSE_PARENTHESIS:
-            k, v = self.parse_parameter_map_single()
-            params[k] = v
+        if self.peek_token() == vt.CLOSE_PARENTHESIS: # empty parameters
             token = self.next_token()
-            assert token in [vt.CLOSE_PARENTHESIS, vt.COMMA], self.error_string(
-                vt.COMMA + " or " + vt.CLOSE_PARENTHESIS, "to separate parameters or end parameter mapping", token)
+        else:
+            while token != vt.CLOSE_PARENTHESIS:
+                k, v = self.parse_parameter_map_single()
+                params[k] = v
+                token = self.next_token()
+                assert token in [vt.CLOSE_PARENTHESIS, vt.COMMA], self.error_string(
+                    vt.COMMA + " or " + vt.CLOSE_PARENTHESIS, "to separate parameters or end parameter mapping", token)
 
         assert token == vt.CLOSE_PARENTHESIS, self.error_string(
             vt.CLOSE_PARENTHESIS, "to terminate ", token)
