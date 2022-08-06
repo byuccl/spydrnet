@@ -6,10 +6,9 @@ import spydrnet as sdn
 
 
 class Composer:
-    def __init__(
-        self, definition_list=None, write_blackbox=False, defparam=False, reverse=False, skip_constraints=False
-    ):
-        """Write a verilog netlist from SDN netlist
+
+    def __init__(self, definition_list=None, write_blackbox=False, defparam = False, reverse=False, sort_all=False,  skip_constraints=False):
+        """ Write a verilog netlist from SDN netlist
 
         parameters
         ----------
@@ -19,6 +18,7 @@ class Composer:
         defparam - (bool) Compose parameters in *defparam* statements instead of using #()
         skip_constraints - (bool) Skips writing constraints to the output verilog file
         reverse - (bool) Compose the netlist bottom to top
+        sort_all (bool) - Sorts all elements of the netlist, to make output deterministic
         """
         self.file = None
         self.direction_string_map = {}
@@ -30,11 +30,11 @@ class Composer:
         self.indent_count = 4  # set the indentation level for various components
         self.write_blackbox = write_blackbox
         self.definition_list = definition_list
-        self.defparam = defparam
-        self.skip_constraints = skip_constraints
-
         self.module_body_ports_written = []
+        self.defparam = defparam
         self.reverse = reverse
+        self.sort_all = sort_all
+        self.skip_constraints = skip_constraints
 
     def run(self, ir, file_out="out.v"):
         self._open_file(file_out)
@@ -57,6 +57,13 @@ class Composer:
                 if definition not in self.written:
                     self._write_module(definition)
 
+    def _sorted(self, iterator, sort_by):
+        """ Creates custom sorting key based on argument
+        if self.sort_all is false it just returns iterator
+        """
+        return sorted(iterator, key=lambda x: sort_by.format(x=x)) \
+            if self.sort_all else iterator
+
     def _write_header(self, netlist):
         self.file.write("//Generated from netlist by SpyDrNet\n")
         self.file.write("//netlist name: " + self._fix_name(netlist.name) + "\n")
@@ -70,7 +77,7 @@ class Composer:
             if definition in self.written:
                 continue
             self.written.add(definition)
-            for c in definition.children:
+            for c in self._sorted(definition.children, "{x.reference.name}_{x.name}"):
                 if c.reference not in self.written:
                     to_write.append(c.reference)
             assert definition.name is not None, self._error_string(
@@ -185,7 +192,7 @@ class Composer:
             self._write_module_body_instances(definition)
 
     def _write_module_body_instances(self, definition):
-        for c in definition.children:
+        for c in self._sorted(definition.children, "{x.name}"):
             self._write_module_body_instance(c)
 
     def _write_module_body_instance(self, instance):
@@ -350,7 +357,7 @@ class Composer:
             self._write_name(port)
 
     def _write_assignments(self, definition):
-        for c in definition.children:
+        for c in self._sorted(definition.children, "{x.name}"):
             if c.reference.library.name == "SDN_VERILOG_ASSIGNMENT":
                 self._write_assignment(c)
 
@@ -468,7 +475,7 @@ class Composer:
         self.file.write(vt.OPEN_PARENTHESIS)
         self.file.write(vt.NEW_LINE)
         first = True
-        for p in instance.reference.ports:
+        for p in self._sorted(instance.reference.ports, "{x.direction}_{x.name}"):
             if not first:
                 self.file.write(vt.COMMA)
                 self.file.write(vt.NEW_LINE)
@@ -569,7 +576,7 @@ class Composer:
         assert name is not None, self._error_string("name of o is not set", o)
         name = self._fix_name(name)
         self.file.write(name)
-    
+
     def _rename_constant(self, cable):
         """
         \<const0> and \<const1> wires without a driver should be renamed to 1'b0 and 1'b1
