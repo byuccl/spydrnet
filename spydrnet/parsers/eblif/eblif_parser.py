@@ -213,6 +213,7 @@ class EBLIFParser:
         self.expect(OUTPUTS)
         self.tokenizer.next()
         while (self.tokenizer.token is not NEW_LINE):
+            is_inout = False
             port_name, index = self.get_port_name_and_index(self.tokenizer.token)
             index = int(index)
             port = None
@@ -223,17 +224,22 @@ class EBLIFParser:
                 pin = port.create_pin()
             elif port_name in existing_port_list:
                 port = next(self.current_model.get_ports(port_name))
-                port.direction = sdn.OUT
+                if port.direction is sdn.IN or port.direction is sdn.INOUT: # it's an input port and now an output, so it's inout
+                    port.direction = sdn.INOUT
+                    is_inout = True
+                else:
+                    port.direction = sdn.OUT
                 if len(port.pins) < index+1:
                     pin = port.create_pin()
                 else:
                     pin = port.pins[index]
             else:
-                port = self.create_top_level_port(sdn.Port.Direction.OUT,port_name)
+                port = self.create_top_level_port(sdn.Port.Direction.OUT, port_name)
                 self.current_model.add_port(port)
                 self.top_level_output_ports[port_name] = port
                 pin = port.create_pin()
-            self.connect_pins_to_wires(pin,port_name,index)
+            if not is_inout:
+                self.connect_pins_to_wires(pin,port_name,index)
             self.tokenizer.next()
     
     def parse_top_level_clock(self):
@@ -383,7 +389,7 @@ class EBLIFParser:
             # print(list(x.inner_pin.port.name for x in instance.get_pins(selection=Selection.OUTSIDE)))
             port = next(instance.get_ports(port_name))
             pin = None
-            if len(port.pins) < pin_index+1: # multibit port that isn't yet multibit
+            while len(port.pins) < (pin_index+1): # multibit port that isn't yet multibit
                 inner_pin = port.create_pin()
             pin = next(instance.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port.name == port_name and x.inner_pin is x.inner_pin.port.pins[pin_index]))
             self.connect_pins_to_wires(pin,cable_name,cable_index)

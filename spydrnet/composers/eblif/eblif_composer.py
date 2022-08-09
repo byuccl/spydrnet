@@ -65,7 +65,7 @@ class EBLIFComposer:
 
     def compose_model_ports(self):
         to_write = ".inputs "
-        for port in self.current_model.get_ports(filter = lambda x: x.direction is sdn.Port.Direction.IN):
+        for port in self.current_model.get_ports(filter = lambda x: (x.direction is sdn.Port.Direction.IN or x.direction is sdn.Port.Direction.INOUT) is True):
             if len(port.pins) > 1:
                 for i in range(len(port.pins)):
                     to_write+=port.name+"["+str(i)+"] "
@@ -75,7 +75,7 @@ class EBLIFComposer:
         self.write_out(to_write)
 
         to_write = ".outputs "
-        for port in self.current_model.get_ports(filter = lambda x: x.direction is sdn.Port.Direction.OUT):
+        for port in self.current_model.get_ports(filter = lambda x: (x.direction is sdn.Port.Direction.OUT or x.direction is sdn.Port.Direction.INOUT) is True):
             if len(port.pins) > 1:
                 for i in range(len(port.pins)):
                     to_write+=port.name+"["+str(i)+"] "
