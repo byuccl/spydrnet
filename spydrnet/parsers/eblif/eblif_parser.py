@@ -615,11 +615,9 @@ class EBLIFParser:
         else:
             cable_one = self.current_model.create_cable(name=cable_one_name)
             self.cables[cable_one_name] = cable_one
-        try:
-            cable_one.wires[index_one]
-        except IndexError:
+        while len(cable_one.wires) < (index_one + 1):
             wire = Wire()
-            cable_one.add_wire(wire,index_one)
+            cable_one.add_wire(wire)
         wire_one = cable_one.wires[index_one]
 
         if (cable_two_name in self.cables.keys()):
@@ -627,11 +625,9 @@ class EBLIFParser:
         else:
             cable_two = self.current_model.create_cable(name=cable_two_name)
             self.cables[cable_two_name] = cable_two
-        try:
-            cable_two.wires[index_two]
-        except IndexError:
+        while len(cable_two.wires) < (index_two + 1):
             wire = Wire()
-            cable_two.add_wire(wire,index_two)
+            cable_two.add_wire(wire)
         wire_two = cable_two.wires[index_two]
         return wire_one,wire_two
 
