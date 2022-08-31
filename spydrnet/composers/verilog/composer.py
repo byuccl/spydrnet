@@ -112,7 +112,7 @@ class Composer:
                 return
         if definition.library.name == "SDN_VERILOG_ASSIGNMENT":
             return  # don't write assignment definitions
-        if definition.library.name == "SDN.verilog_primitives":
+        if definition.library.name == "hdi_primitives":
             if not self.write_blackbox:
                 return
             self.file.write(vt.CELL_DEFINE)
@@ -121,7 +121,7 @@ class Composer:
         self._write_module_header(definition)
         self._write_module_body(definition)
         self.file.write(vt.END_MODULE)
-        if definition.library.name == "SDN.verilog_primitives":
+        if definition.library.name == "hdi_primitives":
             self.file.write(vt.NEW_LINE)
             self.file.write(vt.END_CELL_DEFINE)
 
@@ -144,7 +144,7 @@ class Composer:
     def _write_module_body(self, definition):
         '''write out the module body start with ports, then do assignments then instances'''
         self._write_module_body_ports(definition)
-        if definition.library.name != "SDN.verilog_primitives":
+        if definition.library.name != "hdi_primitives":
             self._write_module_body_cables(definition)
             self._write_assignments(definition)
             self._write_module_body_instances(definition)
