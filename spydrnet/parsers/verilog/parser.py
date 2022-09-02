@@ -175,7 +175,7 @@ class VerilogParser:
         self.netlist = sdn.Netlist()
         self.netlist.name = "SDN_VERILOG_NETLIST"
         self.work = self.netlist.create_library("work")
-        self.primitives = self.netlist.create_library("SDN.verilog_primitives")
+        self.primitives = self.netlist.create_library("hdi_primitives")
         self.current_library = self.work
 
         preprocessor_defines = set()
