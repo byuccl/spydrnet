@@ -1363,6 +1363,9 @@ class TestVerilogParser(unittest.TestCase):
         expected1 = [e11, [cable1.wires[0]], [cable1.wires[0]], [cable1.wires[1]], cable1.wires[2:5]]
         expected2 = [e21, [cable2.wires[0]], [cable2.wires[0]], [cable2.wires[1]], cable2.wires[2:5]]
 
+        expected1[4].reverse()
+        expected2[4].reverse()
+
         for i in range(len(tests)):
             left1 = tests[i][0] + cable1.lower_index
             if tests[i][1] != None:
