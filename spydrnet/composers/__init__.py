@@ -1,7 +1,7 @@
 import os
 
 
-def compose(netlist, filename, definition_list=[], write_blackbox=True, write_eblif_cname=True, defparam = False):
+def compose(netlist, filename, Verilog_voters=[], definition_list=[], write_blackbox=True, write_eblif_cname=True, defparam = False):
     """To compose a file into a netlist format"""
     extension = os.path.splitext(filename)[1]
     extension_lower = extension.lower()
@@ -14,7 +14,7 @@ def compose(netlist, filename, definition_list=[], write_blackbox=True, write_eb
     elif extension_lower in [".v", ".vh", ".vm"]:
         from spydrnet.composers.verilog.composer import Composer
         composer = Composer(definition_list, write_blackbox, defparam)
-        composer.run(netlist, file_out=filename)
+        composer.run(netlist, Verilog_voters, file_out=filename)
     elif extension_lower in [".eblif",".blif"]:
         from spydrnet.composers.eblif.eblif_composer import EBLIFComposer
         composer = EBLIFComposer(write_blackbox, write_eblif_cname)

@@ -7,6 +7,7 @@ import spydrnet.parsers.verilog.verilog_tokens as vt
 from spydrnet.ir import Netlist, Library, Definition, Port, Cable, Instance, OuterPin
 from spydrnet.plugins import namespace_manager
 import spydrnet as sdn
+from spydrnet.util.remove_space import remove_space
 
 from functools import reduce
 import re
@@ -117,7 +118,11 @@ class VerilogParser:
         self.parse_verilog()
         namespace_manager.default = ns_default
         self.tokenizer.__del__()
+        self.remove_spacing()        
         return self.netlist
+    
+    def remove_spacing(self):
+        self.remove_space = remove_space(self.netlist)
 
     def initialize_tokenizer(self):
         self.tokenizer = VerilogTokenizer(self.filename)
