@@ -2,11 +2,8 @@ from collections import deque, OrderedDict
 from spydrnet.ir import Port
 from spydrnet.ir import Cable
 import spydrnet.parsers.verilog.verilog_tokens as vt
-<<<<<<< HEAD
 from spydrnet.util.reinsert_space import reinsert_space
-=======
 import spydrnet as sdn
->>>>>>> 0472b06ae65c3b983e1a1f3ed2f5033b7ce26386
 
 
 class Composer:
