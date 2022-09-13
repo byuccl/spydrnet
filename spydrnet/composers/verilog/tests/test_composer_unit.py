@@ -138,13 +138,15 @@ class TestVerilogComposerUnit(unittest.TestCase):
 
         single_bit_expected = "." + single_bit_port.name + "(" + single_bit_cable.name + ")"
 
-        multi_bit_expected = "." + multi_bit_port.name + "(" + multi_bit_cable.name + ")"
+        multi_bit_expected = "." + multi_bit_port.name + "(" + multi_bit_cable.name + "[" + str(len(multi_bit_cable.wires) - 1 + multi_bit_cable.lower_index) + ":" + \
+                                    str(multi_bit_cable.lower_index) + "]"")"
 
-        offset_expected = "." + multi_bit_port_offset.name + "(" + multi_bit_cable.name + ")"
+        offset_expected = "." + multi_bit_port_offset.name + "(" + multi_bit_cable.name + "[" + str(len(multi_bit_cable.wires) - 1 + multi_bit_cable.lower_index) + ":" + \
+                                    str(multi_bit_cable.lower_index) + "]"")"
 
         partial_expected = "." + partial_port.name + "(" + multi_bit_cable.name + "[1:0])"
 
-        concatenated_expected = "." + concatenated_port.name + "({" + ccs[0].name + ', ' + ccs[1].name + ', ' + ccs[2].name + ', ' + ccs[3].name + "})"
+        concatenated_expected = "." + concatenated_port.name + "({" + ccs[3].name + ', ' + ccs[2].name + ', ' + ccs[1].name + ', ' + ccs[0].name + "})"
 
         return single_bit_port, single_bit_expected, \
             multi_bit_port, multi_bit_expected, \
@@ -278,7 +280,7 @@ class TestVerilogComposerUnit(unittest.TestCase):
         assert composer.file.compare("[2]")
         composer.file.clear()
         composer._write_brackets(port, 0, 3)
-        assert composer.file.compare("")
+        assert composer.file.compare("[3:0]")
         composer.file.clear()
         composer._write_brackets(port, 1, 2)
         assert composer.file.compare("[2:1]")
@@ -297,7 +299,7 @@ class TestVerilogComposerUnit(unittest.TestCase):
         assert composer.file.compare("[2]")
         composer.file.clear()
         composer._write_brackets(cable, 0, 3)
-        assert composer.file.compare("")
+        assert composer.file.compare("[3:0]")
         composer.file.clear()
         composer._write_brackets(cable, 1, 2)
         assert composer.file.compare("[2:1]")
@@ -336,7 +338,7 @@ class TestVerilogComposerUnit(unittest.TestCase):
         assert composer.file.compare("[6]")
         composer.file.clear()
         composer._write_brackets(port, 4, 7)
-        assert composer.file.compare("")
+        assert composer.file.compare("[7:4]")
         composer.file.clear()
         composer._write_brackets(port, 5, 6)
         assert composer.file.compare("[6:5]")
@@ -355,7 +357,7 @@ class TestVerilogComposerUnit(unittest.TestCase):
         assert composer.file.compare("[6]")
         composer.file.clear()
         composer._write_brackets(cable, 4, 7)
-        assert composer.file.compare("")
+        assert composer.file.compare("[7:4]")
         composer.file.clear()
         composer._write_brackets(cable, 5, 6)
         assert composer.file.compare("[6:5]")
@@ -568,7 +570,7 @@ class TestVerilogComposerUnit(unittest.TestCase):
         c2.wires[0].connect_pin(port_alias.pins[1])
 
         composer._write_module_header_port(port_alias)
-        assert composer.file.compare("." + port_alias.name + "({"+ c1.name + ", " + c2.name +"})")
+        assert composer.file.compare("." + port_alias.name + "({"+ c2.name + ", " + c1.name +"})")
         composer.file.clear()
         composer._write_module_body_port(port_alias)
         assert composer.file.compare("input " + c1.name + ";\n    " + "input " + c2.name + ";\n")

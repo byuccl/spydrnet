@@ -438,7 +438,7 @@ class VerilogParser:
 
         example syntax
         .canale({\\canale[3] ,\\canale[2] ,\\canale[1] ,\\canale[0] }),'''
-
+        
         token = self.next_token()
         assert token == vt.DOT, self.error_string(
             vt.DOT, "for port aliasing", token)
@@ -466,12 +466,13 @@ class VerilogParser:
             name, left_index=len(wires)-1, right_index=0)
 
         # connect the wires to the pins
-
         assert len(port.pins) == len(
             wires), "Internal Error: the pins in a created port and the number of wires the aliased cable do not match up"
 
-        for i in range(len(port.pins)):
-            wires[i].connect_pin(port.pins[i])
+        pin_list = list(p for p in port.pins)
+        pin_list.sort(reverse=True, key=self.pin_sort_func)
+        for i in range(len(pin_list)):
+            wires[i].connect_pin(pin_list[i])
 
     def parse_cable_concatenation(self):
         '''parse a concatenation structure of cables, create the cables mentioned, and deal with indicies
@@ -486,6 +487,7 @@ class VerilogParser:
         while token != vt.CLOSE_BRACE:
             cable, left, right = self.parse_variable_instantiation()
             wires_temp = self.get_wires_from_cable(cable, left, right)
+            wires_temp.sort(reverse=True,key=self.wire_sort_func)
             for w in wires_temp:
                 wires.append(w)
             token = self.next_token()
@@ -494,6 +496,9 @@ class VerilogParser:
                     vt.CLOSE_BRACE, "to end cable concatenation", token)
 
         return wires
+
+    def wire_sort_func(self, w):
+        return w.cable.wires.index(w)
 
     def parse_module_header_port(self):
         '''parse the port declaration in the module header'''
@@ -533,8 +538,11 @@ class VerilogParser:
         # wire together the cables and the port
         assert len(port.pins) == len(cable.wires), self.error_string(
             "the pins in a created port and the number of wires in it's cable do not match up", "wires: " + str(len(cable.wires)), "pins: " + str(len(port.pins)))
-        for i in range(len(port.pins)):
-            cable.wires[i].connect_pin(port.pins[i])
+        
+        pin_list = list(p for p in port.pins)
+        pin_list.sort(reverse=False, key=self.pin_sort_func) 
+        for i in range(len(pin_list)):
+            cable.wires[i].connect_pin(pin_list[i])
 
     def parse_module_body(self):
         '''
@@ -634,7 +642,7 @@ class VerilogParser:
             else:
                 port = self.create_or_update_port(port_list.pop(
                 ).name, left_index=left, right_index=right, direction=direction, defining=True)
-
+            
             if len(cable.wires) > 1:
                 self.connect_resized_port_cable(cable, port)
 
@@ -701,7 +709,7 @@ class VerilogParser:
                         current_level.parent
                     except AttributeError:
                         new_level = current_level
-                        break;
+                        break
 
             self.netlist.top_instance = sdn.Instance()
             self.netlist.top_instance.name = new_level.name + "_top"
@@ -870,8 +878,9 @@ class VerilogParser:
                 "pins length to match or exceed cable.wires length", "INTERNAL ERROR", str(len(pins)) + "!=" + str(len(wires)))
 
             # there can be unconnected pins at the end of the port.
+            pins.sort(reverse=True, key=self.pin_sort_func)
             for i in range(len(wires)):
-                wires[i].connect_pin(pins[i])
+               wires[i].connect_pin(pins[i])
 
             token = self.next_token()
 
@@ -883,6 +892,11 @@ class VerilogParser:
 
         assert token == vt.CLOSE_PARENTHESIS, self.error_string(
             vt.CLOSE_PARENTHESIS, "to end cable name in port mapping", token)
+    
+    def pin_sort_func(self, p):
+        if isinstance(p, sdn.OuterPin):
+            return p.inner_pin.port.pins.index(p.inner_pin)
+        return p.port.pins.index(p)
 
     def connect_implicitly_mapped_ports(self):
         for instance, token_list in self.implicitly_mapped_ports.items():
@@ -921,8 +935,10 @@ class VerilogParser:
                     "pins length to match or exceed cable.wires length", "INTERNAL ERROR", str(len(pins)) + "!=" + str(len(wires)))
 
                 # there can be unconnected pins at the end of the port.
+                pin_list = list(p for p in pins)
+                pin_list.sort(reverse=True, key=self.pin_sort_func)
                 for i in range(len(wires)):
-                    wires[i].connect_pin(pins[i])
+                    wires[i].connect_pin(pin_list[i])
 
                 token = self.next_token()
                 index += 1
@@ -1142,9 +1158,8 @@ class VerilogParser:
             left = left - cable.lower_index
             right = right - cable.lower_index
             temp_wires = cable.wires[min(left, right): max(left, right) + 1]
-            if left > right:
-                temp_wires = reversed(temp_wires)
-
+            # if right > left:
+            temp_wires.reverse()
             for w in temp_wires:
                 wires.append(w)
 
@@ -1156,7 +1171,9 @@ class VerilogParser:
             wires.append(cable.wires[index])
 
         else:
-            for w in cable.wires:
+            temp_wires = list(w for w in cable.wires)
+            temp_wires.reverse()
+            for w in temp_wires:
                 wires.append(w)
 
         return wires
