@@ -1388,6 +1388,31 @@ class TestVerilogParser(unittest.TestCase):
                 w22 = expected2[i][j]
                 assert w21 == w22, "the wires are not the same or not in the same order"
 
+    def test_constant_parsing(self):
+        """
+        Tests multiple wire decalaration on the same line in verilog
+        """
+        parser = VerilogParser()
+
+        # Check constant 0 net declaration
+        tokens = ("1'b0", vt.SEMI_COLON)
+        tokenizer = self.TestTokenizer(tokens)
+        parser = VerilogParser()
+        parser.tokenizer = tokenizer
+
+        parser.current_definition = sdn.Definition()
+        cable, _, _ = parser.parse_variable_instantiation()
+        self.assertEqual(cable.name, "\\<const0> ", "Check const wire name")
+
+        # Check constant 1 net declaration
+        tokens = ("1'b1", vt.SEMI_COLON)
+        tokenizer = self.TestTokenizer(tokens)
+        parser = VerilogParser()
+        parser.tokenizer = tokenizer
+
+        parser.current_definition = sdn.Definition()
+        cable, _, _ = parser.parse_variable_instantiation()
+        self.assertEqual(cable.name, "\\<const1> ", "Check const wire name")
 
 
 if __name__ == '__main__':

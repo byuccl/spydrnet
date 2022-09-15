@@ -15,6 +15,7 @@ class Composer:
         definition_list - (list[str]) list of definitions to write
         write_blackbox - (bool) Skips writing black boxes/verilog primitives
         defparam - (bool) Compose parameters in *defparam* statements instead of using #()
+        reverse - (bool) Compose the netlist bottom to top
         """
         self.file = None
         self.direction_string_map = dict()
@@ -88,7 +89,7 @@ class Composer:
                 if c.reference not in visited:
                     to_write_list.append(c.reference)
                     to_write_stack.append(c.reference)
-        print(list(x.name for x in to_write_stack if len(x.children) > 0))
+        # print(list(x.name for x in to_write_stack if len(x.children) > 0))
         while(to_write_stack):
             definition = to_write_stack.pop()
             if definition not in self.written:
