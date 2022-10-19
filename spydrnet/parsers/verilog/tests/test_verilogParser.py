@@ -1163,10 +1163,8 @@ class TestVerilogParser(unittest.TestCase):
         assert len(definition.ports) == 2
         assert len(definition.ports[0].pins) == width
         assert len(definition.ports[1].pins) == width
-        assert len(definition.cables) == 1
-        for i in range(width):
-            assert definition.ports[0].pins[i] in definition.cables[0].wires[i].pins
-            assert definition.ports[1].pins[i] in definition.cables[0].wires[i].pins
+        assert len(definition.cables) == 0
+
 
 
     def test_connect_assigned_wires(self):
