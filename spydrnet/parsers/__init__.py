@@ -71,6 +71,8 @@ def _parse(filename, architecture=None):
 
     if architecture:
         read_primitive_library(architecture, parser.netlist)
+        if extension in [".eblif",".blif"]:
+            set_eblif_names(parser.netlist)
     return parser.netlist
 
 
@@ -83,3 +85,9 @@ def read_primitive_library(architecture, netlist):
     from spydrnet.parsers.primitive_library_reader import PrimitiveLibraryReader
     reader = PrimitiveLibraryReader(architecture, netlist)
     reader.run()
+
+def set_eblif_names(netlist):
+    from spydrnet.parsers.eblif.eblif_parser import EBLIFParser
+    eblif_parser = EBLIFParser()
+    eblif_parser.netlist = netlist
+    eblif_parser.set_subcircuit_names_by_convention()
