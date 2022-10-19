@@ -1078,11 +1078,12 @@ class VerilogParser:
             in_port.direction = sdn.Port.Direction.IN
             out_port.direction = sdn.Port.Direction.OUT
 
-            cable = definition.create_cable("through")
-            cable.create_wires(width)
-            for i in range(width):
-                cable.wires[i].connect_pin(in_port.pins[i])
-                cable.wires[i].connect_pin(out_port.pins[i])
+            # no need for this. It actually messes with other spydrnet functions like uniquify() and is_leaf()
+            # cable = definition.create_cable("through")
+            # cable.create_wires(width)
+            # for i in range(width):
+            #     cable.wires[i].connect_pin(in_port.pins[i])
+            #     cable.wires[i].connect_pin(out_port.pins[i])
 
         return definition
 
@@ -1223,6 +1224,10 @@ class VerilogParser:
         for i in range(len(resized_port.pins)):
             # I think these should be lined up right?
             if resized_port.pins[i] not in resized_cable.wires[i].pins:
+                if resized_port.pins[i].wire:
+                    continue
+                    # the resized_port's pin is already connected
+                    # this likely occurred because of an alias statement.
                 resized_cable.wires[i].connect_pin(resized_port.pins[i])
 
     def create_or_update_cable(self, name, left_index=None, right_index=None, var_type=None, defining=False):
