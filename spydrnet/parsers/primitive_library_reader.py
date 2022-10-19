@@ -35,6 +35,8 @@ class PrimitiveLibraryReader():
             definition = self.parser.current_definition
             if definition:
                 self.parsed_defs[definition.name] = definition
+            if len(self.parsed_defs) == len(self.netlist_defs): # found all needed information
+                break
         cnt = self.insert_info()
         print("Found information for %d definitions" % cnt)
     
