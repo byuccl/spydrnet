@@ -2,9 +2,7 @@ from collections import deque, OrderedDict
 from spydrnet.ir import Port
 from spydrnet.ir import Cable
 import spydrnet.parsers.verilog.verilog_tokens as vt
-from spydrnet.util.reinsert_space import reinsert_space
 import spydrnet as sdn
-
 
 class Composer:
 
@@ -34,14 +32,10 @@ class Composer:
         self.reverse = reverse
 
 
-    def run(self, ir, voters, file_out="out.v"):
-        self.reinserting_space(ir, voters)
+    def run(self, ir, file_out="out.v"):
         self._open_file(file_out)
         self._compose(ir)
         
-    def reinserting_space(self, netlist, voters):
-        self.reinsert_space = reinsert_space(netlist, voters)
-
     def _open_file(self, file_name):
         f = open(file_name, "w")
         self.file = f
