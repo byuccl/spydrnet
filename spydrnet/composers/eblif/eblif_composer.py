@@ -1,5 +1,4 @@
 import os
-from re import sub
 from spydrnet.util.selection import Selection
 import spydrnet as sdn
 
@@ -10,6 +9,7 @@ class EBLIFComposer:
         self.open_file = None
         self.write_blackbox = write_blackbox
         self.write_cname = write_cname
+        self.models_written = []
         self.blackboxes_to_compose = set()
 
     def run(self, ir, file_out):
@@ -31,7 +31,6 @@ class EBLIFComposer:
 
     def _compose(self,ir):
         self.netlist = ir
-        # print("Composing...")
         self.compose_comments()
         self.compose_models()
         self.clean_up()
@@ -46,26 +45,28 @@ class EBLIFComposer:
     
     def compose_models(self):
         self.compose_model(self.netlist.top_instance.reference)
-        for model in self.netlist.get_hinstances(recursive=True, filter=lambda x: (x.item.is_leaf()==False)):
+        for model in self.netlist.get_hinstances(recursive=True):
             model = model.item.reference
-            if "EBLIF.blackbox" not in model.data.keys():
+            if model not in self.models_written:
                 self.compose_model(model)
-        if (self.write_blackbox):
+                self.models_written.append(model)
+        if self.write_blackbox:
             self.compose_blackboxes()
     
     def compose_model(self, model):
+        if model.library.name == "hdi_primitives":
+            return
         self.current_model = model
         to_write = ".model " + model.name + "\n"
         self.write_out(to_write)
         self.compose_model_ports()
         self.compose_model_clocks()
-        self.compose_default_wires()
         self.compose_instances()
         self.compose_end()
 
     def compose_model_ports(self):
         to_write = ".inputs "
-        for port in self.current_model.get_ports(filter = lambda x: (x.direction is sdn.Port.Direction.IN or x.direction is sdn.Port.Direction.INOUT) is True):
+        for port in self.current_model.get_ports(filter = lambda x: x.direction in {sdn.IN, sdn.INOUT}):
             if len(port.pins) > 1:
                 for i in range(len(port.pins)):
                     to_write+=port.name+"["+str(i)+"] "
@@ -75,7 +76,7 @@ class EBLIFComposer:
         self.write_out(to_write)
 
         to_write = ".outputs "
-        for port in self.current_model.get_ports(filter = lambda x: (x.direction is sdn.Port.Direction.OUT or x.direction is sdn.Port.Direction.INOUT) is True):
+        for port in self.current_model.get_ports(filter = lambda x: x.direction in {sdn.OUT, sdn.INOUT}):
             if len(port.pins) > 1:
                 for i in range(len(port.pins)):
                     to_write+=port.name+"["+str(i)+"] "
@@ -90,26 +91,6 @@ class EBLIFComposer:
             for clock in self.current_model["EBLIF.clock"]:
                 to_write+=clock+" "
             self.write_out(to_write+"\n")
-    
-    def compose_default_wires(self):
-        default_wires = list()
-        try:
-            self.netlist["EBLIF.default_wires"]
-            default_wires = self.netlist['EBLIF.default_wires']
-        except KeyError:
-            None
-        written = False
-        if "$false" in default_wires:
-            self.write_out(".names $false\n")
-            written=True
-        if "$true" in default_wires:
-            self.write_out(".names $true\n1\n")
-            written=True
-        if "$undef" in default_wires:
-            self.write_out(".names $undef\n")
-            written=True
-        if written:
-            self.write_out("\n")
     
     def compose_instances(self):
         categories = self.separate_by_type()
@@ -143,7 +124,7 @@ class EBLIFComposer:
     def compose_subcircuits(self,list_of_subcircuits,is_gate=False):
         for subckt in list_of_subcircuits:
             if (subckt.is_leaf()):
-                self.blackboxes_to_compose.add(subckt.reference.name)
+                self.blackboxes_to_compose.add(subckt.reference)
             to_add = ""
             if is_gate:
                 to_write = ".gate "+ subckt.reference.name+" "
@@ -208,20 +189,15 @@ class EBLIFComposer:
     def compose_latches(self,latch_list):
         for latch_instance in latch_list:
             to_write = ".latch "
-            # port_list = list(x for x in latch_instance.get_ports())
             for port_type in ['input', 'output', 'type', 'control', 'init-val']: # this is the specific order of ports
-                # current_port = next(port for port in port_list if port.name == port_type)
                 for pin in latch_instance.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port.name == port_type):
-                    # connection_name = None
                     if pin.wire:
                         to_write+=pin.wire.cable.name
                         if (len(pin.wire.cable.wires)>1):
                             to_write+="["+str(pin.wire.index())+"]"
                         to_write+=" "
-                        # connection_name=pin.wire.cable.name
                     else:
                         to_write+="unconn "
-                        # connection_name="unconn"
             to_write+='\n'
             self.write_out(to_write)
             self.find_and_write_additional_instance_info(latch_instance)
@@ -237,9 +213,6 @@ class EBLIFComposer:
     def find_and_write_additional_instance_info(self,instance):
         to_write = ""
         if self.write_cname:
-            # if "EBLIF.cname" in instance.data:
-            #     to_write+=".cname "+instance["EBLIF.cname"]+'\n'
-            # else:
             to_write+=".cname "+instance.name+'\n'
         if "EBLIF.attr" in instance.data:
             for key, value in instance.data["EBLIF.attr"].items():
@@ -250,9 +223,9 @@ class EBLIFComposer:
         self.write_out(to_write)
     
     def compose_blackboxes(self):
-        for definition in self.netlist.get_definitions():
-            if definition.name in self.blackboxes_to_compose:
-                # if "EBLIF.blackbox" in definition.data.keys():
+        primitive_library = next(self.netlist.get_libraries("hdi_primitives"))
+        for definition in primitive_library.definitions:
+            if definition in self.blackboxes_to_compose:
                 to_write = ".model "+definition.name
                 to_write+="\n.inputs"
                 for port in definition.get_ports(filter=lambda x: x.direction is sdn.IN):

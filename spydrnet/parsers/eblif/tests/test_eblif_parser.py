@@ -50,7 +50,7 @@ class TestEBLIFParser(unittest.TestCase):
         for cable in self.netlist.get_cables():
             self.assertTrue(self.netlist_is_own_netlist(cable))
             count+=1
-        self.assertEqual(count,10)
+        self.assertEqual(count, 11)
 
     def netlist_is_own_netlist(self,object):
         netlist_list = list(x for x in object.get_netlists())

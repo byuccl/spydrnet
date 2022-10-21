@@ -47,13 +47,9 @@ class TestEBLIFComposer(unittest.TestCase):
         cables_2.sort()
         self.assertEqual(cables_1,cables_2)
         self.assertEqual(len(cables_1),len(cables_2))
-    
-    def test_no_blackbox_netlist(self):
-        for definition in self.netlist_1.get_definitions(filter=lambda x: (x is not self.netlist_1.top_instance.reference
-                                                             and "logic-gate_0" not in x.name)):
-            self.assertTrue("EBLIF.blackbox" in definition.data.keys(),definition.name+" is not a blackbox"+str(definition.data))
-        for definition in self.netlist_3.get_definitions(filter=lambda x: x is not self.netlist_3.top_instance.reference):
-            self.assertFalse("EBLIF.blackbox" in definition.data,definition.name+" is a blackbox"+str(definition.data))
 
+    
     # TODO add wires and connections tests
+
+    # test the composing of each individual part
         
