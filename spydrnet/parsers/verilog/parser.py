@@ -1352,13 +1352,17 @@ class VerilogParser:
             port_upper = port.lower_index + len(port.pins) - 1
 
         if in_upper is not None and in_lower is not None:
-
-            if in_lower < port_lower:
-                prepend = port_lower - in_lower
-                self.prepend_pins(port, prepend)
-            if in_upper > port_upper:
-                postpend = in_upper - port_upper
-                self.postpend_pins(port, postpend)
+            # to prevent unneccessary pins being added, check to see if port
+            # width is already correct
+            if (in_upper-in_lower) == (port_upper-port_lower):
+                None
+            else:
+                if in_lower < port_lower:
+                    prepend = port_lower - in_lower
+                    self.prepend_pins(port, prepend)
+                if in_upper > port_upper:
+                    postpend = in_upper - port_upper
+                    self.postpend_pins(port, postpend)
 
         if direction is not None:
             port.direction = direction
