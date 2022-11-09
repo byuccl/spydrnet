@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create/View a Netlist with Vivado &mdash; SpyDrNet 1.12.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Modify Netlist with SpyDrNet" href="AND_to_OR.html" />
+    <link rel="prev" title="Connectivity Graph" href="../extended/plot_connectivity_graph.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> SpyDrNet
+          </a>
+              <div class="version">
+                1.12
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../index.html#basic">Basic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#extended">Extended</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#vivado">Vivado</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Create/View a Netlist with Vivado</a></li>
+<li class="toctree-l3"><a class="reference internal" href="AND_to_OR.html">Modify Netlist with SpyDrNet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="LUT_builder.html">Create Netlist with SpyDrNet</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../credits.html">Credits</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SpyDrNet</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Examples</a> &raquo;</li>
+      <li>Create/View a Netlist with Vivado</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/auto_examples/vivado/vivado_netlist.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-vivado-vivado-netlist-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<section class="sphx-glr-example-title" id="create-view-a-netlist-with-vivado">
+<span id="sphx-glr-auto-examples-vivado-vivado-netlist-py"></span><h1>Create/View a Netlist with Vivado<a class="headerlink" href="#create-view-a-netlist-with-vivado" title="Permalink to this heading"></a></h1>
+<p>This example walks through the process of creating and viewing a netlist within Vivado.</p>
+<p>The first step is to choose what kind of project you want to create. If you already have a netlist, choose “Post-synthesis” project. Within a “Post-synthesis” project, you can add a netlist source such as an EDIF file. Look in the <code class="docutils literal notranslate"><span class="pre">spydrnet/support_files/</span></code> folder to see netlists that you can add to a “post-synthesis” project to view for yourself. If you only have hardware description file(s) (Verliog, SystemVerilog, VHDL, etc.), then create an RTL project. “RTL” means <a class="reference external" href="https://en.wikipedia.org/wiki/Register-transfer_level">register-transfer level</a>, which essentially tells Vivado that you will be adding your own hardware description language sources such as Verilog or VHDL for the design. This example shows how to run synthesis on an RTL project and open the netlist afterwards, but opening a netlist from a “Post-synthesis” project is done in practically the same way.</p>
+<img alt="../../_images/vivado_screenshot1.png" class="align-center" src="../../_images/vivado_screenshot1.png" />
+<p>This example is of a simple 3-input AND gate module. Here, a SystemVerilog source was created, and the logic was implemented inside the .sv file. Below is a view of Vivado after the source has been created/added, as well as the source code.</p>
+<img alt="../../_images/vivado_screenshot2.png" class="align-center" id="img-vivado-source" src="../../_images/vivado_screenshot2.png" />
+<div class="highlight-sv notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">AND_gate</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">input</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="kt">logic</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">output</span><span class="w"> </span><span class="kt">logic</span><span class="w"> </span><span class="n">q</span><span class="w"></span>
+<span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">and</span><span class="p">(</span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">);</span><span class="w"></span>
+
+<span class="k">endmodule</span><span class="w"></span>
+</pre></div>
+</div>
+<p>After adding/creating any source files for your project, go to the “Flow Navigator” window on the left hand side of the screen, and click on “Run Synthesis.” If you’re in a post-synthesis project, you don’t need to run synthesis, since you should already have a netlist ready to go.</p>
+<img alt="../../_images/vivado_screenshot3.png" class="align-center" id="img-vivado-run-synthesis" src="../../_images/vivado_screenshot3.png" />
+<p>Once synthesis has been run, you are ready to open up the netlist schematic in the synthesized design. Expand the “Open Synthesized Design” tab under the “Synthesis” section, and click on the “Schematic” option. If you’re in a post-synthesis project, the “Open Synthesized Design” tab should be under the “Netlist Analysis” section of the “Flow Navigator” window. By default, it will open up a view for the device, but to see the netlist, you should see that another tab was opened in the main window called “Schematic.”</p>
+<img alt="../../_images/vivado_screenshot4.png" class="align-center" id="img-vivado-open-schematic" src="../../_images/vivado_screenshot4.png" />
+<p>Now you can see the netlist for yourself! This gives you a way to easily visualize what the netlist is, and to be able to interact with it.</p>
+<img alt="../../_images/vivado_screenshot5.png" class="align-center" id="img-vivado-schematic-view" src="../../_images/vivado_screenshot5.png" />
+<p>To further interact with the netlist schematic, try clicking on the “Netlist” tab next to the “Schematic” window. A menu should popup with all the “Nets” and “Leaf Cells.” Expand the menu and click on each of the lines. As you do so, you’ll see each element be highlighted in the “Schematic” viewer.</p>
+<img alt="../../_images/vivado_screenshot6.png" class="align-center" id="img-vivado-netlist-menu" src="../../_images/vivado_screenshot6.png" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.000 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-vivado-vivado-netlist-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/8f6023390de0b4b29aec00bbf9c9879e/vivado_netlist.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">vivado_netlist.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/0bee5d5c03204f1c6e32d547b0ea5049/vivado_netlist.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">vivado_netlist.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../extended/plot_connectivity_graph.html" class="btn btn-neutral float-left" title="Connectivity Graph" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="AND_to_OR.html" class="btn btn-neutral float-right" title="Modify Netlist with SpyDrNet" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Brigham Young Universitiy.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

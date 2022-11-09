@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>spydrnet.parsers.primitive_library_reader &mdash; SpyDrNet 1.12.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> SpyDrNet
+          </a>
+              <div class="version">
+                1.12
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/index.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../credits.html">Credits</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SpyDrNet</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../parsers.html">spydrnet.parsers</a> &raquo;</li>
+      <li>spydrnet.parsers.primitive_library_reader</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for spydrnet.parsers.primitive_library_reader</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">spydrnet</span> <span class="k">as</span> <span class="nn">sdn</span>
+<span class="kn">from</span> <span class="nn">spydrnet.ir</span> <span class="kn">import</span> <span class="n">Library</span>
+<span class="kn">from</span> <span class="nn">spydrnet.parsers.verilog.parser</span> <span class="kn">import</span> <span class="n">VerilogParser</span>
+<span class="kn">import</span> <span class="nn">spydrnet.parsers.verilog.verilog_tokens</span> <span class="k">as</span> <span class="nn">vt</span>
+
+<span class="n">MODULE</span> <span class="o">=</span> <span class="s2">&quot;module&quot;</span>
+<span class="n">END_MODULE</span> <span class="o">=</span> <span class="s2">&quot;endmodule&quot;</span>
+<span class="n">INPUT</span> <span class="o">=</span> <span class="s2">&quot;input&quot;</span>
+<span class="n">OUTPUT</span> <span class="o">=</span> <span class="s2">&quot;output&quot;</span>
+<span class="n">PARAMETER</span> <span class="o">=</span> <span class="s2">&quot;parameter&quot;</span>
+
+<div class="viewcode-block" id="PrimitiveLibraryReader"><a class="viewcode-back" href="../../../reference/built_in_architecture.html#spydrnet.parsers.primitive_library_reader.PrimitiveLibraryReader">[docs]</a><span class="k">class</span> <span class="nc">PrimitiveLibraryReader</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to extract primitive port information from a Verilog file and insert it into the netlist. The input file is parsed using the Verilog Parser and if any module information is found for a definition in the given netlist, the port information (i.e. directions) is added.</span>
+
+<span class="sd">    parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    architecture - the targeted architecture. Must be a type from spydrnet.util.architecture</span>
+<span class="sd">    netlist - the current netlist</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">architecture</span><span class="p">,</span> <span class="n">netlist</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_file</span> <span class="o">=</span> <span class="n">architecture</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">netlist</span> <span class="o">=</span> <span class="n">netlist</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">definition_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">netlist_defs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parsed_defs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="kc">None</span>
+    
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+        <span class="k">while</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">has_next</span><span class="p">()):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">progress_past_comments</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse_primitive</span><span class="p">(</span><span class="n">definition_list</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">definition_list</span><span class="p">,</span> <span class="n">bypass_name_check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">definition</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">current_definition</span>
+            <span class="k">if</span> <span class="n">definition</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parsed_defs</span><span class="p">[</span><span class="n">definition</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">definition</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parsed_defs</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">netlist_defs</span><span class="p">):</span> <span class="c1"># found all needed information</span>
+                <span class="k">break</span>
+        <span class="n">cnt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">insert_info</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Found information for </span><span class="si">%d</span><span class="s2"> definitions&quot;</span> <span class="o">%</span> <span class="n">cnt</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">VerilogParser</span><span class="o">.</span><span class="n">from_filename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_file</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">initialize_tokenizer</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">current_library</span> <span class="o">=</span> <span class="n">Library</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_defintiion_dict</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">progress_past_comments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">peek_token</span><span class="p">()</span>
+        <span class="k">while</span><span class="p">(</span><span class="n">token</span> <span class="o">!=</span> <span class="n">vt</span><span class="o">.</span><span class="n">MODULE</span> <span class="ow">and</span> <span class="n">token</span> <span class="o">!=</span> <span class="n">vt</span><span class="o">.</span><span class="n">PRIMITIVE</span><span class="p">):</span>
+            <span class="c1"># print(token)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">next_token</span><span class="p">()</span>
+            <span class="n">token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">peek_token</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">create_defintiion_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">definition</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">netlist</span><span class="o">.</span><span class="n">get_definitions</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">netlist_defs</span><span class="p">[</span><span class="n">definition</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">definition</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">definition_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">definition</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">insert_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">def_name</span><span class="p">,</span> <span class="n">definition</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">netlist_defs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">def_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_defs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">match</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_defs</span><span class="p">[</span><span class="n">def_name</span><span class="p">]</span>
+                <span class="n">port_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_port_dict</span><span class="p">(</span><span class="n">match</span><span class="p">)</span>
+                <span class="c1"># print(definition.name + &quot; &quot; + str(port_dict))</span>
+                <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="n">definition</span><span class="o">.</span><span class="n">get_ports</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">port</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># no port name, so assume it&#39;s the only port.</span>
+                        <span class="n">port</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">port_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                        <span class="c1"># print(&quot;Port name was None so changed to &quot; + port.name)</span>
+                    <span class="n">port</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">port_dict</span><span class="p">[</span><span class="n">port</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+                <span class="n">cnt</span><span class="o">+=</span><span class="mi">1</span>
+        <span class="k">return</span> <span class="n">cnt</span>
+
+    <span class="k">def</span> <span class="nf">create_port_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">definition</span><span class="p">):</span>
+        <span class="n">port_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="n">definition</span><span class="o">.</span><span class="n">get_ports</span><span class="p">():</span>
+            <span class="n">port_dict</span><span class="p">[</span><span class="n">port</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">port</span><span class="o">.</span><span class="n">direction</span>
+            <span class="c1"># print(port.name + &quot; has direction &quot; + str(port.direction))</span>
+        <span class="k">return</span> <span class="n">port_dict</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Brigham Young Universitiy.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

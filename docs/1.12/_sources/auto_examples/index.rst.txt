@@ -1,0 +1,326 @@
+:orphan:
+
+
+
+.. _sphx_glr_auto_examples:
+
+.. _sec:examples:
+
+Examples
+========
+
+A collection of examples to introduce the functionality, features, and uses of SpyDrNet. 
+
+.. raw:: html
+
+    <div class="sphx-glr-clear"></div>
+
+
+
+.. _sphx_glr_auto_examples_basic:
+
+Basic
+-----
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A simple example to demonstrate using SpyDrNet&#x27;s built in primitive libraries.">
+
+.. only:: html
+
+ .. figure:: /auto_examples/basic/images/thumb/sphx_glr_built_in_libraries_thumb.png
+     :alt: Using Built-In Primitive Libraries
+
+     :ref:`sphx_glr_auto_examples_basic_built_in_libraries.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/basic/built_in_libraries
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A simple example using the spydrnet_extension module to illustrate the extension of SpyDrNet IR...">
+
+.. only:: html
+
+ .. figure:: /auto_examples/basic/images/thumb/sphx_glr_using_extensions_thumb.png
+     :alt: Using Extensions
+
+     :ref:`sphx_glr_auto_examples_basic_using_extensions.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/basic/using_extensions
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Traverse a netlist and collect statistics on the netlist.">
+
+.. only:: html
+
+ .. figure:: /auto_examples/basic/images/thumb/sphx_glr_plot_stat_thumb.png
+     :alt: Traversal and Statistics of a Netlist
+
+     :ref:`sphx_glr_auto_examples_basic_plot_stat.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/basic/plot_stat
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Some example functions that can be run to display information in a netlist:     1) print the hi...">
+
+.. only:: html
+
+ .. figure:: /auto_examples/basic/images/thumb/sphx_glr_display_info_thumb.png
+     :alt: Display Netlist Information Functions
+
+     :ref:`sphx_glr_auto_examples_basic_display_info.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/basic/display_info
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Builds a netlist from scratch">
+
+.. only:: html
+
+ .. figure:: /auto_examples/basic/images/thumb/sphx_glr_minimal_thumb.png
+     :alt: Minimal Script
+
+     :ref:`sphx_glr_auto_examples_basic_minimal.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/basic/minimal
+.. raw:: html
+
+    <div class="sphx-glr-clear"></div>
+
+
+
+.. _sphx_glr_auto_examples_extended:
+
+Extended
+-------------
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Creates definitions for non-leaf instances so each instance has its own definition. Each librar...">
+
+.. only:: html
+
+ .. figure:: /auto_examples/extended/images/thumb/sphx_glr_plot_single_use_definitions_thumb.png
+     :alt: Make Instances Unique
+
+     :ref:`sphx_glr_auto_examples_extended_plot_single_use_definitions.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/extended/plot_single_use_definitions
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Extend a four bit counter to a 5 bit counter.">
+
+.. only:: html
+
+ .. figure:: /auto_examples/extended/images/thumb/sphx_glr_plot_four_to_five_bit_counter_thumb.png
+     :alt: Four Bit Counter To Five Bit Counter
+
+     :ref:`sphx_glr_auto_examples_extended_plot_four_to_five_bit_counter.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/extended/plot_four_to_five_bit_counter
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Remove hierarchy from a netlist. The original hierarchy and new hierarchy (after flattening) wi...">
+
+.. only:: html
+
+ .. figure:: /auto_examples/extended/images/thumb/sphx_glr_plot_flatten_thumb.png
+     :alt: Flatten A Netlist
+
+     :ref:`sphx_glr_auto_examples_extended_plot_flatten.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/extended/plot_flatten
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A connectivity graph is a mathematical view of the connections between components in a netlist....">
+
+.. only:: html
+
+ .. figure:: /auto_examples/extended/images/thumb/sphx_glr_plot_connectivity_graph_thumb.png
+     :alt: Connectivity Graph
+
+     :ref:`sphx_glr_auto_examples_extended_plot_connectivity_graph.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/extended/plot_connectivity_graph
+.. raw:: html
+
+    <div class="sphx-glr-clear"></div>
+
+
+
+.. _sphx_glr_auto_examples_vivado:
+
+Vivado
+------
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example walks through the process of creating and viewing a netlist within Vivado.">
+
+.. only:: html
+
+ .. figure:: /auto_examples/vivado/images/thumb/sphx_glr_vivado_netlist_thumb.png
+     :alt: Create/View a Netlist with Vivado
+
+     :ref:`sphx_glr_auto_examples_vivado_vivado_netlist.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/vivado/vivado_netlist
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how SpyDrNet can parse in a netlist, modify it, and compose a new netlist.">
+
+.. only:: html
+
+ .. figure:: /auto_examples/vivado/images/thumb/sphx_glr_AND_to_OR_thumb.png
+     :alt: Modify Netlist with SpyDrNet
+
+     :ref:`sphx_glr_auto_examples_vivado_AND_to_OR.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/vivado/AND_to_OR
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Builds a netlist with a lookup table and HDI primitives from scratch ready to be used for a &quot;po...">
+
+.. only:: html
+
+ .. figure:: /auto_examples/vivado/images/thumb/sphx_glr_LUT_builder_thumb.png
+     :alt: Create Netlist with SpyDrNet
+
+     :ref:`sphx_glr_auto_examples_vivado_LUT_builder.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/vivado/LUT_builder
+.. raw:: html
+
+    <div class="sphx-glr-clear"></div>
+
+
+
+.. only :: html
+
+ .. container:: sphx-glr-footer
+    :class: sphx-glr-footer-gallery
+
+
+  .. container:: sphx-glr-download sphx-glr-download-python
+
+    :download:`Download all examples in Python source code: auto_examples_python.zip </auto_examples/auto_examples_python.zip>`
+
+
+
+  .. container:: sphx-glr-download sphx-glr-download-jupyter
+
+    :download:`Download all examples in Jupyter notebooks: auto_examples_jupyter.zip </auto_examples/auto_examples_jupyter.zip>`
+
+
+.. only:: html
+
+ .. rst-class:: sphx-glr-signature
+
+    `Gallery generated by Sphinx-Gallery <https://sphinx-gallery.github.io>`_

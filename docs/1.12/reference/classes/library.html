@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Library &mdash; SpyDrNet 1.12.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="spydrnet.Library.__init__" href="generated/spydrnet.Library.__init__.html" />
+    <link rel="prev" title="spydrnet.Netlist.get_hwires" href="generated/spydrnet.Netlist.get_hwires.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> SpyDrNet
+          </a>
+              <div class="version">
+                1.12
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">API Summary</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#basic-object-types">Basic object types</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="netlist.html">Netlist</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Library</a></li>
+<li class="toctree-l4"><a class="reference internal" href="definition.html">Definition</a></li>
+<li class="toctree-l4"><a class="reference internal" href="instance.html">Instance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="port.html">Port</a></li>
+<li class="toctree-l4"><a class="reference internal" href="innerpin.html">InnerPin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="outerpin.html">OuterPin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cable.html">Cable</a></li>
+<li class="toctree-l4"><a class="reference internal" href="wire.html">Wire</a></li>
+<li class="toctree-l4"><a class="reference internal" href="href.html">HRef</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/spydrnet.ir.Pin.html">spydrnet.ir.Pin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/spydrnet.ir.Bundle.html">spydrnet.ir.Bundle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/spydrnet.ir.Element.html">spydrnet.ir.Element</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/spydrnet.ir.FirstClassElement.html">spydrnet.ir.FirstClassElement</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#getter-functions">Getter Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#other-functions">Other Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#shortcuts">Shortcuts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#in-summary">In Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../netlist_types.html">Netlist Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../built_in_architecture.html">Built In FPGA Architectures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../functions/index.html">Functions (Additional Information)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../element_data.html">Element Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../NamespaceManager.html">Namespace Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../verilog_support.html">Verilog Language Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../eblif_support.html">EBLIF Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Callback_Framework.html">Callback Framework</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extensions.html">Extensions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../archive/index.html">Archive</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../auto_examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../credits.html">Credits</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SpyDrNet</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Reference</a> &raquo;</li>
+          <li><a href="index.html">API Summary</a> &raquo;</li>
+      <li>Library</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/reference/classes/library.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="library">
+<span id="id1"></span><h1>Library<a class="headerlink" href="#library" title="Permalink to this heading"></a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="spydrnet.Library">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spydrnet.</span></span><span class="sig-name descname"><span class="pre">Library</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spydrnet.Library" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Library.__init__.html#spydrnet.Library.__init__" title="spydrnet.Library.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library.__init__</span></code></a>([name, properties])</p></td>
+<td><p>creates an empty object of type Library</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Library.netlist.html#spydrnet.Library.netlist" title="spydrnet.Library.netlist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library.netlist</span></code></a></p></td>
+<td><p>Get the netlist that contains this library</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Library.definitions.html#spydrnet.Library.definitions" title="spydrnet.Library.definitions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library.definitions</span></code></a></p></td>
+<td><p>Return a list of all the definitions that are included in this library</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Library.create_definition.html#spydrnet.Library.create_definition" title="spydrnet.Library.create_definition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library.create_definition</span></code></a>([name, properties])</p></td>
+<td><p>Create a definition, add it to the library, and return the definition</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Library.add_definition.html#spydrnet.Library.add_definition" title="spydrnet.Library.add_definition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library.add_definition</span></code></a>(definition[, position])</p></td>
+<td><p>Add an existing definition to the library.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Library.remove_definition.html#spydrnet.Library.remove_definition" title="spydrnet.Library.remove_definition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library.remove_definition</span></code></a>(definition)</p></td>
+<td><p>Remove the given definition from the library.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Library.remove_definitions_from.html#spydrnet.Library.remove_definitions_from" title="spydrnet.Library.remove_definitions_from"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library.remove_definitions_from</span></code></a>(definitions)</p></td>
+<td><p>Remove a set of definitions from the library.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Library.clone.html#spydrnet.Library.clone" title="spydrnet.Library.clone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library.clone</span></code></a>()</p></td>
+<td><p>Clone the library in an API safe manner.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Library.get_netlists.html#spydrnet.Library.get_netlists" title="spydrnet.Library.get_netlists"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library.get_netlists</span></code></a>(...)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_netlists.html#spydrnet.get_netlists" title="spydrnet.get_netlists"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_netlists()</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Library.get_libraries.html#spydrnet.Library.get_libraries" title="spydrnet.Library.get_libraries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library.get_libraries</span></code></a>(...)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_libraries.html#spydrnet.get_libraries" title="spydrnet.get_libraries"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_libraries()</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Library.get_definitions.html#spydrnet.Library.get_definitions" title="spydrnet.Library.get_definitions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library.get_definitions</span></code></a>(...)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_definitions.html#spydrnet.get_definitions" title="spydrnet.get_definitions"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_definitions()</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Library.get_instances.html#spydrnet.Library.get_instances" title="spydrnet.Library.get_instances"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library.get_instances</span></code></a>(...)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_instances.html#spydrnet.get_instances" title="spydrnet.get_instances"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_instances()</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Library.get_ports.html#spydrnet.Library.get_ports" title="spydrnet.Library.get_ports"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library.get_ports</span></code></a>(...)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_ports.html#spydrnet.get_ports" title="spydrnet.get_ports"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_ports()</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Library.get_pins.html#spydrnet.Library.get_pins" title="spydrnet.Library.get_pins"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library.get_pins</span></code></a>(...)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_pins.html#spydrnet.get_pins" title="spydrnet.get_pins"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_pins()</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Library.get_cables.html#spydrnet.Library.get_cables" title="spydrnet.Library.get_cables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library.get_cables</span></code></a>(...)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_cables.html#spydrnet.get_cables" title="spydrnet.get_cables"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_cables()</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Library.get_wires.html#spydrnet.Library.get_wires" title="spydrnet.Library.get_wires"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library.get_wires</span></code></a>(...)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_wires.html#spydrnet.get_wires" title="spydrnet.get_wires"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_wires()</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Library.get_hinstances.html#spydrnet.Library.get_hinstances" title="spydrnet.Library.get_hinstances"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library.get_hinstances</span></code></a>(...)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_hinstances.html#spydrnet.get_hinstances" title="spydrnet.get_hinstances"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_hinstances()</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Library.get_hports.html#spydrnet.Library.get_hports" title="spydrnet.Library.get_hports"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library.get_hports</span></code></a>(...)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_hports.html#spydrnet.get_hports" title="spydrnet.get_hports"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_hports()</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Library.get_hpins.html#spydrnet.Library.get_hpins" title="spydrnet.Library.get_hpins"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library.get_hpins</span></code></a>(...)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_hpins.html#spydrnet.get_hpins" title="spydrnet.get_hpins"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_hpins()</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/spydrnet.Library.get_hcables.html#spydrnet.Library.get_hcables" title="spydrnet.Library.get_hcables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library.get_hcables</span></code></a>(...)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_hcables.html#spydrnet.get_hcables" title="spydrnet.get_hcables"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_hcables()</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/spydrnet.Library.get_hwires.html#spydrnet.Library.get_hwires" title="spydrnet.Library.get_hwires"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library.get_hwires</span></code></a>(...)</p></td>
+<td><p>Shortcut to <a class="reference internal" href="generated/spydrnet.get_hwires.html#spydrnet.get_hwires" title="spydrnet.get_hwires"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_hwires()</span></code></a>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="generated/spydrnet.Netlist.get_hwires.html" class="btn btn-neutral float-left" title="spydrnet.Netlist.get_hwires" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="generated/spydrnet.Library.__init__.html" class="btn btn-neutral float-right" title="spydrnet.Library.__init__" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Brigham Young Universitiy.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>spydrnet.util.hierarchical_reference &mdash; SpyDrNet 1.12.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> SpyDrNet
+          </a>
+              <div class="version">
+                1.12
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/index.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../credits.html">Credits</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SpyDrNet</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>spydrnet.util.hierarchical_reference</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for spydrnet.util.hierarchical_reference</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">spydrnet.ir</span> <span class="k">as</span> <span class="nn">ir</span>
+<span class="kn">import</span> <span class="nn">weakref</span>
+
+<span class="kn">from</span> <span class="nn">spydrnet.shortcuts.getter</span> <span class="kn">import</span> <span class="n">GetterShortcuts</span>
+
+<span class="n">flyweight</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">WeakKeyDictionary</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="HRef"><a class="viewcode-back" href="../../../reference/classes/href.html#spydrnet.util.HRef">[docs]</a><span class="k">class</span> <span class="nc">HRef</span><span class="p">(</span><span class="n">GetterShortcuts</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A hierarchical reference to a specific element in a netlist.</span>
+
+<span class="sd">    Definitions can be instanced more than once (i.e., multiple instances can reference the same definition).</span>
+<span class="sd">    When a definition is instanced more than once, it causes the contents of the definition to be shared. Therefore, any</span>
+<span class="sd">    changes to a multi-instanced definition will be reflected in all instances of that definition. Similarly, any</span>
+<span class="sd">    references to the contents of a multi-instanced definition refer to the contents of all of the instances and not to</span>
+<span class="sd">    the contents of a specific instance. This sharing creates challenges for analyzing and transforming the netlist.</span>
+
+<span class="sd">    Hierarchical references refer to a netlist element by hierarchical sequence. A hierarchical sequence begins with the</span>
+<span class="sd">    the top-instance of netlist (see Netlist.top_instance). The sequence continues with children instances (parent to</span>
+<span class="sd">    child) until the instance of interest is reached. The instance of interest is the final instance in the sequence.</span>
+<span class="sd">    When the referenced element is an instance, the sequence terminates. When the referenced element is a port, pin,</span>
+<span class="sd">    cable, or wire, the sequence continues with those elements until the desired element is specified (e.g., port;</span>
+<span class="sd">    port, pin; cable; or cable, wire. In this way, hierarhical elements are uniquely referenced even though the contents</span>
+<span class="sd">    of a definition may be shared.</span>
+
+<span class="sd">    **Hierarchical Sequence Examples:**</span>
+
+<span class="sd">    Here are some examples of hierarchical sequences:</span>
+
+<span class="sd">    * Top Instance:</span>
+<span class="sd">        * ``[top_instance]``</span>
+<span class="sd">    * Top Instance Port</span>
+<span class="sd">        * ``[top_instance, port]``</span>
+<span class="sd">    * Top Instance Pin</span>
+<span class="sd">        * ``[top_instance, port, pin]``</span>
+<span class="sd">    * Shared Sub-Instance Cable)</span>
+<span class="sd">        * ``[top_instance, sub_instance_A, sub_instance_C, cable]``</span>
+<span class="sd">        * ``[top_instance, sub_instance_B, sub_instance_C, cable]``</span>
+<span class="sd">        * ``sub_instance_A`` and ``sub_instance_B`` are instances (or children) with the definition referenced by</span>
+<span class="sd">          ``top_instance``.</span>
+<span class="sd">        * ``sub_instance_A`` and ``sub_instance_B`` reference the same definition, which contains ``sub_instance_C``.</span>
+<span class="sd">        * Even though ``cable`` is the same element in both sequences, each sequence uniquely references the cable</span>
+<span class="sd">          inside ``sub_instance_A`` and ``sub_instance_B`` respectively.</span>
+
+<span class="sd">    **Netlist Analysis and Transformation:**</span>
+
+<span class="sd">    Hierarchical references provide unique handles on hierarchical elements. A unique handle allows for such elements to</span>
+<span class="sd">    be considered individually even though two hierarchical may point to some of the same elements. This makes it</span>
+<span class="sd">    possible, for example, to consider pin connectivity across hierarchy even though the actual pins may be the same.</span>
+
+<span class="sd">    In some netlist tranformations, it may be desirable to modify the contents of a specific instance without modifying</span>
+<span class="sd">    the contents of another instance that refers to the same definition. Hierarchical references make it possible to</span>
+<span class="sd">    refer to an instance that should be changed. Once the definition is made unique (see spydrnet.uniquify), then any</span>
+<span class="sd">    alterations will only affect the originally specified instance. Hierarchical instances also allow for uniqueness</span>
+<span class="sd">    checking (see HRef.is_unique).</span>
+
+<span class="sd">    **Hierarchical Reference Representation:**</span>
+
+<span class="sd">    HRefs represent hierarchy as nodes in a hierarchical tree. The root node is an HRef to the top_instance of a netlist</span>
+<span class="sd">    with no parent node. Each HRef contains a pointer to its parent HRef (``None`` in the case of the root HRef), a</span>
+<span class="sd">    pointer to the element in the netlist that it references, and a hashcode generated from each referenced object.</span>
+
+<span class="sd">    Storing the hashcode with the object saves on re-computation and allows for quick operations in containers that</span>
+<span class="sd">    require Hashable objects. If the hashcode were not stored with the object, it would have to be recalculated for</span>
+<span class="sd">    each hash-dependent operation, which could consume a large amount of computational resources depending on the</span>
+<span class="sd">    hierarchical depth of the node. Parent and item pointers are immutable. The hashcode of a referenced item is also</span>
+<span class="sd">    immutable. Therefore, the hashcode of a HRef should not change during its existence (even if a netlist</span>
+<span class="sd">    transformation renders it invalid).</span>
+
+<span class="sd">    **Use of a Flyweight Pattern:**</span>
+
+<span class="sd">    Due the the nature of hierarchical references, parent nodes can be referenced more than once. Rather than having</span>
+<span class="sd">    multiple hierarchical nodes in memory that point to the same hierarchical parent, a flyweight can be used to save</span>
+<span class="sd">    on memory. A flyweight pattern is used here to share hierarchical parent nodes. See `Flyweight pattern</span>
+<span class="sd">    &lt;https://en.wikipedia.org/wiki/Flyweight_pattern&gt;`_.</span>
+
+<span class="sd">    **Lack of Parent to Child Pointers:**</span>
+
+<span class="sd">    A parent to child pointer requires a lookup diction from each child item to each child hierarchical node. This</span>
+<span class="sd">    approach could be taken, but it recreates much of the same information that is available in the original netlist. It</span>
+<span class="sd">    was therefore decided to leverage the flyweight pattern rather than explicitly manage all of the necessary</span>
+<span class="sd">    child-item to child-node relationships.</span>
+
+<span class="sd">    .. attribute:: item: the item of the object</span>
+<span class="sd">    .. attribute:: parent: the parent of the object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="HRef.get_all_hrefs_of_item"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.util.HRef.get_all_hrefs_of_item.html#spydrnet.util.HRef.get_all_hrefs_of_item">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_all_hrefs_of_item</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get all the href of the itsm</span>
+
+<span class="sd">        parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        item - The item to get the href from.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ir</span><span class="o">.</span><span class="n">Instance</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">href</span> <span class="ow">in</span> <span class="n">HRef</span><span class="o">.</span><span class="n">get_all_hrefs_of_instances</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">href</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ir</span><span class="o">.</span><span class="n">Definition</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">href</span> <span class="ow">in</span> <span class="n">HRef</span><span class="o">.</span><span class="n">get_all_hrefs_of_instances</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">references</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">href</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ir</span><span class="o">.</span><span class="n">Port</span><span class="p">):</span>
+            <span class="n">definition</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">definition</span>
+            <span class="k">if</span> <span class="n">definition</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">href</span> <span class="ow">in</span> <span class="n">HRef</span><span class="o">.</span><span class="n">get_all_hrefs_of_instances</span><span class="p">(</span><span class="n">definition</span><span class="o">.</span><span class="n">references</span><span class="p">):</span>
+                    <span class="k">yield</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">href</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ir</span><span class="o">.</span><span class="n">InnerPin</span><span class="p">):</span>
+            <span class="n">port</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">port</span>
+            <span class="k">if</span> <span class="n">port</span><span class="p">:</span>
+                <span class="n">definition</span> <span class="o">=</span> <span class="n">port</span><span class="o">.</span><span class="n">definition</span>
+                <span class="k">if</span> <span class="n">definition</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">href</span> <span class="ow">in</span> <span class="n">HRef</span><span class="o">.</span><span class="n">get_all_hrefs_of_instances</span><span class="p">(</span><span class="n">definition</span><span class="o">.</span><span class="n">references</span><span class="p">):</span>
+                        <span class="n">href_port</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">href</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+                        <span class="k">yield</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">href_port</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ir</span><span class="o">.</span><span class="n">OuterPin</span><span class="p">):</span>
+            <span class="n">instance</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">instance</span>
+            <span class="n">inner_pin</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">inner_pin</span>
+            <span class="k">if</span> <span class="n">instance</span> <span class="ow">and</span> <span class="n">inner_pin</span><span class="p">:</span>
+                <span class="n">port</span> <span class="o">=</span> <span class="n">inner_pin</span><span class="o">.</span><span class="n">port</span>
+                <span class="k">if</span> <span class="n">port</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">href</span> <span class="ow">in</span> <span class="n">HRef</span><span class="o">.</span><span class="n">get_all_hrefs_of_instances</span><span class="p">(</span><span class="n">instance</span><span class="p">):</span>
+                        <span class="n">href_port</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">href</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+                        <span class="k">yield</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">href_port</span><span class="p">,</span> <span class="n">inner_pin</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ir</span><span class="o">.</span><span class="n">Cable</span><span class="p">):</span>
+            <span class="n">definition</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">definition</span>
+            <span class="k">if</span> <span class="n">definition</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">href</span> <span class="ow">in</span> <span class="n">HRef</span><span class="o">.</span><span class="n">get_all_hrefs_of_instances</span><span class="p">(</span><span class="n">definition</span><span class="o">.</span><span class="n">references</span><span class="p">):</span>
+                    <span class="k">yield</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">href</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ir</span><span class="o">.</span><span class="n">Wire</span><span class="p">):</span>
+            <span class="n">cable</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">cable</span>
+            <span class="k">if</span> <span class="n">cable</span><span class="p">:</span>
+                <span class="n">definition</span> <span class="o">=</span> <span class="n">cable</span><span class="o">.</span><span class="n">definition</span>
+                <span class="k">if</span> <span class="n">definition</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">href</span> <span class="ow">in</span> <span class="n">HRef</span><span class="o">.</span><span class="n">get_all_hrefs_of_instances</span><span class="p">(</span><span class="n">definition</span><span class="o">.</span><span class="n">references</span><span class="p">):</span>
+                        <span class="n">href_cable</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">href</span><span class="p">,</span> <span class="n">cable</span><span class="p">)</span>
+                        <span class="k">yield</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">href_cable</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HRef.get_all_hrefs_of_instances"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.util.HRef.get_all_hrefs_of_instances.html#spydrnet.util.HRef.get_all_hrefs_of_instances">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_all_hrefs_of_instances</span><span class="p">(</span><span class="n">instances</span><span class="p">,</span> <span class="n">netlist</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assuming all instances are vaild (meaning their reference belongs in a proper library inside a netlist).</span>
+<span class="sd">        :param instances:</span>
+<span class="sd">        :param netlist:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instances</span><span class="p">,</span> <span class="n">ir</span><span class="o">.</span><span class="n">Instance</span><span class="p">):</span>
+            <span class="n">instances</span> <span class="o">=</span> <span class="p">{</span><span class="n">instances</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">instances</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">instances</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ir</span><span class="o">.</span><span class="n">Instance</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">netlist</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">instance</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">instances</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">instance</span><span class="p">:</span>
+                <span class="n">reference</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">reference</span>
+                <span class="k">if</span> <span class="n">reference</span><span class="p">:</span>
+                    <span class="n">library</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">library</span>
+                    <span class="k">if</span> <span class="n">library</span><span class="p">:</span>
+                        <span class="n">netlist</span> <span class="o">=</span> <span class="n">library</span><span class="o">.</span><span class="n">netlist</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">netlist</span><span class="p">,</span> <span class="n">ir</span><span class="o">.</span><span class="n">Netlist</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">top_instance</span> <span class="o">=</span> <span class="n">netlist</span><span class="o">.</span><span class="n">top_instance</span>
+
+        <span class="n">bound</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">search_stack</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">instances</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">search_stack</span><span class="p">:</span>
+            <span class="n">instance</span> <span class="o">=</span> <span class="n">search_stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+            <span class="n">parent_def</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">parent</span>
+            <span class="k">if</span> <span class="n">parent_def</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">parent_inst</span> <span class="ow">in</span> <span class="n">parent_def</span><span class="o">.</span><span class="n">references</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">parent_inst</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">bound</span><span class="p">:</span>
+                        <span class="n">bound</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">parent_inst</span><span class="p">)</span>
+                        <span class="n">search_stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parent_inst</span><span class="p">)</span>
+
+        <span class="n">href</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">top_instance</span><span class="p">)</span>
+        <span class="n">search_stack</span> <span class="o">=</span> <span class="p">[</span><span class="n">href</span><span class="p">]</span>
+        <span class="k">while</span> <span class="n">search_stack</span><span class="p">:</span>
+            <span class="n">href</span> <span class="o">=</span> <span class="n">search_stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">href</span><span class="o">.</span><span class="n">item</span>
+            <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">instances</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">href</span>
+            <span class="n">reference</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">reference</span>
+            <span class="k">if</span> <span class="n">reference</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">reference</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">bound</span><span class="p">:</span>
+                        <span class="n">href_child</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">href</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+                        <span class="n">search_stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">href_child</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">instances</span><span class="p">:</span>
+                        <span class="n">href_child</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">href</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+                        <span class="k">yield</span> <span class="n">href_child</span></div>
+
+<div class="viewcode-block" id="HRef.from_sequence"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.util.HRef.from_sequence.html#spydrnet.util.HRef.from_sequence">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">from_sequence</span><span class="p">(</span><span class="n">sequence</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the href of the sequence</span>
+
+<span class="sd">        parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        sequence - The sequence to get the href from</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sequence</span><span class="p">:</span>
+            <span class="n">href</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+            <span class="n">parent</span> <span class="o">=</span> <span class="n">href</span>
+        <span class="k">return</span> <span class="n">href</span></div>
+
+<div class="viewcode-block" id="HRef.from_parent_and_item"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.util.HRef.from_parent_and_item.html#spydrnet.util.HRef.from_parent_and_item">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">from_parent_and_item</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the href with given parent and item</span>
+
+<span class="sd">        parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        parent - the parent obejct of this href</span>
+<span class="sd">        item - the item that the href is reference to</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">href</span> <span class="o">=</span> <span class="n">HRef</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">href</span> <span class="ow">in</span> <span class="n">flyweight</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">flyweight</span><span class="p">[</span><span class="n">href</span><span class="p">]()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">flyweight</span><span class="p">[</span><span class="n">href</span><span class="p">]</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">href</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">href</span></div>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_hashcode&#39;</span><span class="p">,</span> <span class="s1">&#39;parent&#39;</span><span class="p">,</span> <span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;__weakref__&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="HRef.__init__"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.util.HRef.__init__.html#spydrnet.util.HRef.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the href</span>
+
+<span class="sd">        parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        item - the item that the href is reference to</span>
+<span class="sd">        parent - the parent obejct of this href</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hashcode</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">hash</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span><span class="o">*</span><span class="mi">31</span> <span class="o">+</span> <span class="nb">hash</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">item</span> <span class="o">=</span> <span class="n">item</span></div>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hashcode</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span> <span class="ow">is</span> <span class="n">other</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">HRef</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">this</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="n">that</span> <span class="o">=</span> <span class="n">other</span>
+        <span class="k">while</span> <span class="n">this</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">that</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">this</span><span class="o">.</span><span class="n">item</span> <span class="o">==</span> <span class="n">that</span><span class="o">.</span><span class="n">item</span><span class="p">:</span>
+                <span class="n">this</span> <span class="o">=</span> <span class="n">this</span><span class="o">.</span><span class="n">parent</span>
+                <span class="n">that</span> <span class="o">=</span> <span class="n">that</span><span class="o">.</span><span class="n">parent</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">this</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">that</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;&lt;</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2"> &#39;</span><span class="si">{}</span><span class="s2">&#39; at 0x</span><span class="si">{:016X}</span><span class="s2">&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                                  <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">return</span> <span class="n">name</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_unique</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A hierarchical reference must be valid to be unique. If it is not valid, it may not be unique.</span>
+<span class="sd">        : return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_valid</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">href</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="n">search_stack</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">instances</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">while</span> <span class="n">href</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">href</span><span class="o">.</span><span class="n">item</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ir</span><span class="o">.</span><span class="n">Instance</span><span class="p">):</span>
+                <span class="n">instances</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+                <span class="n">parent</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">parent</span>
+                <span class="k">if</span> <span class="n">parent</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">references</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">href</span><span class="o">.</span><span class="n">parent</span><span class="p">:</span>
+                    <span class="n">search_stack</span> <span class="o">+=</span> <span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">parent</span><span class="o">.</span><span class="n">references</span> <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span>
+                                     <span class="n">href</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">item</span><span class="p">)</span>
+            <span class="n">href</span> <span class="o">=</span> <span class="n">href</span><span class="o">.</span><span class="n">parent</span>
+        <span class="k">while</span> <span class="n">search_stack</span><span class="p">:</span>
+            <span class="n">instance</span> <span class="o">=</span> <span class="n">search_stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+            <span class="n">reference</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">parent</span>
+            <span class="k">if</span> <span class="n">reference</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">parent</span> <span class="ow">in</span> <span class="n">reference</span><span class="o">.</span><span class="n">references</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">parent</span> <span class="ow">in</span> <span class="n">instances</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="kc">False</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">search_stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Checks if the href is valid</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">href</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">while</span> <span class="n">href</span><span class="p">:</span>
+            <span class="n">hparent</span> <span class="o">=</span> <span class="n">href</span><span class="o">.</span><span class="n">parent</span>  <span class="c1"># href</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">href</span><span class="o">.</span><span class="n">item</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ir</span><span class="o">.</span><span class="n">Instance</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">hparent</span><span class="p">:</span>
+                    <span class="n">reference</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">reference</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">reference</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="kc">False</span>
+                    <span class="n">library</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">library</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">library</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="kc">False</span>
+                    <span class="n">netlist</span> <span class="o">=</span> <span class="n">library</span><span class="o">.</span><span class="n">netlist</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">netlist</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="kc">False</span>
+                    <span class="n">top_instance</span> <span class="o">=</span> <span class="n">netlist</span><span class="o">.</span><span class="n">top_instance</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">top_instance</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="kc">False</span>
+                    <span class="k">if</span> <span class="n">top_instance</span> <span class="o">==</span> <span class="n">item</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="kc">True</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">parent</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">parent</span>  <span class="c1"># definition</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">parent</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="kc">False</span>
+                    <span class="n">hparent_item</span> <span class="o">=</span> <span class="n">hparent</span><span class="o">.</span><span class="n">item</span>  <span class="c1"># instance</span>
+                    <span class="k">if</span> <span class="n">hparent_item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">parent</span><span class="o">.</span><span class="n">references</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="kc">False</span>
+                    <span class="n">href</span> <span class="o">=</span> <span class="n">hparent</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="p">(</span><span class="n">ir</span><span class="o">.</span><span class="n">Cable</span><span class="p">,</span> <span class="n">ir</span><span class="o">.</span><span class="n">Port</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">hparent</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+                <span class="n">definition</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">definition</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">definition</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+                <span class="k">if</span> <span class="n">hparent</span><span class="o">.</span><span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">definition</span><span class="o">.</span><span class="n">references</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+                <span class="n">href</span> <span class="o">=</span> <span class="n">hparent</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ir</span><span class="o">.</span><span class="n">Wire</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">hparent</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+                <span class="n">cable</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">cable</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">cable</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+                <span class="k">if</span> <span class="n">hparent</span><span class="o">.</span><span class="n">item</span> <span class="o">!=</span> <span class="n">cable</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+                <span class="n">href</span> <span class="o">=</span> <span class="n">hparent</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ir</span><span class="o">.</span><span class="n">InnerPin</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">hparent</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+                <span class="n">port</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">port</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">port</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+                <span class="k">if</span> <span class="n">hparent</span><span class="o">.</span><span class="n">item</span> <span class="o">!=</span> <span class="n">port</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+                <span class="n">href</span> <span class="o">=</span> <span class="n">hparent</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">href</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Stores the name of the href</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">hseperator</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">item</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ir</span><span class="o">.</span><span class="n">Wire</span><span class="p">):</span>
+            <span class="n">cable</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">cable</span>
+            <span class="k">if</span> <span class="n">cable</span><span class="o">.</span><span class="n">is_array</span><span class="p">:</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="n">cable</span><span class="o">.</span><span class="n">lower_index</span> <span class="o">+</span> <span class="n">cable</span><span class="o">.</span><span class="n">wires</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="n">href</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ir</span><span class="o">.</span><span class="n">InnerPin</span><span class="p">):</span>
+            <span class="n">port</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">port</span>
+            <span class="k">if</span> <span class="n">port</span><span class="o">.</span><span class="n">is_array</span><span class="p">:</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="n">port</span><span class="o">.</span><span class="n">lower_index</span> <span class="o">+</span> <span class="n">port</span><span class="o">.</span><span class="n">pins</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="n">href</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">href</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">while</span> <span class="n">href</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">href</span><span class="o">.</span><span class="n">item</span>
+            <span class="n">item_name</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;.NAME&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item_name</span><span class="p">)</span>
+            <span class="n">href</span> <span class="o">=</span> <span class="n">href</span><span class="o">.</span><span class="n">parent</span>
+        <span class="n">bus_index</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;[</span><span class="si">{}</span><span class="s2">]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">hname</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hseperator</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">names</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])),</span> <span class="n">bus_index</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">hname</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Brigham Young Universitiy.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

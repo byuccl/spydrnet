@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Linting &mdash; SpyDrNet 1.12.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="License" href="../license.html" />
+    <link rel="prev" title="Testing" href="testing.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> SpyDrNet
+          </a>
+              <div class="version">
+                1.12
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../auto_examples/index.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Developer’s Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="contribute.html">How to Contribute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute.html#creating-a-release">Creating a Release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="repository.html">GitHub Repository</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html">Testing</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Linting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#running-pylint">Running Pylint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#viewing-pylint-score-for-each-release">Viewing Pylint score for each release</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SpyDrNet</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Developer’s Guide</a> &raquo;</li>
+      <li>Linting</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/developer/linting.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="linting">
+<h1>Linting<a class="headerlink" href="#linting" title="Permalink to this heading"></a></h1>
+<p>SpyDrNet developers strive to provide high quality code that follows a general coding standard and does not contain errors. To help accomplish this goal, the <a class="reference external" href="https://pylint.org/">Pylint</a> python package is used.</p>
+<section id="running-pylint">
+<h2>Running Pylint<a class="headerlink" href="#running-pylint" title="Permalink to this heading"></a></h2>
+<p>There are many ways to execute pylint to lint code. SpyDrNet source code can be linted by executing the following command from within the directory of the repository:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pylint</span> <span class="n">spydrnet</span><span class="o">/</span>
+</pre></div>
+</div>
+<p>This will run pylint in its most basic form, without any specified options. A number of options are preffered that are specific to SpyDrNet’s needs. These options are found in the <cite>.pylintrc</cite> file, and can be used with the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pylint</span> <span class="o">--</span><span class="n">rcfile</span><span class="o">=.</span><span class="n">pylintrc</span> <span class="n">spydrnet</span><span class="o">/</span>
+</pre></div>
+</div>
+<p>Pylint will then provide a score from 0.0 to 10.0 for your code. The best way to understand how this score is produced is to run pylint on SpyDrNet, or on any Python script. Pylint can also be run on individual files or directories with the following commands:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pylint</span> <span class="o">&lt;</span><span class="n">directory_name</span><span class="o">&gt;/</span>
+<span class="n">pylint</span> <span class="o">&lt;</span><span class="n">file_name</span><span class="o">&gt;.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>It is strongly encouraged to run pylint on any code that you change or create that will be added into the SpyDrNet repository, and ensure that the code scores well (getting 10.0 is not terribly difficult). This not only improves the SpyDrNet codebase, but will improve your own skills as a competant programmer.</p>
+<p>Pylint, along with pytest, will be run every time code is pushed to the GitHub repository with GitHub actions (as specificed in the <cite>.github/workflows/pylint.yml</cite> file in the root SpyDrNet directory).</p>
+</section>
+<section id="viewing-pylint-score-for-each-release">
+<h2>Viewing Pylint score for each release<a class="headerlink" href="#viewing-pylint-score-for-each-release" title="Permalink to this heading"></a></h2>
+<p>On the <a class="reference external" href="https://github.com/byuccl/spydrnet/actions">byuccl/spydrnet</a> page, navigate to the “Actions” tab. From there, you should be able to select the “Pylint” workflow and view all jobs within that workflow. Open up a job, and then find the “Analysing the code with pylint” tab. Here, all pylint output can be found for each push done for the repository.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="testing.html" class="btn btn-neutral float-left" title="Testing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../license.html" class="btn btn-neutral float-right" title="License" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Brigham Young Universitiy.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

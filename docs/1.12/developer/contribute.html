@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How to Contribute &mdash; SpyDrNet 1.12.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="GitHub Repository" href="repository.html" />
+    <link rel="prev" title="Developer’s Guide" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> SpyDrNet
+          </a>
+              <div class="version">
+                1.12
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../auto_examples/index.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Developer’s Guide</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">How to Contribute</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#testing">Testing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-a-release">Creating a Release</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#update-the-release-notes">Update the Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#update-the-documentation">Update the Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#create-and-update-the-tag">Create and Update the Tag</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#build-the-documentation">Build the Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#build-the-python-package">Build the Python Package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#publish-the-packages-to-pypi">Publish the Packages to Pypi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#create-a-github-release">Create a Github Release</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#publish-the-documentation">Publish the Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="repository.html">GitHub Repository</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html">Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linting.html">Linting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SpyDrNet</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Developer’s Guide</a> &raquo;</li>
+      <li>How to Contribute</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/developer/contribute.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="how-to-contribute">
+<span id="contributing-rst"></span><h1>How to Contribute<a class="headerlink" href="#how-to-contribute" title="Permalink to this heading"></a></h1>
+<p>Thank you for your interest in contributing to SpyDrNet. We welcome your support
+and hope that you have a great experience. Additionally we hope you feel as we
+do that your work on SpyDrNet makes a positve impact on the greater community.</p>
+<p>We ask all contributers to make respectful and constructive contributions in
+order to ensure a positive environment exists around SpyDrNet.</p>
+<p><strong>some suggestions as you get started</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Make sure you have a recent version of python installed. We test against version 3.6 and up (as of SpyDrNet 1.10.0…before then we also supported Python 3.5).</p></li>
+<li><p>Clone the repository and create a new branch on which to make changes.</p></li>
+<li><p>Connect through Git Hub. The issues tab is the primary place for conversations and questions.</p></li>
+<li><p>Make sure that there are tests for your code.</p></li>
+<li><p>While we do not require 100% test coverage it is a good idea to strive to achive it.</p></li>
+<li><p>Make sure that your code passes the Travis CI test before merging to master</p></li>
+</ul>
+</div></blockquote>
+<p><strong>To start contributing please follow the following steps</strong></p>
+<ol class="arabic simple">
+<li><p>Create a github account</p></li>
+<li><p>Clone the SpyDrNet repositoy</p></li>
+<li><p>Otherwise fork the repository to make your changes.</p></li>
+<li><p>Once you have made your changes make a pull request.</p></li>
+<li><p>When the pull request has passed the tests it will be reviewed and merged. Note: we may have you request your code into a branch other than <em>master</em></p></li>
+</ol>
+<p><strong>Write (or other) privileges can be obtained</strong></p>
+<p><em>if</em></p>
+<p>you have made a few good contributions and plan to make more</p>
+<p><em>or</em></p>
+<p>you are a student working on the project in the BYU CCL</p>
+<p><em>and in either case</em></p>
+<p>upon request to the admins who can give write privlages.</p>
+<p>If you don’t know who the admins are and you feel that you qualify you can
+create an issue to request permissions.</p>
+<p>Of course the admin’s have the final say in granting permissions and reserve the
+right to deny privileges for any reason or no reason at all even if the above
+criteria are met.</p>
+<section id="testing">
+<h2>Testing<a class="headerlink" href="#testing" title="Permalink to this heading"></a></h2>
+<p>We use pytest which can be installed through pip, to test the repository. Tests
+are placed in the tests folders at an appropriate place in the repository. The
+existing tests can be used as a template to create your own and the pytest
+documentation can be referenced as well. Basically <cite>import unittest</cite> and then
+declare your class and have it inherit from the <cite>unittest.TestCase</cite> like this
+<cite>class TestFeatureName(unittest.TestCase):</cite> then make sure that your function
+is called something that starts with <cite>test_</cite> like
+<cite>def test_some_functionality(self):</cite>.</p>
+<p>Exceptions and other features can be tested as well within the pytest framework.</p>
+</section>
+</section>
+<section id="creating-a-release">
+<h1>Creating a Release<a class="headerlink" href="#creating-a-release" title="Permalink to this heading"></a></h1>
+<p>This section aims to help you do a spydrnet release, meaning you make the latest code and documentation available. The steps are listed in what seems to be the best order of operation. Steps which need more explanation are highlighted below.</p>
+<ol class="arabic simple">
+<li><p>Merge each contributors’ branches into one branch (the ‘next_release’ branch)</p></li>
+<li><p>run <cite>git merge master</cite> while the next-release branch is checked out.</p></li>
+<li><p><a class="reference internal" href="#update-release-notes"><span class="std std-ref">Update the Release Notes</span></a></p></li>
+<li><p><a class="reference internal" href="#update-documentation"><span class="std std-ref">Update the Documentation</span></a> and ensure it can build properly</p></li>
+<li><p>On Github, create a pull request with the updated code in the next_release branch.</p></li>
+<li><p>Accept and merge the pull request when the checks have finished.</p></li>
+<li><p>Move to the master branch using <cite>git checkout master</cite></p></li>
+<li><p><a class="reference internal" href="#create-and-update-tag"><span class="std std-ref">Create and Update the Tag</span></a></p></li>
+<li><p><a class="reference internal" href="#build-documentation"><span class="std std-ref">Build the Documentation</span></a></p></li>
+<li><p><a class="reference internal" href="#build-package"><span class="std std-ref">Build the Python Package</span></a> (this will update the documentation’s version number)</p></li>
+<li><p><a class="reference internal" href="#publish-packages"><span class="std std-ref">Publish the Packages to Pypi</span></a></p></li>
+<li><p><a class="reference internal" href="#github-release"><span class="std std-ref">Create a Github Release</span></a></p></li>
+<li><p><a class="reference internal" href="#publish-documentation"><span class="std std-ref">Publish the Documentation</span></a></p></li>
+</ol>
+<section id="update-the-release-notes">
+<span id="update-release-notes"></span><h2>Update the Release Notes<a class="headerlink" href="#update-the-release-notes" title="Permalink to this heading"></a></h2>
+<p>The release notes file called RELEASE.rst should be updated to outline what has
+been acomplished. The date and version number should be included and other
+information as needed can be entered as well.</p>
+<p>SpyDrNet uses a Major.Minor.Bug versioning scheme where minor
+version updates do not break the existing API and major version updates may
+break it. Bug fixes do not add substantial new functionality, but rather fix
+broken functionality.</p>
+</section>
+<section id="update-the-documentation">
+<span id="update-documentation"></span><h2>Update the Documentation<a class="headerlink" href="#update-the-documentation" title="Permalink to this heading"></a></h2>
+<p>The documentation pulls from doc strings as well as .rst files in the build so
+this step is important. The documentation is built using a makefile in the docs
+folder.</p>
+<p>Before building the documentation run <cite>make clean</cite> to clear away the old files.</p>
+<p>Before proceeding, ensure that both of the following are successful (make they execute without errors. Try to minimize the warnings as well):</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">make</span> <span class="n">html</span>
+</pre></div>
+</div>
+<p>and</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">make</span> <span class="n">latexpdf</span>
+</pre></div>
+</div>
+<p>if you are missing packages run:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">make</span> <span class="n">install</span>
+</pre></div>
+</div>
+<p>You may also need to run ‘sudo apt install latexmk’ and ‘apt install texlive-latex-extra’ to be able to create the pdf file.</p>
+<p>The generated files can be found in the build folder. Take a look at them and make sure everything looks good. Later, these commands will be run again, and the html files put online and pdf files added to the Github release files.</p>
+</section>
+<section id="create-and-update-the-tag">
+<span id="create-and-update-tag"></span><h2>Create and Update the Tag<a class="headerlink" href="#create-and-update-the-tag" title="Permalink to this heading"></a></h2>
+<p>Be sure you are on the master branch.</p>
+<p>Tags are used to label the release. When all changes are merged into the main branch, create a new tag. In the examples below, replace 1.5.0 with the version number you are releasing.</p>
+<p><strong>To see the current version number</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">git</span> <span class="n">describe</span>
+</pre></div>
+</div>
+<p><strong>Create the tag</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">git</span> <span class="n">tag</span> <span class="o">-</span><span class="n">a</span> <span class="n">v1</span><span class="mf">.5.0</span> <span class="o">-</span><span class="n">m</span> <span class="s2">&quot;SpyDrNet 1.5.0&quot;</span>
+</pre></div>
+</div>
+<p><strong>Push your changes to the tags</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">git</span> <span class="n">push</span> <span class="o">--</span><span class="n">tags</span>
+</pre></div>
+</div>
+<p>If you mess up, you can use the following instructions to force update your tag</p>
+<p><strong>Updating</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">git</span> <span class="n">tag</span> <span class="o">-</span><span class="n">a</span> <span class="n">v1</span><span class="mf">.5.0</span> <span class="o">-</span><span class="n">m</span> <span class="s2">&quot;SpyDrNet 1.5.0&quot;</span> <span class="o">-</span><span class="n">f</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">git</span> <span class="n">push</span> <span class="o">--</span><span class="n">tags</span> <span class="o">-</span><span class="n">f</span>
+</pre></div>
+</div>
+</section>
+<section id="build-the-documentation">
+<span id="build-documentation"></span><h2>Build the Documentation<a class="headerlink" href="#build-the-documentation" title="Permalink to this heading"></a></h2>
+<p>Make sure you are in the docs directory</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cd</span> <span class="n">docs</span>
+</pre></div>
+</div>
+<p>then run the following:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">make</span> <span class="n">clean</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">make</span> <span class="n">latexpdf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">make</span> <span class="n">html</span>
+</pre></div>
+</div>
+<p>Make sure that each one executes without errors. Try to minimize warnings as well, although the most important thing is that the documentation looks the way you want it to.</p>
+</section>
+<section id="build-the-python-package">
+<span id="build-package"></span><h2>Build the Python Package<a class="headerlink" href="#build-the-python-package" title="Permalink to this heading"></a></h2>
+<p>Refer to pypi.org if necessary. They have a tutorial called “uploading packages”</p>
+<p>Upgrade pip if needed.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">python3</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">upgrade</span> <span class="n">pip</span>
+</pre></div>
+</div>
+<p>Make sure everything is up to date</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">python3</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">user</span> <span class="o">--</span><span class="n">upgrade</span> <span class="n">setuptools</span> <span class="n">wheel</span>
+</pre></div>
+</div>
+<p>Make the python archive package:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">python3</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">sdist</span> <span class="n">bdist_wheel</span>
+</pre></div>
+</div>
+<p>The build files will be stored in the following directories</p>
+<p>spydrnet/build and spydrnet/dist</p>
+</section>
+<section id="publish-the-packages-to-pypi">
+<span id="publish-packages"></span><h2>Publish the Packages to Pypi<a class="headerlink" href="#publish-the-packages-to-pypi" title="Permalink to this heading"></a></h2>
+<p>The packages need to be published to Pypi in order to be installable via pip. On the <a class="reference external" href="https://packaging.python.org/tutorials/packaging-projects/">Pypi website</a> there is a guide on uploading packages. You will need an account for this. Follow the instructions there to upload to the test pip server and then the production server.</p>
+<p>If you have an account and know what you are doing, use the command below :</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">python3</span> <span class="o">-</span><span class="n">m</span> <span class="n">twine</span> <span class="n">upload</span> <span class="n">dist</span><span class="o">/*</span>
+</pre></div>
+</div>
+<p>And then input your username and password for Pypi.</p>
+<p>To install the python package to check for success, use:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">python3</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">spydrnet</span>
+</pre></div>
+</div>
+<p>Then go to the release on the Pypi website through your account. Download the .whl file and the .tar.gz file. These will be used in the next step.</p>
+</section>
+<section id="create-a-github-release">
+<span id="github-release"></span><h2>Create a Github Release<a class="headerlink" href="#create-a-github-release" title="Permalink to this heading"></a></h2>
+<p>Releases can be created on Github. On the releases tab you can draft a new
+release. You can then select the existing tag with the release number you want
+to release.</p>
+<p>The release should be named <cite>SpyDrNet 1.5.0</cite> where 1.5.0 is replaced with the
+proper release number.</p>
+<p>Enter a description–it could just be a reiteration of the release notes or other relevant information.</p>
+<dl class="simple">
+<dt>Three files should be added as assets to the new release:</dt><dd><ol class="arabic simple">
+<li><p>The .tar.gz file from the previous step</p></li>
+<li><p>The .whl file from the previous step</p></li>
+<li><p>The spydrnet_reference pdf document created in the <a class="reference internal" href="#build-documentation"><span class="std std-ref">Build the Documentation</span></a> step. Go to docs/latex folder, change the <cite>spydrnet_reference.pdf</cite> name to <cite>spydrnet_reference-new_release_number.pdf</cite>, and then copy it to the assets under the new release.</p></li>
+</ol>
+</dd>
+</dl>
+</section>
+<section id="publish-the-documentation">
+<span id="publish-documentation"></span><h2>Publish the Documentation<a class="headerlink" href="#publish-the-documentation" title="Permalink to this heading"></a></h2>
+<p>This is easiest on Linux (or at least not Windows, MacOS works fine as well)</p>
+<p>Make sure you are still on the Master branch and that everything in the html folder is up-to-date.
+If not, re-run the instructions in <a class="reference internal" href="#build-documentation"><span class="std std-ref">Build the Documentation</span></a>.</p>
+<p>Move to the gh-pages branch using</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">git</span> <span class="n">checkout</span> <span class="n">gh</span><span class="o">-</span><span class="n">pages</span>
+</pre></div>
+</div>
+<p>Create a new folder with the release number as the name. Move the contents of the <cite>docs/build/html</cite> folder into the newly created folder. Then delete the html folder (which should be empty).</p>
+<p>(If html folder doesn’t contain the latest pages, it could be that the html folder wasn’t deleted from the previous release, delete the folder, commit the changes and repeat the steps above)</p>
+<p>The documentation is built from a stable link which will need to be updated to point to the new documentation.</p>
+<p>Check which version of the documentation the stable link points to</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ls</span> <span class="o">-</span><span class="n">lha</span>
+</pre></div>
+</div>
+<p>To update the stable link, remove it first (watch syntax here very carefully, a
+terminating could make the command delete the folder’s contents instead of the
+link)</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rm</span> <span class="n">stable</span>
+</pre></div>
+</div>
+<p>Then create a link to the new folder</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ln</span> <span class="o">-</span><span class="n">s</span> <span class="n">version</span><span class="o">.</span><span class="n">number</span> <span class="n">stable</span>
+</pre></div>
+</div>
+<p>Then add, commit, and push the newly created folder and the updated stable link to the git repository, just to the gh-pages branch.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Developer’s Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="repository.html" class="btn btn-neutral float-right" title="GitHub Repository" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Brigham Young Universitiy.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

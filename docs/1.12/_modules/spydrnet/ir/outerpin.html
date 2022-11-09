@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>spydrnet.ir.outerpin &mdash; SpyDrNet 1.12.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> SpyDrNet
+          </a>
+              <div class="version">
+                1.12
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/index.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../credits.html">Credits</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SpyDrNet</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>spydrnet.ir.outerpin</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for spydrnet.ir.outerpin</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">spydrnet.ir</span> <span class="kn">import</span> <span class="n">Pin</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span><span class="p">,</span> <span class="n">copy</span><span class="p">,</span> <span class="n">error</span>
+
+
+<span class="k">class</span> <span class="nc">OuterPin</span><span class="p">(</span><span class="n">Pin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pins that correspond to instances. These pins can be thought of as on the outside of an instance. There can be many</span>
+<span class="sd">    outer pins for each inner pin</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_instance&#39;</span><span class="p">,</span> <span class="s1">&#39;_inner_pin&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="OuterPin.from_instance_and_inner_pin"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.OuterPin.from_instance_and_inner_pin.html#spydrnet.OuterPin.from_instance_and_inner_pin">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">from_instance_and_inner_pin</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">inner_pin</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create an outer pin associated with a given inner_pin and instance object.</span>
+
+<span class="sd">        parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        instance - (Instance) the instance to associate with this pin</span>
+
+<span class="sd">        inner_pin - (InnerPin) the inner pin with which to associate this outer pin&quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">spydrnet.ir</span> <span class="kn">import</span> <span class="n">OuterPin</span> <span class="k">as</span> <span class="n">OuterPinExtended</span>
+        <span class="k">return</span> <span class="n">OuterPinExtended</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">inner_pin</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="OuterPin.__init__"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.OuterPin.__init__.html#spydrnet.OuterPin.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inner_pin</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;create an OuterPin.</span>
+
+<span class="sd">        parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        instance - (Instance) the instance with which to associate this outper pin.</span>
+
+<span class="sd">        inner_pin - (InnerPin) a definition&#39;s inner pin to be associated with this instance outer pin.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="n">instance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_pin</span> <span class="o">=</span> <span class="n">inner_pin</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">instance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the instance with which this pin is associated&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">inner_pin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;get the inner pin associated with this outer pin&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inner_pin</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">OuterPin</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inner_pin</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_inner_pin</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inner_pin</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_clone_rip_and_replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;remove from its current environment and place it into the new cloned environment with references held in the memo dictionary&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wire</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wire</span> <span class="ow">in</span> <span class="n">memo</span><span class="p">,</span> <span class="s2">&quot;can&#39;t call this function when the wire has not been cloned yet&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_wire</span> <span class="o">=</span> <span class="n">memo</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_wire</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_clone_rip</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Remove from its current environmnet.</span>
+
+<span class="sd">        This will remove all pin pointers and create a floating stand alone instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inner_pin</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wire</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_clone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Not api safe clone function</span>
+
+<span class="sd">        clone leaving all references in tact.</span>
+<span class="sd">        the element can then either be ripped or ripped and replaced&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">memo</span><span class="p">,</span> <span class="s2">&quot;the object should not have been copied twice in this pass&quot;</span>
+        <span class="kn">from</span> <span class="nn">spydrnet.ir</span> <span class="kn">import</span> <span class="n">OuterPin</span> <span class="k">as</span> <span class="n">OuterPinExtended</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">OuterPinExtended</span><span class="p">()</span>
+        <span class="n">memo</span><span class="p">[</span><span class="bp">self</span><span class="p">]</span> <span class="o">=</span> <span class="n">c</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">_inner_pin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inner_pin</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">_wire</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wire</span>
+        <span class="k">return</span> <span class="n">c</span>
+
+<div class="viewcode-block" id="OuterPin.clone"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.OuterPin.clone.html#spydrnet.OuterPin.clone">[docs]</a>    <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Clone the pin in an api safe way.</span>
+
+<span class="sd">        The following conditions will be met with the returned outer pin:</span>
+
+<span class="sd">         * the pin will not be connected to any wires</span>
+<span class="sd">         * the pin will be orphaned from any instance</span>
+<span class="sd">         * the pin will not be connected to any inner pins</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clone</span><span class="p">(</span><span class="nb">dict</span><span class="p">())</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">_clone_rip</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">c</span></div>
+
+    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inner_pin</span><span class="o">.</span><span class="n">port</span><span class="o">.</span><span class="n">pins</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_inner_pin</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Brigham Young Universitiy.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

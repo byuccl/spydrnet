@@ -1,0 +1,6 @@
+﻿spydrnet.Wire.index
+===================
+
+.. currentmodule:: spydrnet
+
+.. automethod:: Wire.index
