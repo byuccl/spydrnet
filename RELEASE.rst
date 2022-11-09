@@ -1,3 +1,13 @@
+SpyDrNet 1.12.0
+----------------
+November 9, 2022
+
+* Major improvements and fixes for the Verilog netlist parser and composer to broaden support and accuracy
+* Built in primitive libraries to allow SpyDrNet to populate port directions of primitives when parsing netlist types that don't always explicitly define primitive cells (Verilog, EBLIF). An option is added to parsing to specify which primitive library to use.
+* Improvements, fixes, and simplification to EBLIF netlist parser and composer
+* Verilog parser and composer option to remove/add lagging space in names
+* Documentation updates and improvements 
+
 SpyDrNet 1.11.1
 ---------------
 April 20, 2022
