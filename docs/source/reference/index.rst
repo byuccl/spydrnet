@@ -11,12 +11,12 @@ Reference
 
    classes/index.rst
    netlist_types
+   built_in_architecture
+   functions/index
    element_data
-   clone
-   uniquify
    NamespaceManager
    verilog_support
    eblif_support
    Callback_Framework
    extensions
-   introduction
+   archive/index

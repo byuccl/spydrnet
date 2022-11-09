@@ -2,7 +2,7 @@
 # please see the BYU CCl SpyDrNet license file for terms of usage.
 
 
-from spydrnet.parsers.verilog.tokenizer import VerilogTokenizer
+from spydrnet.parsers.verilog.tokenizer import VerilogTokenizer, VerilogTokenizerSimple
 import spydrnet.parsers.verilog.verilog_tokens as vt
 from spydrnet.ir import Netlist, Library, Definition, Port, Cable, Instance, OuterPin
 from spydrnet.plugins import namespace_manager
@@ -104,6 +104,8 @@ class VerilogParser:
 
         self.blackbox_holder = self.BlackboxHolder()
 
+        self.implicitly_mapped_ports = dict()
+
     def parse(self):
         ''' parse a verilog netlist represented by verilog file
 
@@ -115,7 +117,7 @@ class VerilogParser:
         self.parse_verilog()
         namespace_manager.default = ns_default
         self.tokenizer.__del__()
-        return self.netlist
+        return self.netlist   
 
     def initialize_tokenizer(self):
         self.tokenizer = VerilogTokenizer(self.filename)
@@ -173,7 +175,7 @@ class VerilogParser:
         self.netlist = sdn.Netlist()
         self.netlist.name = "SDN_VERILOG_NETLIST"
         self.work = self.netlist.create_library("work")
-        self.primitives = self.netlist.create_library("SDN.verilog_primitives")
+        self.primitives = self.netlist.create_library("hdi_primitives")
         self.current_library = self.work
 
         preprocessor_defines = set()
@@ -239,6 +241,8 @@ class VerilogParser:
                     "something at the top level of the file", "got unexpected token", token)
 
         self.add_blackbox_definitions()
+        
+        self.connect_implicitly_mapped_ports()
 
         return self.netlist
 
@@ -248,16 +252,28 @@ class VerilogParser:
             d["VERILOG.primitive"] = True
             self.current_library.add_definition(d)
 
-    def parse_primitive(self):
-        '''similar to parse module but it will only look for the inputs and outputs to get an idea of how those things look'''
+    def parse_primitive(self, definition_list = [], bypass_name_check=False):
+        '''
+        similar to parse module but it will only look for the inputs and outputs to get an idea of how those things look
 
+        definition_list is an optional parameter that is used by primitive_library_reader as primitive libraries are parsed. If the primitive name is not
+        in the definition list, it is not needed and will be skipped.
+        '''
         token = self.next_token()
         assert token == vt.MODULE or token == vt.PRIMITIVE, self.error_string(
             vt.MODULE, "to begin module statement", token)
         token = self.next_token()
-        assert vt.is_valid_identifier(token), self.error_string(
-            "identifier", "not a valid module name", token)
+        if not bypass_name_check:
+            assert vt.is_valid_identifier(token), self.error_string(
+                "identifier", "not a valid module name", token)
         name = token
+        
+        if definition_list:
+            if name not in definition_list: # we don't need this primitive info
+                while(token != vt.END_MODULE):
+                    token = self.next_token()
+                # self.next_token()
+                return
 
         definition = self.blackbox_holder.get_blackbox(name)
         self.blackbox_holder.define(name)
@@ -417,7 +433,7 @@ class VerilogParser:
 
         example syntax
         .canale({\\canale[3] ,\\canale[2] ,\\canale[1] ,\\canale[0] }),'''
-
+        
         token = self.next_token()
         assert token == vt.DOT, self.error_string(
             vt.DOT, "for port aliasing", token)
@@ -445,12 +461,13 @@ class VerilogParser:
             name, left_index=len(wires)-1, right_index=0)
 
         # connect the wires to the pins
-
         assert len(port.pins) == len(
             wires), "Internal Error: the pins in a created port and the number of wires the aliased cable do not match up"
 
-        for i in range(len(port.pins)):
-            wires[i].connect_pin(port.pins[i])
+        pin_list = list(p for p in port.pins)
+        pin_list.sort(reverse=True, key=self.pin_sort_func)
+        for i in range(len(pin_list)):
+            wires[i].connect_pin(pin_list[i])
 
     def parse_cable_concatenation(self):
         '''parse a concatenation structure of cables, create the cables mentioned, and deal with indicies
@@ -465,6 +482,7 @@ class VerilogParser:
         while token != vt.CLOSE_BRACE:
             cable, left, right = self.parse_variable_instantiation()
             wires_temp = self.get_wires_from_cable(cable, left, right)
+            wires_temp.sort(reverse=True,key=self.wire_sort_func)
             for w in wires_temp:
                 wires.append(w)
             token = self.next_token()
@@ -473,6 +491,9 @@ class VerilogParser:
                     vt.CLOSE_BRACE, "to end cable concatenation", token)
 
         return wires
+
+    def wire_sort_func(self, w):
+        return w.cable.wires.index(w)
 
     def parse_module_header_port(self):
         '''parse the port declaration in the module header'''
@@ -512,8 +533,11 @@ class VerilogParser:
         # wire together the cables and the port
         assert len(port.pins) == len(cable.wires), self.error_string(
             "the pins in a created port and the number of wires in it's cable do not match up", "wires: " + str(len(cable.wires)), "pins: " + str(len(port.pins)))
-        for i in range(len(port.pins)):
-            cable.wires[i].connect_pin(port.pins[i])
+        
+        pin_list = list(p for p in port.pins)
+        pin_list.sort(reverse=False, key=self.pin_sort_func) 
+        for i in range(len(pin_list)):
+            cable.wires[i].connect_pin(pin_list[i])
 
     def parse_module_body(self):
         '''
@@ -613,15 +637,16 @@ class VerilogParser:
             else:
                 port = self.create_or_update_port(port_list.pop(
                 ).name, left_index=left, right_index=right, direction=direction, defining=True)
-
+            
             if len(cable.wires) > 1:
                 self.connect_resized_port_cable(cable, port)
 
-    def parse_cable_declaration(self, properties):
-        token = self.next_token()
-        assert token in [vt.REG, vt.WIRE, vt.TRI0, vt.TRI1], self.error_string(
-            "reg, tri1, tri0, or wire", "for cable declaration", token)
-        var_type = token
+    def parse_cable_declaration(self, properties, var_type = None):
+        if not var_type:
+            token = self.next_token()
+            assert token in [vt.REG, vt.WIRE, vt.TRI0, vt.TRI1], self.error_string(
+                "reg, tri1, tri0, or wire", "for cable declaration", token)
+            var_type = token
 
         token = self.peek_token()
         if token == vt.OPEN_BRACKET:
@@ -640,8 +665,11 @@ class VerilogParser:
         cable["VERILOG.InlineConstraints"] = properties
 
         token = self.next_token()
-        assert token == vt.SEMI_COLON, self.error_string(
-            vt.SEMI_COLON, "to end cable declaration", token)
+        if token == vt.COMMA: # continue listing wires
+            self.parse_cable_declaration(dict(), var_type)
+        else:
+            assert token == vt.SEMI_COLON, self.error_string(
+                vt.SEMI_COLON, "to end cable declaration", token)
 
     def parse_instantiation(self, properties):
         token = self.next_token()
@@ -658,6 +686,37 @@ class VerilogParser:
         assert vt.is_valid_identifier(token), self.error_string(
             "instance name", "for instantiation", token)
         name = token
+
+        # the current definition is instancing the current top instance, so a change needs to be made
+        if def_name == self.netlist.top_instance.reference.name:
+            # print(self.current_definition.name + " is instancing the current top instance (" + name+ " which is a "+ self.netlist.top_instance.reference.name+")")
+            old_top_instance = self.netlist.top_instance
+
+            new_level = self.current_definition
+            # we know the current top is not right. So now we can move it up a level.
+            # But double check to make sure nothing is instancing the potential new top.
+            # Move up levels until we reach a new top
+            if (len(self.current_definition.references) > 0):
+                current_level = list(x for x in self.current_definition.references)[0]
+                while(True):
+                    current_level = current_level.parent
+                    try:
+                        current_level.parent
+                    except AttributeError:
+                        new_level = current_level
+                        break
+
+            self.netlist.top_instance = sdn.Instance()
+            self.netlist.top_instance.name = new_level.name + "_top"
+            self.netlist.top_instance.reference = new_level
+            self.netlist.name = "SDN_VERILOG_NETLIST_" + new_level.name
+
+            # print("New top instance is "+ self.netlist.top_instance.name)
+
+            # this instance should just go away. It was created to be the top instance but we don't want that 
+            # it has no parent. And now with no reference, it should have no ties to the netlist.
+            old_top_instance.reference = None
+
 
         token = self.peek_token()
         assert token == vt.OPEN_PARENTHESIS, self.error_string(
@@ -707,6 +766,7 @@ class VerilogParser:
         assert token == vt.EQUAL, self.error_string(vt.EQUAL, "separate the key from the value in a defparam statement", token)
         token = self.next_token()
         value = token
+        params[key] = value
         token = self.next_token()
         assert token == vt.SEMI_COLON, self.error_string(vt.SEMI_COLON, "to end the defparam statement", token)
         self.set_instance_parameters(instance, params)
@@ -722,12 +782,15 @@ class VerilogParser:
         assert token == vt.OPEN_PARENTHESIS, self.error_string(
             vt.OPEN_PARENTHESIS, "after # to begin parameter mapping", token)
 
-        while token != vt.CLOSE_PARENTHESIS:
-            k, v = self.parse_parameter_map_single()
-            params[k] = v
+        if self.peek_token() == vt.CLOSE_PARENTHESIS: # empty parameters
             token = self.next_token()
-            assert token in [vt.CLOSE_PARENTHESIS, vt.COMMA], self.error_string(
-                vt.COMMA + " or " + vt.CLOSE_PARENTHESIS, "to separate parameters or end parameter mapping", token)
+        else:
+            while token != vt.CLOSE_PARENTHESIS:
+                k, v = self.parse_parameter_map_single()
+                params[k] = v
+                token = self.next_token()
+                assert token in [vt.CLOSE_PARENTHESIS, vt.COMMA], self.error_string(
+                    vt.COMMA + " or " + vt.CLOSE_PARENTHESIS, "to separate parameters or end parameter mapping", token)
 
         assert token == vt.CLOSE_PARENTHESIS, self.error_string(
             vt.CLOSE_PARENTHESIS, "to terminate ", token)
@@ -763,11 +826,20 @@ class VerilogParser:
         assert token == vt.OPEN_PARENTHESIS, self.error_string(
             vt.OPEN_PARENTHESIS, "to start the port mapping", token)
 
-        while token != vt.CLOSE_PARENTHESIS:
-            self.parse_port_map_single()
-            token = self.next_token()
-            assert token in [vt.COMMA, vt.CLOSE_PARENTHESIS], self.error_string(
-                vt.COMMA + " or " + vt.CLOSE_PARENTHESIS, "between port mapping elements or to end the port mapping", token)
+        peeked_token = self.peek_token()
+        if peeked_token != vt.DOT: # the ports are implicitly mapped
+            token_list = list()
+            while (token != vt.CLOSE_PARENTHESIS):
+                token_list.append(token)
+                token = self.next_token()
+            token_list.append(token)
+            self.implicitly_mapped_ports[self.current_instance] = token_list
+        else: # the ports are explicitly mapped
+            while token != vt.CLOSE_PARENTHESIS:
+                self.parse_port_map_single()
+                token = self.next_token()
+        assert token in [vt.COMMA, vt.CLOSE_PARENTHESIS], self.error_string(
+            vt.COMMA + " or " + vt.CLOSE_PARENTHESIS, "between port mapping elements or to end the port mapping", token)
 
     def parse_port_map_single(self):
         '''acutally does the mapping of the pins'''
@@ -801,8 +873,9 @@ class VerilogParser:
                 "pins length to match or exceed cable.wires length", "INTERNAL ERROR", str(len(pins)) + "!=" + str(len(wires)))
 
             # there can be unconnected pins at the end of the port.
+            pins.sort(reverse=True, key=self.pin_sort_func)
             for i in range(len(wires)):
-                wires[i].connect_pin(pins[i])
+               wires[i].connect_pin(pins[i])
 
             token = self.next_token()
 
@@ -814,6 +887,59 @@ class VerilogParser:
 
         assert token == vt.CLOSE_PARENTHESIS, self.error_string(
             vt.CLOSE_PARENTHESIS, "to end cable name in port mapping", token)
+    
+    def pin_sort_func(self, p):
+        if isinstance(p, sdn.OuterPin):
+            return p.inner_pin.port.pins.index(p.inner_pin)
+        return p.port.pins.index(p)
+
+    def connect_implicitly_mapped_ports(self):
+        for instance, token_list in self.implicitly_mapped_ports.items():
+            self.current_instance = instance
+            self.current_definition = instance.parent
+            port_list = list(x for x in instance.reference.get_ports())
+            self.tokenizer = VerilogTokenizerSimple(token_list)
+
+            token = self.next_token()
+            assert token == vt.OPEN_PARENTHESIS, self.error_string(
+                vt.OPEN_PARENTHESIS, "to encapsulate cable name in port mapping", token)
+            
+            index = 0
+            while (token != vt.CLOSE_PARENTHESIS):
+                token = self.peek_token()
+
+                if token == vt.OPEN_BRACE:
+                    wires = self.parse_cable_concatenation()
+                else:
+                    cable, left, right = self.parse_variable_instantiation()
+                    wires = self.get_wires_from_cable(cable, left, right)
+
+                if (index > len(port_list) - 1): # no port exists yet i.e. no module information in netlist
+                    # print("Not enough ports for "+ instance.name)
+                    port = instance.reference.create_port()
+                    self.populate_new_port(port, None, len(wires)-1, 0, None)
+                else:
+                    port = port_list[index]
+
+                pins = list()
+                for pin in self.current_instance.pins:
+                    if pin.inner_pin in port.pins:
+                        pins.append(pin)
+
+                assert len(pins) >= len(wires), self.error_string(
+                    "pins length to match or exceed cable.wires length", "INTERNAL ERROR", str(len(pins)) + "!=" + str(len(wires)))
+
+                # there can be unconnected pins at the end of the port.
+                pin_list = list(p for p in pins)
+                pin_list.sort(reverse=True, key=self.pin_sort_func)
+                for i in range(len(wires)):
+                    wires[i].connect_pin(pin_list[i])
+
+                token = self.next_token()
+                index += 1
+
+            assert token == vt.CLOSE_PARENTHESIS, self.error_string(
+                vt.CLOSE_PARENTHESIS, "to end cable name in port mapping", token)
 
     def parse_assign(self):
         token = self.next_token()
@@ -844,7 +970,7 @@ class VerilogParser:
             assert token[1] == vt.SINGLE_QUOTE, self.error_string(vt.SINGLE_QUOTE, "in the constant", token)
             assert token[2] == 'b', self.error_string('b', "in the constant", token)
             assert token[3] in ["0", "1", "x", "X", "z", "Z"], self.error_string("one of 0, 1, x, X, z, Z", "represent the constant value after '", token)
-            name = "\\<const" + token[2] + "> "
+            name = "\\<const" + token[3] + "> "
         elif vt.is_numeric(token[0]):
             assert False, self.error_string("single bit constant", "multibit constants not supported", token)
         else:
@@ -947,11 +1073,12 @@ class VerilogParser:
             in_port.direction = sdn.Port.Direction.IN
             out_port.direction = sdn.Port.Direction.OUT
 
-            cable = definition.create_cable("through")
-            cable.create_wires(width)
-            for i in range(width):
-                cable.wires[i].connect_pin(in_port.pins[i])
-                cable.wires[i].connect_pin(out_port.pins[i])
+            # no need for this. It actually messes with other spydrnet functions like uniquify() and is_leaf()
+            # cable = definition.create_cable("through")
+            # cable.create_wires(width)
+            # for i in range(width):
+            #     cable.wires[i].connect_pin(in_port.pins[i])
+            #     cable.wires[i].connect_pin(out_port.pins[i])
 
         return definition
 
@@ -1027,9 +1154,8 @@ class VerilogParser:
             left = left - cable.lower_index
             right = right - cable.lower_index
             temp_wires = cable.wires[min(left, right): max(left, right) + 1]
-            if left > right:
-                temp_wires = reversed(temp_wires)
-
+            # if right > left:
+            temp_wires.reverse()
             for w in temp_wires:
                 wires.append(w)
 
@@ -1041,7 +1167,9 @@ class VerilogParser:
             wires.append(cable.wires[index])
 
         else:
-            for w in cable.wires:
+            temp_wires = list(w for w in cable.wires)
+            temp_wires.reverse()
+            for w in temp_wires:
                 wires.append(w)
 
         return wires
@@ -1091,6 +1219,10 @@ class VerilogParser:
         for i in range(len(resized_port.pins)):
             # I think these should be lined up right?
             if resized_port.pins[i] not in resized_cable.wires[i].pins:
+                if resized_port.pins[i].wire:
+                    continue
+                    # the resized_port's pin is already connected
+                    # this likely occurred because of an alias statement.
                 resized_cable.wires[i].connect_pin(resized_port.pins[i])
 
     def create_or_update_cable(self, name, left_index=None, right_index=None, var_type=None, defining=False):
@@ -1220,13 +1352,17 @@ class VerilogParser:
             port_upper = port.lower_index + len(port.pins) - 1
 
         if in_upper is not None and in_lower is not None:
-
-            if in_lower < port_lower:
-                prepend = port_lower - in_lower
-                self.prepend_pins(port, prepend)
-            if in_upper > port_upper:
-                postpend = in_upper - port_upper
-                self.postpend_pins(port, postpend)
+            # to prevent unneccessary pins being added, check to see if port
+            # width is already correct
+            if (in_upper-in_lower) == (port_upper-port_lower):
+                None
+            else:
+                if in_lower < port_lower:
+                    prepend = port_lower - in_lower
+                    self.prepend_pins(port, prepend)
+                if in_upper > port_upper:
+                    postpend = in_upper - port_upper
+                    self.postpend_pins(port, postpend)
 
         if direction is not None:
             port.direction = direction

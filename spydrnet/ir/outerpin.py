@@ -93,3 +93,6 @@ class OuterPin(Pin):
         c = self._clone(dict())
         c._clone_rip()
         return c
+
+    def index(self):
+        return self._inner_pin.port.pins.index(self._inner_pin)
