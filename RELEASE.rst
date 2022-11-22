@@ -3,7 +3,7 @@ SpyDrNet 1.12.1
 November 18, 2022
 
 * Bug fix for names in EDIF netlists in which they were cut off if more than 100 characters long. Now the allowed number of characters in a name is 255.
-* Slight additions to documentation about doing a release
+* Slight additions to documentation about doing a release 
 
 SpyDrNet 1.12.0
 ----------------
