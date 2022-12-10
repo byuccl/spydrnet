@@ -138,7 +138,7 @@ class EBLIFComposer:
                 inner_pin_list = port.pins     
                 for pin in subckt.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port is port):
                     if (amount_of_ports_to_write > 5):
-                        to_write+=to_add+" \\ \n"
+                        to_write+=to_add+" \\\n"
                         to_add = ""
                     if len(inner_pin_list) > 1:
                         index = inner_pin_list.index(pin.inner_pin)
@@ -225,8 +225,8 @@ class EBLIFComposer:
     def compose_blackboxes(self):
         primitive_library = next(self.netlist.get_libraries("hdi_primitives"))
         for definition in primitive_library.definitions:
-            if definition in self.blackboxes_to_compose:
-                to_write = ".model "+definition.name
+            if definition in self.blackboxes_to_compose and "logic-gate" not in definition.name: # only compose blackboxes that are not .names
+                to_write = ".model " + definition.name
                 to_write+="\n.inputs"
                 for port in definition.get_ports(filter=lambda x: x.direction is sdn.IN):
                     to_write+=" "+port.name
