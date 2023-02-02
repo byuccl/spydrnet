@@ -5,6 +5,7 @@ February 2, 2023
 * Bug fix for names in EDIF netlists in which they were cut off if more than 100 characters long. Now the allowed number of characters in a name is 255.
 * Slight additions to documentation about doing a release 
 * Removing Travis CI (from now on only Github Actions will do automated testing)
+* Fixed bug where architecture liraries were not included in the release
 
 SpyDrNet 1.12.0
 ----------------
