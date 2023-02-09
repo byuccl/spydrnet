@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="English" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>How to Contribute &mdash; SpyDrNet 1.12.0 documentation</title>
+  <title>How to Contribute &mdash; SpyDrNet 1.12.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
@@ -25,7 +25,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="GitHub Repository" href="repository.html" />
-    <link rel="prev" title="Developer’s Guide" href="index.html" /> 
+    <link rel="prev" title="Developer&#39;s Guide" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -51,7 +51,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../auto_examples/index.html">Examples</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">Developer’s Guide</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Developer's Guide</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">How to Contribute</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#testing">Testing</a></li>
 </ul>
@@ -90,7 +90,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Developer’s Guide</a> &raquo;</li>
+          <li><a href="index.html">Developer's Guide</a> &raquo;</li>
       <li>How to Contribute</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/developer/contribute.rst.txt" rel="nofollow"> View page source</a>
@@ -111,7 +111,7 @@ order to ensure a positive environment exists around SpyDrNet.</p>
 <p><strong>some suggestions as you get started</strong></p>
 <blockquote>
 <div><ul class="simple">
-<li><p>Make sure you have a recent version of python installed. We test against version 3.6 and up (as of SpyDrNet 1.10.0…before then we also supported Python 3.5).</p></li>
+<li><p>Make sure you have a recent version of python installed. We test against version 3.6 and up (as of SpyDrNet 1.10.0...before then we also supported Python 3.5).</p></li>
 <li><p>Clone the repository and create a new branch on which to make changes.</p></li>
 <li><p>Connect through Git Hub. The issues tab is the primary place for conversations and questions.</p></li>
 <li><p>Make sure that there are tests for your code.</p></li>
@@ -134,9 +134,9 @@ order to ensure a positive environment exists around SpyDrNet.</p>
 <p>you are a student working on the project in the BYU CCL</p>
 <p><em>and in either case</em></p>
 <p>upon request to the admins who can give write privlages.</p>
-<p>If you don’t know who the admins are and you feel that you qualify you can
+<p>If you don't know who the admins are and you feel that you qualify you can
 create an issue to request permissions.</p>
-<p>Of course the admin’s have the final say in granting permissions and reserve the
+<p>Of course the admin's have the final say in granting permissions and reserve the
 right to deny privileges for any reason or no reason at all even if the above
 criteria are met.</p>
 <section id="testing">
@@ -156,16 +156,16 @@ is called something that starts with <cite>test_</cite> like
 <h1>Creating a Release<a class="headerlink" href="#creating-a-release" title="Permalink to this heading"></a></h1>
 <p>This section aims to help you do a spydrnet release, meaning you make the latest code and documentation available. The steps are listed in what seems to be the best order of operation. Steps which need more explanation are highlighted below.</p>
 <ol class="arabic simple">
-<li><p>Merge each contributors’ branches into one branch (the ‘next_release’ branch)</p></li>
+<li><p>Merge each contributors' branches into one branch (the 'next_release' branch)</p></li>
 <li><p>run <cite>git merge master</cite> while the next-release branch is checked out.</p></li>
-<li><p><a class="reference internal" href="#update-release-notes"><span class="std std-ref">Update the Release Notes</span></a></p></li>
+<li><p><a class="reference internal" href="#update-release-notes"><span class="std std-ref">Update the Release Notes</span></a> (remember to commit and push afterwards).</p></li>
 <li><p><a class="reference internal" href="#update-documentation"><span class="std std-ref">Update the Documentation</span></a> and ensure it can build properly</p></li>
 <li><p>On Github, create a pull request with the updated code in the next_release branch.</p></li>
 <li><p>Accept and merge the pull request when the checks have finished.</p></li>
 <li><p>Move to the master branch using <cite>git checkout master</cite></p></li>
 <li><p><a class="reference internal" href="#create-and-update-tag"><span class="std std-ref">Create and Update the Tag</span></a></p></li>
 <li><p><a class="reference internal" href="#build-documentation"><span class="std std-ref">Build the Documentation</span></a></p></li>
-<li><p><a class="reference internal" href="#build-package"><span class="std std-ref">Build the Python Package</span></a> (this will update the documentation’s version number)</p></li>
+<li><p><a class="reference internal" href="#build-package"><span class="std std-ref">Build the Python Package</span></a> (this will update the documentation's version number)</p></li>
 <li><p><a class="reference internal" href="#publish-packages"><span class="std std-ref">Publish the Packages to Pypi</span></a></p></li>
 <li><p><a class="reference internal" href="#github-release"><span class="std std-ref">Create a Github Release</span></a></p></li>
 <li><p><a class="reference internal" href="#publish-documentation"><span class="std std-ref">Publish the Documentation</span></a></p></li>
@@ -198,7 +198,7 @@ folder.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">make</span> <span class="n">install</span>
 </pre></div>
 </div>
-<p>You may also need to run ‘sudo apt install latexmk’ and ‘apt install texlive-latex-extra’ to be able to create the pdf file.</p>
+<p>You may also need to run 'sudo apt install latexmk' and 'apt install texlive-latex-extra' to be able to create the pdf file.</p>
 <p>The generated files can be found in the build folder. Take a look at them and make sure everything looks good. Later, these commands will be run again, and the html files put online and pdf files added to the Github release files.</p>
 </section>
 <section id="create-and-update-the-tag">
@@ -299,14 +299,14 @@ If not, re-run the instructions in <a class="reference internal" href="#build-do
 </pre></div>
 </div>
 <p>Create a new folder with the release number as the name. Move the contents of the <cite>docs/build/html</cite> folder into the newly created folder. Then delete the html folder (which should be empty).</p>
-<p>(If html folder doesn’t contain the latest pages, it could be that the html folder wasn’t deleted from the previous release, delete the folder, commit the changes and repeat the steps above)</p>
+<p>(If html folder doesn't contain the latest pages, it could be that the html folder wasn't deleted from the previous release, delete the folder, commit the changes and repeat the steps above)</p>
 <p>The documentation is built from a stable link which will need to be updated to point to the new documentation.</p>
 <p>Check which version of the documentation the stable link points to</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ls</span> <span class="o">-</span><span class="n">lha</span>
 </pre></div>
 </div>
 <p>To update the stable link, remove it first (watch syntax here very carefully, a
-terminating could make the command delete the folder’s contents instead of the
+terminating could make the command delete the folder's contents instead of the
 link)</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rm</span> <span class="n">stable</span>
 </pre></div>
@@ -323,7 +323,7 @@ link)</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="index.html" class="btn btn-neutral float-left" title="Developer’s Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Developer&#39;s Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="repository.html" class="btn btn-neutral float-right" title="GitHub Repository" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

@@ -8,14 +8,14 @@ This section aims to help you do a spydrnet release, meaning you make the latest
 
 1. Merge each contributors' branches into one branch (the 'next_release' branch)
 2. run `git merge master` while the next-release branch is checked out.
-3. :ref:`update_release_notes`
+3. :ref:`update_release_notes` (remember to commit and push afterwards).
 4. :ref:`update_documentation` and ensure it can build properly
 5. On Github, create a pull request with the updated code in the next_release branch.
 6. Accept and merge the pull request when the checks have finished.
 7. Move to the master branch using `git checkout master`
 8. :ref:`create_and_update_tag`
 9. :ref:`build_documentation`
-10. :ref:`build_package` (this will update the documentation’s version number)
+10. :ref:`build_package` (this will update the documentation's version number)
 11. :ref:`publish_packages`
 12. :ref:`github_release`
 13. :ref:`publish_documentation`

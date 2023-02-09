@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="English" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Namespace Manager &mdash; SpyDrNet 1.12.0 documentation</title>
+  <title>Namespace Manager &mdash; SpyDrNet 1.12.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
@@ -70,7 +70,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../auto_examples/index.html">Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer's Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits</a></li>
 </ul>
@@ -102,24 +102,24 @@
              
   <section id="namespace-manager">
 <h1>Namespace Manager<a class="headerlink" href="#namespace-manager" title="Permalink to this heading"></a></h1>
-<p>SpyDrNet’s callback framework was leveraged to implement a namespace manager that will raise an exception if a naming rule is violated. The managers themselves also provide an example of how the callback framework can be leveraged.</p>
+<p>SpyDrNet's callback framework was leveraged to implement a namespace manager that will raise an exception if a naming rule is violated. The managers themselves also provide an example of how the callback framework can be leveraged.</p>
 <p>The namespace manager is a plugin that is loaded when the library is loaded. It will constantly be checking names and rejecting invalid or duplicate names. The active namespace can be set in code to allow for parsing in a different language or other cases where a valid name in the namespace may differ.</p>
 <p>Currently there are 2 namespaces implemented. One for EDIF and one called Default.</p>
 <section id="namespace-details-default">
 <h2>Namespace Details (Default)<a class="headerlink" href="#namespace-details-default" title="Permalink to this heading"></a></h2>
 <p>The namespace managers provide separate namespaces to be created based on element types. Both the default and EDIF namespaces allow for 1 namespace for Libraries indexed by the Netlist, 1 namespace for Definitions indexed by the Library and 3 namespaces for Ports, Cables, and Instances indexed by the Definition. This parallels EDIF and verilog Netlists well. Namespace scopes could be modified by creating a custom namespace manager (see the section below)</p>
-<p>The namespace manager checks each of the namespaces when an object is added, removed, or renamed to ensure that the new name does not clash with an old name. Name comparisons are made against the “.NAME” entry in each element’s dictionary. This value is set when the .name setter is used as well so no additional care needs to be used. The implementation was done using the dictionary lookup on the key “.NAME” to provide a simpler template on which additional keys could be watched.</p>
+<p>The namespace manager checks each of the namespaces when an object is added, removed, or renamed to ensure that the new name does not clash with an old name. Name comparisons are made against the &quot;.NAME&quot; entry in each element's dictionary. This value is set when the .name setter is used as well so no additional care needs to be used. The implementation was done using the dictionary lookup on the key &quot;.NAME&quot; to provide a simpler template on which additional keys could be watched.</p>
 <p>The default manager accpets any name and has no restrictions, but it has the framework included to implement this when it is extended. The EDIF manager takes advantage of this feature.</p>
 </section>
 <section id="edif-details">
 <h2>EDIF Details<a class="headerlink" href="#edif-details" title="Permalink to this heading"></a></h2>
 <p>EDIF has a relativly restrictive naming convention. Names are not case sensitive, Their max length is 255 characters, and they cannont contain many special characters. Most names are composed of uper and lower case letters, numbers, and underscores. The only exception is names that begin with a <cite>&amp;</cite> character. To compensate for this some EDIF netlsits use an rename construct to provide a more human readable name and convert the name to something that fits within the namespace as an EDIF identifer.</p>
-<p>SpyDrNet’s EDIF Namespace manager will look for case insensitive conflicts on the EDIF identifiers that are stored with the key “EDIF.identifier” along side the check for conflicts with the regular name in the default namespace.</p>
+<p>SpyDrNet's EDIF Namespace manager will look for case insensitive conflicts on the EDIF identifiers that are stored with the key &quot;EDIF.identifier&quot; along side the check for conflicts with the regular name in the default namespace.</p>
 <p>Additionally the EDIF namespace manager will check the EDIF identifiers for invalid characters or or lengths longer than 255 characters or 256 if it starts with an &amp;.</p>
 </section>
 <section id="using-the-namespace-managers">
 <h2>Using the namespace managers<a class="headerlink" href="#using-the-namespace-managers" title="Permalink to this heading"></a></h2>
-<p>Currently only “DEFAULT” and “EDIF” are avaiable namespaces. Verilog takes advantage of the “DEFAULT” namespace</p>
+<p>Currently only &quot;DEFAULT&quot; and &quot;EDIF&quot; are avaiable namespaces. Verilog takes advantage of the &quot;DEFAULT&quot; namespace</p>
 <p>code required to turn the namespace to a different one. code:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">spydrnet.plugins</span> <span class="kn">import</span> <span class="n">namespace_manager</span>
 <span class="go">&gt;&gt;&gt;</span>
@@ -135,7 +135,7 @@
 </section>
 <section id="creating-a-new-namespace">
 <h2>Creating a new Namespace<a class="headerlink" href="#creating-a-new-namespace" title="Permalink to this heading"></a></h2>
-<p>The directory <cite>spydrnet/plugins/namespace_manager/__init__.py</cite> holds the callback logic while the other files in the directory <cite>edif_namespace.py</cite> and <cite>default_namespace.py</cite> hold the logic that checks if names are valid. Adding additional namespaces requires creating a new class that implements all of the functions present in the default_namespace.py’s DefaultNamespace. The DefaultNamespace itself can be inherited and only the functions needed overwritten.</p>
+<p>The directory <cite>spydrnet/plugins/namespace_manager/__init__.py</cite> holds the callback logic while the other files in the directory <cite>edif_namespace.py</cite> and <cite>default_namespace.py</cite> hold the logic that checks if names are valid. Adding additional namespaces requires creating a new class that implements all of the functions present in the default_namespace.py's DefaultNamespace. The DefaultNamespace itself can be inherited and only the functions needed overwritten.</p>
 <p>Once implemented the __init__.py can be updated to include the namespace as a possible policy with an appropriate name string. Set the manager to be used with something like the example code above.</p>
 </section>
 </section>

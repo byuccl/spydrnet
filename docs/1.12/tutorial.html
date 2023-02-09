@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="English" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tutorial &mdash; SpyDrNet 1.12.0 documentation</title>
+  <title>Tutorial &mdash; SpyDrNet 1.12.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/sg_gallery.css" type="text/css" />
@@ -70,7 +70,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="reference/index.html">Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer/index.html">Developer's Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
 </ul>
@@ -128,7 +128,7 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">spydrnet</span> <span class="k">as</span> <span class="nn">sdn</span>
 </pre></div>
 </div>
-<p>In this tutorial, we will use ‘sdn’ as a shortcut to access SpyDrNet commands.</p>
+<p>In this tutorial, we will use 'sdn' as a shortcut to access SpyDrNet commands.</p>
 </section>
 <section id="parsing">
 <h2>Parsing<a class="headerlink" href="#parsing" title="Permalink to this heading"></a></h2>
@@ -141,7 +141,7 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">netlist</span> <span class="o">=</span> <span class="n">sdn</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;&lt;netlist_filename&gt;.v&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>SpyDrNet has built in example netlists. For this tutorial, we will use the example ‘one_counter’. This is the same as if we parsed a netlist named ‘one_counter’.</p>
+<p>SpyDrNet has built in example netlists. For this tutorial, we will use the example 'one_counter'. This is the same as if we parsed a netlist named 'one_counter'.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">netlist</span> <span class="o">=</span> <span class="n">sdn</span><span class="o">.</span><span class="n">load_example_netlist_by_name</span><span class="p">(</span><span class="s2">&quot;one_counter&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -152,7 +152,7 @@
 <section id="netlist">
 <h3>Netlist:<a class="headerlink" href="#netlist" title="Permalink to this heading"></a></h3>
 <blockquote>
-<div><p>This class is the highest level of organization (it’s a whole netlist). It contains an ordered collection of libraries and any data associated with the netlist as a whole.</p>
+<div><p>This class is the highest level of organization (it's a whole netlist). It contains an ordered collection of libraries and any data associated with the netlist as a whole.</p>
 </div></blockquote>
 </section>
 <section id="library">
@@ -169,20 +169,20 @@
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Library:&quot;</span><span class="p">,</span> <span class="n">library</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>As seen in this example, most objects have a name and can be accessed using ‘.name’</p>
+<p>As seen in this example, most objects have a name and can be accessed using '.name'</p>
 </div></blockquote>
 </div></blockquote>
 </section>
 <section id="definition">
 <h3>Definition:<a class="headerlink" href="#definition" title="Permalink to this heading"></a></h3>
 <blockquote>
-<div><p>Holds information about an element like its ports, pins, etc. (note: the pins are inner pins…see below). Verilog and System Verilog refer to a definition as a module, VHDL refers to a definition as an entity, and EDIF refers to a definition as a cell.</p>
+<div><p>Holds information about an element like its ports, pins, etc. (note: the pins are inner pins...see below). Verilog and System Verilog refer to a definition as a module, VHDL refers to a definition as an entity, and EDIF refers to a definition as a cell.</p>
 <blockquote>
 <div><p>To see the definitions in the first library, use:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">netlist</span><span class="o">.</span><span class="n">libraries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">definitions</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>As before, we can use ‘.name’ to see the name of each definition:</p>
+<p>As before, we can use '.name' to see the name of each definition:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">definition</span> <span class="ow">in</span> <span class="n">netlist</span><span class="o">.</span><span class="n">libraries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_definitions</span><span class="p">():</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Definition:&quot;</span><span class="p">,</span> <span class="n">definition</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 </pre></div>
@@ -193,7 +193,7 @@
 <section id="ports">
 <h3>Ports:<a class="headerlink" href="#ports" title="Permalink to this heading"></a></h3>
 <blockquote>
-<div><p>The input/output “slots” of each definition (e.g. A,B, and Q of a simple AND gate)</p>
+<div><p>The input/output &quot;slots&quot; of each definition (e.g. A,B, and Q of a simple AND gate)</p>
 <blockquote>
 <div><p>To see the ports for the first definition in the first library, run the following:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">definition_1</span> <span class="o">=</span> <span class="n">netlist</span><span class="o">.</span><span class="n">libraries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">definitions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -207,7 +207,7 @@
 <section id="pins">
 <h3>Pins:<a class="headerlink" href="#pins" title="Permalink to this heading"></a></h3>
 <blockquote>
-<div><p>Found on ports. There are two types of pins: inner and outer (see the following explanation). Most of the time, you don’t need to worry about what type a pin is because SpyDrNet takes care of it for you.</p>
+<div><p>Found on ports. There are two types of pins: inner and outer (see the following explanation). Most of the time, you don't need to worry about what type a pin is because SpyDrNet takes care of it for you.</p>
 <blockquote>
 <div><dl class="simple">
 <dt><strong>InnerPin</strong>:</dt><dd><p>Inner pins are in definitions. Every definition has only one set of inner pins.</p>
@@ -245,11 +245,11 @@
 <h3>Instances:<a class="headerlink" href="#instances" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><p>An instance of a definition. It holds pointers to the definition which it instances (its reference), and contains its own set of pins (outer pins, specifically).</p>
-<p>An instance is also known as a <strong>“child”</strong>.
-The definition instanced is the <strong>“reference”</strong>.
-The definition that instances the other definition is the <strong>“parent”</strong>.</p>
+<p>An instance is also known as a <strong>&quot;child&quot;</strong>.
+The definition instanced is the <strong>&quot;reference&quot;</strong>.
+The definition that instances the other definition is the <strong>&quot;parent&quot;</strong>.</p>
 <blockquote>
-<div><p>To see the instances in the ‘work’ library, or library[2], use the following code:</p>
+<div><p>To see the instances in the 'work' library, or library[2], use the following code:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">instance</span> <span class="ow">in</span> <span class="n">netlist</span><span class="o">.</span><span class="n">libraries</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">get_instances</span><span class="p">():</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Instance:&quot;</span><span class="p">,</span> <span class="n">instance</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Instance&#39;s Parent:&quot;</span><span class="p">,</span><span class="n">instance</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
@@ -257,8 +257,8 @@ The definition that instances the other definition is the <strong>“parent”</
 </pre></div>
 </div>
 </div></blockquote>
-<p>In the previous code, we saw that the definition ‘<em>counter</em>’ instances the definition ‘<em>MUXCY_L</em>’ as ‘<em>count_cry[0]</em>’.
-So ‘<em>counter</em>’ is the <strong>parent</strong>, ‘<em>MUXCY_L</em>’ is the <strong>reference</strong>, and ‘<em>count_cry[0]</em>’ is the <strong>instance</strong> and <strong>child</strong> of ‘counter’.</p>
+<p>In the previous code, we saw that the definition '<em>counter</em>' instances the definition '<em>MUXCY_L</em>' as '<em>count_cry[0]</em>'.
+So '<em>counter</em>' is the <strong>parent</strong>, '<em>MUXCY_L</em>' is the <strong>reference</strong>, and '<em>count_cry[0]</em>' is the <strong>instance</strong> and <strong>child</strong> of 'counter'.</p>
 </div></blockquote>
 <p><strong>See the following two figures to aid in understanding the SpyDrNet IR:</strong></p>
 <figure class="align-center" id="id3">
@@ -302,7 +302,7 @@ functions, (see <a class="reference internal" href="reference/element_data.html#
 </pre></div>
 </div>
 </dd>
-<dt><strong>Changing Properties:</strong></dt><dd><p>From the example <a class="reference internal" href="auto_examples/vivado/AND_to_OR.html#sphx-glr-auto-examples-vivado-and-to-or-py"><span class="std std-ref">Modify Netlist with SpyDrNet</span></a> in the examples tab, the following line of code “[changes] the value in the properties of the LUT2 instance”</p>
+<dt><strong>Changing Properties:</strong></dt><dd><p>From the example <a class="reference internal" href="auto_examples/vivado/AND_to_OR.html#sphx-glr-auto-examples-vivado-and-to-or-py"><span class="std std-ref">Modify Netlist with SpyDrNet</span></a> in the examples tab, the following line of code &quot;[changes] the value in the properties of the LUT2 instance&quot;</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">properties</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;4&#39;h&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="n">LUT_CONFIG</span><span class="p">))</span><span class="o">.</span><span class="n">upper</span><span class="p">()[</span><span class="mi">2</span><span class="p">:]</span>
 </pre></div>
 </div>
@@ -317,8 +317,8 @@ functions, (see <a class="reference internal" href="reference/element_data.html#
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sdn</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span><span class="n">netlist</span><span class="p">,</span> <span class="s1">&#39;&lt;filename&gt;.edf&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>A new EDIF file named ‘&lt;filename&gt;.edf’ will be generated in the working directory.
-To compose a Verilog file, replace ‘edf’ with ‘v’.</p>
+<p>A new EDIF file named '&lt;filename&gt;.edf' will be generated in the working directory.
+To compose a Verilog file, replace 'edf' with 'v'.</p>
 </section>
 </section>
 

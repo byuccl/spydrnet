@@ -5,12 +5,12 @@
 
 Computation times
 =================
-**00:00.161** total execution time for **auto_examples_extended** files:
+**00:00.165** total execution time for **auto_examples_extended** files:
 
 +----------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_extended_plot_connectivity_graph.py` (``plot_connectivity_graph.py``)             | 00:00.055 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_extended_plot_connectivity_graph.py` (``plot_connectivity_graph.py``)             | 00:00.057 | 0.0 MB |
 +----------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_extended_plot_single_use_definitions.py` (``plot_single_use_definitions.py``)     | 00:00.051 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_extended_plot_single_use_definitions.py` (``plot_single_use_definitions.py``)     | 00:00.054 | 0.0 MB |
 +----------------------------------------------------------------------------------------------------------------+-----------+--------+
 | :ref:`sphx_glr_auto_examples_extended_plot_flatten.py` (``plot_flatten.py``)                                   | 00:00.047 | 0.0 MB |
 +----------------------------------------------------------------------------------------------------------------+-----------+--------+

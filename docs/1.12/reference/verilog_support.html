@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="English" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Verilog Language Support &mdash; SpyDrNet 1.12.0 documentation</title>
+  <title>Verilog Language Support &mdash; SpyDrNet 1.12.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
@@ -80,7 +80,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../auto_examples/index.html">Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer's Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits</a></li>
 </ul>
@@ -112,8 +112,8 @@
              
   <section id="verilog-language-support">
 <h1>Verilog Language Support<a class="headerlink" href="#verilog-language-support" title="Permalink to this heading"></a></h1>
-<p>Structural Verilog support has been added to SpyDrNet, and as of the 1.8.1 release has become much more stable. There are many constructs that are supported and some that aren’t feel free to read through this to understand what Structural Verilog support means for SpyDrNet.</p>
-<p>If you need a new feature added to the verilog parser or composer feel free to let us know in an issue, with an example file (simplest possible that shows the issue) and the intended meaning. Otherwise feel free to fork add the feature and pull request to the SpyDrNet repository. As of version 1.8.1 our testing was done against verilog generated with Xilinx Vivado’s write_verilog command in the tcl console. We would love to add more support for constructs written by other vendors, example netlists that fail help us out a ton!</p>
+<p>Structural Verilog support has been added to SpyDrNet, and as of the 1.8.1 release has become much more stable. There are many constructs that are supported and some that aren't feel free to read through this to understand what Structural Verilog support means for SpyDrNet.</p>
+<p>If you need a new feature added to the verilog parser or composer feel free to let us know in an issue, with an example file (simplest possible that shows the issue) and the intended meaning. Otherwise feel free to fork add the feature and pull request to the SpyDrNet repository. As of version 1.8.1 our testing was done against verilog generated with Xilinx Vivado's write_verilog command in the tcl console. We would love to add more support for constructs written by other vendors, example netlists that fail help us out a ton!</p>
 <section id="structural-verilog">
 <h2>Structural Verilog?<a class="headerlink" href="#structural-verilog" title="Permalink to this heading"></a></h2>
 <p>We use the terms Structural Verilog and Verilog netlists interchangeably for the most part. In a pure sense though, a Verilog netlist is a file that describes a netlist written in Structural Verilog, Structural verilog is in turn, a subset of Verilog that represents modules, instantiations, and the connections between these instances.</p>
@@ -153,11 +153,11 @@
 <tr class="row-odd"><td><p>assign</p></td>
 <td><p>instance (in and out connected)</p></td>
 </tr>
-<tr class="row-even"><td><p>constraints “(* const *)”</p></td>
-<td><p>metadata “VERILOG.InlineConstraints”</p></td>
+<tr class="row-even"><td><p>constraints &quot;(* const *)&quot;</p></td>
+<td><p>metadata &quot;VERILOG.InlineConstraints&quot;</p></td>
 </tr>
 <tr class="row-odd"><td><p>parameters</p></td>
-<td><p>metadata “VERILOG.Parameters”</p></td>
+<td><p>metadata &quot;VERILOG.Parameters&quot;</p></td>
 </tr>
 </tbody>
 </table>
@@ -198,10 +198,10 @@
 </section>
 <section id="assign">
 <h3>Assign<a class="headerlink" href="#assign" title="Permalink to this heading"></a></h3>
-<p>Verilog’s assign statement <cite>assign output = input;</cite> is supported if nothing other than a straight wire/reg to wire/reg assignment is happening. <cite>&amp;</cite>, <cite>|</cite>, <cite>^</cite>, <cite>+</cite>, <cite>-</cite> … and concatenations are currently not supported.</p>
+<p>Verilog's assign statement <cite>assign output = input;</cite> is supported if nothing other than a straight wire/reg to wire/reg assignment is happening. <cite>&amp;</cite>, <cite>|</cite>, <cite>^</cite>, <cite>+</cite>, <cite>-</cite> ... and concatenations are currently not supported.</p>
 <p>Internal to SpyDrNet Assignments are represented as instances with an in port out port and a single cable that connects the 2 ports. The value on the right hand side of the = is attached to the in port. The value on the left is attached to the out port.</p>
-<p>All Definitions representing various widths of assignments are stored in a library named SDN_VERILOG_ASSIGNMENT. The definitions generated with <cite>“SDN_VERILOG_ASSIGNMENT_” + str(width)</cite>
-and the instances have the same name as the definitions with a <cite>“_” + str(UID)</cite> added to the end where UID is a counter that starts at 0 and counts up.</p>
+<p>All Definitions representing various widths of assignments are stored in a library named SDN_VERILOG_ASSIGNMENT. The definitions generated with <cite>&quot;SDN_VERILOG_ASSIGNMENT_&quot; + str(width)</cite>
+and the instances have the same name as the definitions with a <cite>&quot;_&quot; + str(UID)</cite> added to the end where UID is a counter that starts at 0 and counts up.</p>
 <p>Assignment Defintions have two ports, <cite>i</cite> and <cite>o</cite>. the <cite>i</cite> port is input and attached to the cable on the right of the assignment while the <cite>o</cite> port is output, attached to the cable on the left hand side of the assignment.</p>
 <p>The assignment instances are not written out to a verilog file in the same way other instances are, instead they are swapped out with an assign statement to mimic the original file.</p>
 </section>
@@ -218,7 +218,7 @@ and the instances have the same name as the definitions with a <cite>“_” + s
 <p>Included are examples of good syntax for both module and instantiation parameters.</p>
 <p>Module</p>
 <p>Instantiation</p>
-<p>The parameters on a parsed verilog file can be found in the metadata in instances and definitions as “VERILOG.Parameters” this stores a dictionary of all of the parameters that were included in the module (SpyDrNet Definition) or module instantiation (SpyDrNet instance). The key in the dictionary is to the left of the equal sign the text to the right of the equal sign is the value. These are always stored as strings even if the input data is numeric</p>
+<p>The parameters on a parsed verilog file can be found in the metadata in instances and definitions as &quot;VERILOG.Parameters&quot; this stores a dictionary of all of the parameters that were included in the module (SpyDrNet Definition) or module instantiation (SpyDrNet instance). The key in the dictionary is to the left of the equal sign the text to the right of the equal sign is the value. These are always stored as strings even if the input data is numeric</p>
 <p>There is currently no check to ensure that a constraint on an instance is actually on the module. The composer will write all constraints present to the file as though they are on the module too.</p>
 </section>
 <section id="inline-constraints">
@@ -228,7 +228,7 @@ and the instances have the same name as the definitions with a <cite>“_” + s
 <p><code class="docutils literal notranslate"><span class="pre">(*</span> <span class="pre">no_value</span> <span class="pre">*)</span> <span class="pre">//as</span> <span class="pre">a</span> <span class="pre">single</span> <span class="pre">key</span></code></p>
 <p><code class="docutils literal notranslate"><span class="pre">(*</span> <span class="pre">no_value,</span> <span class="pre">no_value_2,</span> <span class="pre">key</span> <span class="pre">=</span> <span class="pre">value</span> <span class="pre">*)</span> <span class="pre">//either</span> <span class="pre">or</span> <span class="pre">both</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">above</span> <span class="pre">as</span> <span class="pre">a</span> <span class="pre">set</span></code></p>
 <p>All of these are supported ways of representing constraints. Multiple sets of constraints can exist before constructs. Currently, Modules, instantiations, wires/regs all allow for constraints to be defined. The constraints are unused in SpyDrNet but will be written on the compose step. When writing all constraints will be combined into a single set.</p>
-<p>Constraints are included in Definitions, Instances and Cables in a dictionary that can be found in the meta dictionary with the key “VERILOG.InlineConstraints”. All keys and values are strings.</p>
+<p>Constraints are included in Definitions, Instances and Cables in a dictionary that can be found in the meta dictionary with the key &quot;VERILOG.InlineConstraints&quot;. All keys and values are strings.</p>
 <p>Currently constraints from an XDC constraints file or other external file are not supported directly in the library. Users can add this functionality if desired. If you do add this functionality and want to share feel free to pull request or let us know in an issue.</p>
 </section>
 <section id="escaped-identifiers">
@@ -241,7 +241,7 @@ and the instances have the same name as the definitions with a <cite>“_” + s
 <p>One notable exception to this rule is the `celldefine and `endcelldefine directives. These directives indicate that a module is a primitive module. See the section on `celldefine</p>
 <p>There is rudimentary support for storing the details of a `timescale and other macros in the metadata for a definition. This is not tested well and may have some unexpected behavior. The composer ignores these constructs and they will not be written to the resulting file.</p>
 <p><strong>Note to developers about macro handling :</strong>
-The tokenizer splits tokens beginning with ` into only two tokens even if the line has whitespace. example `timescale 1 ps / 1 ps is split into a token of “`timescale” and one of “1 ps / 1 ps” looking for the endline to end the second token. Single word directives will be one token.</p>
+The tokenizer splits tokens beginning with ` into only two tokens even if the line has whitespace. example `timescale 1 ps / 1 ps is split into a token of &quot;`timescale&quot; and one of &quot;1 ps / 1 ps&quot; looking for the endline to end the second token. Single word directives will be one token.</p>
 </section>
 </section>
 </section>
