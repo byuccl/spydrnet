@@ -38,6 +38,7 @@ def parse(filename):
     basename_less_final_extension = os.path.splitext(
         os.path.basename(filename))[0]
     extension = get_lowercase_extension(filename)
+    filename = basename_less_final_extension + extension
     if extension == ".zip":
         assert zipfile.is_zipfile(filename), \
             "Input filename {} with extension .zip is not a zip file.".format(
