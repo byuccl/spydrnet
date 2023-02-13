@@ -63,7 +63,7 @@ class EdififyNames:
     def __init__(self):
         self.valid = set()
         self.non_alpha = set()
-        self.name_length_target = 100
+        self.name_length_target = 256
 
     def _length_good(self, identifier):
         """returns a boolean indicating whether or not the indentifier fits the 256 character limit"""

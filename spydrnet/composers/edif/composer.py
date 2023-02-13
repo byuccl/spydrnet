@@ -129,7 +129,7 @@ class ComposeEdif:
 
     def _add_rename_property(self, obj, namespace_list, rename_helper):
         if obj.name is None:
-            raise Exception('obj, ', obj, '.name undifined')
+            raise Exception('obj, ', obj, '.name undefined')
         name = obj.name
         if "EDIF.identifier" in obj.data:
             return
