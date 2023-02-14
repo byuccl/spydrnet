@@ -35,10 +35,14 @@ def parse(filename, architecture=None, remove_space=False):
 
     The same applies for EBLIF files
     """
-    filename = os.path.splitext(os.path.basename(filename))[0] + os.path.splitext(os.path.basename(filename))[1]
+    
     basename_less_final_extension = os.path.splitext(
         os.path.basename(filename))[0]
     extension = get_lowercase_extension(filename)
+    # filename = os.path.basename(filename)
+    print('FILENAME ',filename)
+    print('BASENAME ',basename_less_final_extension)
+    print('EXTENSION',extension)
     if extension == ".zip":
         assert zipfile.is_zipfile(filename), \
             "Input filename {} with extension .zip is not a zip file.".format(
@@ -51,11 +55,14 @@ def parse(filename, architecture=None, remove_space=False):
                 zip.extract(basename_less_final_extension, tempdirname)
                 filename = os.path.join(
                     tempdirname, basename_less_final_extension)
-                return _parse(filename)
+                return _parse(filename, architecture, remove_space)
+    filename = os.path.basename(filename)
+    print("FINAL",filename)
     return _parse(filename, architecture, remove_space)
 
 
 def _parse(filename, architecture=None, remove_space=False):
+    print("PARSING")
     extension = get_lowercase_extension(filename)
     if extension in [".edf", ".edif", ".edn"]:
         from spydrnet.parsers.edif.parser import EdifParser
