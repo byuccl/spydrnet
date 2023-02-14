@@ -35,6 +35,7 @@ def parse(filename, architecture=None, remove_space=False):
 
     The same applies for EBLIF files
     """
+    filename = os.path.splitext(os.path.basename(filename))[0] + os.path.splitext(os.path.basename(filename))[1]
     basename_less_final_extension = os.path.splitext(
         os.path.basename(filename))[0]
     extension = get_lowercase_extension(filename)
@@ -51,7 +52,6 @@ def parse(filename, architecture=None, remove_space=False):
                 filename = os.path.join(
                     tempdirname, basename_less_final_extension)
                 return _parse(filename)
-
     return _parse(filename, architecture, remove_space)
 
 
