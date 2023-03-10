@@ -8,7 +8,7 @@ Init for Spydrnet. The functions below can be called directly
 """
 
 
-def parse(filename, architecture=None, remove_space=False):
+def parse(filename, architecture=None, remove_space=False, path_used=False):
     """
     The parse function is able to parse an EDIF (.edf) file, a Verilog file (.v), or an EBLIF file (.eblif).
 
@@ -37,7 +37,7 @@ def parse(filename, architecture=None, remove_space=False):
     """
     basename_less_final_extension = os.path.splitext(
         os.path.basename(filename))[0]
-    extension = get_lowercase_extension(filename)
+    extension = get_lowercase_extension(filename)        
     if extension == ".zip":
         assert zipfile.is_zipfile(filename), \
             "Input filename {} with extension .zip is not a zip file.".format(
@@ -50,35 +50,14 @@ def parse(filename, architecture=None, remove_space=False):
                 zip.extract(basename_less_final_extension, tempdirname)
                 filename = os.path.join(
                     tempdirname, basename_less_final_extension)
-                return _parse(filename)
-    return _parse(filename, architecture, remove_space)
-    # basename_less_final_extension = os.path.splitext(
-    #     os.path.basename(filename))[0]
-    # extension = get_lowercase_extension(filename)
-    # # filename = os.path.basename(filename)
-    # print('FILENAME ',filename)
-    # print('BASENAME ',basename_less_final_extension)
-    # print('EXTENSION',extension)
-    # if extension == ".zip":
-    #     assert zipfile.is_zipfile(filename), \
-    #         "Input filename {} with extension .zip is not a zip file.".format(
-    #             basename_less_final_extension)
-    #     with tempfile.TemporaryDirectory() as tempdirname:
-    #         with zipfile.ZipFile(filename) as zip:
-    #             files = zip.namelist()
-    #             assert len(files) == 1 and files[0] == basename_less_final_extension, \
-    #                 "Only single file archives allowed with a file whose name matches the name of the archive"
-    #             zip.extract(basename_less_final_extension, tempdirname)
-    #             filename = os.path.join(
-    #                 tempdirname, basename_less_final_extension)
-    #             return _parse(filename, architecture, remove_space)
-    # filename = os.path.basename(filename)
-    # print("FINAL",filename)
-    # return _parse(filename, architecture, remove_space)
+                return _parse(filename, architecture, remove_space)
+            
+    return _parse(filename, architecture, remove_space)    
 
 
-def _parse(filename, architecture=None, remove_space=False):
-    print("PARSING")
+def _parse(filename, architecture=None, remove_space=False, path_used=False):
+    if (path_used):
+        filename = os.path.basename(filename)
     extension = get_lowercase_extension(filename)
     if extension in [".edf", ".edif", ".edn"]:
         from spydrnet.parsers.edif.parser import EdifParser
@@ -91,7 +70,7 @@ def _parse(filename, architecture=None, remove_space=False):
         parser = EBLIFParser.from_filename(filename)
     else:
         raise RuntimeError("Extension {} not recognized.".format(extension))
-    parser.parse()
+    parser.parse()     
     
     if remove_space:
         from spydrnet.util.remove_space import removing_space
