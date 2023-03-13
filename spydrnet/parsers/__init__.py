@@ -50,9 +50,9 @@ def parse(filename, architecture=None, remove_space=False, path_used=False):
                 zip.extract(basename_less_final_extension, tempdirname)
                 filename = os.path.join(
                     tempdirname, basename_less_final_extension)
-                return _parse(filename, architecture, remove_space)
+                return _parse(filename, architecture, remove_space, path_used)
             
-    return _parse(filename, architecture, remove_space)    
+    return _parse(filename, architecture, remove_space, path_used)    
 
 
 def _parse(filename, architecture=None, remove_space=False, path_used=False):
