@@ -14,8 +14,8 @@ This section aims to help you do a spydrnet release, meaning you make the latest
 6. Accept and merge the pull request when the checks have finished.
 7. Move to the master branch using `git checkout master`
 8. :ref:`create_and_update_tag`
-9. :ref:`build_documentation`
-10. :ref:`build_package` (this will update the documentation's version number)
+9. :ref:`build_package` (this will update the documentation's version number)
+10. :ref:`build_documentation`
 11. :ref:`publish_packages`
 12. :ref:`github_release`
 13. :ref:`publish_documentation`
@@ -90,23 +90,6 @@ If you mess up, you can use the following instructions to force update your tag
 
 >>> git push --tags -f
 
-.. _build_documentation:
-
-Build the Documentation
-------------------------
-
-Make sure you are in the docs directory
-
->>> cd docs
-
-then run the following:
-
->>> make clean
->>> make latexpdf
->>> make html
-
-Make sure that each one executes without errors. Try to minimize warnings as well, although the most important thing is that the documentation looks the way you want it to.
-
 .. _build_package:
 
 Build the Python Package
@@ -129,6 +112,23 @@ Make the python archive package:
 The build files will be stored in the following directories 
 
 spydrnet/build and spydrnet/dist
+
+.. _build_documentation:
+
+Build the Documentation
+------------------------
+
+Make sure you are in the docs directory
+
+>>> cd docs
+
+then run the following:
+
+>>> make clean
+>>> make latexpdf
+>>> make html
+
+Make sure that each one executes without errors. Try to minimize warnings as well, although the most important thing is that the documentation looks the way you want it to.
 
 .. _publish_packages:
 
