@@ -3,6 +3,9 @@ Getting Started with SpyDrNet
 
 SpyDrNet was originally built for EDF netlist, but has since been expanded to Verilog and EBLIF netlists.
 
+* Note 
+    This guide makes references to SpyDrNet TMR
+
 Parsing
 -------
 
