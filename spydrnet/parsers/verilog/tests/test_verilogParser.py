@@ -835,11 +835,47 @@ class TestVerilogParser(unittest.TestCase):
         instance = next(netlist.get_instances("my_inst"))
         self.assertEqual(instance.name, "my_inst")
         connections = ["clk_c", "VCC_net", "out"]
-        for i in range(0,2):
+        for i in range(0,3):
             port = next(instance.get_ports("port_"+str(i)))
             self.assertEqual(len(port.pins), 1)
             for pin in port.get_pins(selection=Selection.OUTSIDE):
                 self.assertEqual(pin.wire.cable.name, connections[i])
+
+        os.remove("test_netlist.v")
+
+    def test_parse_empty_mapped_ports(self):
+        # create dummy netlist
+        to_write = "module top (input clk, output out);\n"
+        to_write += "\tINST my_inst ();\n"
+        to_write += "\tINST my_whitespace_inst (  );\n"
+        to_write += "endmodule\n\n"
+        to_write += "module INST (input port_0, input port_1, output port_2);\n"
+        to_write += "endmodule"
+        f = open("test_netlist.v", "x")
+        f.write(to_write)
+        f.close()
+
+        parser = VerilogParser.from_filename("test_netlist.v")
+        parser.parse()
+        netlist = parser.netlist
+
+        # my_inst has nothing attached
+        instance = next(netlist.get_instances("my_inst"))
+        self.assertEqual(instance.name, "my_inst")
+        for i in range(0,3):
+            port = next(instance.get_ports("port_"+str(i)))
+            self.assertEqual(len(port.pins), 1)
+            for pin in port.get_pins(selection=Selection.OUTSIDE):
+                self.assertEqual(pin.wire, None)
+
+        # my_whitespace_inst has nothing attached and doesn't immediately have a closing paren
+        instance = next(netlist.get_instances("my_whitespace_inst"))
+        self.assertEqual(instance.name, "my_whitespace_inst")
+        for i in range(0,3):
+            port = next(instance.get_ports("port_"+str(i)))
+            self.assertEqual(len(port.pins), 1)
+            for pin in port.get_pins(selection=Selection.OUTSIDE):
+                self.assertEqual(pin.wire, None)
 
         os.remove("test_netlist.v")
 
