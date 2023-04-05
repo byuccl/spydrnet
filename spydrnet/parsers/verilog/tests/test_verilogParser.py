@@ -1305,6 +1305,60 @@ class TestVerilogParser(unittest.TestCase):
 
         os.remove("test_netlist.v")
 
+    #################################################
+    ## Other tests
+    #################################################
+    
+    def test_partially_connected_ports(self):
+        # make sure partially connected ports connect pins on lower end of the port
+        # create a little netlist to use
+        to_write = "module top (input clk, output out);\n"
+        to_write += "\twire [6:0]count_cry, count_cry_2;\n"
+        to_write += "\twire [7:0] count_s, count_qxu;\n"
+        to_write += "\twire[7:0] count_s_2, count_qxu_2;\n"
+        to_write += "\twire [3:0] b;\n"
+        to_write += "\twire lopt_1, GND;\n"
+        to_write += "\n"
+        to_write += "\tCARRY4 carry_part_connected\n"
+        to_write += "\t(\n"
+        to_write += "\t\t.CI(count_cry[3]),\n"
+        to_write += "\t\t.CO(count_cry[6:4]),\n"
+        to_write += "\t\t.CYINIT(lopt_1),\n"
+        to_write += "\t\t.DI({GND, GND, GND}),\n"
+        to_write += "\t\t.O(count_s[7:4]),\n"
+        to_write += "\t\t.S(count_qxu[7:4])\n"
+        to_write += "\t);\n"
+        to_write += "\t\n"
+        to_write += "\tCARRY4 carry_full_connected\n"
+        to_write += "\t(\n"
+        to_write += "\t\t.CI(count_cry_2[3]),\n"
+        to_write += "\t\t.CO(count_cry_2[6:2]),\n"
+        to_write += "\t\t.CYINIT(lopt_1),\n"
+        to_write += "\t\t.DI({GND,GND, GND, GND}),\n"
+        to_write += "\t\t.O(count_s_2[7:4]),\n"
+        to_write += "\t\t.S(count_qxu_2[7:4])\n"
+        to_write += "\t);\n"
+        to_write += "endmodule\n"
+        f = open("test_netlist.v", "x")
+        f.write(to_write)
+        f.close()
+
+        parser = VerilogParser.from_filename("test_netlist.v")
+        parser.parse()
+        netlist = parser.netlist
+        netlist = sdn.parse("test_netlist.v")
+        for inst in netlist.get_instances():
+            for port in inst.get_ports():
+                pins = list(p for p in port.get_pins(selection=Selection.OUTSIDE, filter=lambda x: x.instance==inst))
+                pins.reverse()
+                if not all(p.wire for p in pins) and any(p.wire for p in pins):
+                    wires = list(p.wire for p in pins if p.wire)
+                    for i in range(len(wires)):
+                        assert pins[i].wire, "The wire is " + str(pins[i].wire + " but should be connected")
+                    for i in range(len(pins)-len(wires)):
+                        assert pins[len(wires)+i].wire is None, "The wire is " + str(pins[i].wire + " but should NOT be connected")
+
+        os.remove("test_netlist.v")
 
     ############################################
     ##test helpers

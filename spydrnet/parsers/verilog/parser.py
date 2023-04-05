@@ -874,8 +874,13 @@ class VerilogParser:
 
             # there can be unconnected pins at the end of the port.
             pins.sort(reverse=True, key=self.pin_sort_func)
+            # the offset makes sure connections are on lower
+            # end of the port for partially connected ports
+            offset = 0
+            if len(pins) > len(wires):
+                offset = len(pins)-len(wires)
             for i in range(len(wires)):
-               wires[i].connect_pin(pins[i])
+                wires[i].connect_pin(pins[offset + i])
 
             token = self.next_token()
 
@@ -932,8 +937,13 @@ class VerilogParser:
                 # there can be unconnected pins at the end of the port.
                 pin_list = list(p for p in pins)
                 pin_list.sort(reverse=True, key=self.pin_sort_func)
+                # the offset makes sure connections are on lower
+                # end of the port for partially connected ports
+                offset = 0
+                if len(pins) > len(wires):
+                    offset = len(pins)-len(wires)
                 for i in range(len(wires)):
-                    wires[i].connect_pin(pin_list[i])
+                    wires[i].connect_pin(pins[offset + i])
 
                 token = self.next_token()
                 index += 1
