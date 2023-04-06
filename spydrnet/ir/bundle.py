@@ -1,4 +1,4 @@
-from spydrnet.ir.first_class_element import FirstClassElement
+from spydrnet.ir import FirstClassElement
 
 
 class Bundle(FirstClassElement):
@@ -18,7 +18,7 @@ class Bundle(FirstClassElement):
 
     @property
     def definition(self):
-        """Get the definition that this bundle belongs to. 
+        """Get the definition that this bundle belongs to.
 
         The definition is responsible for changing this value.
         """
@@ -26,7 +26,7 @@ class Bundle(FirstClassElement):
 
     @property
     def is_downto(self):
-        """Get the downto status of the bundle. 
+        """Get the downto status of the bundle.
 
         Downto is False if the right index is higher than the left one. True
         otherwise
@@ -56,7 +56,7 @@ class Bundle(FirstClassElement):
     def is_scalar(self):
         """Return True if the item is a scalar False otherwise.
 
-        The item is not a scalar if it has more than one pin orwire in it. 
+        The item is not a scalar if it has more than one pin orwire in it.
         if it has one pin or wire in it it may be a scalar.
         This mimics vhdl's downto usage which canrepresent single pin arrays
         ie. std_logic_vector(0 downto 0) which would have a single pin but not be a scalar.
@@ -89,7 +89,7 @@ class Bundle(FirstClassElement):
 
     @property
     def is_array(self):
-        """This is the logical inverse of is_scalar. 
+        """This is the logical inverse of is_scalar.
 
         See the is_scalar documentation for more insight into the properties of this value.
         """
@@ -97,7 +97,7 @@ class Bundle(FirstClassElement):
 
     @is_array.setter
     def is_array(self, value):
-        """This is the logical inverse of is_scalar. 
+        """This is the logical inverse of is_scalar.
 
         See the is_scalar documentation for more insight into the properties of this value.
 
@@ -116,7 +116,7 @@ class Bundle(FirstClassElement):
 
     @property
     def lower_index(self):
-        """Get the value of the lower index of the array. 
+        """Get the value of the lower index of the array.
 
         This would be the right index in the case of downto and the left
         in the case of to
@@ -125,7 +125,7 @@ class Bundle(FirstClassElement):
 
     @lower_index.setter
     def lower_index(self, value):
-        """Set the lower index of the array. 
+        """Set the lower index of the array.
 
         In the case of to this is the left index and the right in the case of downto
 

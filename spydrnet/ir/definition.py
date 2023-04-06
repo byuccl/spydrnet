@@ -1,13 +1,10 @@
-from spydrnet.ir.first_class_element import FirstClassElement
-from spydrnet.ir.port import Port
-from spydrnet.ir.cable import Cable
-from spydrnet.ir.instance import Instance
-from spydrnet.ir.outerpin import OuterPin
-from spydrnet.ir.views.listview import ListView
-from spydrnet.ir.views.setview import SetView
+from copy import copy, deepcopy, error
+
 from spydrnet.global_state import global_callback
 from spydrnet.global_state.global_callback import _call_create_definition
-from copy import deepcopy, copy, error
+from spydrnet.ir import Cable, FirstClassElement, Instance, OuterPin, Port
+from spydrnet.ir.views.listview import ListView
+from spydrnet.ir.views.setview import SetView
 
 
 class Definition(FirstClassElement):
@@ -142,7 +139,7 @@ class Definition(FirstClassElement):
             return False
         return True
 
-    def create_port(self, name=None, properties=None, is_downto=None, is_scalar=None, lower_index=None, direction=None):
+    def create_port(self, name=None, properties=None, is_downto=None, is_scalar=None, lower_index=None, direction=None, pins=None):
         """Create a port, add it to the definition, and return that port.
 
         parameters
@@ -154,11 +151,13 @@ class Definition(FirstClassElement):
         is_scalar - (bool) set the scalar status. Return True if the item is a scalar False otherwise.
         lower_index - (int) get the value of the lower index of the array.
         direction - (Enum) Define the possible directions for a given port. (UNDEFINED, INOUT, IN, OUT)
-
+        pins - (int) Create number of pins in the newly created port
         """
         port = Port(name, properties, is_downto,
                     is_scalar, lower_index, direction)
         self.add_port(port)
+        if pins:
+            port.create_pins(pins)
         return port
 
     def add_port(self, port, position=None):
@@ -340,7 +339,7 @@ class Definition(FirstClassElement):
         global_callback._call_definition_remove_child(self, child)
         child._parent = None
 
-    def create_cable(self, name=None, properties=None, is_downto=None, is_scalar=None, lower_index=None):
+    def create_cable(self, name=None, properties=None, is_downto=None, is_scalar=None, lower_index=None, wires=None):
         """Create a cable, add it to the definition, and return the cable.
 
         parameters
@@ -351,9 +350,12 @@ class Definition(FirstClassElement):
         id_downto - (bool) set the downto status. Downto is False if the right index is higher than the left one, True otherwise
         is_scalar - (bool) set the scalar status. Return True if the item is a scalar False otherwise.
         lower_index - (int) get the value of the lower index of the array.
+        wires - (int) Create number of wires in the newly created cable
         """
         cable = Cable(name, properties, is_downto, is_scalar, lower_index)
         self.add_cable(cable)
+        if wires:
+            cable.create_wires(wires)
         return cable
 
     def add_cable(self, cable, position=None):
@@ -458,7 +460,8 @@ class Definition(FirstClassElement):
         clone leaving all references in tact.
         the element can then either be ripped or ripped and replaced"""
         assert self not in memo, "the object should not have been copied twice in this pass"
-        c = Definition()
+        from spydrnet.ir import Definition as DefinitionExtended
+        c = DefinitionExtended()
         memo[self] = c
         c._data = deepcopy(self._data)
         c._library = None

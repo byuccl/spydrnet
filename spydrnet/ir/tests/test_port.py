@@ -1,7 +1,7 @@
 import unittest
 
 import spydrnet as sdn
-from spydrnet.ir.bundle import Bundle
+from spydrnet.ir import Bundle
 
 
 class TestPort(unittest.TestCase):
@@ -38,6 +38,10 @@ class TestPort(unittest.TestCase):
         for direction in sdn.Port.Direction:
             self.port.direction = direction
             self.assertEqual(self.port.direction, direction)
+
+    def test_direction_2(self):
+        port = sdn.Port(direction=sdn.IN)
+        self.assertTrue(port.direction is sdn.IN)
 
     @unittest.expectedFailure
     def test_direction_set_bad_type(self):

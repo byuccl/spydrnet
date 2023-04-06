@@ -1,5 +1,5 @@
 from spydrnet.ir.views.dictview import DictView
-from spydrnet.ir.outerpin import OuterPin
+from spydrnet.ir import OuterPin
 
 
 class OuterPinsView(DictView):

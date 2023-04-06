@@ -1,5 +1,5 @@
-from spydrnet.ir.bundle import Bundle
-from spydrnet.ir.wire import Wire
+from spydrnet.ir import Bundle
+from spydrnet.ir import Wire
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
 from spydrnet.global_state.global_callback import _call_create_cable
@@ -159,7 +159,8 @@ class Cable(Bundle):
         clone leaving all references in tact.
         the element can then either be ripped or ripped and replaced"""
         assert self not in memo, "the object should not have been copied twice in this pass"
-        c = Cable()
+        from spydrnet.ir import Cable as CableExtended
+        c = CableExtended()
         memo[self] = c
         new_wires = list()
         for w in self._wires:

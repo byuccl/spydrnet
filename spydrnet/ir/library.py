@@ -1,5 +1,5 @@
-from spydrnet.ir.first_class_element import FirstClassElement
-from spydrnet.ir.definition import Definition
+from spydrnet.ir import FirstClassElement
+from spydrnet.ir import Definition
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
 from spydrnet.global_state.global_callback import _call_create_library
@@ -91,9 +91,9 @@ class Library(FirstClassElement):
         Parameters
         ----------
 
-        definition - Definition 
+        definition - Definition
             The defintion to add to the library
-        position - int, (default None) 
+        position - int, (default None)
             the index in the library list at which to add the definition
         """
         assert definition.library is not self, "Definition " + str(definition) + " already included in library " + str(self)
@@ -155,7 +155,7 @@ class Library(FirstClassElement):
             definition._clone_rip_and_replace(memo)
 
     def _clone_rip(self, memo):
-        """Remove from its current environmnet. 
+        """Remove from its current environmnet.
 
         This will remove all pin pointers and create a floating stand alone instance."""
         # references lists of definitions need to be vacated except those that were cloned.

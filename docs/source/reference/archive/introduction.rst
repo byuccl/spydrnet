@@ -1,7 +1,7 @@
 .. _introduction:
 
-Introduction
-============
+Introduction (Old Version)
+==========================
 
 .. currentmodule:: spydrnet
 
@@ -47,7 +47,7 @@ Netlists flow through SpyDrNet in a three step process (see :numref:`fig:flow`).
 .. _Pandoc: https://pandoc.org/
 
 .. _fig:flow:
-.. figure:: ../figures/flow.*
+.. figure:: ../../figures/flow.*
    :align: center
    :alt: SpyDrNet Flow
 
@@ -82,7 +82,7 @@ At this point, SpyDrNet features and functionality are accessible via ``sdn.<fun
 Digital designs for FPGAs are represented as netlists, a list of components and connections. Netlists come from various vendors in many different formats. SpyDrNet allows you to look at and alter a netlist in a language inspecific way. SpyDrNet parses a netlist into an intermediate represention (IR) that is designed to be easily traversed and effortlessly manipulated. SpyDrNet aims to provide the tools you need to accomplish the netlist analysis and transformation tasks you have in mind without having to reinvent the wheel. :numref:`fig:IR` shows a summary of the SpyDrNet intermediate representation (IR).
 
 .. _fig:IR:
-.. figure:: ../figures/IR.*
+.. figure:: ../../figures/IR.*
    :align: center
    :alt: SpyDrNet Intermediate Representation
 

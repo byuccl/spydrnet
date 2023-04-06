@@ -12,7 +12,7 @@ order to ensure a positive environment exists around SpyDrNet.
 
 **some suggestions as you get started**
 
- * Make sure you have a recent version of python installed. We test against version 3.5 and up.
+ * Make sure you have a recent version of python installed. We test against version 3.6 and up (as of SpyDrNet 1.10.0...before then we also supported Python 3.5).
  * Clone the repository and create a new branch on which to make changes.
  * Connect through Git Hub. The issues tab is the primary place for conversations and questions.
  * Make sure that there are tests for your code.
@@ -25,7 +25,7 @@ order to ensure a positive environment exists around SpyDrNet.
 2. Clone the SpyDrNet repositoy
 3. Otherwise fork the repository to make your changes.
 4. Once you have made your changes make a pull request.
-5. When the pull request has passed the tests it will be reviewed and merged
+5. When the pull request has passed the tests it will be reviewed and merged. Note: we may have you request your code into a branch other than *master*
 
 
 **Write (or other) privileges can be obtained**

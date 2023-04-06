@@ -1,3 +1,60 @@
+SpyDrNet 1.12.1
+----------------
+February 2, 2023
+
+* Bug fix for names in EDIF netlists in which they were cut off if more than 100 characters long. Now the allowed number of characters in a name is 255.
+* Slight additions to documentation about doing a release 
+* Removing Travis CI (from now on only Github Actions will do automated testing)
+* Fixed bug where architecture liraries were not included in the release
+
+SpyDrNet 1.12.0
+----------------
+November 9, 2022
+
+* Major improvements and fixes for the Verilog netlist parser and composer to broaden support and accuracy
+* Built in primitive libraries to allow SpyDrNet to populate port directions of primitives when parsing netlist types that don't always explicitly define primitive cells (Verilog, EBLIF). An option is added to parsing to specify which primitive library to use.
+* Improvements, fixes, and simplification to EBLIF netlist parser and composer
+* Verilog parser and composer option to remove/add lagging space in names
+* Documentation updates and improvements 
+
+SpyDrNet 1.11.1
+---------------
+April 20, 2022
+
+* Bug Fix. Now EBLIF support should actually be included.
+
+SpyDrNet 1.11.0
+---------------
+April 9, 2022
+
+* Initial support for parsing and composing EBLIF netlists.
+
+SpyDrNet 1.10.1
+----------------
+January 1, 2022
+
+* Fixes some parts that did not fully detail dropping support for Python 3.5
+* Improvements to documentation about doing a release
+
+SpyDrNet 1.10.0
+---------------
+December 29, 2021
+
+* Introduces support for loading other modules to extend IR classes
+* Drops support for Python 3.5 and adds support for Python 3.9 and 3.10
+* Adds Pylint to Github Actions
+* Various documentation updates
+
+SpyDrNet 1.9.0
+---------------
+November 17, 2021
+
+* Incorporates Github Actions for automated testing
+* Minor shortcut additions in IR classes
+* Minor documentation updates
+* Improved comment handling in the Verilog parser
+* Enhanced the Verilog composer
+
 SpyDrNet 1.8.3
 --------------
 July 20, 2021

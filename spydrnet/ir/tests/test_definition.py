@@ -1,7 +1,7 @@
 import unittest
 
 import spydrnet as sdn
-from spydrnet.ir.first_class_element import FirstClassElement
+from spydrnet.ir import FirstClassElement
 
 
 class TestDefinition(unittest.TestCase):
@@ -27,7 +27,9 @@ class TestDefinition(unittest.TestCase):
         self.assertEqual(self.definition.ports, [port2, port1])
 
     def test_create_port(self):
-        port = self.definition.create_port()
+        port = self.definition.create_port("Port1", pins=2)
+        self.assertEqual(port.name, "Port1")
+        self.assertEqual(len(port.pins), 2)
         self.assertTrue(port in self.definition.ports)
         self.assertEqual(port.definition, self.definition)
 
@@ -43,6 +45,15 @@ class TestDefinition(unittest.TestCase):
         self.definition.remove_port(port)
         self.assertFalse(port in self.definition.ports)
         self.assertIsNone(port.definition)
+
+    def test_remove_multiple_ports(self):
+        port = self.definition.create_port()
+        port_2 = self.definition.create_port()
+        self.definition.remove_ports_from([port,port_2])
+        self.assertFalse(port in self.definition.ports)
+        self.assertFalse(port_2 in self.definition.ports)
+        self.assertIsNone(port.definition)
+        self.assertIsNone(port_2.definition)
 
     @unittest.expectedFailure
     def test_remove_ports_from_outside_definition(self):
@@ -72,7 +83,9 @@ class TestDefinition(unittest.TestCase):
         self.assertEqual(self.definition.cables, [cable2, cable1])
 
     def test_create_cable(self):
-        cable = self.definition.create_cable()
+        cable = self.definition.create_cable("cable1", wires=2)
+        self.assertEqual(cable.name, "cable1")
+        self.assertEqual(len(cable.wires), 2)
         self.assertTrue(cable in self.definition.cables)
         self.assertEqual(self.definition, cable.definition)
 
@@ -161,3 +174,11 @@ class TestDefinition(unittest.TestCase):
         self.definition.create_cable()
         self.assertFalse(self.definition.is_leaf()), "Definition with a cable and child instance is considered a leaf" \
                                                      " cell"
+
+    def test_library_name(self):
+        definition = sdn.Definition()
+        library = sdn.Library()
+        library.add_definition(definition)
+        self.assertTrue('Library.name undefined' in definition.__str__())
+        library.name = 'library'
+        self.assertTrue('Library.name \'library\'' in definition.__str__())

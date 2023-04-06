@@ -1,15 +1,16 @@
-from spydrnet.ir.element import Element
-from spydrnet.ir.outerpin import OuterPin
-from spydrnet.ir.views.listview import ListView
+from copy import copy
+
+import spydrnet as sdn
 from spydrnet.global_state import global_callback
-from copy import copy, deepcopy, error
+from spydrnet.ir import Element, OuterPin
+from spydrnet.ir.views.listview import ListView
 
 
 class Wire(Element):
     """
     Represents a wire object
     """
-    __slots__ = ['_cable', '_pins', '__weakref__']
+    __slots__ = ['_cable', '_pins']
 
     def __init__(self):
         self._cable = None
@@ -144,7 +145,8 @@ class Wire(Element):
         clone leaving all references in tact.
         the element can then either be ripped or ripped and replaced"""
         assert self not in memo, "the object should not have been copied twice in this pass"
-        c = Wire()
+        from spydrnet.ir import Wire as ExtendedWire
+        c = ExtendedWire()
         memo[self] = c
         c._cable = None
         # shallow copy the list so that it retains its pin references
@@ -152,7 +154,7 @@ class Wire(Element):
         return c
 
     def clone(self):
-        """clone wire in an api safe way. 
+        """clone wire in an api safe way.
 
         The following properties can be expected from the returned element:
          * The wire is not connected to any pins.
@@ -169,7 +171,7 @@ class Wire(Element):
         assert self.cable is not None, "the wire does not belong to a cable"
 
         return self.cable.wires.index(self)
-    
+
     def __str__(self):
         """Re-define the print function so it is easier to read"""
         rep = str(type(self))
@@ -179,6 +181,20 @@ class Wire(Element):
         elif self.cable.name is None:
             rep += 'Contained by Cable whose name is undefined'
         else:
-            rep += 'Cotained by Cable.name \'' + str(self.cable) + '\''
+            rep += 'Contained by Cable.name \'' + str(self.cable.name) + '\' ' + str(self.cable)
         rep += '>'
         return rep
+
+    def get_driver(self):
+        '''
+        returns the driver(s) of the wire
+        '''
+        drivers = []
+        for pin in self._pins:
+            if pin.__class__ is sdn.InnerPin:
+                if pin.port.direction is sdn.IN:
+                    drivers.append(pin)
+            else:
+                if pin.inner_pin.port.direction is sdn.OUT:
+                    drivers.append(pin)
+        return drivers
