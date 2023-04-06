@@ -910,6 +910,14 @@ class VerilogParser:
                 vt.OPEN_PARENTHESIS, "to encapsulate cable name in port mapping", token)
             
             index = 0
+
+            # There may be no mapped wires at all. It may be empty or filled with whitespace
+            token = self.peek_token()
+
+            if token == vt.CLOSE_PARENTHESIS:
+                # Consume the token, we're going to skip the loop
+                token = self.next_token()
+
             while (token != vt.CLOSE_PARENTHESIS):
                 token = self.peek_token()
 
