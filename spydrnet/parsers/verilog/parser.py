@@ -948,10 +948,10 @@ class VerilogParser:
                 # the offset makes sure connections are on lower
                 # end of the port for partially connected ports
                 offset = 0
-                if len(pins) > len(wires):
-                    offset = len(pins)-len(wires)
+                if len(pin_list) > len(wires):
+                    offset = len(pin_list)-len(wires)
                 for i in range(len(wires)):
-                    wires[i].connect_pin(pins[offset + i])
+                    wires[i].connect_pin(pin_list[offset + i])
 
                 token = self.next_token()
                 index += 1
