@@ -1,4 +1,6 @@
+import pathlib
 import unittest
+
 import spydrnet as sdn
 from spydrnet import get_libraries
 
@@ -20,3 +22,20 @@ class TestUtil(unittest.TestCase):
         library2 = netlist2.create_library()
         get_libraries([netlist1, netlist2])
 
+    def test_unused_ports(self):
+        test_netlist_path = (
+            pathlib.Path(sdn.base_dir)
+            / "support_files"
+            / "verilog_netlists"
+            / "carry4_unused_output.v"
+        )
+
+        netlist = sdn.parse(str(test_netlist_path))
+
+        carry4 = next(netlist.get_instances())
+        assert carry4.name == "carry4_inst"
+
+        # Check that 3-bit O/S inputs/outputs are wired up correctly (connected to lower 3 pins)
+        for pin in carry4.pins:
+            if pin.wire.cable.name in ("O", "S"):
+                assert pin.index() <= 2
