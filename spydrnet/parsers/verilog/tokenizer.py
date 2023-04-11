@@ -8,6 +8,7 @@ import io
 import os
 import spydrnet.parsers.verilog.verilog_tokens as vt
 from spydrnet.parsers.verilog.verilog_token_factory import TokenFactory
+import pathlib
 
 
 class VerilogTokenizer:
@@ -42,6 +43,8 @@ class VerilogTokenizer:
                 self.input_stream = stream
             else:
                 self.input_stream = open(input_source, 'r')
+        elif isinstance(input_source, pathlib.PosixPath):
+            self.input_stream = open(input_source,"r")
         else:
             if isinstance(input_source, io.TextIOBase) is False:
                 self.input_stream = io.TextIOWrapper(input_source)

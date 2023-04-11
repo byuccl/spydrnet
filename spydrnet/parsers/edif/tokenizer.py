@@ -3,6 +3,7 @@ import re
 import zipfile
 import io
 import os
+import pathlib
 
 
 class EdifTokenizer:
@@ -37,6 +38,8 @@ class EdifTokenizer:
                 self.input_stream = stream
             else:
                 self.input_stream = open(input_source, "r")
+        elif isinstance(input_source, pathlib.PosixPath):
+            self.input_stream = open(input_source,"r")
         else:
             if isinstance(input_source, io.TextIOBase) is False:
                 self.input_stream = io.TextIOWrapper(input_source)
