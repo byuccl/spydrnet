@@ -325,9 +325,9 @@ class TestVerilogParser(unittest.TestCase):
         for c in parser.current_definition.cables:
             names.append(c.name)
             assert len(c.wires) == 1
-        assert '\\byte_num[2] ' in names
-        assert '\\byte_num[1] ' in names
-        assert '\\byte_num[0] ' in names
+        assert '\\byte_num[2]' in names
+        assert '\\byte_num[1]' in names
+        assert '\\byte_num[0]' in names
         assert parser.current_definition.ports[0].name == 'byte_num'
 
 
@@ -1242,7 +1242,7 @@ class TestVerilogParser(unittest.TestCase):
         assert i_right == None
         c1, o_left, o_right, c2, i_left, i_right = parser.parse_assign()
         assert c1.name == "SR2"
-        assert c2.name == "\\<const0> "
+        assert c2.name == "\\<const0>"
         assert o_left == 2
         assert o_right == None
         assert i_left == None
@@ -1490,7 +1490,7 @@ class TestVerilogParser(unittest.TestCase):
 
         parser.current_definition = sdn.Definition()
         cable, _, _ = parser.parse_variable_instantiation()
-        self.assertEqual(cable.name, "\\<const0> ", "Check const wire name")
+        self.assertEqual(cable.name, "\\<const0>", "Check const wire name")
 
         # Check constant 1 net declaration
         tokens = ("1'b1", vt.SEMI_COLON)
@@ -1500,7 +1500,7 @@ class TestVerilogParser(unittest.TestCase):
 
         parser.current_definition = sdn.Definition()
         cable, _, _ = parser.parse_variable_instantiation()
-        self.assertEqual(cable.name, "\\<const1> ", "Check const wire name")
+        self.assertEqual(cable.name, "\\<const1>", "Check const wire name")
 
 
 if __name__ == '__main__':
