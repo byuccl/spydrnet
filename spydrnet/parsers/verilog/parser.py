@@ -910,6 +910,14 @@ class VerilogParser:
                 vt.OPEN_PARENTHESIS, "to encapsulate cable name in port mapping", token)
             
             index = 0
+
+            # There may be no mapped wires at all. It may be empty or filled with whitespace
+            token = self.peek_token()
+
+            if token == vt.CLOSE_PARENTHESIS:
+                # Consume the token, we're going to skip the loop
+                token = self.next_token()
+
             while (token != vt.CLOSE_PARENTHESIS):
                 token = self.peek_token()
 
@@ -940,10 +948,10 @@ class VerilogParser:
                 # the offset makes sure connections are on lower
                 # end of the port for partially connected ports
                 offset = 0
-                if len(pins) > len(wires):
-                    offset = len(pins)-len(wires)
+                if len(pin_list) > len(wires):
+                    offset = len(pin_list)-len(wires)
                 for i in range(len(wires)):
-                    wires[i].connect_pin(pins[offset + i])
+                    wires[i].connect_pin(pin_list[offset + i])
 
                 token = self.next_token()
                 index += 1
