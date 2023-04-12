@@ -1,6 +1,7 @@
 import os
 import zipfile
 import tempfile
+import pathlib
 
 """
 Init for Spydrnet. The functions below can be called directly
@@ -35,9 +36,9 @@ def parse(filename, architecture=None):
 
     The same applies for EBLIF files
     """
-    basename_less_final_extension = os.path.splitext(
-        os.path.basename(filename))[0]
-    extension = get_lowercase_extension(filename)        
+
+    basename_less_final_extension = pathlib.Path(filename).stem
+    extension = get_lowercase_extension(filename)     
     if extension == ".zip":
         assert zipfile.is_zipfile(filename), \
             "Input filename {} with extension .zip is not a zip file.".format(
@@ -78,7 +79,7 @@ def _parse(filename, architecture=None):
 
 
 def get_lowercase_extension(filename):
-    extension = os.path.splitext(filename)[1]
+    extension = pathlib.Path(filename).suffix
     extension_lower = extension.lower()
     return extension_lower
 
