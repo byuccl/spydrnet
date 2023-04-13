@@ -4,6 +4,7 @@ import zipfile
 import io
 import os
 from spydrnet.parsers.eblif.eblif_tokens import BACKSLASH
+from pathlib import Path
 
 class Tokenizer:
     @staticmethod
@@ -31,13 +32,15 @@ class Tokenizer:
         if isinstance(input_source, str):
             if zipfile.is_zipfile(input_source):
                 zip = zipfile.ZipFile(input_source)
-                filename = os.path.basename(input_source)
+                filename = Path(input_source).name
                 filename = filename[:filename.rindex(".")]
                 stream = zip.open(filename)
                 stream = io.TextIOWrapper(stream)
                 self.input_stream = stream
             else:
                 self.input_stream = open(input_source, 'r')
+        elif isinstance(input_source, Path):
+            self.input_stream = open(input_source,"r")
         else:
             if isinstance(input_source, io.TextIOBase) is False:
                 self.input_stream = io.TextIOWrapper(input_source)

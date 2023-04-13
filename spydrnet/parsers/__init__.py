@@ -1,7 +1,6 @@
-import os
 import zipfile
 import tempfile
-import pathlib
+from pathlib import Path
 
 """
 Init for Spydrnet. The functions below can be called directly
@@ -37,7 +36,7 @@ def parse(filename, architecture=None):
     The same applies for EBLIF files
     """
 
-    basename_less_final_extension = pathlib.Path(filename).stem
+    basename_less_final_extension = Path(filename).stem
     extension = get_lowercase_extension(filename)     
     if extension == ".zip":
         assert zipfile.is_zipfile(filename), \
@@ -49,8 +48,7 @@ def parse(filename, architecture=None):
                 assert len(files) == 1 and files[0] == basename_less_final_extension, \
                     "Only single file archives allowed with a file whose name matches the name of the archive"
                 zip.extract(basename_less_final_extension, tempdirname)
-                filename = os.path.join(
-                    tempdirname, basename_less_final_extension)
+                filename = Path(tempdirname).joinpath(basename_less_final_extension)
                 return _parse(filename, architecture)
             
     return _parse(filename, architecture)    
@@ -79,7 +77,7 @@ def _parse(filename, architecture=None):
 
 
 def get_lowercase_extension(filename):
-    extension = pathlib.Path(filename).suffix
+    extension = Path(filename).suffix
     extension_lower = extension.lower()
     return extension_lower
 

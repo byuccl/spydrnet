@@ -5,12 +5,15 @@ from spydrnet import parsers
 import os
 import tempfile
 import glob
+from pathlib import Path
 
 class TestVerilogComposer(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.dir_of_verilog_netlists = os.path.join(sdn.base_dir, "support_files", "verilog_netlists")
+        cls.dir_of_verilog_netlists = Path(sdn.base_dir).joinpath("support_files", "verilog_netlists")
+        # os.path.join(sdn.base_dir, "support_files", "verilog_netlists")
+        
         cls.verilog_files = sorted(glob.glob(os.path.join(cls.dir_of_verilog_netlists, "*.v.zip")), key = os.path.getsize)
 
     @unittest.skip("Test takes a long time right now.")
