@@ -11,7 +11,7 @@ Parsing
 
 **Default parsing arguments**
 
-``parse(filename, architecture=None, remove_space=False, path_used=False):``
+``parse(filename, architecture=None):``
 
 filename 
 
@@ -21,14 +21,6 @@ architecture
 
 - Desired board architecture
 
-remove_space 
-
-- Flag used for verilog netlists to insure that the triplicated primitives do not have a space in the middle of their name
-
-path_used 
-
-- Flag that allows for the use of pathlib.Path to find files not in current directory
-
 
 **General structure**
 
@@ -36,7 +28,7 @@ path_used
 
 **Basic structure for Verilog netlist**
 
-``netlist = sdn.parse("filename.v", architecture=XILINX_7SERIES, remove_space=True)``
+``netlist = sdn.parse("filename.v", architecture=XILINX_7SERIES)``
 
 **Basic structure for EDF netlists**
 
@@ -44,14 +36,12 @@ path_used
 
 *edf usually only needs the filename and not the other arguments*
 
-
-
 Composing
 ----------
 
 **Default composing arguments**
 
-``compose(netlist, filename, voters=[], definition_list=[], write_blackbox=True, write_eblif_cname=True, defparam=False, reinsert_space=False):``
+``compose(netlist, filename, voters=[], definition_list=[], write_blackbox=True, write_eblif_cname=True, defparam=False):``
 
 netlist 
 
@@ -81,9 +71,6 @@ defparam
 
 - Flag that composes parameters in *defparam* statements instead of using #()
 
-reinsert_space 
-
-- Flag to If remove_space was used in the parser (for verilog netlists) reinsert_space needs to be used to allow the primitves to have the correct syntax for Vivado
 
 **General structure**
 
