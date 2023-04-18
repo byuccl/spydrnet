@@ -6,10 +6,9 @@ Flatten A Netlist
 Remove hierarchy from a netlist. The original hierarchy and new hierarchy (after flattening) will be printed.
 """
 
-import os
 import tempfile
 import spydrnet as sdn
-
+from pathlib import Path
 
 # Check if given instance is a black box
 # instance: std.Instance to check
@@ -180,7 +179,7 @@ flatten_definition(top_def, top_definition=True)
 
 with tempfile.TemporaryDirectory() as td:
     file_name = example_name + '_flat.edf'
-    sdn.compose(ir, os.path.join(td, file_name))
+    sdn.compose(ir, Path(td, file_name))
 
 # sdn.composers.compose("test.edf", ir)
 print()

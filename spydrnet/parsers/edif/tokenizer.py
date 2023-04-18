@@ -2,7 +2,6 @@ from functools import partial
 import re
 import zipfile
 import io
-import os
 from pathlib import Path
 
 

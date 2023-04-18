@@ -1,9 +1,10 @@
 import os
+from pathlib import Path
 
 
 def compose(netlist, filename, voters=[], definition_list=[], write_blackbox=True, write_eblif_cname=True, defparam = False):
     """To compose a file into a netlist format"""
-    extension = os.path.splitext(filename)[1]
+    extension = Path(filename).suffix
     extension_lower = extension.lower()
     if extension_lower in {".edf", ".edif"}:
         from spydrnet.composers.edif.composer import ComposeEdif

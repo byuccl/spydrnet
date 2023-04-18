@@ -48,7 +48,8 @@ def parse(filename, architecture=None):
                 assert len(files) == 1 and files[0] == basename_less_final_extension, \
                     "Only single file archives allowed with a file whose name matches the name of the archive"
                 zip.extract(basename_less_final_extension, tempdirname)
-                filename = Path(tempdirname).joinpath(basename_less_final_extension)
+                # filename = Path(tempdirname).joinpath(basename_less_final_extension)
+                filename = Path(tempdirname, basename_less_final_extension)
                 return _parse(filename, architecture)
             
     return _parse(filename, architecture)    
