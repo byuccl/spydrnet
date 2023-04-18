@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="English" >
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Linting &mdash; SpyDrNet 1.12.1 documentation</title>
+  <title>Linting &mdash; SpyDrNet 1.12.2 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
@@ -48,10 +48,10 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../install.html">Install</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/index.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../auto_examples/index.html">Examples</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">Developer's Guide</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Developer’s Guide</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="contribute.html">How to Contribute</a></li>
 <li class="toctree-l2"><a class="reference internal" href="contribute.html#creating-a-release">Creating a Release</a></li>
 <li class="toctree-l2"><a class="reference internal" href="repository.html">GitHub Repository</a></li>
@@ -80,9 +80,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Developer's Guide</a> &raquo;</li>
-      <li>Linting</li>
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Developer’s Guide</a></li>
+      <li class="breadcrumb-item active">Linting</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/developer/linting.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -101,7 +101,7 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pylint</span> <span class="n">spydrnet</span><span class="o">/</span>
 </pre></div>
 </div>
-<p>This will run pylint in its most basic form, without any specified options. A number of options are preffered that are specific to SpyDrNet's needs. These options are found in the <cite>.pylintrc</cite> file, and can be used with the following command:</p>
+<p>This will run pylint in its most basic form, without any specified options. A number of options are preffered that are specific to SpyDrNet’s needs. These options are found in the <cite>.pylintrc</cite> file, and can be used with the following command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pylint</span> <span class="o">--</span><span class="n">rcfile</span><span class="o">=.</span><span class="n">pylintrc</span> <span class="n">spydrnet</span><span class="o">/</span>
 </pre></div>
 </div>
@@ -115,7 +115,7 @@
 </section>
 <section id="viewing-pylint-score-for-each-release">
 <h2>Viewing Pylint score for each release<a class="headerlink" href="#viewing-pylint-score-for-each-release" title="Permalink to this heading"></a></h2>
-<p>On the <a class="reference external" href="https://github.com/byuccl/spydrnet/actions">byuccl/spydrnet</a> page, navigate to the &quot;Actions&quot; tab. From there, you should be able to select the &quot;Pylint&quot; workflow and view all jobs within that workflow. Open up a job, and then find the &quot;Analysing the code with pylint&quot; tab. Here, all pylint output can be found for each push done for the repository.</p>
+<p>On the <a class="reference external" href="https://github.com/byuccl/spydrnet/actions">byuccl/spydrnet</a> page, navigate to the “Actions” tab. From there, you should be able to select the “Pylint” workflow and view all jobs within that workflow. Open up a job, and then find the “Analysing the code with pylint” tab. Here, all pylint output can be found for each push done for the repository.</p>
 </section>
 </section>
 

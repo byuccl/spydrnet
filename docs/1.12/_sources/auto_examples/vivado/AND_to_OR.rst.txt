@@ -103,23 +103,18 @@ After making this configuration, the new netlist will be composed twice, showing
 
 .. _sphx_glr_download_auto_examples_vivado_AND_to_OR.py:
 
+.. only:: html
 
-.. only :: html
-
- .. container:: sphx-glr-footer
-    :class: sphx-glr-footer-example
+  .. container:: sphx-glr-footer sphx-glr-footer-example
 
 
+    .. container:: sphx-glr-download sphx-glr-download-python
 
-  .. container:: sphx-glr-download sphx-glr-download-python
+      :download:`Download Python source code: AND_to_OR.py <AND_to_OR.py>`
 
-     :download:`Download Python source code: AND_to_OR.py <AND_to_OR.py>`
+    .. container:: sphx-glr-download sphx-glr-download-jupyter
 
-
-
-  .. container:: sphx-glr-download sphx-glr-download-jupyter
-
-     :download:`Download Jupyter notebook: AND_to_OR.ipynb <AND_to_OR.ipynb>`
+      :download:`Download Jupyter notebook: AND_to_OR.ipynb <AND_to_OR.ipynb>`
 
 
 .. only:: html

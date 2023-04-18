@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting Started with SpyDrNet &mdash; SpyDrNet 1.12.2 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Reference" href="../reference/index.html" />
+    <link rel="prev" title="Overview" href="tutorial.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> SpyDrNet
+          </a>
+              <div class="version">
+                1.12
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html">Overview</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Getting Started with SpyDrNet</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#parsing">Parsing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#composing">Composing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../auto_examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SpyDrNet</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Tutorial</a></li>
+      <li class="breadcrumb-item active">Getting Started with SpyDrNet</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/overview/start.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="getting-started-with-spydrnet">
+<h1>Getting Started with SpyDrNet<a class="headerlink" href="#getting-started-with-spydrnet" title="Permalink to this heading"></a></h1>
+<p>SpyDrNet was originally built for EDF netlist, but has since been expanded to Verilog and EBLIF netlists.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Note</dt><dd><p>This guide makes references to SpyDrNet TMR</p>
+</dd>
+</dl>
+</li>
+</ul>
+<section id="parsing">
+<h2>Parsing<a class="headerlink" href="#parsing" title="Permalink to this heading"></a></h2>
+<p><strong>Default parsing arguments</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">parse(filename,</span> <span class="pre">architecture=None):</span></code></p>
+<p>filename</p>
+<ul class="simple">
+<li><p>Name of the file that is being parsed</p></li>
+</ul>
+<p>architecture</p>
+<ul class="simple">
+<li><p>Desired board architecture</p></li>
+</ul>
+<p><strong>General structure</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">netlist</span> <span class="pre">=</span> <span class="pre">sdn.parse(filename,</span> <span class="pre">...)</span></code></p>
+<p><strong>Basic structure for Verilog netlist</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">netlist</span> <span class="pre">=</span> <span class="pre">sdn.parse(&quot;filename.v&quot;,</span> <span class="pre">architecture=XILINX_7SERIES)</span></code></p>
+<p><strong>Basic structure for EDF netlists</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">netlist</span> <span class="pre">=</span> <span class="pre">sdn.parse(&quot;filename.edf&quot;)</span></code></p>
+<p><em>edf usually only needs the filename and not the other arguments</em></p>
+</section>
+<section id="composing">
+<h2>Composing<a class="headerlink" href="#composing" title="Permalink to this heading"></a></h2>
+<p><strong>Default composing arguments</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">compose(netlist,</span> <span class="pre">filename,</span> <span class="pre">voters=[],</span> <span class="pre">definition_list=[],</span> <span class="pre">write_blackbox=True,</span> <span class="pre">write_eblif_cname=True,</span> <span class="pre">defparam=False):</span></code></p>
+<p>netlist</p>
+<ul class="simple">
+<li><p>Netlist that was parsed in / replicated / changed</p></li>
+</ul>
+<p>filename</p>
+<ul class="simple">
+<li><p>Desired output name of netlist</p></li>
+</ul>
+<p>voters</p>
+<ul class="simple">
+<li><p>List of voters that was created in script <em>this is only needed for verilog netlists</em></p></li>
+</ul>
+<p>definition_list</p>
+<ul class="simple">
+<li><p>List of definitions to write</p></li>
+</ul>
+<p>write_blackbox</p>
+<ul class="simple">
+<li><p>Flag that skips writing black boxes/verilog primitives</p></li>
+</ul>
+<p>write_eblif_cname</p>
+<ul class="simple">
+<li><p>Flag</p></li>
+</ul>
+<p>defparam</p>
+<ul class="simple">
+<li><p>Flag that composes parameters in <em>defparam</em> statements instead of using #()</p></li>
+</ul>
+<p><strong>General structure</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">netlist.compose(filename,</span> <span class="pre">...)</span></code></p>
+<p><strong>Basic structure for Verilog netlist</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">netlist.compose(&quot;filename_tmr.v&quot;,</span> <span class="pre">voters,</span> <span class="pre">reinsert_space=True)</span></code></p>
+<p><strong>Basic structure for EDF netlists</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">netlist.compose(&quot;filename_tmr.edf&quot;)</span></code></p>
+<p><em>edf usually only needs the filename and not the other arguments</em></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tutorial.html" class="btn btn-neutral float-left" title="Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../reference/index.html" class="btn btn-neutral float-right" title="Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Brigham Young Universitiy.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

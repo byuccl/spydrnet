@@ -51,8 +51,6 @@ full hierarchical path when referencing the instances.
 
 .. rst-class:: sphx-glr-script-out
 
- Out:
-
  .. code-block:: none
 
     Total nodes in connectivity_graph with top_level_ports 114
@@ -300,28 +298,23 @@ full hierarchical path when referencing the instances.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.057 seconds)
+   **Total running time of the script:** ( 0 minutes  0.055 seconds)
 
 
 .. _sphx_glr_download_auto_examples_extended_plot_connectivity_graph.py:
 
+.. only:: html
 
-.. only :: html
-
- .. container:: sphx-glr-footer
-    :class: sphx-glr-footer-example
+  .. container:: sphx-glr-footer sphx-glr-footer-example
 
 
+    .. container:: sphx-glr-download sphx-glr-download-python
 
-  .. container:: sphx-glr-download sphx-glr-download-python
+      :download:`Download Python source code: plot_connectivity_graph.py <plot_connectivity_graph.py>`
 
-     :download:`Download Python source code: plot_connectivity_graph.py <plot_connectivity_graph.py>`
+    .. container:: sphx-glr-download sphx-glr-download-jupyter
 
-
-
-  .. container:: sphx-glr-download sphx-glr-download-jupyter
-
-     :download:`Download Jupyter notebook: plot_connectivity_graph.ipynb <plot_connectivity_graph.ipynb>`
+      :download:`Download Jupyter notebook: plot_connectivity_graph.ipynb <plot_connectivity_graph.ipynb>`
 
 
 .. only:: html

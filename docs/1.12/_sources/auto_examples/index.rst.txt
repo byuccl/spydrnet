@@ -1,26 +1,31 @@
 :orphan:
 
-
+.. _sec:examples:
 
 .. _sphx_glr_auto_examples:
-
-.. _sec:examples:
 
 Examples
 ========
 
 A collection of examples to introduce the functionality, features, and uses of SpyDrNet. 
 
+
 .. raw:: html
 
-    <div class="sphx-glr-clear"></div>
+    <div class="sphx-glr-thumbnails">
 
 
+.. raw:: html
 
-.. _sphx_glr_auto_examples_basic:
+    </div>
 
 Basic
 -----
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
 
 
 .. raw:: html
@@ -29,20 +34,16 @@ Basic
 
 .. only:: html
 
- .. figure:: /auto_examples/basic/images/thumb/sphx_glr_built_in_libraries_thumb.png
-     :alt: Using Built-In Primitive Libraries
+  .. image:: /auto_examples/basic/images/thumb/sphx_glr_built_in_libraries_thumb.png
+    :alt: Using Built-In Primitive Libraries
 
-     :ref:`sphx_glr_auto_examples_basic_built_in_libraries.py`
+  :ref:`sphx_glr_auto_examples_basic_built_in_libraries.py`
 
 .. raw:: html
 
+      <div class="sphx-glr-thumbnail-title">Using Built-In Primitive Libraries</div>
     </div>
 
-
-.. toctree::
-   :hidden:
-
-   /auto_examples/basic/built_in_libraries
 
 .. raw:: html
 
@@ -50,20 +51,16 @@ Basic
 
 .. only:: html
 
- .. figure:: /auto_examples/basic/images/thumb/sphx_glr_using_extensions_thumb.png
-     :alt: Using Extensions
+  .. image:: /auto_examples/basic/images/thumb/sphx_glr_using_extensions_thumb.png
+    :alt: Using Extensions
 
-     :ref:`sphx_glr_auto_examples_basic_using_extensions.py`
+  :ref:`sphx_glr_auto_examples_basic_using_extensions.py`
 
 .. raw:: html
 
+      <div class="sphx-glr-thumbnail-title">Using Extensions</div>
     </div>
 
-
-.. toctree::
-   :hidden:
-
-   /auto_examples/basic/using_extensions
 
 .. raw:: html
 
@@ -71,20 +68,16 @@ Basic
 
 .. only:: html
 
- .. figure:: /auto_examples/basic/images/thumb/sphx_glr_plot_stat_thumb.png
-     :alt: Traversal and Statistics of a Netlist
+  .. image:: /auto_examples/basic/images/thumb/sphx_glr_plot_stat_thumb.png
+    :alt: Traversal and Statistics of a Netlist
 
-     :ref:`sphx_glr_auto_examples_basic_plot_stat.py`
+  :ref:`sphx_glr_auto_examples_basic_plot_stat.py`
 
 .. raw:: html
 
+      <div class="sphx-glr-thumbnail-title">Traversal and Statistics of a Netlist</div>
     </div>
 
-
-.. toctree::
-   :hidden:
-
-   /auto_examples/basic/plot_stat
 
 .. raw:: html
 
@@ -92,20 +85,16 @@ Basic
 
 .. only:: html
 
- .. figure:: /auto_examples/basic/images/thumb/sphx_glr_display_info_thumb.png
-     :alt: Display Netlist Information Functions
+  .. image:: /auto_examples/basic/images/thumb/sphx_glr_display_info_thumb.png
+    :alt: Display Netlist Information Functions
 
-     :ref:`sphx_glr_auto_examples_basic_display_info.py`
+  :ref:`sphx_glr_auto_examples_basic_display_info.py`
 
 .. raw:: html
 
+      <div class="sphx-glr-thumbnail-title">Display Netlist Information Functions</div>
     </div>
 
-
-.. toctree::
-   :hidden:
-
-   /auto_examples/basic/display_info
 
 .. raw:: html
 
@@ -113,30 +102,28 @@ Basic
 
 .. only:: html
 
- .. figure:: /auto_examples/basic/images/thumb/sphx_glr_minimal_thumb.png
-     :alt: Minimal Script
+  .. image:: /auto_examples/basic/images/thumb/sphx_glr_minimal_thumb.png
+    :alt: Minimal Script
 
-     :ref:`sphx_glr_auto_examples_basic_minimal.py`
+  :ref:`sphx_glr_auto_examples_basic_minimal.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Minimal Script</div>
+    </div>
+
 
 .. raw:: html
 
     </div>
 
-
-.. toctree::
-   :hidden:
-
-   /auto_examples/basic/minimal
-.. raw:: html
-
-    <div class="sphx-glr-clear"></div>
-
-
-
-.. _sphx_glr_auto_examples_extended:
-
 Extended
 -------------
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
 
 
 .. raw:: html
@@ -145,20 +132,16 @@ Extended
 
 .. only:: html
 
- .. figure:: /auto_examples/extended/images/thumb/sphx_glr_plot_single_use_definitions_thumb.png
-     :alt: Make Instances Unique
+  .. image:: /auto_examples/extended/images/thumb/sphx_glr_plot_single_use_definitions_thumb.png
+    :alt: Make Instances Unique
 
-     :ref:`sphx_glr_auto_examples_extended_plot_single_use_definitions.py`
+  :ref:`sphx_glr_auto_examples_extended_plot_single_use_definitions.py`
 
 .. raw:: html
 
+      <div class="sphx-glr-thumbnail-title">Make Instances Unique</div>
     </div>
 
-
-.. toctree::
-   :hidden:
-
-   /auto_examples/extended/plot_single_use_definitions
 
 .. raw:: html
 
@@ -166,20 +149,16 @@ Extended
 
 .. only:: html
 
- .. figure:: /auto_examples/extended/images/thumb/sphx_glr_plot_four_to_five_bit_counter_thumb.png
-     :alt: Four Bit Counter To Five Bit Counter
+  .. image:: /auto_examples/extended/images/thumb/sphx_glr_plot_four_to_five_bit_counter_thumb.png
+    :alt: Four Bit Counter To Five Bit Counter
 
-     :ref:`sphx_glr_auto_examples_extended_plot_four_to_five_bit_counter.py`
+  :ref:`sphx_glr_auto_examples_extended_plot_four_to_five_bit_counter.py`
 
 .. raw:: html
 
+      <div class="sphx-glr-thumbnail-title">Four Bit Counter To Five Bit Counter</div>
     </div>
 
-
-.. toctree::
-   :hidden:
-
-   /auto_examples/extended/plot_four_to_five_bit_counter
 
 .. raw:: html
 
@@ -187,20 +166,16 @@ Extended
 
 .. only:: html
 
- .. figure:: /auto_examples/extended/images/thumb/sphx_glr_plot_flatten_thumb.png
-     :alt: Flatten A Netlist
+  .. image:: /auto_examples/extended/images/thumb/sphx_glr_plot_flatten_thumb.png
+    :alt: Flatten A Netlist
 
-     :ref:`sphx_glr_auto_examples_extended_plot_flatten.py`
+  :ref:`sphx_glr_auto_examples_extended_plot_flatten.py`
 
 .. raw:: html
 
+      <div class="sphx-glr-thumbnail-title">Flatten A Netlist</div>
     </div>
 
-
-.. toctree::
-   :hidden:
-
-   /auto_examples/extended/plot_flatten
 
 .. raw:: html
 
@@ -208,30 +183,28 @@ Extended
 
 .. only:: html
 
- .. figure:: /auto_examples/extended/images/thumb/sphx_glr_plot_connectivity_graph_thumb.png
-     :alt: Connectivity Graph
+  .. image:: /auto_examples/extended/images/thumb/sphx_glr_plot_connectivity_graph_thumb.png
+    :alt: Connectivity Graph
 
-     :ref:`sphx_glr_auto_examples_extended_plot_connectivity_graph.py`
+  :ref:`sphx_glr_auto_examples_extended_plot_connectivity_graph.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Connectivity Graph</div>
+    </div>
+
 
 .. raw:: html
 
     </div>
 
-
-.. toctree::
-   :hidden:
-
-   /auto_examples/extended/plot_connectivity_graph
-.. raw:: html
-
-    <div class="sphx-glr-clear"></div>
-
-
-
-.. _sphx_glr_auto_examples_vivado:
-
 Vivado
 ------
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
 
 
 .. raw:: html
@@ -240,20 +213,16 @@ Vivado
 
 .. only:: html
 
- .. figure:: /auto_examples/vivado/images/thumb/sphx_glr_vivado_netlist_thumb.png
-     :alt: Create/View a Netlist with Vivado
+  .. image:: /auto_examples/vivado/images/thumb/sphx_glr_vivado_netlist_thumb.png
+    :alt: Create/View a Netlist with Vivado
 
-     :ref:`sphx_glr_auto_examples_vivado_vivado_netlist.py`
+  :ref:`sphx_glr_auto_examples_vivado_vivado_netlist.py`
 
 .. raw:: html
 
+      <div class="sphx-glr-thumbnail-title">Create/View a Netlist with Vivado</div>
     </div>
 
-
-.. toctree::
-   :hidden:
-
-   /auto_examples/vivado/vivado_netlist
 
 .. raw:: html
 
@@ -261,20 +230,16 @@ Vivado
 
 .. only:: html
 
- .. figure:: /auto_examples/vivado/images/thumb/sphx_glr_AND_to_OR_thumb.png
-     :alt: Modify Netlist with SpyDrNet
+  .. image:: /auto_examples/vivado/images/thumb/sphx_glr_AND_to_OR_thumb.png
+    :alt: Modify Netlist with SpyDrNet
 
-     :ref:`sphx_glr_auto_examples_vivado_AND_to_OR.py`
+  :ref:`sphx_glr_auto_examples_vivado_AND_to_OR.py`
 
 .. raw:: html
 
+      <div class="sphx-glr-thumbnail-title">Modify Netlist with SpyDrNet</div>
     </div>
 
-
-.. toctree::
-   :hidden:
-
-   /auto_examples/vivado/AND_to_OR
 
 .. raw:: html
 
@@ -282,10 +247,16 @@ Vivado
 
 .. only:: html
 
- .. figure:: /auto_examples/vivado/images/thumb/sphx_glr_LUT_builder_thumb.png
-     :alt: Create Netlist with SpyDrNet
+  .. image:: /auto_examples/vivado/images/thumb/sphx_glr_LUT_builder_thumb.png
+    :alt: Create Netlist with SpyDrNet
 
-     :ref:`sphx_glr_auto_examples_vivado_LUT_builder.py`
+  :ref:`sphx_glr_auto_examples_vivado_LUT_builder.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Create Netlist with SpyDrNet</div>
+    </div>
+
 
 .. raw:: html
 
@@ -294,29 +265,24 @@ Vivado
 
 .. toctree::
    :hidden:
+   :includehidden:
 
-   /auto_examples/vivado/LUT_builder
-.. raw:: html
-
-    <div class="sphx-glr-clear"></div>
-
-
-
-.. only :: html
-
- .. container:: sphx-glr-footer
-    :class: sphx-glr-footer-gallery
+   /auto_examples/basic/index.rst
+   /auto_examples/extended/index.rst
+   /auto_examples/vivado/index.rst
 
 
-  .. container:: sphx-glr-download sphx-glr-download-python
+.. only:: html
 
-    :download:`Download all examples in Python source code: auto_examples_python.zip </auto_examples/auto_examples_python.zip>`
+  .. container:: sphx-glr-footer sphx-glr-footer-gallery
 
+    .. container:: sphx-glr-download sphx-glr-download-python
 
+      :download:`Download all examples in Python source code: auto_examples_python.zip </auto_examples/auto_examples_python.zip>`
 
-  .. container:: sphx-glr-download sphx-glr-download-jupyter
+    .. container:: sphx-glr-download sphx-glr-download-jupyter
 
-    :download:`Download all examples in Jupyter notebooks: auto_examples_jupyter.zip </auto_examples/auto_examples_jupyter.zip>`
+      :download:`Download all examples in Jupyter notebooks: auto_examples_jupyter.zip </auto_examples/auto_examples_jupyter.zip>`
 
 
 .. only:: html

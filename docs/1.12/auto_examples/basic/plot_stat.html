@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="English" >
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Traversal and Statistics of a Netlist &mdash; SpyDrNet 1.12.1 documentation</title>
+  <title>Traversal and Statistics of a Netlist &mdash; SpyDrNet 1.12.2 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
@@ -48,22 +48,27 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/index.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Reference</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">Examples</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../index.html#basic">Basic</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="built_in_libraries.html">Using Built-In Primitive Libraries</a></li>
-<li class="toctree-l3"><a class="reference internal" href="using_extensions.html">Using Extensions</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Traversal and Statistics of a Netlist</a></li>
-<li class="toctree-l3"><a class="reference internal" href="display_info.html">Display Netlist Information Functions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="minimal.html">Minimal Script</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#basic">Basic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#extended">Extended</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../index.html#vivado">Vivado</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#vivado">Vivado</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">Basic</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="built_in_libraries.html">Using Built-In Primitive Libraries</a></li>
+<li class="toctree-l4"><a class="reference internal" href="using_extensions.html">Using Extensions</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Traversal and Statistics of a Netlist</a></li>
+<li class="toctree-l4"><a class="reference internal" href="display_info.html">Display Netlist Information Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="minimal.html">Minimal Script</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer's Guide</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../extended/index.html">Extended</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../vivado/index.html">Vivado</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer’s Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../credits.html">Credits</a></li>
 </ul>
@@ -81,9 +86,10 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Examples</a> &raquo;</li>
-      <li>Traversal and Statistics of a Netlist</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Examples</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Basic</a></li>
+      <li class="breadcrumb-item active">Traversal and Statistics of a Netlist</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/auto_examples/basic/plot_stat.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -101,7 +107,6 @@ to download the full example code</p>
 <section class="sphx-glr-example-title" id="traversal-and-statistics-of-a-netlist">
 <span id="sphx-glr-auto-examples-basic-plot-stat-py"></span><h1>Traversal and Statistics of a Netlist<a class="headerlink" href="#traversal-and-statistics-of-a-netlist" title="Permalink to this heading"></a></h1>
 <p>Traverse a netlist and collect statistics on the netlist.</p>
-<p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Netlist stats
 Top instance: fourBitCounter
 2 libraries detected
@@ -383,8 +388,8 @@ Library name: work
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t\t\t</span><span class="s2">Number of wires:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">cable</span><span class="o">.</span><span class="n">wires</span><span class="p">))</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.024 seconds)</p>
-<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-basic-plot-stat-py">
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.014 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-basic-plot-stat-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/82ade89067d73b45dd228271a29ad35c/plot_stat.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_stat.py</span></code></a></p>
 </div>

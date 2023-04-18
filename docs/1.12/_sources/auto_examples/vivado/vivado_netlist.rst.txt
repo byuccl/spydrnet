@@ -84,23 +84,18 @@ To further interact with the netlist schematic, try clicking on the "Netlist" ta
 
 .. _sphx_glr_download_auto_examples_vivado_vivado_netlist.py:
 
+.. only:: html
 
-.. only :: html
-
- .. container:: sphx-glr-footer
-    :class: sphx-glr-footer-example
+  .. container:: sphx-glr-footer sphx-glr-footer-example
 
 
+    .. container:: sphx-glr-download sphx-glr-download-python
 
-  .. container:: sphx-glr-download sphx-glr-download-python
+      :download:`Download Python source code: vivado_netlist.py <vivado_netlist.py>`
 
-     :download:`Download Python source code: vivado_netlist.py <vivado_netlist.py>`
+    .. container:: sphx-glr-download sphx-glr-download-jupyter
 
-
-
-  .. container:: sphx-glr-download sphx-glr-download-jupyter
-
-     :download:`Download Jupyter notebook: vivado_netlist.ipynb <vivado_netlist.ipynb>`
+      :download:`Download Jupyter notebook: vivado_netlist.ipynb <vivado_netlist.ipynb>`
 
 
 .. only:: html

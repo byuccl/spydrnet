@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="English" >
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>spydrnet.composers &mdash; SpyDrNet 1.12.1 documentation</title>
+  <title>spydrnet.composers &mdash; SpyDrNet 1.12.2 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
@@ -45,10 +45,10 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/index.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../auto_examples/index.html">Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer's Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer’s Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../credits.html">Credits</a></li>
 </ul>
@@ -66,9 +66,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>spydrnet.composers</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">spydrnet.composers</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -79,11 +79,12 @@
              
   <h1>Source code for spydrnet.composers</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 
-<div class="viewcode-block" id="compose"><a class="viewcode-back" href="../../reference/classes/generated/spydrnet.compose.html#spydrnet.compose">[docs]</a><span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="n">netlist</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">voters</span><span class="o">=</span><span class="p">[],</span> <span class="n">definition_list</span><span class="o">=</span><span class="p">[],</span> <span class="n">write_blackbox</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">write_eblif_cname</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">defparam</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">reinsert_space</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="compose"><a class="viewcode-back" href="../../reference/classes/generated/spydrnet.compose.html#spydrnet.compose">[docs]</a><span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="n">netlist</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">voters</span><span class="o">=</span><span class="p">[],</span> <span class="n">definition_list</span><span class="o">=</span><span class="p">[],</span> <span class="n">write_blackbox</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">write_eblif_cname</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">defparam</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;To compose a file into a netlist format&quot;&quot;&quot;</span>
-    <span class="n">extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">extension</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span>
     <span class="n">extension_lower</span> <span class="o">=</span> <span class="n">extension</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">extension_lower</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;.edf&quot;</span><span class="p">,</span> <span class="s2">&quot;.edif&quot;</span><span class="p">}:</span>
         <span class="kn">from</span> <span class="nn">spydrnet.composers.edif.composer</span> <span class="kn">import</span> <span class="n">ComposeEdif</span>
@@ -92,9 +93,6 @@
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;netlist.name undefined&quot;</span><span class="p">)</span>
         <span class="n">composer</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">netlist</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">extension_lower</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;.v&quot;</span><span class="p">,</span> <span class="s2">&quot;.vh&quot;</span><span class="p">,</span> <span class="s2">&quot;.vm&quot;</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="n">reinsert_space</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">spydrnet.util.reinsert_space</span> <span class="kn">import</span> <span class="n">reinserting_space</span>
-            <span class="n">reinserting_space</span><span class="p">(</span><span class="n">netlist</span><span class="p">,</span> <span class="n">voters</span><span class="p">)</span>
         <span class="kn">from</span> <span class="nn">spydrnet.composers.verilog.composer</span> <span class="kn">import</span> <span class="n">Composer</span>
         <span class="n">composer</span> <span class="o">=</span> <span class="n">Composer</span><span class="p">(</span><span class="n">definition_list</span><span class="p">,</span> <span class="n">write_blackbox</span><span class="p">,</span> <span class="n">defparam</span><span class="p">)</span>
         <span class="n">composer</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">netlist</span><span class="p">,</span> <span class="n">file_out</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>

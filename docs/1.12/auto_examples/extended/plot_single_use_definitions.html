@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="English" >
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Make Instances Unique &mdash; SpyDrNet 1.12.1 documentation</title>
+  <title>Make Instances Unique &mdash; SpyDrNet 1.12.2 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
@@ -25,7 +25,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Four Bit Counter To Five Bit Counter" href="plot_four_to_five_bit_counter.html" />
-    <link rel="prev" title="Minimal Script" href="../basic/minimal.html" /> 
+    <link rel="prev" title="Extended" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -48,21 +48,26 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/index.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Reference</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">Examples</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../index.html#basic">Basic</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../index.html#extended">Extended</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Make Instances Unique</a></li>
-<li class="toctree-l3"><a class="reference internal" href="plot_four_to_five_bit_counter.html">Four Bit Counter To Five Bit Counter</a></li>
-<li class="toctree-l3"><a class="reference internal" href="plot_flatten.html">Flatten A Netlist</a></li>
-<li class="toctree-l3"><a class="reference internal" href="plot_connectivity_graph.html">Connectivity Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#extended">Extended</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#vivado">Vivado</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../basic/index.html">Basic</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">Extended</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Make Instances Unique</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_four_to_five_bit_counter.html">Four Bit Counter To Five Bit Counter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_flatten.html">Flatten A Netlist</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_connectivity_graph.html">Connectivity Graph</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../index.html#vivado">Vivado</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../vivado/index.html">Vivado</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer's Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer’s Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../credits.html">Credits</a></li>
 </ul>
@@ -80,9 +85,10 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Examples</a> &raquo;</li>
-      <li>Make Instances Unique</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Examples</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Extended</a></li>
+      <li class="breadcrumb-item active">Make Instances Unique</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/auto_examples/extended/plot_single_use_definitions.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -99,8 +105,7 @@ to download the full example code</p>
 </div>
 <section class="sphx-glr-example-title" id="make-instances-unique">
 <span id="sphx-glr-auto-examples-extended-plot-single-use-definitions-py"></span><h1>Make Instances Unique<a class="headerlink" href="#make-instances-unique" title="Permalink to this heading"></a></h1>
-<p>Creates definitions for non-leaf instances so each instance has its own definition. Each library in both the original and the uniquified netlist will be printed along with each's definitions.</p>
-<p class="sphx-glr-script-out">Out:</p>
+<p>Creates definitions for non-leaf instances so each instance has its own definition. Each library in both the original and the uniquified netlist will be printed along with each’s definitions.</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>ORIGINAL
    DEFINITIONS IN &#39; hdi_primitives &#39;: [&#39;LUT2&#39;, &#39;LUT3&#39;, &#39;IBUF&#39;, &#39;OBUF&#39;, &#39;INV&#39;]
    DEFINITIONS IN &#39; work &#39;: [&#39;c&#39;, &#39;b&#39;, &#39;a&#39;, &#39;top&#39;]
@@ -112,10 +117,10 @@ UNIQUE
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">import</span> <span class="nn">spydrnet</span> <span class="k">as</span> <span class="nn">sdn</span>
 <span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 
 <span class="c1"># Check if given instance is a black box</span>
@@ -295,7 +300,7 @@ UNIQUE
 
 <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">td</span><span class="p">:</span>
     <span class="n">file_name</span> <span class="o">=</span> <span class="n">example_name</span> <span class="o">+</span> <span class="s1">&#39;_unique.edf&#39;</span>
-    <span class="n">sdn</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span><span class="n">ir</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">td</span><span class="p">,</span> <span class="n">file_name</span><span class="p">))</span>
+    <span class="n">sdn</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span><span class="n">ir</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">td</span><span class="p">,</span> <span class="n">file_name</span><span class="p">))</span>
 
 <span class="c1">#show the original netlist with its definitions and the new netlist with each instance now as a unique definition</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ORIGINAL&quot;</span><span class="p">)</span>
@@ -304,8 +309,8 @@ UNIQUE
 <span class="n">libraries_definitions</span><span class="p">(</span><span class="n">ir</span><span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.054 seconds)</p>
-<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-extended-plot-single-use-definitions-py">
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.057 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-extended-plot-single-use-definitions-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/a3c58d31cb1d622603913c9a1f7e5bea/plot_single_use_definitions.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_single_use_definitions.py</span></code></a></p>
 </div>
@@ -320,7 +325,7 @@ UNIQUE
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../basic/minimal.html" class="btn btn-neutral float-left" title="Minimal Script" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Extended" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="plot_four_to_five_bit_counter.html" class="btn btn-neutral float-right" title="Four Bit Counter To Five Bit Counter" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

@@ -24,7 +24,7 @@ Minimal Script
 
 Builds a netlist from scratch
 
-.. GENERATED FROM PYTHON SOURCE LINES 8-94
+.. GENERATED FROM PYTHON SOURCE LINES 8-99
 
 .. code-block:: default
 
@@ -114,6 +114,11 @@ Builds a netlist from scratch
     wire_o.connect_pin(pin_widget_o)
     wire_o.connect_pin(inst_or2.pins[pin_or2_q])
 
+    temp = next(netlist.libraries[0].get_instances("and2_1"),None)  
+    print("Instance:",temp.name)  
+    print("Reference:",temp.reference.name)  
+    print("Parent:",temp.parent.name)  
+
     sdn.compose(netlist, 'test.edf')
 
 .. rst-class:: sphx-glr-timing
@@ -123,23 +128,18 @@ Builds a netlist from scratch
 
 .. _sphx_glr_download_auto_examples_basic_minimal.py:
 
+.. only:: html
 
-.. only :: html
-
- .. container:: sphx-glr-footer
-    :class: sphx-glr-footer-example
+  .. container:: sphx-glr-footer sphx-glr-footer-example
 
 
+    .. container:: sphx-glr-download sphx-glr-download-python
 
-  .. container:: sphx-glr-download sphx-glr-download-python
+      :download:`Download Python source code: minimal.py <minimal.py>`
 
-     :download:`Download Python source code: minimal.py <minimal.py>`
+    .. container:: sphx-glr-download sphx-glr-download-jupyter
 
-
-
-  .. container:: sphx-glr-download sphx-glr-download-jupyter
-
-     :download:`Download Jupyter notebook: minimal.ipynb <minimal.ipynb>`
+      :download:`Download Jupyter notebook: minimal.ipynb <minimal.ipynb>`
 
 
 .. only:: html

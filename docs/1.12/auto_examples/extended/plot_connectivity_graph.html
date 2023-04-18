@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="English" >
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Connectivity Graph &mdash; SpyDrNet 1.12.1 documentation</title>
+  <title>Connectivity Graph &mdash; SpyDrNet 1.12.2 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
@@ -24,7 +24,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Create/View a Netlist with Vivado" href="../vivado/vivado_netlist.html" />
+    <link rel="next" title="Vivado" href="../vivado/index.html" />
     <link rel="prev" title="Flatten A Netlist" href="plot_flatten.html" /> 
 </head>
 
@@ -48,21 +48,26 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/index.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Reference</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">Examples</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../index.html#basic">Basic</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../index.html#extended">Extended</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="plot_single_use_definitions.html">Make Instances Unique</a></li>
-<li class="toctree-l3"><a class="reference internal" href="plot_four_to_five_bit_counter.html">Four Bit Counter To Five Bit Counter</a></li>
-<li class="toctree-l3"><a class="reference internal" href="plot_flatten.html">Flatten A Netlist</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Connectivity Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#extended">Extended</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#vivado">Vivado</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../basic/index.html">Basic</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">Extended</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="plot_single_use_definitions.html">Make Instances Unique</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_four_to_five_bit_counter.html">Four Bit Counter To Five Bit Counter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_flatten.html">Flatten A Netlist</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Connectivity Graph</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../index.html#vivado">Vivado</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../vivado/index.html">Vivado</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer's Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer’s Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../credits.html">Credits</a></li>
 </ul>
@@ -80,9 +85,10 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Examples</a> &raquo;</li>
-      <li>Connectivity Graph</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Examples</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Extended</a></li>
+      <li class="breadcrumb-item active">Connectivity Graph</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/auto_examples/extended/plot_connectivity_graph.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -117,7 +123,6 @@ for a non-leaf definition, (i.e. a definition that instances other definitions),
 scenario, instances within the non-leaf definition are not unique. Uniqueness can be guaranteed by including the
 hierarchical path when referencing the desired instance. Accordingly, a lightweight object is created to preserve the
 full hierarchical path when referencing the instances.</p>
-<p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Total nodes in connectivity_graph with top_level_ports 114
 Total edges in connectivity_graph with top_level_ports 498
 Total nodes in connectivity_graph without top_level_ports 102
@@ -356,8 +361,8 @@ Total edges in connectivity_graph without top_level_ports 362
 <span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.057 seconds)</p>
-<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-extended-plot-connectivity-graph-py">
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.055 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-extended-plot-connectivity-graph-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/407ab0b005ed6588e6c7e6fd7177505a/plot_connectivity_graph.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_connectivity_graph.py</span></code></a></p>
 </div>
@@ -373,7 +378,7 @@ Total edges in connectivity_graph without top_level_ports 362
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="plot_flatten.html" class="btn btn-neutral float-left" title="Flatten A Netlist" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../vivado/vivado_netlist.html" class="btn btn-neutral float-right" title="Create/View a Netlist with Vivado" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../vivado/index.html" class="btn btn-neutral float-right" title="Vivado" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

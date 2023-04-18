@@ -88,23 +88,18 @@ We can also simply print lists of the attributes and methods found in each class
 
 .. _sphx_glr_download_auto_examples_basic_using_extensions.py:
 
+.. only:: html
 
-.. only :: html
-
- .. container:: sphx-glr-footer
-    :class: sphx-glr-footer-example
+  .. container:: sphx-glr-footer sphx-glr-footer-example
 
 
+    .. container:: sphx-glr-download sphx-glr-download-python
 
-  .. container:: sphx-glr-download sphx-glr-download-python
+      :download:`Download Python source code: using_extensions.py <using_extensions.py>`
 
-     :download:`Download Python source code: using_extensions.py <using_extensions.py>`
+    .. container:: sphx-glr-download sphx-glr-download-jupyter
 
-
-
-  .. container:: sphx-glr-download sphx-glr-download-jupyter
-
-     :download:`Download Jupyter notebook: using_extensions.ipynb <using_extensions.ipynb>`
+      :download:`Download Jupyter notebook: using_extensions.ipynb <using_extensions.ipynb>`
 
 
 .. only:: html

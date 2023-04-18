@@ -1,0 +1,76 @@
+
+
+.. _sphx_glr_auto_examples_vivado:
+
+Vivado
+------
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example walks through the process of creating and viewing a netlist within Vivado.">
+
+.. only:: html
+
+  .. image:: /auto_examples/vivado/images/thumb/sphx_glr_vivado_netlist_thumb.png
+    :alt: Create/View a Netlist with Vivado
+
+  :ref:`sphx_glr_auto_examples_vivado_vivado_netlist.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Create/View a Netlist with Vivado</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how SpyDrNet can parse in a netlist, modify it, and compose a new netlist.">
+
+.. only:: html
+
+  .. image:: /auto_examples/vivado/images/thumb/sphx_glr_AND_to_OR_thumb.png
+    :alt: Modify Netlist with SpyDrNet
+
+  :ref:`sphx_glr_auto_examples_vivado_AND_to_OR.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Modify Netlist with SpyDrNet</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Builds a netlist with a lookup table and HDI primitives from scratch ready to be used for a &quot;po...">
+
+.. only:: html
+
+  .. image:: /auto_examples/vivado/images/thumb/sphx_glr_LUT_builder_thumb.png
+    :alt: Create Netlist with SpyDrNet
+
+  :ref:`sphx_glr_auto_examples_vivado_LUT_builder.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Create Netlist with SpyDrNet</div>
+    </div>
+
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/vivado/vivado_netlist
+   /auto_examples/vivado/AND_to_OR
+   /auto_examples/vivado/LUT_builder
+

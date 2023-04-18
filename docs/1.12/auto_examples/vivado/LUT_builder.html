@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="English" >
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Create Netlist with SpyDrNet &mdash; SpyDrNet 1.12.1 documentation</title>
+  <title>Create Netlist with SpyDrNet &mdash; SpyDrNet 1.12.2 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
@@ -24,7 +24,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Developer&#39;s Guide" href="../../developer/index.html" />
+    <link rel="next" title="Developer’s Guide" href="../../developer/index.html" />
     <link rel="prev" title="Modify Netlist with SpyDrNet" href="AND_to_OR.html" /> 
 </head>
 
@@ -48,20 +48,25 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/index.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Reference</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">Examples</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../index.html#basic">Basic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#extended">Extended</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../index.html#vivado">Vivado</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="vivado_netlist.html">Create/View a Netlist with Vivado</a></li>
-<li class="toctree-l3"><a class="reference internal" href="AND_to_OR.html">Modify Netlist with SpyDrNet</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Create Netlist with SpyDrNet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basic/index.html">Basic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../extended/index.html">Extended</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">Vivado</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="vivado_netlist.html">Create/View a Netlist with Vivado</a></li>
+<li class="toctree-l4"><a class="reference internal" href="AND_to_OR.html">Modify Netlist with SpyDrNet</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Create Netlist with SpyDrNet</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer's Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer’s Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../credits.html">Credits</a></li>
 </ul>
@@ -79,9 +84,10 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Examples</a> &raquo;</li>
-      <li>Create Netlist with SpyDrNet</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Examples</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Vivado</a></li>
+      <li class="breadcrumb-item active">Create Netlist with SpyDrNet</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/auto_examples/vivado/LUT_builder.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -98,10 +104,10 @@ to download the full example code</p>
 </div>
 <section class="sphx-glr-example-title" id="create-netlist-with-spydrnet">
 <span id="sphx-glr-auto-examples-vivado-lut-builder-py"></span><h1>Create Netlist with SpyDrNet<a class="headerlink" href="#create-netlist-with-spydrnet" title="Permalink to this heading"></a></h1>
-<p>Builds a netlist with a lookup table and HDI primitives from scratch ready to be used for a &quot;post-synthesis&quot; project</p>
+<p>Builds a netlist with a lookup table and HDI primitives from scratch ready to be used for a “post-synthesis” project</p>
 <p>This script shows how SpyDrNet is capable of creating a real netlist that can be downloaded to an FPGA development board. This specific design is meant for Digilent development boards with Xilinx FPGAs, but should work for other FPGAs that use the same primitives.</p>
 <p>Using SpyDrNet, this script creates a netlist with a lookup table and the necessary primitive definitions to implement it on a board. The number of inputs to the lookup table and the configuration of the lookup table can be set by changing the <code class="docutils literal notranslate"><span class="pre">LUT_SIZE</span></code> and <code class="docutils literal notranslate"><span class="pre">LUT_CONFIG</span></code> variables. The configuration for the lookup table is simply the output from an n-input truth table in hexadecimal. The lookup table will use however many of the lower switches on the FPGA development board necessary for the specified number of inputs. The output will be displayed on the first LED.</p>
-<p>At the end of the script, the netlist will be composed into an EDIF netlist called <code class="docutils literal notranslate"><span class="pre">`my_LUT.edf`</span></code> that can be added as a design source to a &quot;post-synthesis&quot; project in Vivado. To better visualize what is happening, click on &quot;Open Synthesized Design&quot; and then open the &quot;Schematic&quot; to view the netlist. Once added to the project in Vivado, a simple constraints file must be added (<a class="reference external" href="https://github.com/Digilent/digilent-xdc">Digilent master XDC files can be found here</a>), and then a bitstream that can be downloaded onto a board is generated.</p>
+<p>At the end of the script, the netlist will be composed into an EDIF netlist called <code class="docutils literal notranslate"><span class="pre">`my_LUT.edf`</span></code> that can be added as a design source to a “post-synthesis” project in Vivado. To better visualize what is happening, click on “Open Synthesized Design” and then open the “Schematic” to view the netlist. Once added to the project in Vivado, a simple constraints file must be added (<a class="reference external" href="https://github.com/Digilent/digilent-xdc">Digilent master XDC files can be found here</a>), and then a bitstream that can be downloaded onto a board is generated.</p>
 <p>Below are SystemVerilog modules that will generate a 4-input LUT after synthesis. The netlist created by the included python script generates something very similar to what Vivado will generate.</p>
 <div class="highlight-sv notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">basic_LUT</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">input</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="kt">logic</span><span class="w"> </span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">D</span><span class="p">,</span><span class="w"></span>
@@ -336,7 +342,7 @@ to download the full example code</p>
 </pre></div>
 </div>
 <p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.000 seconds)</p>
-<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-vivado-lut-builder-py">
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-vivado-lut-builder-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/a50ec90c9187e1e08c9020493090ac50/LUT_builder.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">LUT_builder.py</span></code></a></p>
 </div>
@@ -352,7 +358,7 @@ to download the full example code</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="AND_to_OR.html" class="btn btn-neutral float-left" title="Modify Netlist with SpyDrNet" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../../developer/index.html" class="btn btn-neutral float-right" title="Developer&#39;s Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../../developer/index.html" class="btn btn-neutral float-right" title="Developer’s Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

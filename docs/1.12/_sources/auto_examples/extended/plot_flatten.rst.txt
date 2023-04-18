@@ -24,14 +24,12 @@ Flatten A Netlist
 
 Remove hierarchy from a netlist. The original hierarchy and new hierarchy (after flattening) will be printed.
 
-.. GENERATED FROM PYTHON SOURCE LINES 8-191
+.. GENERATED FROM PYTHON SOURCE LINES 8-190
 
 
 
 
 .. rst-class:: sphx-glr-script-out
-
- Out:
 
  .. code-block:: none
 
@@ -299,10 +297,9 @@ Remove hierarchy from a netlist. The original hierarchy and new hierarchy (after
 .. code-block:: default
 
 
-    import os
     import tempfile
     import spydrnet as sdn
-
+    from pathlib import Path
 
     # Check if given instance is a black box
     # instance: std.Instance to check
@@ -473,7 +470,7 @@ Remove hierarchy from a netlist. The original hierarchy and new hierarchy (after
 
     with tempfile.TemporaryDirectory() as td:
         file_name = example_name + '_flat.edf'
-        sdn.compose(ir, os.path.join(td, file_name))
+        sdn.compose(ir, Path(td, file_name))
 
     # sdn.composers.compose("test.edf", ir)
     print()
@@ -490,23 +487,18 @@ Remove hierarchy from a netlist. The original hierarchy and new hierarchy (after
 
 .. _sphx_glr_download_auto_examples_extended_plot_flatten.py:
 
+.. only:: html
 
-.. only :: html
-
- .. container:: sphx-glr-footer
-    :class: sphx-glr-footer-example
+  .. container:: sphx-glr-footer sphx-glr-footer-example
 
 
+    .. container:: sphx-glr-download sphx-glr-download-python
 
-  .. container:: sphx-glr-download sphx-glr-download-python
+      :download:`Download Python source code: plot_flatten.py <plot_flatten.py>`
 
-     :download:`Download Python source code: plot_flatten.py <plot_flatten.py>`
+    .. container:: sphx-glr-download sphx-glr-download-jupyter
 
-
-
-  .. container:: sphx-glr-download sphx-glr-download-jupyter
-
-     :download:`Download Jupyter notebook: plot_flatten.ipynb <plot_flatten.ipynb>`
+      :download:`Download Jupyter notebook: plot_flatten.ipynb <plot_flatten.ipynb>`
 
 
 .. only:: html

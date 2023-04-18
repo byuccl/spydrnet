@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="English" >
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to SpyDrNet! &mdash; SpyDrNet 1.12.1 documentation</title>
+  <title>Welcome to SpyDrNet! &mdash; SpyDrNet 1.12.2 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/sg_gallery.css" type="text/css" />
@@ -47,10 +47,10 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview/index.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/index.html">Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="developer/index.html">Developer's Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer/index.html">Developer’s Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
 </ul>
@@ -68,8 +68,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
-      <li>Welcome to SpyDrNet!</li>
+      <li><a href="#" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Welcome to SpyDrNet!</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -96,7 +96,7 @@
 </ul>
 <section id="simple-examples">
 <h2>Simple Examples<a class="headerlink" href="#simple-examples" title="Permalink to this heading"></a></h2>
-<p>SpyDrNet can be used to create netlists from scratch. Because it is a low-level framework, manual netlist creation can be tedious (much like writting a high level application in assembly). To assist in rapid productivity, parsers and composers are provided for common netlist formats. Currently <a class="reference external" href="https://en.wikipedia.org/wiki/EDIF">EDIF</a> and structural Verilog are supported, but the roadmap also includes structural VHDL, Verilog Quartus Mapping Files (<a class="reference external" href="https://www.intel.com/content/www/us/en/programmable/quartushelp/17.0/mapIdTopics/mwh1465406414431.htm">Intel's VQM</a>), and JSON.</p>
+<p>SpyDrNet can be used to create netlists from scratch. Because it is a low-level framework, manual netlist creation can be tedious (much like writting a high level application in assembly). To assist in rapid productivity, parsers and composers are provided for common netlist formats. Currently <a class="reference external" href="https://en.wikipedia.org/wiki/EDIF">EDIF</a> and structural Verilog are supported, but the roadmap also includes structural VHDL, Verilog Quartus Mapping Files (<a class="reference external" href="https://www.intel.com/content/www/us/en/programmable/quartushelp/17.0/mapIdTopics/mwh1465406414431.htm">Intel’s VQM</a>), and JSON.</p>
 <p><strong>Loading Example Netlists</strong></p>
 <p>Several example netlists are included with the package to introduce the framework, its features, and functionality. To list and load these netlists, modify the following example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">spydrnet</span> <span class="k">as</span> <span class="nn">sdn</span>
@@ -177,7 +177,7 @@
 </section>
 <section id="special-thanks">
 <h2>Special Thanks<a class="headerlink" href="#special-thanks" title="Permalink to this heading"></a></h2>
-<p>Special thanks is given to <a class="reference external" href="https://networkx.github.io/">NetworkX</a> - &quot;a python package for the creation, manipulation, and study of the structure, dynamics and functions of complex networks.&quot;  This mature project has been used as a template for much of SpyDrNet's documentation and code structure. It also has saved enormous effort in heavy graph analysis as a robust and complete library used to analyze the relationships between circuit nodes.</p>
+<p>Special thanks is given to <a class="reference external" href="https://networkx.github.io/">NetworkX</a> - “a python package for the creation, manipulation, and study of the structure, dynamics and functions of complex networks.”  This mature project has been used as a template for much of SpyDrNet’s documentation and code structure. It also has saved enormous effort in heavy graph analysis as a robust and complete library used to analyze the relationships between circuit nodes.</p>
 </section>
 <section id="license">
 <h2>License<a class="headerlink" href="#license" title="Permalink to this heading"></a></h2>
@@ -191,7 +191,7 @@
 <dd class="field-odd"><p>1.12</p>
 </dd>
 <dt class="field-even">Date</dt>
-<dd class="field-even"><p>Feb 09, 2023</p>
+<dd class="field-even"><p>Apr 18, 2023</p>
 </dd>
 </dl>
 <div class="toctree-wrapper compound">
@@ -202,13 +202,9 @@
 <li class="toctree-l2"><a class="reference internal" href="install.html#optional-packages">Optional Packages</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#tool-flow">Tool Flow</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#import-package">Import Package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#parsing">Parsing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#intermediate-representation-ir-basics">Intermediate Representation (IR) Basics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#modifying-netlists">Modifying Netlists</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#composing">Composing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview/index.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="overview/tutorial.html">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview/start.html">Getting Started with SpyDrNet</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="reference/index.html">Reference</a><ul>
@@ -231,7 +227,7 @@
 <li class="toctree-l2"><a class="reference internal" href="auto_examples/index.html#vivado">Vivado</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="developer/index.html">Developer's Guide</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="developer/index.html">Developer’s Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="developer/contribute.html">How to Contribute</a></li>
 <li class="toctree-l2"><a class="reference internal" href="developer/contribute.html#creating-a-release">Creating a Release</a></li>
 <li class="toctree-l2"><a class="reference internal" href="developer/repository.html">GitHub Repository</a></li>

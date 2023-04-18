@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="English" >
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>spydrnet.parsers &mdash; SpyDrNet 1.12.1 documentation</title>
+  <title>spydrnet.parsers &mdash; SpyDrNet 1.12.2 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
@@ -45,10 +45,10 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/index.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../auto_examples/index.html">Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer's Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer’s Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../credits.html">Credits</a></li>
 </ul>
@@ -66,9 +66,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>spydrnet.parsers</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">spydrnet.parsers</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -78,9 +78,9 @@
            <div itemprop="articleBody">
              
   <h1>Source code for spydrnet.parsers</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">zipfile</span>
+<span></span><span class="kn">import</span> <span class="nn">zipfile</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Init for Spydrnet. The functions below can be called directly</span>
@@ -88,7 +88,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="parse"><a class="viewcode-back" href="../../reference/classes/generated/spydrnet.parse.html#spydrnet.parse">[docs]</a><span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">architecture</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">remove_space</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="parse"><a class="viewcode-back" href="../../reference/classes/generated/spydrnet.parse.html#spydrnet.parse">[docs]</a><span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">architecture</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The parse function is able to parse an EDIF (.edf) file, a Verilog file (.v), or an EBLIF file (.eblif).</span>
 
@@ -115,9 +115,9 @@
 
 <span class="sd">    The same applies for EBLIF files</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">basename_less_final_extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">extension</span> <span class="o">=</span> <span class="n">get_lowercase_extension</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+    <span class="n">basename_less_final_extension</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span>
+    <span class="n">extension</span> <span class="o">=</span> <span class="n">get_lowercase_extension</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>     
     <span class="k">if</span> <span class="n">extension</span> <span class="o">==</span> <span class="s2">&quot;.zip&quot;</span><span class="p">:</span>
         <span class="k">assert</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">is_zipfile</span><span class="p">(</span><span class="n">filename</span><span class="p">),</span> \
             <span class="s2">&quot;Input filename </span><span class="si">{}</span><span class="s2"> with extension .zip is not a zip file.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
@@ -128,13 +128,14 @@
                 <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">basename_less_final_extension</span><span class="p">,</span> \
                     <span class="s2">&quot;Only single file archives allowed with a file whose name matches the name of the archive&quot;</span>
                 <span class="nb">zip</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">basename_less_final_extension</span><span class="p">,</span> <span class="n">tempdirname</span><span class="p">)</span>
-                <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                    <span class="n">tempdirname</span><span class="p">,</span> <span class="n">basename_less_final_extension</span><span class="p">)</span>
-                <span class="k">return</span> <span class="n">_parse</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">_parse</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">architecture</span><span class="p">,</span> <span class="n">remove_space</span><span class="p">)</span></div>
+                <span class="c1"># filename = Path(tempdirname).joinpath(basename_less_final_extension)</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tempdirname</span><span class="p">,</span> <span class="n">basename_less_final_extension</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">_parse</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">architecture</span><span class="p">)</span>
+            
+    <span class="k">return</span> <span class="n">_parse</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">architecture</span><span class="p">)</span>    </div>
 
 
-<span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">architecture</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">remove_space</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">architecture</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="n">extension</span> <span class="o">=</span> <span class="n">get_lowercase_extension</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">extension</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;.edf&quot;</span><span class="p">,</span> <span class="s2">&quot;.edif&quot;</span><span class="p">,</span> <span class="s2">&quot;.edn&quot;</span><span class="p">]:</span>
         <span class="kn">from</span> <span class="nn">spydrnet.parsers.edif.parser</span> <span class="kn">import</span> <span class="n">EdifParser</span>
@@ -147,11 +148,7 @@
         <span class="n">parser</span> <span class="o">=</span> <span class="n">EBLIFParser</span><span class="o">.</span><span class="n">from_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Extension </span><span class="si">{}</span><span class="s2"> not recognized.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">extension</span><span class="p">))</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span>
-    
-    <span class="k">if</span> <span class="n">remove_space</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">spydrnet.util.remove_space</span> <span class="kn">import</span> <span class="n">removing_space</span>
-        <span class="n">removing_space</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">netlist</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span>     
 
     <span class="k">if</span> <span class="n">architecture</span><span class="p">:</span>
         <span class="n">read_primitive_library</span><span class="p">(</span><span class="n">architecture</span><span class="p">,</span> <span class="n">parser</span><span class="o">.</span><span class="n">netlist</span><span class="p">)</span>
@@ -161,7 +158,7 @@
 
 
 <span class="k">def</span> <span class="nf">get_lowercase_extension</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-    <span class="n">extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">extension</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span>
     <span class="n">extension_lower</span> <span class="o">=</span> <span class="n">extension</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">extension_lower</span>
 

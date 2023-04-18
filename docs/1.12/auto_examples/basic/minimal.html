@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="English" >
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Minimal Script &mdash; SpyDrNet 1.12.1 documentation</title>
+  <title>Minimal Script &mdash; SpyDrNet 1.12.2 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
@@ -24,7 +24,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Make Instances Unique" href="../extended/plot_single_use_definitions.html" />
+    <link rel="next" title="Extended" href="../extended/index.html" />
     <link rel="prev" title="Display Netlist Information Functions" href="display_info.html" /> 
 </head>
 
@@ -48,22 +48,27 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/index.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Reference</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">Examples</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../index.html#basic">Basic</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="built_in_libraries.html">Using Built-In Primitive Libraries</a></li>
-<li class="toctree-l3"><a class="reference internal" href="using_extensions.html">Using Extensions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="plot_stat.html">Traversal and Statistics of a Netlist</a></li>
-<li class="toctree-l3"><a class="reference internal" href="display_info.html">Display Netlist Information Functions</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Minimal Script</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#basic">Basic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#extended">Extended</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../index.html#vivado">Vivado</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#vivado">Vivado</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">Basic</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="built_in_libraries.html">Using Built-In Primitive Libraries</a></li>
+<li class="toctree-l4"><a class="reference internal" href="using_extensions.html">Using Extensions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_stat.html">Traversal and Statistics of a Netlist</a></li>
+<li class="toctree-l4"><a class="reference internal" href="display_info.html">Display Netlist Information Functions</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Minimal Script</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer's Guide</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../extended/index.html">Extended</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../vivado/index.html">Vivado</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer’s Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../credits.html">Credits</a></li>
 </ul>
@@ -81,9 +86,10 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Examples</a> &raquo;</li>
-      <li>Minimal Script</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Examples</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Basic</a></li>
+      <li class="breadcrumb-item active">Minimal Script</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/auto_examples/basic/minimal.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -187,11 +193,16 @@ to download the full example code</p>
 <span class="n">wire_o</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">pin_widget_o</span><span class="p">)</span>
 <span class="n">wire_o</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">inst_or2</span><span class="o">.</span><span class="n">pins</span><span class="p">[</span><span class="n">pin_or2_q</span><span class="p">])</span>
 
+<span class="n">temp</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">netlist</span><span class="o">.</span><span class="n">libraries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_instances</span><span class="p">(</span><span class="s2">&quot;and2_1&quot;</span><span class="p">),</span><span class="kc">None</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Instance:&quot;</span><span class="p">,</span><span class="n">temp</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reference:&quot;</span><span class="p">,</span><span class="n">temp</span><span class="o">.</span><span class="n">reference</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parent:&quot;</span><span class="p">,</span><span class="n">temp</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
 <span class="n">sdn</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span><span class="n">netlist</span><span class="p">,</span> <span class="s1">&#39;test.edf&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.000 seconds)</p>
-<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-basic-minimal-py">
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-basic-minimal-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/65a8698a36dfe37e51e09aa4ddfb53ea/minimal.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">minimal.py</span></code></a></p>
 </div>
@@ -207,7 +218,7 @@ to download the full example code</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="display_info.html" class="btn btn-neutral float-left" title="Display Netlist Information Functions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../extended/plot_single_use_definitions.html" class="btn btn-neutral float-right" title="Make Instances Unique" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../extended/index.html" class="btn btn-neutral float-right" title="Extended" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

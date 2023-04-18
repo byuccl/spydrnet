@@ -65,23 +65,18 @@ netlist_2 is parsed in using the XILINX_7SERIES primitive library. The output sh
 
 .. _sphx_glr_download_auto_examples_basic_built_in_libraries.py:
 
+.. only:: html
 
-.. only :: html
-
- .. container:: sphx-glr-footer
-    :class: sphx-glr-footer-example
+  .. container:: sphx-glr-footer sphx-glr-footer-example
 
 
+    .. container:: sphx-glr-download sphx-glr-download-python
 
-  .. container:: sphx-glr-download sphx-glr-download-python
+      :download:`Download Python source code: built_in_libraries.py <built_in_libraries.py>`
 
-     :download:`Download Python source code: built_in_libraries.py <built_in_libraries.py>`
+    .. container:: sphx-glr-download sphx-glr-download-jupyter
 
-
-
-  .. container:: sphx-glr-download sphx-glr-download-jupyter
-
-     :download:`Download Jupyter notebook: built_in_libraries.ipynb <built_in_libraries.ipynb>`
+      :download:`Download Jupyter notebook: built_in_libraries.ipynb <built_in_libraries.ipynb>`
 
 
 .. only:: html

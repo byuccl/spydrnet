@@ -282,23 +282,18 @@ Below is all the python code used to create the netlist from scratch with SpyDrN
 
 .. _sphx_glr_download_auto_examples_vivado_LUT_builder.py:
 
+.. only:: html
 
-.. only :: html
-
- .. container:: sphx-glr-footer
-    :class: sphx-glr-footer-example
+  .. container:: sphx-glr-footer sphx-glr-footer-example
 
 
+    .. container:: sphx-glr-download sphx-glr-download-python
 
-  .. container:: sphx-glr-download sphx-glr-download-python
+      :download:`Download Python source code: LUT_builder.py <LUT_builder.py>`
 
-     :download:`Download Python source code: LUT_builder.py <LUT_builder.py>`
+    .. container:: sphx-glr-download sphx-glr-download-jupyter
 
-
-
-  .. container:: sphx-glr-download sphx-glr-download-jupyter
-
-     :download:`Download Jupyter notebook: LUT_builder.ipynb <LUT_builder.ipynb>`
+      :download:`Download Jupyter notebook: LUT_builder.ipynb <LUT_builder.ipynb>`
 
 
 .. only:: html
