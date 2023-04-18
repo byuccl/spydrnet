@@ -266,7 +266,7 @@ class VerilogParser:
         if not bypass_name_check:
             assert vt.is_valid_identifier(token), self.error_string(
                 "identifier", "not a valid module name", token)
-        name = token
+        name = token.strip()
         
         if definition_list:
             if name not in definition_list: # we don't need this primitive info
@@ -311,7 +311,7 @@ class VerilogParser:
         token = self.next_token()
         assert vt.is_valid_identifier(token), self.error_string(
             "identifier", "not a valid module name", token)
-        name = token
+        name = token.strip()
 
         definition = self.blackbox_holder.get_blackbox(name)
         self.blackbox_holder.define(name)
@@ -377,7 +377,7 @@ class VerilogParser:
             token = self.next_token()
             assert vt.is_valid_identifier(token), self.error_string(
                 'identifer', "in parameter list", token)
-            key += token
+            key += token.strip()
 
             token = self.next_token()
             if key == vt.INTEGER:
@@ -440,7 +440,7 @@ class VerilogParser:
         token = self.next_token()
         assert vt.is_valid_identifier(token), self.error_string(
             "identifier", "for port in port aliasing", token)
-        name = token
+        name = token.strip()
 
         token = self.next_token()
         assert token == vt.OPEN_PARENTHESIS, self.error_string(
@@ -514,7 +514,7 @@ class VerilogParser:
         token = self.next_token()
         assert vt.is_valid_identifier(token), self.error_string(
             "identifier", "for port declaration", token)
-        name = token
+        name = token.strip()
         port = self.create_or_update_port(
             name, left_index=left, right_index=right, direction=direction, defining=defining)
 
@@ -608,12 +608,12 @@ class VerilogParser:
         assert vt.is_valid_identifier(token), self.error_string(
             "port identifier", "identify port", token)
         names = []
-        names.append(token)
+        names.append(token.strip())
 
         token = self.next_token()
         while token == vt.COMMA:
             token = self.next_token()
-            names.append(token)
+            names.append(token.strip())
             token = self.next_token()
 
         assert token == vt.SEMI_COLON, self.error_string(
@@ -658,7 +658,7 @@ class VerilogParser:
         token = self.next_token()
         assert vt.is_valid_identifier(token), self.error_string(
             "valid cable identifier", "identify the cable", token)
-        name = token
+        name = token.strip()
 
         cable = self.create_or_update_cable(
             name, left_index=left, right_index=right, var_type=var_type)
@@ -675,7 +675,7 @@ class VerilogParser:
         token = self.next_token()
         assert vt.is_valid_identifier(token), self.error_string(
             "module identifier", "for instantiation", token)
-        def_name = token
+        def_name = token.strip()
 
         parameter_dict = dict()
         token = self.peek_token()
@@ -685,7 +685,7 @@ class VerilogParser:
         token = self.next_token()
         assert vt.is_valid_identifier(token), self.error_string(
             "instance name", "for instantiation", token)
-        name = token
+        name = token.strip()
 
         # the current definition is instancing the current top instance, so a change needs to be made
         if def_name == self.netlist.top_instance.reference.name:
@@ -752,7 +752,7 @@ class VerilogParser:
         assert token == vt.DEFPARAM, self.error_string(vt.DEFPARAM, "to being defparam statement", token)
         token = self.next_token()
         assert vt.is_valid_identifier(token), self.error_string("valid identifier", "of an instance to apply the defparam to", token)
-        instance_name = token
+        instance_name = token.strip()
         if self.current_instance.name == instance_name:
             instance = self.current_instance
         else:
@@ -806,7 +806,7 @@ class VerilogParser:
         token = self.next_token()
         assert vt.is_valid_identifier(token), self.error_string(
             "valid parameter identifier", "in parameter mapping", token)
-        k = token
+        k = token.strip()
 
         token = self.next_token()
         assert token == vt.OPEN_PARENTHESIS, self.error_string(
@@ -850,7 +850,7 @@ class VerilogParser:
         token = self.next_token()
         assert vt.is_valid_identifier(token), self.error_string(
             "valid port identifier", "for port in instantiation port map", token)
-        port_name = token
+        port_name = token.strip()
 
         token = self.next_token()
         assert token == vt.OPEN_PARENTHESIS, self.error_string(
@@ -874,8 +874,13 @@ class VerilogParser:
 
             # there can be unconnected pins at the end of the port.
             pins.sort(reverse=True, key=self.pin_sort_func)
+            # the offset makes sure connections are on lower
+            # end of the port for partially connected ports
+            offset = 0
+            if len(pins) > len(wires):
+                offset = len(pins)-len(wires)
             for i in range(len(wires)):
-               wires[i].connect_pin(pins[i])
+                wires[i].connect_pin(pins[offset + i])
 
             token = self.next_token()
 
@@ -905,6 +910,14 @@ class VerilogParser:
                 vt.OPEN_PARENTHESIS, "to encapsulate cable name in port mapping", token)
             
             index = 0
+
+            # There may be no mapped wires at all. It may be empty or filled with whitespace
+            token = self.peek_token()
+
+            if token == vt.CLOSE_PARENTHESIS:
+                # Consume the token, we're going to skip the loop
+                token = self.next_token()
+
             while (token != vt.CLOSE_PARENTHESIS):
                 token = self.peek_token()
 
@@ -932,8 +945,13 @@ class VerilogParser:
                 # there can be unconnected pins at the end of the port.
                 pin_list = list(p for p in pins)
                 pin_list.sort(reverse=True, key=self.pin_sort_func)
+                # the offset makes sure connections are on lower
+                # end of the port for partially connected ports
+                offset = 0
+                if len(pin_list) > len(wires):
+                    offset = len(pin_list)-len(wires)
                 for i in range(len(wires)):
-                    wires[i].connect_pin(pin_list[i])
+                    wires[i].connect_pin(pin_list[offset + i])
 
                 token = self.next_token()
                 index += 1
@@ -984,7 +1002,7 @@ class VerilogParser:
             left, right = self.parse_brackets()
 
         cable = self.create_or_update_cable(
-            name, left_index=left, right_index=right)
+            name.strip(), left_index=left, right_index=right)
 
         return cable, left, right
 
@@ -1023,7 +1041,7 @@ class VerilogParser:
         token = self.next_token()
         while token != vt.STAR:
             assert vt.is_valid_identifier(token)
-            key = token
+            key = token.strip()
             token = self.next_token()
             assert token in [vt.EQUAL, vt.STAR, vt.COMMA], self.error_string(
                 vt.EQUAL + " or " + vt.STAR + " or " + vt.COMMA, "to set a star parameter", token)

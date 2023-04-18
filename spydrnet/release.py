@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 # Version information
 name = 'spydrnet'
@@ -49,14 +50,14 @@ classifiers = [
         ]
 
 
-directory = os.path.dirname(os.path.abspath(__file__))
-version_filename = os.path.join(directory, "VERSION")
+directory = Path(Path(__file__).absolute()).parent
+version_filename = Path(directory, "VERSION")
 
 def load_versionfile():
     global release
     global version
     global date
-    if os.path.isfile(version_filename):
+    if Path(version_filename).is_file():
         with open(version_filename) as fi:
             release = fi.readline().strip()[1:]
             second_period_index = _get_second_period_index(release)
@@ -89,12 +90,12 @@ def update_versionfile():
     #check for git on path
     git_exists = False
     for path in os.environ['PATH'].split(os.pathsep):
-        exe_file = os.path.join(path, 'git')
-        if os.path.isfile(exe_file) and os.access(exe_file, os.X_OK):
+        exe_file = Path(path, 'git')
+        if Path(exe_file).is_file() and os.access(exe_file, os.X_OK):
             git_exists = True
         else:
-            exe_file = os.path.join(path, 'git.exe')
-            if os.path.isfile(exe_file) and os.access(exe_file, os.X_OK):
+            exe_file = Path(path, 'git.exe')
+            if Path(exe_file).is_file() and os.access(exe_file, os.X_OK):
                 git_exists = True
             
     if git_exists:
@@ -103,7 +104,7 @@ def update_versionfile():
 
         git_version = git_describe_output.strip()
         if git_version.startswith('v'):
-            version_file = os.path.join(directory, "VERSION")
+            version_file = Path(directory, "VERSION")
             with open(version_file, 'w') as fh:
                 fh.write(git_version + '\n')
                 fh.write(date + '\n')

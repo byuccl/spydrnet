@@ -416,7 +416,6 @@ class TestVerilogComposerUnit(unittest.TestCase):
         o = sdn.Cable()
         composer._write_name(o)
 
-    @unittest.expectedFailure
     def test_write_invalid_name(self):
         composer = self.initialize_tests()
         o = sdn.Cable()

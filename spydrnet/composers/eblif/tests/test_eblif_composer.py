@@ -2,6 +2,7 @@ import unittest
 import os
 import spydrnet as sdn
 from spydrnet import base_dir
+from pathlib import Path
 
 """
 Test the EBLIF composer. The best way I can think to do this is to parse a netlist, compose it, then parse it again to see if anything changed. It should all be the same
@@ -9,7 +10,7 @@ Test the EBLIF composer. The best way I can think to do this is to parse a netli
 
 class TestEBLIFComposer(unittest.TestCase):
     def setUp(self):
-        self.netlist_1 = sdn.parse(os.path.join(base_dir, 'support_files', 'eblif_netlists', "toggle.eblif.zip"))
+        self.netlist_1 = sdn.parse(Path(base_dir, 'support_files', 'eblif_netlists', "toggle.eblif.zip"))
         self.definition_list = ["INV","BUFG","FDRE","IBUF","OBUF","toggle", "logic-gate_0"]
         sdn.compose(self.netlist_1,"temp_for_composer_test.eblif")
         sdn.compose(self.netlist_1,"temp_for_composer_test_no_blackbox.eblif",write_blackbox=False)
