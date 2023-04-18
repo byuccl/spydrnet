@@ -1,6 +1,6 @@
 .. _sec:examples:
 
-.. _sphinx_glr_auto_examples:
+.. _sphx_glr_auto_examples:
 
 Examples
 ========
