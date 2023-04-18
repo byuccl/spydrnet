@@ -1,5 +1,7 @@
 .. _sec:examples:
 
+.. _sphinx_glr_auto_examples:
+
 Examples
 ========
 
