@@ -13,6 +13,7 @@ class TestVerilogComposer(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.dir_of_verilog_netlists = Path(sdn.base_dir, "support_files", "verilog_netlists")        
         cls.verilog_files = sorted(glob.glob(os.path.join(cls.dir_of_verilog_netlists, "*.v.zip")), key = os.path.getsize)
+        # cls.verilog_files = sorted(glob.glob(Path(cls.dir_of_verilog_netlists, "*.v.zip")), key = ?? )
 
     @unittest.skip("Test takes a long time right now.")
     def test_large_verilog_compose(self):
@@ -76,8 +77,7 @@ class TestVerilogComposer(unittest.TestCase):
         assert errors == 0, "there were errors while parsing and composing files. Please see the output."
 
     def test_definition_list_option(self):
-        for filename in glob.glob(os.path.join(
-                self.dir_of_verilog_netlists, "*4bitadder.v.zip")):
+        for filename in glob.glob(os.path.join(self.dir_of_verilog_netlists, "*4bitadder.v.zip")):
             with tempfile.TemporaryDirectory() as tempdirectory:
                 netlist = parsers.parse(filename)
                 out_file = Path(
@@ -97,6 +97,7 @@ class TestVerilogComposer(unittest.TestCase):
     def test_write_blackbox_option(self):
         for filename in glob.glob(os.path.join(
                 self.dir_of_verilog_netlists, "*4bitadder.v.zip")):
+            print(filename)
             with tempfile.TemporaryDirectory() as tempdirectory:
                 netlist = parsers.parse(filename)
                 out_file = Path(

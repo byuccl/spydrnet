@@ -2,6 +2,7 @@ import sys
 import setuptools
 import glob
 import os
+from pathlib import Path
 
 if sys.argv[-1] == "setup.py":
     print("To install, run 'python setup.py install'")
@@ -27,8 +28,8 @@ with open("README.rst", "r") as fh:
 support_files = list()
 folder_path = os.path.normpath(os.path.join(os.path.dirname(__file__), "spydrnet", "support_files"))
 for filename in glob.glob(os.path.join(folder_path, "**", "*"), recursive=True):
-    if os.path.isfile(filename) and \
-        (os.path.getsize(filename) < 1024 * 10 or "architecture_libraries" in filename):
+    if Path(filename).is_file() and \
+        (Path(filename).stat().st_size < 1024 * 10 or "architecture_libraries" in filename):
         support_files.append("support_files/" + str(filename)[len(folder_path) + 1:].replace('\\', '/'))
 
 extras_require = {

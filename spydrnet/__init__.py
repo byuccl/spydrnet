@@ -13,6 +13,7 @@ import os
 import pathlib
 import pkgutil
 import sys
+from pathlib import Path
 
 # ===================
 #  Setup Logging
@@ -57,11 +58,11 @@ logger.debug("Installed Plugins", discovered_plugins.keys())
 def get_active_plugins():
     active_plugins = {}
     config_file = None
-    config_file_home = os.path.join(str(pathlib.Path.home()), ".spydrnet")
-    if os.path.isfile(config_file_home):
+    config_file_home = Path(str(pathlib.Path.home()), ".spydrnet")
+    if Path(config_file_home).is_file():
         config_file = config_file_home
-    config_file_local = os.path.join(".", ".spydrnet")
-    if os.path.isfile(config_file_local):
+    config_file_local = Path(".", ".spydrnet")
+    if Path(config_file_local).is_file():
         config_file = config_file_local
     if config_file:
         for plugin in open(config_file, "r").read().split():
@@ -112,38 +113,38 @@ from spydrnet.util import (get_cables, get_definitions, get_hcables,
 from spydrnet.util.selection import ALL, BOTH, INSIDE, OUTSIDE
 from spydrnet.util.netlist_type import EDIF, VERILOG, EBLIF
 
-base_dir = os.path.dirname(os.path.abspath(__file__))
+base_dir = Path(Path(__file__).absolute()).parent
 
 import glob
 
 example_netlist_names = list()
 for filename in glob.glob(os.path.join(base_dir, 'support_files', 'EDIF_netlists', "*")):
-    basename = os.path.basename(filename)
+    basename = Path(filename).name
     example_netlist_names.append(basename[:basename.index('.')])
 example_netlist_names.sort()
 
 verilog_example_netlist_names = list()
 for filename in glob.glob(os.path.join(base_dir, 'support_files', 'verilog_netlists', "*")):
-    basename = os.path.basename(filename)
+    basename = Path(filename).name
     verilog_example_netlist_names.append(basename[:basename.index('.')])
 verilog_example_netlist_names.sort()
 
 eblif_example_netlist_names = list()
 for filename in glob.glob(os.path.join(base_dir, 'support_files', 'eblif_netlists', "*")):
-    basename = os.path.basename(filename)
+    basename = Path(filename).name
     eblif_example_netlist_names.append(basename[:basename.index('.')])
 eblif_example_netlist_names.sort()
 
 def load_example_netlist_by_name(name, format=EDIF):
     if format is EDIF:
         assert name in example_netlist_names, "Example netlist not found"
-        return parse(os.path.join(base_dir, 'support_files', 'EDIF_netlists', name + ".edf.zip"))
+        return parse(Path(base_dir, 'support_files', 'EDIF_netlists', name + ".edf.zip"))
     elif format is VERILOG:
         assert name in verilog_example_netlist_names, "Example netlist not found"
-        return parse(os.path.join(base_dir, 'support_files', 'verilog_netlists', name + ".v.zip"))
+        return parse(Path(base_dir, 'support_files', 'verilog_netlists', name + ".v.zip"))
     elif format is EBLIF:
         assert name in eblif_example_netlist_names, "Example netlist not found"
-        return parse(os.path.join(base_dir, 'support_files', 'eblif_netlists', name + ".eblif.zip"))
+        return parse(Path(base_dir, 'support_files', 'eblif_netlists', name + ".eblif.zip"))
     else: # if no version is recognized, default to edif
         assert name in example_netlist_names, "Example netlist not found"
-        return parse(os.path.join(base_dir, 'support_files', 'EDIF_netlists', name + ".edf.zip"))
+        return parse(Path(base_dir, 'support_files', 'EDIF_netlists', name + ".edf.zip"))
