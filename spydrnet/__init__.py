@@ -115,22 +115,23 @@ from spydrnet.util.netlist_type import EDIF, VERILOG, EBLIF
 
 base_dir = Path(Path(__file__).absolute()).parent
 
-import glob
-
 example_netlist_names = list()
-for filename in glob.glob(os.path.join(base_dir, 'support_files', 'EDIF_netlists', "*")):
+edif_path = Path(base_dir).joinpath('support_files', 'EDIF_netlists')
+for filename in Path.glob(edif_path, "*"):
     basename = Path(filename).name
     example_netlist_names.append(basename[:basename.index('.')])
 example_netlist_names.sort()
 
 verilog_example_netlist_names = list()
-for filename in glob.glob(os.path.join(base_dir, 'support_files', 'verilog_netlists', "*")):
+verilog_path = Path(base_dir).joinpath('support_files', 'verilog_netlists')
+for filename in Path.glob(verilog_path, "*"):
     basename = Path(filename).name
     verilog_example_netlist_names.append(basename[:basename.index('.')])
 verilog_example_netlist_names.sort()
 
 eblif_example_netlist_names = list()
-for filename in glob.glob(os.path.join(base_dir, 'support_files', 'eblif_netlists', "*")):
+eblif_path = Path(base_dir).joinpath('support_files', 'eblif_netlists')
+for filename in Path.glob(eblif_path, "*"):
     basename = Path(filename).name
     eblif_example_netlist_names.append(basename[:basename.index('.')])
 eblif_example_netlist_names.sort()
