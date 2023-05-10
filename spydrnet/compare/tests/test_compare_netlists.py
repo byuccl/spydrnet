@@ -1,7 +1,5 @@
 import unittest
-import os
 import tempfile
-import glob
 import shutil
 from pathlib import Path
 
@@ -14,10 +12,8 @@ class TestCompareNetlists(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.dir_of_edif_netlists = Path(sdn.base_dir, "support_files", "EDIF_netlists")
         cls.dir_of_verilog_netlists = Path(sdn.base_dir, "support_files", "verilog_netlists")
-        cls.edif_files = sorted(glob.glob(os.path.join(cls.dir_of_edif_netlists, "*.edf.zip")), key=os.path.getsize)
-        cls.verilog_files = sorted(glob.glob(os.path.join(cls.dir_of_verilog_netlists, "*.v.zip")), key = os.path.getsize)
-        # cls.edif_files = sorted(glob.glob(Path(cls.dir_of_edif_netlists, "*.edf.zip")), key= ?? )
-        # cls.verilog_files = sorted(glob.glob(Path(cls.dir_of_verilog_netlists, "*.v.zip")), key = ?? )
+        cls.edif_files = sorted(Path.glob(cls.dir_of_edif_netlists, "*.edf.zip"))
+        cls.verilog_files = sorted(Path.glob(cls.dir_of_verilog_netlists, "*.v.zip"))
 
     @unittest.skip("Test takes a long time right now.")
     def test_large_edif(self):

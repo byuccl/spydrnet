@@ -1,4 +1,3 @@
-import os
 import spydrnet as sdn
 from pathlib import Path
 

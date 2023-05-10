@@ -5,7 +5,6 @@ from functools import partial
 import re
 import zipfile
 import io
-import os
 import spydrnet.parsers.verilog.verilog_tokens as vt
 from spydrnet.parsers.verilog.verilog_token_factory import TokenFactory
 from pathlib import Path

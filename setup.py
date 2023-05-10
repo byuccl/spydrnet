@@ -1,7 +1,5 @@
 import sys
 import setuptools
-import glob
-import os
 from pathlib import Path
 
 if sys.argv[-1] == "setup.py":
@@ -26,11 +24,11 @@ with open("README.rst", "r") as fh:
     long_description = fh.read().replace(':ref:','')
 
 support_files = list()
-folder_path = os.path.normpath(os.path.join(os.path.dirname(__file__), "spydrnet", "support_files"))
-for filename in glob.glob(os.path.join(folder_path, "**", "*"), recursive=True):
-    if Path(filename).is_file() and \
-        (Path(filename).stat().st_size < 1024 * 10 or "architecture_libraries" in filename):
-        support_files.append("support_files/" + str(filename)[len(folder_path) + 1:].replace('\\', '/'))
+folder_path = Path(Path(__file__).parent).joinpath("spydrnet", "support_files")
+for filename in Path.glob(folder_path, "**/*"):
+    if filename.is_file() and \
+        (filename.stat().st_size < 1024 * 10 or "architecture_libraries" in str(filename)):
+        support_files.append("support_files/" + str(filename)[len(str(folder_path)) + 1:].replace('\\', '/'))
 
 extras_require = {
     "all": [

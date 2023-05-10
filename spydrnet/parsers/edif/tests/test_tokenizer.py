@@ -1,5 +1,4 @@
 import unittest
-import os
 import io
 import zipfile
 import tempfile
@@ -26,8 +25,7 @@ class TestEdifTokenizer(unittest.TestCase):
 
     def test_open_zip_file(self):
         dir_of_edif_netlists = Path(base_dir, "support_files", "EDIF_netlists")
-        test_file = os.path.join(dir_of_edif_netlists, "n_bit_counter.edf.zip")
-        # test_file = Path(dir_of_edif_netlists, "n_bit_counter.edf.zip") # UnicodeDecodeError
+        test_file = Path(dir_of_edif_netlists, "n_bit_counter.edf.zip") # UnicodeDecodeError
         tokenizer = EdifTokenizer.from_filename(test_file)
         next_token = tokenizer.next()
         self.assertEqual("(", next_token)

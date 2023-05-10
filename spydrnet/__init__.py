@@ -100,8 +100,6 @@ IN = Port.Direction.IN
 INOUT = Port.Direction.INOUT
 UNDEFINED = Port.Direction.UNDEFINED
 
-import os
-
 from spydrnet.composers import compose
 from spydrnet.parsers import parse
 from spydrnet.plugins import namespace_manager

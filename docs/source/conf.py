@@ -17,6 +17,7 @@
 # sys.path.insert(0, os.path.abspath('.'))
 import os
 import sys
+import pathlib
 sys.path.insert(0,os.path.abspath('../..'))
 import spydrnet as sdn
 
@@ -208,9 +209,9 @@ epub_exclude_files = ['search.html']
 # -- Options for Sphinx-Gallery ----------------------------------------------
 
 sphinx_gallery_conf = {
-     'examples_dirs': os.path.join('..', '..', 'examples'),   # path to your example scripts
+     'examples_dirs': pathlib.Path('..').joinpath('..', 'examples'),   # path to your example scripts
      'gallery_dirs': 'auto_examples',  # path to where to save gallery generated output
-     'remove_config_comments': True,
+     'remove_config_comments': True
 }
 
 # -- Extension configuration -------------------------------------------------

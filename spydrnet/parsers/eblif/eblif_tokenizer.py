@@ -2,7 +2,6 @@ import io
 import re
 import zipfile
 import io
-import os
 from spydrnet.parsers.eblif.eblif_tokens import BACKSLASH
 from pathlib import Path
 
