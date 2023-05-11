@@ -33,7 +33,7 @@ Run the following code and type 'y' and then hit enter when asked whether or not
 .. code-block::
 
         import spydrnet as sdn
-        netlist = sdn.load_example_netlist_by_name("b13")
+        netlist = sdn.load_example_netlist_by_name(<name>)
 
 Additional Information
 ^^^^^^^^^^^^^^^^^^^^^^^
