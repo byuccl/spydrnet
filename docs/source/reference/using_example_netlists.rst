@@ -1,6 +1,6 @@
 .. _using_example_netlists:
 
-Using SpyDrNet's Example Netlists
+Using SpyDrNet Example Netlists
 ----------------------------------
 
 Many EDIF, Verilog, and EBLIF example netlists are found in the SpyDrNet repo under *example_netlists*. In versions of SpyDrNet previous to 1.13, the example netlists were included in the python package. From version 1.13 on, perform the steps below to access the example netlists using *sdn.load_example_netlist_by_name(<name>)*.
