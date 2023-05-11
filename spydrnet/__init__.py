@@ -113,7 +113,7 @@ from spydrnet.util.netlist_type import EDIF, VERILOG, EBLIF
 
 def determine_example_netlists_path(download_option):
     example_netlists_path = pathlib.Path("example_netlists")
-    temp_dir_loc = pathlib.Path("/tmp/spydrnet_example_netlists/spydrnet-move_tests/example_netlists/")
+    temp_dir_loc = pathlib.Path("/tmp/spydrnet_example_netlists/spydrnet-move_tests_and_files/example_netlists/")
     if "EXAMPLE_NETLISTS_PATH" in os.environ:
         example_netlists_path = pathlib.Path(os.environ["EXAMPLE_NETLISTS_PATH"])
     elif temp_dir_loc.exists():
@@ -137,7 +137,7 @@ def determine_example_netlists_path(download_option):
             extract_loc = "/tmp/spydrnet_example_netlists"
             with zipfile.ZipFile(filename, 'r') as zip_ref:
                 zip_ref.extractall(extract_loc)
-            env_variable = extract_loc + "/spydrnet-move_tests/example_netlists/"
+            env_variable = extract_loc + "/spydrnet-move_tests_and_files/example_netlists/"
             os.environ["EXAMPLE_NETLISTS_PATH"] = env_variable
             print("Example netlists located in " + os.environ["EXAMPLE_NETLISTS_PATH"])
             example_netlists_path = temp_dir_loc
