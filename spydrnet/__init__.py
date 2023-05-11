@@ -111,7 +111,7 @@ from spydrnet.util import (get_cables, get_definitions, get_hcables,
 from spydrnet.util.selection import ALL, BOTH, INSIDE, OUTSIDE
 from spydrnet.util.netlist_type import EDIF, VERILOG, EBLIF
 
-def determine_example_netlists_path():
+def determine_example_netlists_path(download_option):
     example_netlists_path = pathlib.Path("example_netlists")
     temp_dir_loc = pathlib.Path("/tmp/spydrnet_example_netlists/spydrnet-move_tests/example_netlists/")
     if "EXAMPLE_NETLISTS_PATH" in os.environ:
@@ -121,7 +121,7 @@ def determine_example_netlists_path():
     else:
         None
 
-    if not example_netlists_path.exists():
+    if not example_netlists_path.exists() and download_option:
         print("Could not find example netlists. Download to /tmp/spydrnet_example_netlists? y/n")
         response = input()
         if response == "y":
@@ -145,7 +145,7 @@ def determine_example_netlists_path():
     example_netlists_path = example_netlists_path.resolve()
     return example_netlists_path
 
-example_netlists_path = determine_example_netlists_path()
+example_netlists_path = determine_example_netlists_path(False)
 
 base_dir = Path(Path(__file__).absolute()).parent
 
@@ -171,6 +171,7 @@ for filename in Path.glob(eblif_path, "*"):
 eblif_example_netlist_names.sort()
 
 def load_example_netlist_by_name(name, format=EDIF):
+    example_netlists_path = determine_example_netlists_path(True)
     error_message = "Example netlist not found. Either run 'export EXAMPLE_NETLISTS_PATH=<path>' or allow downloading to /tmp/spydrnet_example_netlists."
     if format is EDIF:
         assert name in example_netlist_names, error_message

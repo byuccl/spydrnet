@@ -2,7 +2,6 @@ import unittest
 import spydrnet as sdn
 
 from spydrnet.parsers.edif.parser import EdifParser
-from spydrnet import base_dir
 import tempfile
 import shutil
 from pathlib import Path

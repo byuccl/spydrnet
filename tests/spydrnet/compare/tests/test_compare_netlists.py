@@ -10,8 +10,8 @@ import spydrnet as sdn
 class TestCompareNetlists(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.dir_of_edif_netlists = Path(sdn.base_dir, "support_files", "EDIF_netlists")
-        cls.dir_of_verilog_netlists = Path(sdn.base_dir, "support_files", "verilog_netlists")
+        cls.dir_of_edif_netlists = Path(sdn.example_netlists_path, "EDIF_netlists")
+        cls.dir_of_verilog_netlists = Path(sdn.example_netlists_path, "verilog_netlists")
         cls.edif_files = sorted(Path.glob(cls.dir_of_edif_netlists, "*.edf.zip"))
         cls.verilog_files = sorted(Path.glob(cls.dir_of_verilog_netlists, "*.v.zip"))
 
