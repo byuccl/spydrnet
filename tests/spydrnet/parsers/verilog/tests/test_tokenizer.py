@@ -10,7 +10,7 @@ class TestVerilogTokenizer(unittest.TestCase):
 
 
     def test_against_4bit_adder(self):
-        directory = Path(sdn.base_dir).joinpath("support_files", "verilog_netlists", "4bitadder.v.zip")
+        directory = Path(sdn.example_netlists_path).joinpath("verilog_netlists", "4bitadder.v.zip")
         
         tokenizer = VerilogTokenizer.from_filename(directory)
         while(tokenizer.has_next()):

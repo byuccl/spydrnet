@@ -5,14 +5,14 @@ import tempfile
 from pathlib import Path
 
 from spydrnet.parsers.edif.tokenizer import EdifTokenizer
-from spydrnet import base_dir
+from spydrnet import example_netlists_path
 
 class TestEdifTokenizer(unittest.TestCase):
     def test_no_constructor_of_zero_argument(self):
         self.assertRaises(TypeError, EdifTokenizer)
 
     def test_stream(self):
-        dir_of_edif_netlists = Path(base_dir, "support_files", "EDIF_netlists")
+        dir_of_edif_netlists = Path(example_netlists_path, "EDIF_netlists")
         test_file = Path(dir_of_edif_netlists, "n_bit_counter.edf.zip")
         zip = zipfile.ZipFile(test_file)
         file_name = Path(test_file).name
@@ -24,14 +24,14 @@ class TestEdifTokenizer(unittest.TestCase):
         self.assertEqual("(", next_token)
 
     def test_open_zip_file(self):
-        dir_of_edif_netlists = Path(base_dir, "support_files", "EDIF_netlists")
+        dir_of_edif_netlists = Path(example_netlists_path, "EDIF_netlists")
         test_file = Path(dir_of_edif_netlists, "n_bit_counter.edf.zip") # UnicodeDecodeError
         tokenizer = EdifTokenizer.from_filename(test_file)
         next_token = tokenizer.next()
         self.assertEqual("(", next_token)
 
     def test_open_file(self):
-        dir_of_edif_netlists = Path(base_dir, "support_files", "EDIF_netlists")
+        dir_of_edif_netlists = Path(example_netlists_path, "EDIF_netlists")
         test_file = Path(dir_of_edif_netlists, "n_bit_counter.edf.zip")
         file_name = Path(test_file).name
         file_name = file_name[:file_name.rindex(".")]

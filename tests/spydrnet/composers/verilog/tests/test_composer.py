@@ -10,7 +10,7 @@ class TestVerilogComposer(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.dir_of_verilog_netlists = Path(sdn.base_dir, "support_files", "verilog_netlists")        
+        cls.dir_of_verilog_netlists = Path(sdn.example_netlists_path, "verilog_netlists")        
         cls.verilog_files = sorted(Path.glob(cls.dir_of_verilog_netlists, "*.v.zip"))
 
     @unittest.skip("Test takes a long time right now.")

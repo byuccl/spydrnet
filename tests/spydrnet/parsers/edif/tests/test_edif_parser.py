@@ -50,7 +50,7 @@ class TestEdifTokenizer(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.dir_of_edif_netlists = Path(sdn.base_dir, "support_files", "EDIF_netlists")
+        cls.dir_of_edif_netlists = Path(sdn.example_netlists_path, "EDIF_netlists")
         cls.edif_files = sorted(Path.glob(Path(cls.dir_of_edif_netlists), "*.edf.zip"))
 
     @unittest.skip("Test takes a long time right now.")
