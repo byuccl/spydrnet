@@ -10,6 +10,7 @@ Reference
    :maxdepth: 2
 
    classes/index.rst
+   using_example_netlists
    netlist_types
    built_in_architecture
    functions/index
