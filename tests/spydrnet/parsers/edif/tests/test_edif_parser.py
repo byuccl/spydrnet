@@ -2,10 +2,7 @@ import unittest
 import spydrnet as sdn
 
 from spydrnet.parsers.edif.parser import EdifParser
-from spydrnet import base_dir
-import os
 import tempfile
-import glob
 import shutil
 from pathlib import Path
 
@@ -52,9 +49,8 @@ class TestEdifTokenizer(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.dir_of_edif_netlists = Path(sdn.base_dir, "support_files", "EDIF_netlists")
-        cls.edif_files = sorted(glob.glob(os.path.join(cls.dir_of_edif_netlists, "*.edf.zip")), key=os.path.getsize)
-        # cls.edif_files = sorted(glob.glob(Path(cls.dir_of_edif_netlists, "*.edf.zip")), key=Path.stat().st_size)
+        cls.dir_of_edif_netlists = Path(sdn.example_netlists_path, "EDIF_netlists")
+        cls.edif_files = sorted(Path.glob(Path(cls.dir_of_edif_netlists), "*.edf.zip"))
 
     @unittest.skip("Test takes a long time right now.")
     def test_large_edif(self):

@@ -1,6 +1,6 @@
 import unittest
 import spydrnet as sdn
-from spydrnet import base_dir
+from spydrnet import example_netlists_path
 from spydrnet.util.selection import Selection
 from pathlib import Path
 
@@ -11,7 +11,7 @@ Test the EBLIFParser by parsing in a simple netlist and making sure that:
 """
 class TestEBLIFParser(unittest.TestCase):
     def setUp(self):
-        self.netlist = sdn.parse(Path(base_dir, 'support_files', 'eblif_netlists', "toggle.eblif.zip"))
+        self.netlist = sdn.parse(Path(example_netlists_path, 'eblif_netlists', "toggle.eblif.zip"))
         self.definition_list = ["INV","BUFG","FDRE","IBUF","OBUF","toggle", "logic-gate_0"]
 
     def test_name(self):

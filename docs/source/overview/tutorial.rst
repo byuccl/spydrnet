@@ -60,7 +60,7 @@ Or the following for a Verilog file
 
     netlist = sdn.parse('<netlist_filename>.v')
 
-SpyDrNet has built in example netlists. For this tutorial, we will use the example 'one_counter'. This is the same as if we parsed a netlist named 'one_counter'.
+The SpyDrNet repo has example netlists. For this tutorial, we will use the example 'one_counter'. This is the same as if we parsed a netlist named 'one_counter'. Review the :ref:`using_example_netlists` page for help loading example netlists.
 
 .. code-block::
 

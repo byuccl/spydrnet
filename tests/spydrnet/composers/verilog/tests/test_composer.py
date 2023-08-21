@@ -2,34 +2,33 @@ import unittest
 import spydrnet as sdn
 from spydrnet import composers
 from spydrnet import parsers
-import os
 import tempfile
-import glob
 from pathlib import Path
+import zipfile
 
 class TestVerilogComposer(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.dir_of_verilog_netlists = Path(sdn.base_dir, "support_files", "verilog_netlists")        
-        cls.verilog_files = sorted(glob.glob(os.path.join(cls.dir_of_verilog_netlists, "*.v.zip")), key = os.path.getsize)
+        cls.dir_of_verilog_netlists = Path(sdn.example_netlists_path, "verilog_netlists")        
+        cls.verilog_files = sorted(Path.glob(cls.dir_of_verilog_netlists, "*.v.zip"))
 
     @unittest.skip("Test takes a long time right now.")
     def test_large_verilog_compose(self):
         i = 0
         errors = 0
-        for ii, filename in enumerate(self.verilog_files):
+        for ii, filepath in enumerate(self.verilog_files):
             with self.subTest(i=ii):
-                if Path(filename).stat().st_size <= 1024 * 10:
+                if Path(filepath).stat().st_size <= 1024 * 10:
                     continue
-                if filename.endswith(".zip"):
+                if zipfile.is_zipfile(filepath):
                     with tempfile.TemporaryDirectory() as tempdirectory:
                         # try:
-                            print("*********************"+filename+"*********************")
+                            print("*********************"+filepath.name+"*********************")
                             # vp = sdn.parsers.verilog.parser.VerilogParser.from_filename(os.path.join(directory, filename))
                             # netlist = vp.parse()
-                            netlist = parsers.parse(filename)
-                            composers.compose(netlist, Path(tempdirectory, Path(filename).name +  "-spydrnet.v"))
+                            netlist = parsers.parse(filepath)
+                            composers.compose(netlist, Path(tempdirectory).joinpath(filepath.name +  "-spydrnet.v"))
                             #comp.run(netlist,"temp2/"+filename[:len(filename)-6] + "-spydrnet.v")
                             # comp.run(netlist,os.path.join(tempdirectory, filename[:len(filename)-6] + "-spydrnet.v"))
                             i+=1
@@ -48,18 +47,19 @@ class TestVerilogComposer(unittest.TestCase):
     def test_small_verilog_compose(self):
         i = 0
         errors = 0
-        for ii, filename in enumerate(self.verilog_files):
+        for ii, filepath in enumerate(self.verilog_files):
             with self.subTest(i=ii):
-                if Path(filename).stat().st_size > 1024 * 10:
+                if filepath.stat().st_size > 1024 * 10:
                     continue
-                if filename.endswith(".zip"):
+                # if filename.endswith(".zip"):
+                if zipfile.is_zipfile(filepath):
                     with tempfile.TemporaryDirectory() as tempdirectory:
                         # try:
-                            print("*********************"+filename+"*********************")
+                            print("*********************"+filepath.name+"*********************")
                             # vp = sdn.parsers.verilog.parser.VerilogParser.from_filename(os.path.join(directory, filename))
                             # netlist = vp.parse()
-                            netlist = parsers.parse(filename)
-                            composers.compose(netlist, Path(tempdirectory, Path(filename).name +  "-spydrnet.v"))
+                            netlist = parsers.parse(filepath)
+                            composers.compose(netlist, Path(tempdirectory).joinpath(filepath.name + "-spydrnet.v"))
                             #comp.run(netlist,"temp2/"+filename[:len(filename)-6] + "-spydrnet.v")
                             # comp.run(netlist,os.path.join(tempdirectory, filename[:len(filename)-6] + "-spydrnet.v"))
                             i+=1
@@ -76,8 +76,7 @@ class TestVerilogComposer(unittest.TestCase):
         assert errors == 0, "there were errors while parsing and composing files. Please see the output."
 
     def test_definition_list_option(self):
-        for filename in glob.glob(os.path.join(
-                self.dir_of_verilog_netlists, "*4bitadder.v.zip")):
+        for filename in Path.glob(self.dir_of_verilog_netlists, "*4bitadder.v.zip"):
             with tempfile.TemporaryDirectory() as tempdirectory:
                 netlist = parsers.parse(filename)
                 out_file = Path(
@@ -95,8 +94,8 @@ class TestVerilogComposer(unittest.TestCase):
                              "definition_list options not tested,")
 
     def test_write_blackbox_option(self):
-        for filename in glob.glob(os.path.join(
-                self.dir_of_verilog_netlists, "*4bitadder.v.zip")):
+        for filename in Path.glob(self.dir_of_verilog_netlists, "*4bitadder.v.zip"):
+            print(filename)
             with tempfile.TemporaryDirectory() as tempdirectory:
                 netlist = parsers.parse(filename)
                 out_file = Path(
