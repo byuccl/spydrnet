@@ -55,7 +55,7 @@ class Composer:
 
     def _write_header(self, netlist):
         self.file.write("//Generated from netlist by SpyDrNet\n")
-        self.file.write("//netlist name: " + netlist.name + "\n")
+        self.file.write("//netlist name: " + self._fix_name(netlist.name) + "\n")
 
     def _write_from_top(self, instance):
         #self.written = set()
@@ -200,7 +200,7 @@ class Composer:
             if "VERILOG.Parameters" in instance:
                 for key, value in instance["VERILOG.Parameters"].items():
                     to_write = (self.indent_count * vt.SPACE) + vt.DEFPARAM + vt.SPACE
-                    to_write += instance.name + vt.DOT + key + vt.EQUAL
+                    to_write += self._fix_name(instance.name) + vt.DOT + key + vt.EQUAL
                     to_write += value + vt.SEMI_COLON + vt.NEW_LINE
                     self.file.write(to_write)
 
@@ -524,11 +524,17 @@ class Composer:
     def _write_name(self, o):
         '''write the name of an o. this is split out to give an error message if the name is not set
         In the future this could be changed to add a name to os that do not have a name set'''
-        assert o.name is not None, self._error_string("name of o is not set", o)
-        if o.name[0] == '\\':
-            assert o.name[-1] == ' ', self._error_string(
-                "the o name starts with escape and does not end with a space.", o)
-        self.file.write(o.name)
+        name = o.name
+        assert name is not None, self._error_string("name of o is not set", o)
+        name = self._fix_name(name)
+        self.file.write(name)
+    
+    def _fix_name(self, name):
+        if name[0] == '\\':
+            if name[-1] != " ":
+                name+=" "
+        return name
+
 
     def _write_brackets_defining(self, bundle):
         '''write the brackets for port or cable definitions'''

@@ -1,3 +1,4 @@
-import os
+from pathlib import Path
 
-data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "data"))
+data_dir = Path(Path(Path(__file__).parent, "data")).absolute()
+

@@ -7,6 +7,7 @@ import os
 import tempfile
 import glob
 import shutil
+from pathlib import Path
 
 
 class TestEdifTokenizer(unittest.TestCase):
@@ -51,25 +52,26 @@ class TestEdifTokenizer(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.dir_of_edif_netlists = os.path.join(sdn.base_dir, "support_files", "EDIF_netlists")
+        cls.dir_of_edif_netlists = Path(sdn.base_dir, "support_files", "EDIF_netlists")
         cls.edif_files = sorted(glob.glob(os.path.join(cls.dir_of_edif_netlists, "*.edf.zip")), key=os.path.getsize)
+        # cls.edif_files = sorted(glob.glob(Path(cls.dir_of_edif_netlists, "*.edf.zip")), key=Path.stat().st_size)
 
     @unittest.skip("Test takes a long time right now.")
     def test_large_edif(self):
         for ii, filename in enumerate(self.edif_files):
-            if os.path.getsize(filename) <= 1024 * 10:
+            if Path(filename).stat().st_size <= 1024 * 10:
                 continue
             self.ensure_cable_consistency(filename, ii, "edf")
 
     def test_small_edif_cables(self):
         for ii, filename in enumerate(self.edif_files):
-            if os.path.getsize(filename) > 1024 * 10:
+            if Path(filename).stat().st_size > 1024 * 10:
                 continue
             self.ensure_cable_consistency(filename, ii, "edf")
 
     def ensure_cable_consistency(self,filename, ii, target_format_extension = None):
         with self.subTest(i=ii):
-            if os.path.exists("temp"):
+            if Path("temp").exists():
                 shutil.rmtree("temp")
             print(filename)
             with tempfile.TemporaryDirectory() as tempdirname:

@@ -91,4 +91,9 @@ wire_q_2.connect_pin(inst_or2.pins[pin_or2_b])
 wire_o.connect_pin(pin_widget_o)
 wire_o.connect_pin(inst_or2.pins[pin_or2_q])
 
+temp = next(netlist.libraries[0].get_instances("and2_1"),None)  
+print("Instance:",temp.name)  
+print("Reference:",temp.reference.name)  
+print("Parent:",temp.parent.name)  
+
 sdn.compose(netlist, 'test.edf')

@@ -5,12 +5,13 @@ from spydrnet import parsers
 import os
 import tempfile
 import glob
+from pathlib import Path
 
 class TestVerilogComposer(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.dir_of_verilog_netlists = os.path.join(sdn.base_dir, "support_files", "verilog_netlists")
+        cls.dir_of_verilog_netlists = Path(sdn.base_dir, "support_files", "verilog_netlists")        
         cls.verilog_files = sorted(glob.glob(os.path.join(cls.dir_of_verilog_netlists, "*.v.zip")), key = os.path.getsize)
 
     @unittest.skip("Test takes a long time right now.")
@@ -19,7 +20,7 @@ class TestVerilogComposer(unittest.TestCase):
         errors = 0
         for ii, filename in enumerate(self.verilog_files):
             with self.subTest(i=ii):
-                if os.path.getsize(filename) <= 1024 * 10:
+                if Path(filename).stat().st_size <= 1024 * 10:
                     continue
                 if filename.endswith(".zip"):
                     with tempfile.TemporaryDirectory() as tempdirectory:
@@ -28,7 +29,7 @@ class TestVerilogComposer(unittest.TestCase):
                             # vp = sdn.parsers.verilog.parser.VerilogParser.from_filename(os.path.join(directory, filename))
                             # netlist = vp.parse()
                             netlist = parsers.parse(filename)
-                            composers.compose(netlist, os.path.join(tempdirectory, os.path.basename(filename) +  "-spydrnet.v"))
+                            composers.compose(netlist, Path(tempdirectory, Path(filename).name +  "-spydrnet.v"))
                             #comp.run(netlist,"temp2/"+filename[:len(filename)-6] + "-spydrnet.v")
                             # comp.run(netlist,os.path.join(tempdirectory, filename[:len(filename)-6] + "-spydrnet.v"))
                             i+=1
@@ -49,7 +50,7 @@ class TestVerilogComposer(unittest.TestCase):
         errors = 0
         for ii, filename in enumerate(self.verilog_files):
             with self.subTest(i=ii):
-                if os.path.getsize(filename) > 1024 * 10:
+                if Path(filename).stat().st_size > 1024 * 10:
                     continue
                 if filename.endswith(".zip"):
                     with tempfile.TemporaryDirectory() as tempdirectory:
@@ -58,7 +59,7 @@ class TestVerilogComposer(unittest.TestCase):
                             # vp = sdn.parsers.verilog.parser.VerilogParser.from_filename(os.path.join(directory, filename))
                             # netlist = vp.parse()
                             netlist = parsers.parse(filename)
-                            composers.compose(netlist, os.path.join(tempdirectory, os.path.basename(filename) +  "-spydrnet.v"))
+                            composers.compose(netlist, Path(tempdirectory, Path(filename).name +  "-spydrnet.v"))
                             #comp.run(netlist,"temp2/"+filename[:len(filename)-6] + "-spydrnet.v")
                             # comp.run(netlist,os.path.join(tempdirectory, filename[:len(filename)-6] + "-spydrnet.v"))
                             i+=1
@@ -79,8 +80,8 @@ class TestVerilogComposer(unittest.TestCase):
                 self.dir_of_verilog_netlists, "*4bitadder.v.zip")):
             with tempfile.TemporaryDirectory() as tempdirectory:
                 netlist = parsers.parse(filename)
-                out_file = os.path.join(
-                    tempdirectory, os.path.basename(filename) + "-spydrnet.v")
+                out_file = Path(
+                    tempdirectory, Path(filename).name + "-spydrnet.v")
                 composers.compose(netlist, out_file, definition_list=['adder'])
 
                 with open(out_file, "r") as fp:
@@ -98,8 +99,8 @@ class TestVerilogComposer(unittest.TestCase):
                 self.dir_of_verilog_netlists, "*4bitadder.v.zip")):
             with tempfile.TemporaryDirectory() as tempdirectory:
                 netlist = parsers.parse(filename)
-                out_file = os.path.join(
-                    tempdirectory, os.path.basename(filename) + "-spydrnet.v")
+                out_file = Path(
+                    tempdirectory, Path(filename).name + "-spydrnet.v")
                 composers.compose(netlist, out_file, write_blackbox=False)
 
                 with open(out_file, "r") as fp:

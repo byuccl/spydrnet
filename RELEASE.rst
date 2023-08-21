@@ -1,3 +1,10 @@
+SpyDrNet 1.12.2
+----------------
+April 18, 2023
+
+Bug fix for Verilog parser for partially connected ports being misaligned and fixed primitive name with a space at the end.
+Changed some of the os.path to pathlib to conform to updated coding standards
+
 SpyDrNet 1.12.1
 ----------------
 February 2, 2023

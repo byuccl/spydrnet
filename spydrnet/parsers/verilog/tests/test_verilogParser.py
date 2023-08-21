@@ -325,9 +325,9 @@ class TestVerilogParser(unittest.TestCase):
         for c in parser.current_definition.cables:
             names.append(c.name)
             assert len(c.wires) == 1
-        assert '\\byte_num[2] ' in names
-        assert '\\byte_num[1] ' in names
-        assert '\\byte_num[0] ' in names
+        assert '\\byte_num[2]' in names
+        assert '\\byte_num[1]' in names
+        assert '\\byte_num[0]' in names
         assert parser.current_definition.ports[0].name == 'byte_num'
 
 
@@ -835,11 +835,47 @@ class TestVerilogParser(unittest.TestCase):
         instance = next(netlist.get_instances("my_inst"))
         self.assertEqual(instance.name, "my_inst")
         connections = ["clk_c", "VCC_net", "out"]
-        for i in range(0,2):
+        for i in range(0,3):
             port = next(instance.get_ports("port_"+str(i)))
             self.assertEqual(len(port.pins), 1)
             for pin in port.get_pins(selection=Selection.OUTSIDE):
                 self.assertEqual(pin.wire.cable.name, connections[i])
+
+        os.remove("test_netlist.v")
+
+    def test_parse_empty_mapped_ports(self):
+        # create dummy netlist
+        to_write = "module top (input clk, output out);\n"
+        to_write += "\tINST my_inst ();\n"
+        to_write += "\tINST my_whitespace_inst (  );\n"
+        to_write += "endmodule\n\n"
+        to_write += "module INST (input port_0, input port_1, output port_2);\n"
+        to_write += "endmodule"
+        f = open("test_netlist.v", "x")
+        f.write(to_write)
+        f.close()
+
+        parser = VerilogParser.from_filename("test_netlist.v")
+        parser.parse()
+        netlist = parser.netlist
+
+        # my_inst has nothing attached
+        instance = next(netlist.get_instances("my_inst"))
+        self.assertEqual(instance.name, "my_inst")
+        for i in range(0,3):
+            port = next(instance.get_ports("port_"+str(i)))
+            self.assertEqual(len(port.pins), 1)
+            for pin in port.get_pins(selection=Selection.OUTSIDE):
+                self.assertEqual(pin.wire, None)
+
+        # my_whitespace_inst has nothing attached and doesn't immediately have a closing paren
+        instance = next(netlist.get_instances("my_whitespace_inst"))
+        self.assertEqual(instance.name, "my_whitespace_inst")
+        for i in range(0,3):
+            port = next(instance.get_ports("port_"+str(i)))
+            self.assertEqual(len(port.pins), 1)
+            for pin in port.get_pins(selection=Selection.OUTSIDE):
+                self.assertEqual(pin.wire, None)
 
         os.remove("test_netlist.v")
 
@@ -1206,7 +1242,7 @@ class TestVerilogParser(unittest.TestCase):
         assert i_right == None
         c1, o_left, o_right, c2, i_left, i_right = parser.parse_assign()
         assert c1.name == "SR2"
-        assert c2.name == "\\<const0> "
+        assert c2.name == "\\<const0>"
         assert o_left == 2
         assert o_right == None
         assert i_left == None
@@ -1305,6 +1341,60 @@ class TestVerilogParser(unittest.TestCase):
 
         os.remove("test_netlist.v")
 
+    #################################################
+    ## Other tests
+    #################################################
+    
+    def test_partially_connected_ports(self):
+        # make sure partially connected ports connect pins on lower end of the port
+        # create a little netlist to use
+        to_write = "module top (input clk, output out);\n"
+        to_write += "\twire [6:0]count_cry, count_cry_2;\n"
+        to_write += "\twire [7:0] count_s, count_qxu;\n"
+        to_write += "\twire[7:0] count_s_2, count_qxu_2;\n"
+        to_write += "\twire [3:0] b;\n"
+        to_write += "\twire lopt_1, GND;\n"
+        to_write += "\n"
+        to_write += "\tCARRY4 carry_part_connected\n"
+        to_write += "\t(\n"
+        to_write += "\t\t.CI(count_cry[3]),\n"
+        to_write += "\t\t.CO(count_cry[6:4]),\n"
+        to_write += "\t\t.CYINIT(lopt_1),\n"
+        to_write += "\t\t.DI({GND, GND, GND}),\n"
+        to_write += "\t\t.O(count_s[7:4]),\n"
+        to_write += "\t\t.S(count_qxu[7:4])\n"
+        to_write += "\t);\n"
+        to_write += "\t\n"
+        to_write += "\tCARRY4 carry_full_connected\n"
+        to_write += "\t(\n"
+        to_write += "\t\t.CI(count_cry_2[3]),\n"
+        to_write += "\t\t.CO(count_cry_2[6:2]),\n"
+        to_write += "\t\t.CYINIT(lopt_1),\n"
+        to_write += "\t\t.DI({GND,GND, GND, GND}),\n"
+        to_write += "\t\t.O(count_s_2[7:4]),\n"
+        to_write += "\t\t.S(count_qxu_2[7:4])\n"
+        to_write += "\t);\n"
+        to_write += "endmodule\n"
+        f = open("test_netlist.v", "x")
+        f.write(to_write)
+        f.close()
+
+        parser = VerilogParser.from_filename("test_netlist.v")
+        parser.parse()
+        netlist = parser.netlist
+        netlist = sdn.parse("test_netlist.v")
+        for inst in netlist.get_instances():
+            for port in inst.get_ports():
+                pins = list(p for p in port.get_pins(selection=Selection.OUTSIDE, filter=lambda x: x.instance==inst))
+                pins.reverse()
+                if not all(p.wire for p in pins) and any(p.wire for p in pins):
+                    wires = list(p.wire for p in pins if p.wire)
+                    for i in range(len(wires)):
+                        assert pins[i].wire, "The wire is " + str(pins[i].wire + " but should be connected")
+                    for i in range(len(pins)-len(wires)):
+                        assert pins[len(wires)+i].wire is None, "The wire is " + str(pins[i].wire + " but should NOT be connected")
+
+        os.remove("test_netlist.v")
 
     ############################################
     ##test helpers
@@ -1400,7 +1490,7 @@ class TestVerilogParser(unittest.TestCase):
 
         parser.current_definition = sdn.Definition()
         cable, _, _ = parser.parse_variable_instantiation()
-        self.assertEqual(cable.name, "\\<const0> ", "Check const wire name")
+        self.assertEqual(cable.name, "\\<const0>", "Check const wire name")
 
         # Check constant 1 net declaration
         tokens = ("1'b1", vt.SEMI_COLON)
@@ -1410,7 +1500,7 @@ class TestVerilogParser(unittest.TestCase):
 
         parser.current_definition = sdn.Definition()
         cable, _, _ = parser.parse_variable_instantiation()
-        self.assertEqual(cable.name, "\\<const1> ", "Check const wire name")
+        self.assertEqual(cable.name, "\\<const1>", "Check const wire name")
 
 
 if __name__ == '__main__':

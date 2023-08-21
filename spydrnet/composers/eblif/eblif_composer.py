@@ -1,6 +1,6 @@
-import os
 from spydrnet.util.selection import Selection
 import spydrnet as sdn
+from pathlib import Path
 
 class EBLIFComposer:
     def __init__(self, write_blackbox, write_cname=True):
@@ -17,7 +17,7 @@ class EBLIFComposer:
         self._compose(ir)
     
     def prepare_file(self,out_file):
-        if (os.path.exists(out_file)):
+        if (Path(out_file).exists()):
             f = open(out_file,"w")
         else:
             f = open(out_file,"x")

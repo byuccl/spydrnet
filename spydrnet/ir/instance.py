@@ -219,6 +219,9 @@ class Instance(FirstClassElement):
         rep += '>'
         return rep
 
+    def __lt__(self, other):
+        return self.name < other.name
+
     @property
     def is_top_instance(self):
         return self._is_top_instance

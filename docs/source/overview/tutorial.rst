@@ -1,10 +1,10 @@
-Tutorial
-============
+Overview
+========
 
 SpyDrNet is a tool for the analysis and transformation of structural netlists. A structural netlist is a static representation of an electronic circuit. A circuit consists of a number of electrical components and their connections. Figure :numref:`fig:hierarchical_netlist` shows a graphical representation of a netlist.
 
 .. _fig:hierarchical_netlist:
-.. figure:: figures/hierarchical_netlist.*
+.. figure:: ../figures/hierarchical_netlist.*
    :align: center
 
    Hierarchical representation of a Netlist 
@@ -24,7 +24,7 @@ This flow is inspired by `LLVM`_ and `Pandoc`_. LLVM has a similar flow for comp
 .. _Pandoc: https://pandoc.org/
 
 .. _fig:flow.2:
-.. figure:: /figures/flow.*
+.. figure:: ../figures/flow.*
    :align: center
    :alt: SpyDrNet Flow
 
@@ -177,14 +177,14 @@ Instances:
 **See the following two figures to aid in understanding the SpyDrNet IR:**
 
 .. _fig:IR_2:
-.. figure:: /figures/IR.*
+.. figure:: ../figures/IR.*
     :align: center
     :alt: SpyDrNet Intermediate Representation
 
     Summary of the SpyDrNet IR 1
 
 .. _fig:IR_3:
-.. figure:: /figures/spydrnet_api_elements.png
+.. figure:: ../figures/spydrnet_api_elements.png
     :align: center
     :alt: SpyDrNet Intermediate Representation
 

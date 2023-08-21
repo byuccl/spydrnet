@@ -6,10 +6,10 @@ Make Instances Unique
 Creates definitions for non-leaf instances so each instance has its own definition. Each library in both the original and the uniquified netlist will be printed along with each's definitions.
 """
 
-import os
 import tempfile
 import spydrnet as sdn
 import collections
+from pathlib import Path
 
 
 # Check if given instance is a black box
@@ -189,7 +189,7 @@ clean(top_def)
 
 with tempfile.TemporaryDirectory() as td:
     file_name = example_name + '_unique.edf'
-    sdn.compose(ir, os.path.join(td, file_name))
+    sdn.compose(ir, Path(td, file_name))
 
 #show the original netlist with its definitions and the new netlist with each instance now as a unique definition
 print("ORIGINAL")

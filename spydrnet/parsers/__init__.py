@@ -1,6 +1,6 @@
-import os
 import zipfile
 import tempfile
+from pathlib import Path
 
 """
 Init for Spydrnet. The functions below can be called directly
@@ -8,7 +8,7 @@ Init for Spydrnet. The functions below can be called directly
 """
 
 
-def parse(filename, architecture=None, remove_space=False):
+def parse(filename, architecture=None):
     """
     The parse function is able to parse an EDIF (.edf) file, a Verilog file (.v), or an EBLIF file (.eblif).
 
@@ -35,9 +35,9 @@ def parse(filename, architecture=None, remove_space=False):
 
     The same applies for EBLIF files
     """
-    basename_less_final_extension = os.path.splitext(
-        os.path.basename(filename))[0]
-    extension = get_lowercase_extension(filename)
+
+    basename_less_final_extension = Path(filename).stem
+    extension = get_lowercase_extension(filename)     
     if extension == ".zip":
         assert zipfile.is_zipfile(filename), \
             "Input filename {} with extension .zip is not a zip file.".format(
@@ -48,13 +48,14 @@ def parse(filename, architecture=None, remove_space=False):
                 assert len(files) == 1 and files[0] == basename_less_final_extension, \
                     "Only single file archives allowed with a file whose name matches the name of the archive"
                 zip.extract(basename_less_final_extension, tempdirname)
-                filename = os.path.join(
-                    tempdirname, basename_less_final_extension)
-                return _parse(filename)
-    return _parse(filename, architecture, remove_space)
+                # filename = Path(tempdirname).joinpath(basename_less_final_extension)
+                filename = Path(tempdirname, basename_less_final_extension)
+                return _parse(filename, architecture)
+            
+    return _parse(filename, architecture)    
 
 
-def _parse(filename, architecture=None, remove_space=False):
+def _parse(filename, architecture=None):
     extension = get_lowercase_extension(filename)
     if extension in [".edf", ".edif", ".edn"]:
         from spydrnet.parsers.edif.parser import EdifParser
@@ -67,11 +68,7 @@ def _parse(filename, architecture=None, remove_space=False):
         parser = EBLIFParser.from_filename(filename)
     else:
         raise RuntimeError("Extension {} not recognized.".format(extension))
-    parser.parse()
-    
-    if remove_space:
-        from spydrnet.util.remove_space import removing_space
-        removing_space(parser.netlist)
+    parser.parse()     
 
     if architecture:
         read_primitive_library(architecture, parser.netlist)
@@ -81,7 +78,7 @@ def _parse(filename, architecture=None, remove_space=False):
 
 
 def get_lowercase_extension(filename):
-    extension = os.path.splitext(filename)[1]
+    extension = Path(filename).suffix
     extension_lower = extension.lower()
     return extension_lower
 
