@@ -22,9 +22,9 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
-
+    - name: Install Dependencies
+      run: |
+        python -m pip install requests
     - name: Run Pytest for SpyDrNet
-      uses: cclauss/GitHub-Action-for-pytest@master
-      with:
-        dependencies: python3 -m pip install requests
-        args: python3 -m pytest -v
+      run: |
+        python3 -m pytest -v
