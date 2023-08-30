@@ -7,6 +7,7 @@ from pathlib import Path
 from spydrnet.parsers.edif.tokenizer import EdifTokenizer
 from spydrnet import example_netlists_path
 
+
 class TestEdifTokenizer(unittest.TestCase):
     def test_no_constructor_of_zero_argument(self):
         self.assertRaises(TypeError, EdifTokenizer)
@@ -16,7 +17,7 @@ class TestEdifTokenizer(unittest.TestCase):
         test_file = Path(dir_of_edif_netlists, "n_bit_counter.edf.zip")
         zip = zipfile.ZipFile(test_file)
         file_name = Path(test_file).name
-        file_name = file_name[:file_name.rindex(".")]
+        file_name = file_name[: file_name.rindex(".")]
         stream = zip.open(file_name)
         stream = io.TextIOWrapper(stream)
         tokenizer = EdifTokenizer.from_stream(stream)
@@ -25,7 +26,9 @@ class TestEdifTokenizer(unittest.TestCase):
 
     def test_open_zip_file(self):
         dir_of_edif_netlists = Path(example_netlists_path, "EDIF_netlists")
-        test_file = Path(dir_of_edif_netlists, "n_bit_counter.edf.zip") # UnicodeDecodeError
+        test_file = Path(
+            dir_of_edif_netlists, "n_bit_counter.edf.zip"
+        )  # UnicodeDecodeError
         tokenizer = EdifTokenizer.from_filename(test_file)
         next_token = tokenizer.next()
         self.assertEqual("(", next_token)
@@ -34,7 +37,7 @@ class TestEdifTokenizer(unittest.TestCase):
         dir_of_edif_netlists = Path(example_netlists_path, "EDIF_netlists")
         test_file = Path(dir_of_edif_netlists, "n_bit_counter.edf.zip")
         file_name = Path(test_file).name
-        file_name = file_name[:file_name.rindex(".")]
+        file_name = file_name[: file_name.rindex(".")]
         zip = zipfile.ZipFile(test_file)
         with tempfile.TemporaryDirectory() as tempdir:
             zip.extract(file_name, tempdir)
@@ -65,19 +68,19 @@ class TestEdifTokenizer(unittest.TestCase):
         self.assertRaises(StopIteration, tokenizer.next)
 
     def test_string_token(self):
-        test_string = "\"This is a test string in EDIF\""
+        test_string = '"This is a test string in EDIF"'
         tokenizer = EdifTokenizer.from_string(test_string)
         next_token = tokenizer.next()
         self.assertEqual(test_string, next_token)
         self.assertRaises(StopIteration, tokenizer.next)
 
     def test_multiline_string(self):
-        test_string = "\"This is a test string in EDIF\n with a new line in it.\""
+        test_string = '"This is a test string in EDIF\n with a new line in it."'
         tokenizer = EdifTokenizer.from_string(test_string)
         next_token = tokenizer.next()
         self.assertEqual(test_string.replace("\n", ""), next_token)
         self.assertRaises(StopIteration, tokenizer.next)
-    
+
     def test_peek_and_token_equals(self):
         test_id = "VALID_EDIF_ID"
         tokenizer = EdifTokenizer.from_string(test_id)
@@ -94,7 +97,6 @@ class TestEdifTokenizer(unittest.TestCase):
 
 
 class TestTokenTypes(unittest.TestCase):
-
     def test_edif_identifier(self):
         valid_ids = "&test a a9 a_ Alpha_Numeric_0123456789 &"
         tokenizer = EdifTokenizer.from_string(valid_ids)
@@ -102,10 +104,10 @@ class TestTokenTypes(unittest.TestCase):
             tokenizer.next()
             self.assertTrue(tokenizer.is_valid_identifier(), tokenizer.token)
 
-        invalid_ids = "_ _idenitier_ 9alkjf too_long" + "0"*(256 - 7)
+        invalid_ids = "_ _idenitier_ 9alkjf too_long" + "0" * (256 - 7)
         tokenizer = EdifTokenizer.from_string(invalid_ids)
         while tokenizer.has_next():
             tokenizer.next()
             self.assertFalse(tokenizer.is_valid_identifier(), tokenizer.token)
 
-        #TODO Special characters are weird. We should check them out.
+        # TODO Special characters are weird. We should check them out.

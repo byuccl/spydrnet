@@ -7,8 +7,12 @@ class TestGetPorts(unittest.TestCase):
         definition = sdn.Definition()
         port = definition.create_port()
         port.name = "MY_PORT"
-        self.assertRaises(TypeError, sdn.get_ports, definition, "MY_PORT", patterns="MY_PORT")
-        self.assertRaises(TypeError, sdn.get_ports, definition, "MY_PORT", unsupported_keyword=None)
+        self.assertRaises(
+            TypeError, sdn.get_ports, definition, "MY_PORT", patterns="MY_PORT"
+        )
+        self.assertRaises(
+            TypeError, sdn.get_ports, definition, "MY_PORT", unsupported_keyword=None
+        )
         self.assertRaises(TypeError, sdn.get_ports, None, "MY_PORT")
         self.assertRaises(TypeError, sdn.get_ports, [None, definition], "MY_PORT")
 

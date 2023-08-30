@@ -9,10 +9,16 @@ class TestLibrary(unittest.TestCase):
         self.library = sdn.Library()
 
     def test_constructor(self):
-        self.assertIsInstance(self.library, FirstClassElement, "Netlist is not an element.")
-        self.assertTrue(self.library, "Constructor return None type or empty collection")
+        self.assertIsInstance(
+            self.library, FirstClassElement, "Netlist is not an element."
+        )
+        self.assertTrue(
+            self.library, "Constructor return None type or empty collection"
+        )
         library2 = sdn.Netlist()
-        self.assertNotEqual(self.library, library2, "Unique objects are considered equal.")
+        self.assertNotEqual(
+            self.library, library2, "Unique objects are considered equal."
+        )
 
     def test_definitions_set(self):
         definition1 = self.library.create_definition()
@@ -62,10 +68,10 @@ class TestLibrary(unittest.TestCase):
 
     def test_no_parent_netlist(self):
         library = sdn.Library()
-        self.assertTrue('parent netlist undefined' in library.__str__())
+        self.assertTrue("parent netlist undefined" in library.__str__())
 
     def test_no_parent_netlist_name(self):
         netlist = sdn.Netlist()
         library = sdn.Library()
         netlist.add_library(library)
-        self.assertTrue('parent netlist.name undefined' in library.__str__())
+        self.assertTrue("parent netlist.name undefined" in library.__str__())

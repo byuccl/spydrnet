@@ -13,16 +13,33 @@ class TestOuterPinsView(unittest.TestCase):
 
     def test_contains(self):
         self.assertTrue(all(x in self.outer_pins_view for x in self.inner_pins))
-        self.assertTrue(all(sdn.OuterPin(self.instance, x) in self.outer_pins_view for x in self.inner_pins))
+        self.assertTrue(
+            all(
+                sdn.OuterPin(self.instance, x) in self.outer_pins_view
+                for x in self.inner_pins
+            )
+        )
 
     def test_equal(self):
-        self.assertEqual(self.outer_pins_view, dict(map(lambda x: (x, sdn.OuterPin(self.instance, x)),
-                                                        self.inner_pins)))
+        self.assertEqual(
+            self.outer_pins_view,
+            dict(map(lambda x: (x, sdn.OuterPin(self.instance, x)), self.inner_pins)),
+        )
 
     def test_getitem(self):
-        self.assertTrue(all(self.outer_pins_view[x] == sdn.OuterPin(self.instance, x) for x in self.inner_pins))
-        self.assertTrue(all(self.outer_pins_view[x] is self.outer_pins_view[sdn.OuterPin(self.instance, x)] for x in
-                            self.inner_pins))
+        self.assertTrue(
+            all(
+                self.outer_pins_view[x] == sdn.OuterPin(self.instance, x)
+                for x in self.inner_pins
+            )
+        )
+        self.assertTrue(
+            all(
+                self.outer_pins_view[x]
+                is self.outer_pins_view[sdn.OuterPin(self.instance, x)]
+                for x in self.inner_pins
+            )
+        )
 
     def test_iter(self):
         self.assertTrue(all(isinstance(x, sdn.OuterPin) for x in self.outer_pins_view))
@@ -31,6 +48,11 @@ class TestOuterPinsView(unittest.TestCase):
         self.assertEqual(len(self.outer_pins_view), 10)
 
     def test_get(self):
-        self.assertEqual(self.outer_pins_view.get(self.inner_pins[0]), sdn.OuterPin(self.instance, self.inner_pins[0]))
-        self.assertEqual(self.outer_pins_view.get(sdn.OuterPin(self.instance, self.inner_pins[0])),
-                         sdn.OuterPin(self.instance, self.inner_pins[0]))
+        self.assertEqual(
+            self.outer_pins_view.get(self.inner_pins[0]),
+            sdn.OuterPin(self.instance, self.inner_pins[0]),
+        )
+        self.assertEqual(
+            self.outer_pins_view.get(sdn.OuterPin(self.instance, self.inner_pins[0])),
+            sdn.OuterPin(self.instance, self.inner_pins[0]),
+        )

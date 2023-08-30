@@ -23,4 +23,4 @@ class TestPin(unittest.TestCase):
 
     def test_no_wire(self):
         pin = Pin()
-        self.assertTrue('Wire connected undefined' in pin.__str__())
+        self.assertTrue("Wire connected undefined" in pin.__str__())

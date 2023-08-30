@@ -48,11 +48,13 @@ class TestHRefBase(unittest.TestCase):
         href2 = HRef.from_parent_and_item(None, instance)
         self.assertTrue(href1 is href2)
         import weakref
+
         w_href1 = weakref.ref(href1)
         w_href2 = weakref.ref(href2)
         href1 = None
         href2 = None
         import gc
+
         gc.collect()
         self.assertIsNone(w_href1())
         self.assertIsNone(w_href2())
@@ -99,7 +101,7 @@ class TestHRefBase(unittest.TestCase):
         self.assertFalse(href.is_valid)
 
         port = sdn.Port()
-        pin  = sdn.InnerPin()
+        pin = sdn.InnerPin()
 
         href = HRef.from_sequence([instance, port, pin])
         self.assertFalse(href.is_valid)
@@ -183,7 +185,7 @@ class TestHRefBase(unittest.TestCase):
         instance = sdn.Instance()
         instance.name = "MY_INST"
         href = HRef.from_parent_and_item(None, instance)
-        self.assertEqual('', href.name)
+        self.assertEqual("", href.name)
 
     def test_href_wire_name(self):
         top = sdn.Instance()

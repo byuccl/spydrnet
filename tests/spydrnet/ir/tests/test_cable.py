@@ -53,4 +53,4 @@ class TestCable(unittest.TestCase):
         cable = sdn.Cable()
         cable.create_wire()
         cable.create_wire()
-        self.assertTrue('is_scalar: False;' in cable.__str__())
+        self.assertTrue("is_scalar: False;" in cable.__str__())

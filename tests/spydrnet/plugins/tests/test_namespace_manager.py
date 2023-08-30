@@ -3,7 +3,6 @@ import spydrnet as sdn
 
 
 class TestNamespaceManager(unittest.TestCase):
-
     def test_naming_after_assignments(self):
         library = sdn.Library()
         definition = library.create_definition()

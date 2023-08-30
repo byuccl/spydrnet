@@ -11,7 +11,9 @@ class TestCompareNetlists(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.dir_of_edif_netlists = Path(sdn.example_netlists_path, "EDIF_netlists")
-        cls.dir_of_verilog_netlists = Path(sdn.example_netlists_path, "verilog_netlists")
+        cls.dir_of_verilog_netlists = Path(
+            sdn.example_netlists_path, "verilog_netlists"
+        )
         cls.edif_files = sorted(Path.glob(cls.dir_of_edif_netlists, "*.edf.zip"))
         cls.verilog_files = sorted(Path.glob(cls.dir_of_verilog_netlists, "*.v.zip"))
 
@@ -34,16 +36,16 @@ class TestCompareNetlists(unittest.TestCase):
             if Path(filename).stat().st_size <= 1024 * 10:
                 continue
             self.compare_parser_and_composer(filename, ii, "v")
-        #assert False
+        # assert False
 
     def test_small_verilog(self):
         for ii, filename in enumerate(self.verilog_files):
             if Path(filename).stat().st_size > 1024 * 10:
                 continue
             self.compare_parser_and_composer(filename, ii, "v")
-        #assert False
+        # assert False
 
-    def compare_parser_and_composer(self,filename, ii, target_format_extension = None):
+    def compare_parser_and_composer(self, filename, ii, target_format_extension=None):
         with self.subTest(i=ii):
             if Path("temp").exists():
                 shutil.rmtree("temp")
@@ -53,9 +55,14 @@ class TestCompareNetlists(unittest.TestCase):
                     orig_netlist = sdn.parse(filename)
                     basename_without_final_ext = Path(Path(filename).name).stem
                     if target_format_extension is None:
-                        composer_filename = Path(tempdirname, basename_without_final_ext)
+                        composer_filename = Path(
+                            tempdirname, basename_without_final_ext
+                        )
                     else:
-                        composer_filename = Path(tempdirname, basename_without_final_ext + "." + target_format_extension)
+                        composer_filename = Path(
+                            tempdirname,
+                            basename_without_final_ext + "." + target_format_extension,
+                        )
                     orig_netlist.compose(composer_filename)
                     print(composer_filename)
                     composer_netlist = sdn.parse(composer_filename)
@@ -71,16 +78,18 @@ class TestCompareNetlists(unittest.TestCase):
             if Path(filename).stat().st_size <= 1024 * 10:
                 continue
             self.compare_parser_and_composer(filename, ii, "edf")
-        #assert False
+        # assert False
 
-    @unittest.skip("currently not working properly for the number of cables on some examples please use with caution")
+    @unittest.skip(
+        "currently not working properly for the number of cables on some examples please use with caution"
+    )
     def test_small_verilog_to_edif(self):
         for ii, filename in enumerate(self.verilog_files):
             if Path(filename).stat().st_size > 1024 * 10:
                 continue
             self.compare_parser_and_composer(filename, ii, "edf")
-        #assert False
-        
+        # assert False
+
     def test_empty_netlists(self):
         nl1 = sdn.ir.Netlist()
         nl2 = sdn.ir.Netlist()
@@ -88,5 +97,5 @@ class TestCompareNetlists(unittest.TestCase):
         comp.compare()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

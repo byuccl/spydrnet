@@ -10,10 +10,16 @@ class TestBundle(unittest.TestCase):
         self.bundle = Bundle()
 
     def test_constructor(self):
-        self.assertIsInstance(self.bundle, FirstClassElement, "Bundle is not an element.")
-        self.assertTrue(self.bundle, "Constructor returns None type or empty collection.")
+        self.assertIsInstance(
+            self.bundle, FirstClassElement, "Bundle is not an element."
+        )
+        self.assertTrue(
+            self.bundle, "Constructor returns None type or empty collection."
+        )
         bundle2 = Bundle()
-        self.assertNotEqual(self.bundle, bundle2, "Unique objects are considered equal.")
+        self.assertNotEqual(
+            self.bundle, bundle2, "Unique objects are considered equal."
+        )
 
     def test_definition(self):
         self.assertIsNone(self.bundle.definition)

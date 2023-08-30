@@ -4,15 +4,22 @@ import spydrnet as sdn
 from spydrnet.ir import FirstClassElement
 from spydrnet.uniquify import uniquify
 
+
 class TestNetlist(unittest.TestCase):
     def setUp(self):
         self.netlist = sdn.Netlist()
 
     def test_constructor(self):
-        self.assertIsInstance(self.netlist, FirstClassElement, "Netlist is not an element.")
-        self.assertTrue(self.netlist, "Constructor return None type or empty collection")
+        self.assertIsInstance(
+            self.netlist, FirstClassElement, "Netlist is not an element."
+        )
+        self.assertTrue(
+            self.netlist, "Constructor return None type or empty collection"
+        )
         netlist2 = sdn.Netlist()
-        self.assertNotEqual(self.netlist, netlist2, "Unique objects are considered equal.")
+        self.assertNotEqual(
+            self.netlist, netlist2, "Unique objects are considered equal."
+        )
 
     def test_libraries(self):
         self.assertEqual(len(tuple(self.netlist.libraries)), 0)
@@ -78,8 +85,8 @@ class TestNetlist(unittest.TestCase):
         self.assertEqual(library_included.netlist, self.netlist)
 
     def test_top_instance_name(self):
-        netlist = sdn.load_example_netlist_by_name('toggle')
-        self.assertTrue('top_instance.name \'toggle\'' in netlist.__str__())
+        netlist = sdn.load_example_netlist_by_name("toggle")
+        self.assertTrue("top_instance.name 'toggle'" in netlist.__str__())
 
     def test_set_top_instance_using_instance(self):
         netlist = sdn.Netlist()
@@ -94,7 +101,7 @@ class TestNetlist(unittest.TestCase):
         self.assertTrue(netlist.top_instance.reference is definition)
 
     def test_is_unique(self):
-        example_name = 'unique_challenge'
+        example_name = "unique_challenge"
         netlist = sdn.load_example_netlist_by_name(example_name)
         self.assertFalse(netlist.is_unique())
         uniquify(netlist)

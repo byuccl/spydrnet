@@ -7,8 +7,12 @@ class TestGetNetlists(unittest.TestCase):
         netlist = sdn.Netlist()
         library = netlist.create_library()
         library.name = "MY_LIB"
-        self.assertRaises(TypeError, sdn.get_netlists, netlist, "MY_LIB", patterns="MY_LIB")
-        self.assertRaises(TypeError, sdn.get_netlists, netlist, "MY_LIB", unsupported_keyword=None)
+        self.assertRaises(
+            TypeError, sdn.get_netlists, netlist, "MY_LIB", patterns="MY_LIB"
+        )
+        self.assertRaises(
+            TypeError, sdn.get_netlists, netlist, "MY_LIB", unsupported_keyword=None
+        )
         self.assertRaises(TypeError, sdn.get_netlists, None, "MY_LIB")
         self.assertRaises(TypeError, sdn.get_netlists, [None, netlist], "MY_LIB")
 

@@ -1,6 +1,7 @@
 import unittest
 from spydrnet.ir.views.dictview import DictView
 
+
 class TestDictView(unittest.TestCase):
     def setUp(self) -> None:
         self.dict_1 = dict(map(lambda x: (x, str(x)), range(10)))
@@ -47,13 +48,18 @@ class TestDictView(unittest.TestCase):
 
     def test_get(self):
         for ii in range(11):
-            self.assertTrue(self.dict_view_1.get(ii, '10') == str(ii))
+            self.assertTrue(self.dict_view_1.get(ii, "10") == str(ii))
 
     def test_copy(self):
-        self.assertEqual(dict(map(lambda x: (x, str(x)), range(10))), self.dict_view_1.copy())
+        self.assertEqual(
+            dict(map(lambda x: (x, str(x)), range(10))), self.dict_view_1.copy()
+        )
 
     def test_fromkeys(self):
-        self.assertEqual(self.dict_view_1.fromkeys(range(10), 5), dict(map(lambda x: (x, 5), range(10))))
+        self.assertEqual(
+            self.dict_view_1.fromkeys(range(10), 5),
+            dict(map(lambda x: (x, 5), range(10))),
+        )
 
     def test_keys(self):
         for ii, jj in zip(self.dict_view_1.keys(), range(10)):

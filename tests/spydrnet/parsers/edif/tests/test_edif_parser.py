@@ -23,7 +23,7 @@ class TestEdifTokenizer(unittest.TestCase):
         cable0.create_wire()
         cable1.create_wire()
         cable2.create_wire()
-        
+
         p0 = sdn.InnerPin()
         p1 = sdn.InnerPin()
         p2 = sdn.InnerPin()
@@ -38,14 +38,13 @@ class TestEdifTokenizer(unittest.TestCase):
         ep.multibit_add_cable(definition, cable1)
 
         assert len(definition.cables) == 1
-        assert len (definition.cables[0].wires) == 3
+        assert len(definition.cables[0].wires) == 3
         assert len(definition.cables[0].wires[0].pins) == 0
         assert len(definition.cables[0].wires[1].pins) == 3
         assert len(definition.cables[0].wires[2].pins) == 0
         assert p0 in definition.cables[0].wires[1].pins
         assert p1 in definition.cables[0].wires[1].pins
         assert p2 in definition.cables[0].wires[1].pins
-            
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -65,7 +64,7 @@ class TestEdifTokenizer(unittest.TestCase):
                 continue
             self.ensure_cable_consistency(filename, ii, "edf")
 
-    def ensure_cable_consistency(self,filename, ii, target_format_extension = None):
+    def ensure_cable_consistency(self, filename, ii, target_format_extension=None):
         with self.subTest(i=ii):
             if Path("temp").exists():
                 shutil.rmtree("temp")
@@ -78,5 +77,5 @@ class TestEdifTokenizer(unittest.TestCase):
                             assert c.definition is not None
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

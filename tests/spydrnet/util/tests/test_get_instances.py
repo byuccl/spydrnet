@@ -43,9 +43,19 @@ class TestGetInstances(unittest.TestCase):
         definition = sdn.Definition()
         instance = definition.create_child()
         instance.name = "MY_INST"
-        self.assertRaises(TypeError, sdn.get_instances, definition, "MY_INST", patterns="MY_INST")
-        self.assertRaises(TypeError, sdn.get_instances, definition, "MY_INST", unsupported_keyword=None)
-        self.assertRaises(TypeError, sdn.get_instances, definition, "MY_INST", selection=sdn.BOTH)
+        self.assertRaises(
+            TypeError, sdn.get_instances, definition, "MY_INST", patterns="MY_INST"
+        )
+        self.assertRaises(
+            TypeError,
+            sdn.get_instances,
+            definition,
+            "MY_INST",
+            unsupported_keyword=None,
+        )
+        self.assertRaises(
+            TypeError, sdn.get_instances, definition, "MY_INST", selection=sdn.BOTH
+        )
         self.assertRaises(TypeError, sdn.get_instances, None, "MY_INST")
         self.assertRaises(TypeError, sdn.get_instances, [None, definition], "MY_INST")
 
@@ -74,11 +84,15 @@ class TestGetInstances(unittest.TestCase):
         self.assertEqual(self.instance, instance1[0])
 
     def test_from_definition_outside_recursive(self):
-        instance1 = list(sdn.get_instances(self.definition, selection="OUTSIDE", recursive=True))
+        instance1 = list(
+            sdn.get_instances(self.definition, selection="OUTSIDE", recursive=True)
+        )
         self.assertEqual(self.top_instance, instance1[0])
 
     def test_from_leaf_definition_outside_recursive(self):
-        instance1 = list(sdn.get_instances(self.leaf_definition, selection="OUTSIDE", recursive=True))
+        instance1 = list(
+            sdn.get_instances(self.leaf_definition, selection="OUTSIDE", recursive=True)
+        )
         self.assertEqual(len(instance1), 2)
         self.assertTrue(self.top_instance in instance1 and self.instance in instance1)
 
@@ -87,7 +101,9 @@ class TestGetInstances(unittest.TestCase):
         self.assertEqual(self.instance, instance1)
 
     def test_from_instance_outside_resursive(self):
-        instance1 = list(sdn.get_instances(self.instance, selection="OUTSIDE", recursive=True))
+        instance1 = list(
+            sdn.get_instances(self.instance, selection="OUTSIDE", recursive=True)
+        )
         self.assertEqual(self.top_instance, instance1[0])
 
     def test_from_wire(self):

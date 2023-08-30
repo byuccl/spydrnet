@@ -1,6 +1,7 @@
 import unittest
 import spydrnet as sdn
 
+
 class TestGlobalServiceWithoutPlugins(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
@@ -13,6 +14,7 @@ class TestGlobalServiceWithoutPlugins(unittest.TestCase):
 
     def test_double_register_lookup(self):
         from spydrnet.global_state.global_service import register_lookup
+
         register_lookup("TEST", None)
         self.assertRaises(ValueError, register_lookup, "TEST", None)
 
@@ -21,11 +23,13 @@ class TestGlobalServiceWithoutPlugins(unittest.TestCase):
         library_name = library.name
         lib1 = next(self.netlist.get_libraries(library_name))
         self.assertEqual(library, lib1)
-        lib2 = next(self.netlist.get_libraries(library_name, key='EDIF.identifier'))
+        lib2 = next(self.netlist.get_libraries(library_name, key="EDIF.identifier"))
         self.assertEqual(library, lib2)
         lib3 = next(sdn.get_libraries(self.netlist, library_name))
         self.assertEqual(library, lib3)
-        lib4 = next(sdn.get_libraries(self.netlist, library_name, key='EDIF.identifier'))
+        lib4 = next(
+            sdn.get_libraries(self.netlist, library_name, key="EDIF.identifier")
+        )
         self.assertEqual(library, lib4)
 
     def test_lookup_definition(self):
@@ -34,19 +38,25 @@ class TestGlobalServiceWithoutPlugins(unittest.TestCase):
         definition_name = definition.name
         def1 = next(self.netlist.get_definitions(definition_name))
         self.assertEqual(definition, def1)
-        def2 = next(self.netlist.get_definitions(definition_name, key='EDIF.identifier'))
+        def2 = next(
+            self.netlist.get_definitions(definition_name, key="EDIF.identifier")
+        )
         self.assertEqual(definition, def2)
         def3 = next(sdn.get_definitions(self.netlist, definition_name))
         self.assertEqual(definition, def3)
-        def4 = next(sdn.get_definitions(self.netlist, definition_name, key='EDIF.identifier'))
+        def4 = next(
+            sdn.get_definitions(self.netlist, definition_name, key="EDIF.identifier")
+        )
         self.assertEqual(definition, def4)
         def5 = next(library.get_definitions(definition_name))
         self.assertEqual(definition, def5)
-        def6 = next(library.get_definitions(definition_name, key='EDIF.identifier'))
+        def6 = next(library.get_definitions(definition_name, key="EDIF.identifier"))
         self.assertEqual(definition, def6)
         def7 = next(sdn.get_definitions(library, definition_name))
         self.assertEqual(definition, def7)
-        def8 = next(sdn.get_definitions(library, definition_name, key='EDIF.identifier'))
+        def8 = next(
+            sdn.get_definitions(library, definition_name, key="EDIF.identifier")
+        )
         self.assertEqual(definition, def8)
 
     def test_lookup_port_cables_instances(self):

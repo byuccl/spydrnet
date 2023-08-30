@@ -18,4 +18,3 @@ class TestPatterns(unittest.TestCase):
 
     def test_value_matches_pattern_bad_regex_expr(self):
         self.assertFalse(_value_matches_pattern(None, "*", is_case=False, is_re=True))
-

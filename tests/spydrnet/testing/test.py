@@ -1,21 +1,21 @@
 def run(verbosity=1, doctest=False):
     """Run SpyDrNet tests.
-    
+
     Parameters
     ----------
     verbosity: integer, optional
       Level of detail in test reports.  Higher numbers provide more detail.
-    
+
     doctest: bool, optional
       True to run doctests in code modules
     """
 
     import pytest
 
-    pytest_args = ['-l']
+    pytest_args = ["-l"]
 
     if verbosity and int(verbosity) > 1:
-        pytest_args += ["-" + "v"*(int(verbosity)-1)]
+        pytest_args += ["-" + "v" * (int(verbosity) - 1)]
 
     if doctest:
         pytest_args += ["--doctest-modules"]
@@ -27,7 +27,7 @@ def run(verbosity=1, doctest=False):
     except SystemExit as exc:
         code = exc.code
 
-    return (code == 0)
+    return code == 0
 
 
 if __name__ == "__main__":

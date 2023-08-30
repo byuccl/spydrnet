@@ -9,10 +9,16 @@ class TestDefinition(unittest.TestCase):
         self.definition = sdn.Definition()
 
     def test_constructor(self):
-        self.assertIsInstance(self.definition, FirstClassElement, "Definition is not an element.")
-        self.assertTrue(self.definition, "Constructor returns None type or empty collection.")
+        self.assertIsInstance(
+            self.definition, FirstClassElement, "Definition is not an element."
+        )
+        self.assertTrue(
+            self.definition, "Constructor returns None type or empty collection."
+        )
         definition2 = sdn.Definition()
-        self.assertNotEqual(self.definition, definition2, "Unique objects are considered equal.")
+        self.assertNotEqual(
+            self.definition, definition2, "Unique objects are considered equal."
+        )
 
     @unittest.expectedFailure
     def test_assign_library(self):
@@ -49,7 +55,7 @@ class TestDefinition(unittest.TestCase):
     def test_remove_multiple_ports(self):
         port = self.definition.create_port()
         port_2 = self.definition.create_port()
-        self.definition.remove_ports_from([port,port_2])
+        self.definition.remove_ports_from([port, port_2])
         self.assertFalse(port in self.definition.ports)
         self.assertFalse(port_2 in self.definition.ports)
         self.assertIsNone(port.definition)
@@ -163,22 +169,31 @@ class TestDefinition(unittest.TestCase):
         self.assertEqual(instance_included.parent, self.definition)
 
     def test_is_leaf(self):
-        self.assertTrue(self.definition.is_leaf()), "Empty definition is not considered a leaf cell"
+        self.assertTrue(
+            self.definition.is_leaf()
+        ), "Empty definition is not considered a leaf cell"
         self.definition.create_port()
-        self.assertTrue(self.definition.is_leaf()), "Empty definition with a port is not considered a leaf cell"
+        self.assertTrue(
+            self.definition.is_leaf()
+        ), "Empty definition with a port is not considered a leaf cell"
         self.definition.create_cable()
-        self.assertFalse(self.definition.is_leaf()), "Definition with a cable is considered a leaf cell"
+        self.assertFalse(
+            self.definition.is_leaf()
+        ), "Definition with a cable is considered a leaf cell"
         self.definition.remove_cables_from(self.definition.cables)
         self.definition.create_child()
-        self.assertFalse(self.definition.is_leaf()), "Definition with a child instance is considered a leaf cell"
+        self.assertFalse(
+            self.definition.is_leaf()
+        ), "Definition with a child instance is considered a leaf cell"
         self.definition.create_cable()
-        self.assertFalse(self.definition.is_leaf()), "Definition with a cable and child instance is considered a leaf" \
-                                                     " cell"
+        self.assertFalse(
+            self.definition.is_leaf()
+        ), "Definition with a cable and child instance is considered a leaf" " cell"
 
     def test_library_name(self):
         definition = sdn.Definition()
         library = sdn.Library()
         library.add_definition(definition)
-        self.assertTrue('Library.name undefined' in definition.__str__())
-        library.name = 'library'
-        self.assertTrue('Library.name \'library\'' in definition.__str__())
+        self.assertTrue("Library.name undefined" in definition.__str__())
+        library.name = "library"
+        self.assertTrue("Library.name 'library'" in definition.__str__())

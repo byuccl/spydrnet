@@ -6,14 +6,13 @@ from spydrnet.compare.compare_netlists import Comparer
 
 
 class TestClone(unittest.TestCase):
-    
     def _get_two_netlists(self):
-        #create a test netlist
+        # create a test netlist
         nl = self._create_netlist()
-        #create my own backup of the test netlist (just create another that is identical)
+        # create my own backup of the test netlist (just create another that is identical)
         nl2 = self._create_netlist()
-        
-        #both netlists are created and checkout as the same.
+
+        # both netlists are created and checkout as the same.
         return nl, nl2
 
     def _compare_netlists(self, n1, n2):
@@ -54,7 +53,6 @@ class TestClone(unittest.TestCase):
         ins3.reference = def4
         return netlist
 
-
     def create_and_clone_cable(self, wirecount, array, downto, index, key, value):
         definition = Definition()
         p1 = definition.create_cable()
@@ -90,7 +88,7 @@ class TestClone(unittest.TestCase):
         index = 0
         key = "Name"
         value = "myPortName"
-        self.create_and_clone_cable(pincount, array, downto, index, key, value)        
+        self.create_and_clone_cable(pincount, array, downto, index, key, value)
 
     def test_cable_single_bit_array(self):
         pincount = 1
@@ -99,7 +97,7 @@ class TestClone(unittest.TestCase):
         index = 0
         key = "garbage_key"
         value = "garbage_value"
-        self.create_and_clone_cable(pincount, array, downto, index, key, value)        
+        self.create_and_clone_cable(pincount, array, downto, index, key, value)
 
     def test_definition(self):
         lib = Library()
@@ -131,7 +129,7 @@ class TestClone(unittest.TestCase):
         pin2 = pin.clone()
         assert pin2.wire == None
         assert pin2.port == None
-        
+
     def test_instance(self):
         def1 = Definition()
         def2 = Definition()
@@ -145,7 +143,6 @@ class TestClone(unittest.TestCase):
         assert set(inst2.pins.keys()).difference(set(child.pins.keys())) == set()
         for v in inst2.pins.values():
             assert v not in child.pins.values()
-
 
     def test_library_instance_references(self):
         lib1 = Library()
@@ -175,7 +172,6 @@ class TestClone(unittest.TestCase):
         assert ins2 not in def2c.references
         assert len(def3.references) == 2
 
-
     def test_library_definition_references(self):
         lib1 = Library()
         lib2 = Library()
@@ -193,7 +189,7 @@ class TestClone(unittest.TestCase):
             return
         assert e not in r1
 
-    def not_among_all_references(self,r1, nl1):
+    def not_among_all_references(self, r1, nl1):
         self.check(r1, nl1)
         self.check(r1, nl1.top_instance)
         for l in nl1.libraries:
@@ -217,7 +213,7 @@ class TestClone(unittest.TestCase):
                     for pi in p.pins:
                         self.check(r1, pi)
 
-    def add_all_references(self,r1, nl1):
+    def add_all_references(self, r1, nl1):
         r1.add(nl1)
         r1.add(nl1.top_instance)
         for l in nl1.libraries:
@@ -245,7 +241,7 @@ class TestClone(unittest.TestCase):
         r1 = set()
         self.add_all_references(r1, nl1)
         self.not_among_all_references(r1, nl2)
-        
+
     def test_netlist_several_lib(self):
         netlist = Netlist()
         lib1 = netlist.create_library()
@@ -278,7 +274,7 @@ class TestClone(unittest.TestCase):
         netlist2 = clone(netlist)
         self._compare_netlists(netlist, netlist2)
         self.check_overlap_references(netlist, netlist2)
-        
+
     def test_netlist_change_top_instance(self):
         nl1 = Netlist()
         lib1 = nl1.create_library()
@@ -289,7 +285,6 @@ class TestClone(unittest.TestCase):
         nl2 = clone(nl1)
         self._compare_netlists(nl1, nl2)
         self.check_overlap_references(nl1, nl2)
-
 
     def test_library_change_top_instace(self):
         nl1 = Netlist()
@@ -303,14 +298,13 @@ class TestClone(unittest.TestCase):
         nl2.add_library(lib2)
         self._compare_netlists(nl1, nl2)
         self.check_overlap_references(nl1, nl2)
-        
-    
+
     def test_netlist(self):
         nl1, nl2 = self._get_two_netlists()
         nl3 = clone(nl1)
         self._compare_netlists(nl1, nl3)
         self._compare_netlists(nl1, nl2)
-        #now check that no references overlap.
+        # now check that no references overlap.
         self.check_overlap_references(nl1, nl3)
 
     def test_netlist_empty_top_instance(self):
@@ -341,7 +335,9 @@ class TestClone(unittest.TestCase):
         assert op2.instance == None
         assert op2.inner_pin == None
 
-    def create_and_clone_port(self, pincount, direction, array, downto, index, key, value):
+    def create_and_clone_port(
+        self, pincount, direction, array, downto, index, key, value
+    ):
         definition = Definition()
         p1 = definition.create_port()
         p1[key] = value
@@ -370,8 +366,10 @@ class TestClone(unittest.TestCase):
         index = 5
         key = "EDIF.identifier"
         value = "myPort"
-        self.create_and_clone_port(pincount, direction, array, downto, index, key, value)        
-    
+        self.create_and_clone_port(
+            pincount, direction, array, downto, index, key, value
+        )
+
     def test_port_not_array(self):
         pincount = 1
         direction = Port.Direction.OUT
@@ -380,7 +378,9 @@ class TestClone(unittest.TestCase):
         index = 0
         key = "Name"
         value = "myPortName"
-        self.create_and_clone_port(pincount, direction, array, downto, index, key, value)        
+        self.create_and_clone_port(
+            pincount, direction, array, downto, index, key, value
+        )
 
     def test_port_single_bit_array(self):
         pincount = 1
@@ -390,10 +390,12 @@ class TestClone(unittest.TestCase):
         index = 0
         key = "garbage_key"
         value = "garbage_value"
-        self.create_and_clone_port(pincount, direction, array, downto, index, key, value)        
+        self.create_and_clone_port(
+            pincount, direction, array, downto, index, key, value
+        )
 
     def test_port_with_connectivity(self):
-        pass #TODO
+        pass  # TODO
 
     def test_wire(self):
         cable = Cable()

@@ -31,7 +31,7 @@ class TestPort(unittest.TestCase):
         for ii in range(4):
             self.port.direction = ii
             self.assertEqual(self.port.direction.value, ii)
-        directions = ['undefined', 'in', 'out', 'inout']
+        directions = ["undefined", "in", "out", "inout"]
         for direction in directions:
             self.port.direction = direction
             self.assertEqual(self.port.direction.name.lower(), direction.lower())

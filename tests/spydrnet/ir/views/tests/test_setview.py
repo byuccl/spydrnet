@@ -94,8 +94,10 @@ class TestSetView(unittest.TestCase):
         self.assertTrue(self.set_view.issuperset(set(range(5))))
 
     def test_symmetric_difference(self):
-        self.assertTrue(set(range(10)) ^ set(range(5, 20)), self.set_view.symmetric_difference(set(range(5, 20))))
+        self.assertTrue(
+            set(range(10)) ^ set(range(5, 20)),
+            self.set_view.symmetric_difference(set(range(5, 20))),
+        )
 
     def test_union(self):
         self.assertTrue(set(range(20)), self.set_view.union(set(range(10, 20))))
-

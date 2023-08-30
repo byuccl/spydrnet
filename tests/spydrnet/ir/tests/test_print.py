@@ -4,16 +4,15 @@ import spydrnet as sdn
 
 
 class TestPrint(unittest.TestCase):
-
-    netlist = sdn.Netlist(name='netlist')
-    cable = sdn.Cable(name='cable', is_downto=False)
+    netlist = sdn.Netlist(name="netlist")
+    cable = sdn.Cable(name="cable", is_downto=False)
     instance = sdn.Instance()
     print(netlist)
     netlist.top_instance = instance
     print(netlist)
     print(cable)
     print(instance)
-    library = netlist.create_library(name='lib')
+    library = netlist.create_library(name="lib")
     print(library)
     definition = sdn.Definition()
     print(definition)

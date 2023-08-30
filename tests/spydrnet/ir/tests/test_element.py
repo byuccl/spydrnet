@@ -14,15 +14,15 @@ class TestElement(unittest.TestCase):
         self.assertNotEqual(element1, element2, "Unique objects are considered equal.")
 
     def test_dictionary(self):
-        self.assertFalse('NAME' in self.element)
-        self.element['NAME'] = "TestName"
-        self.assertTrue('NAME' in self.element)
+        self.assertFalse("NAME" in self.element)
+        self.element["NAME"] = "TestName"
+        self.assertTrue("NAME" in self.element)
         for key in self.element:
             self.assertEqual(self.element[key], "TestName")
-        del self.element['NAME']
-        self.assertFalse('NAME' in self.element)
-        self.element['NAME'] = "DifferentName"
-        name = self.element.pop('NAME')
+        del self.element["NAME"]
+        self.assertFalse("NAME" in self.element)
+        self.element["NAME"] = "DifferentName"
+        name = self.element.pop("NAME")
         self.assertEqual(name, "DifferentName")
 
     def test_name(self):
@@ -41,5 +41,5 @@ class TestElement(unittest.TestCase):
         self.assertFalse(".NAME" in self.element)
 
     def test_data_view(self):
-        self.element['NAME'] = "TestName"
-        self.assertEqual(self.element.data, {'NAME': 'TestName'})
+        self.element["NAME"] = "TestName"
+        self.assertEqual(self.element.data, {"NAME": "TestName"})

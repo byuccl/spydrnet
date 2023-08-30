@@ -4,21 +4,30 @@ import spydrnet as sdn
 
 class TestGetHInstances(unittest.TestCase):
     netlist = None
+
     @classmethod
     def setUpClass(cls) -> None:
-        cls.netlist = sdn.load_example_netlist_by_name('b13')
+        cls.netlist = sdn.load_example_netlist_by_name("b13")
 
     def test_absolute_search(self):
-        href = next(self.netlist.get_hinstances('tx_end_reg'), None)
+        href = next(self.netlist.get_hinstances("tx_end_reg"), None)
         self.assertIsNotNone(href)
 
     def test_regex_search(self):
-        hrefs = list(sdn.get_hinstances(self.netlist, '.*FSM_onehot.*', is_re=True))
+        hrefs = list(sdn.get_hinstances(self.netlist, ".*FSM_onehot.*", is_re=True))
         self.assertTrue(len(hrefs) == 24)
 
     def test_parameters(self):
-        self.assertRaises(TypeError, sdn.get_hinstances, self.netlist, r'.*FSM_onehot.*', patterns=r".*FSM_onehot.*")
-        self.assertRaises(TypeError, sdn.get_hinstances, self.netlist, parameter_does_not_exit=True)
+        self.assertRaises(
+            TypeError,
+            sdn.get_hinstances,
+            self.netlist,
+            r".*FSM_onehot.*",
+            patterns=r".*FSM_onehot.*",
+        )
+        self.assertRaises(
+            TypeError, sdn.get_hinstances, self.netlist, parameter_does_not_exit=True
+        )
         self.assertRaises(TypeError, sdn.get_hinstances, object())
 
     def test_get_hinstances_of_pin(self):
@@ -39,6 +48,7 @@ class TestGetHInstances(unittest.TestCase):
 
     def test_get_hinstance_of_invalid_reference(self):
         from spydrnet.util.hierarchical_reference import HRef
+
         invalid_href = HRef.from_parent_and_item(None, None)
         hrefs = list(sdn.get_hinstances(invalid_href))
         self.assertTrue(len(hrefs) == 0)
@@ -51,6 +61,7 @@ class TestGetHInstances(unittest.TestCase):
         hrefs = list(sdn.get_hinstances(wire))
         href_top = hrefs[0]
         from spydrnet.util.hierarchical_reference import HRef
+
         cable_href = HRef.from_parent_and_item(href_top, cable)
         href_result = next(sdn.get_hinstances(cable_href), None)
         self.assertTrue(href_result is href_top)
@@ -66,6 +77,7 @@ class TestGetHInstances(unittest.TestCase):
         hrefs = list(sdn.get_hinstances(pin))
         href = hrefs[0]
         from spydrnet.util.hierarchical_reference import HRef
+
         port_href = HRef.from_parent_and_item(href, port)
         href_result = next(sdn.get_hinstances(port_href), None)
         self.assertTrue(href_result is href)
@@ -127,6 +139,6 @@ class TestGetHInstances(unittest.TestCase):
 
     @unittest.skip("Test takes too long at this time.")
     def test_recursive_memory_use(self):
-        netlist = sdn.load_example_netlist_by_name('leon3mp_hierarchical')
+        netlist = sdn.load_example_netlist_by_name("leon3mp_hierarchical")
         hrefs = list(sdn.get_hinstances(netlist))
         self.assertTrue(len(hrefs) > 0)

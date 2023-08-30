@@ -19,4 +19,3 @@ class TestUtil(unittest.TestCase):
         netlist2 = sdn.Netlist()
         library2 = netlist2.create_library()
         get_libraries([netlist1, netlist2])
-

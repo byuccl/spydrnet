@@ -1,7 +1,7 @@
-
 import unittest
 from spydrnet import Netlist, Instance
 from spydrnet.uniquify import uniquify
+
 
 class TestUniquify(unittest.TestCase):
     def create_netlist(self):
@@ -9,7 +9,7 @@ class TestUniquify(unittest.TestCase):
         lib = nl.create_library()
         d1 = lib.create_definition()
         d2 = lib.create_definition()
-        d3 = lib.create_definition(name='instance_name')
+        d3 = lib.create_definition(name="instance_name")
         i11 = d1.create_child()
         i12 = d1.create_child()
         i13 = d1.create_child()
@@ -34,7 +34,7 @@ class TestUniquify(unittest.TestCase):
         return nl
 
     def is_unique(self, netlist):
-        #get all the definitions that are instanced below the top instance
+        # get all the definitions that are instanced below the top instance
         top_inst = netlist.top_instance
         top_def = top_inst.reference
         inst = []
@@ -47,13 +47,13 @@ class TestUniquify(unittest.TestCase):
                 inst.append(c)
             index += 1
 
-        #now we have a list of all the instances in the netlist make sure all references are unique to the netlist
+        # now we have a list of all the instances in the netlist make sure all references are unique to the netlist
         refs = set()
         for i in inst:
             if i.reference.is_leaf():
                 continue
             if i.reference in refs:
-                return False #the instance references a previously referenced definition, instances are not unique
+                return False  # the instance references a previously referenced definition, instances are not unique
             refs.add(i.reference)
         return True
 
@@ -72,7 +72,9 @@ class TestUniquify(unittest.TestCase):
         nl.top_instance = top
         assert self.is_unique(nl), "netlist should be unique upon creation in this test"
         uniquify(nl)
-        assert self.is_unique(nl), "netlist should remain unique in this test. somehow uniquify made the netlist un-unique"
+        assert self.is_unique(
+            nl
+        ), "netlist should remain unique in this test. somehow uniquify made the netlist un-unique"
 
     # def simple_recursive_netlist_visualizer(self, netlist):
     #     #TODO put this code somewhere where people can use it to visualize simple netlists
@@ -86,14 +88,13 @@ class TestUniquify(unittest.TestCase):
     #     def recurse(instance, depth):
     #         s = depth * "\t"
     #         print(s, instance.name, "(", instance.reference.name, ")")
-    #         for c in instance.reference.children:  
+    #         for c in instance.reference.children:
     #             recurse(c, depth + 1)
-        
+
     #     recurse(top_instance, 0)
 
-
     def test_uniquify_simple_with_names(self):
-        '''simple test with 2 definitions.'''
+        """simple test with 2 definitions."""
         nl = Netlist()
         lib = nl.create_library()
         d1 = lib.create_definition()
@@ -115,7 +116,9 @@ class TestUniquify(unittest.TestCase):
         top.name = "top instance"
         top.reference = d1
         nl.top_instance = top
-        assert not self.is_unique(nl), "initial netlist should not be unique in this test"
+        assert not self.is_unique(
+            nl
+        ), "initial netlist should not be unique in this test"
         uniquify(nl)
         assert self.is_unique(nl), "netlist should have been uniquified."
 
