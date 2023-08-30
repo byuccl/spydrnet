@@ -2,7 +2,6 @@ from spydrnet.plugins.namespace_manager.default_namespace import DefaultNamespac
 from spydrnet.ir import Netlist, Library, Definition
 import re
 from spydrnet.plugins.namespace_manager.default_namespace import DefaultNamespace
-from spydrnet.global_state import global_flags
 
 
 class EdifNamespace(DefaultNamespace):
@@ -137,9 +136,8 @@ class EdifNamespace(DefaultNamespace):
                 namespace = self.edif_namespaces[element_type]
                 value_lower = value.lower()
                 if value_lower in namespace:
-                    if global_flags.use_case_sensitive_naming() or value_lower != element.name.lower():
-                        if namespace[value_lower] != element:
-                            return False
+                    if namespace[value_lower] != element:
+                        return False
         return True
 
     def update(self, element, key, value):

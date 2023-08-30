@@ -2,7 +2,6 @@ from spydrnet.parsers.edif.tokenizer import EdifTokenizer
 from spydrnet.parsers.edif.edif_tokens import *
 from spydrnet.ir import Netlist, Library, Definition, Port, Cable, Instance
 from spydrnet.plugins import namespace_manager
-from spydrnet.global_state import global_flags
 
 from functools import reduce
 import re
@@ -16,24 +15,23 @@ class EdifParser:
         return result
 
     @staticmethod
-    def from_filename(filename, **kwArgs):
-        parser = EdifParser(**kwArgs)
+    def from_filename(filename):
+        parser = EdifParser()
         parser.filename = filename
         return parser
 
     @staticmethod
-    def from_file_handle(file_handle, **kwArgs):
-        parser = EdifParser(**kwArgs)
+    def from_file_handle(file_handle):
+        parser = EdifParser()
         parser.file_handle = file_handle
         return parser
 
-    def __init__(self, **kwArgs):
-        self.edif_identifier_namespace = dict() # class -> object -> subclass -> identifier -> object
+    def __init__(self):
+        self.edif_identifier_namespace = {} # class -> object -> subclass -> identifier -> object
         self.filename = None
         self.file_handle = None
         self.elements = []
         self.tokenizer = None
-        global_flags.set_use_case_sensitive_naming('case_sensitive_naming' not in kwArgs or kwArgs['case_sensitive_naming'])
 
     def parse(self):
         self.initialize_tokenizer()
