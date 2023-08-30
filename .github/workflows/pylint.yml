@@ -22,4 +22,4 @@ jobs:
         pip install pylint-exit
     - name: Analysing the code with pylint
       run: |
-        pylint --rcfile=.pylintrc spydrnet/ || pylint-exit $?        
+        pylint --rcfile=.pylintrc spydrnet/ || pylint-exit --error-fail $?        
