@@ -27,5 +27,5 @@ jobs:
         python -m pip install requests
     - name: Run Pytest for SpyDrNet
       uses: cclauss/GitHub-Action-for-pytest@master
-      with:
-        args: python3 -m pytest -v
+      run: |
+        python3 -m pytest -v
