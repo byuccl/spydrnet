@@ -926,18 +926,17 @@ class EdifParser:
     def parse_typedValue(self):
         if self.construct_is(BOOLEAN):
             return self.parse_boolean()
-        elif self.construct_is(INTEGER):
+        if self.construct_is(INTEGER):
             return self.parse_integer()
-        elif self.construct_is(MI_NO_MAX):
+        if self.construct_is(MI_NO_MAX):
             raise NotImplementedError()
-        elif self.construct_is(NUMBER):
+        if self.construct_is(NUMBER):
             return self.parse_number()
-        elif self.construct_is(POINT):
+        if self.construct_is(POINT):
             raise NotImplementedError()
-        elif self.construct_is(STRING):
+        if self.construct_is(STRING):
             return self.parse_string()
-        else:
-            return self.expect("|".join([BOOLEAN, INTEGER, NUMBER, STRING]))
+        return self.expect("|".join([BOOLEAN, INTEGER, NUMBER, STRING]))
 
     def parse_boolean(self):
         self.expect(BOOLEAN)
@@ -1005,7 +1004,7 @@ class EdifParser:
         n_index, n_short = self.separate_name_and_index(c_name, "[")
 
         index = n_index
-        if e_index == None:
+        if e_index is None:
             index = None
 
         existing_cable = next(definition.get_cables(n_short), None)
@@ -1026,7 +1025,7 @@ class EdifParser:
             definition.add_cable(cable)
 
         else:  # there is alread a cable that could need to be merged.
-            if existing_cable.is_array == False or index == None:
+            if existing_cable.is_array is False or index is None:
                 definition.add_cable(cable)  # if this works great. otherwise the parent code will handle the error
             else:  # the cables should be merged
                 if index > existing_cable.lower_index:

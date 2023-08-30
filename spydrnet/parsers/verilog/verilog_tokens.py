@@ -235,4 +235,3 @@ def string_to_port_direction(token):
         return sdn.Port.Direction.INOUT
     else:
         return sdn.Port.Direction.UNDEFINED
-

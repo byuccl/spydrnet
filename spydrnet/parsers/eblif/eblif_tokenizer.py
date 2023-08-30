@@ -1,9 +1,7 @@
 import io
-import re
 import zipfile
-import io
-from spydrnet.parsers.eblif.eblif_tokens import BACKSLASH
 from pathlib import Path
+from spydrnet.parsers.eblif.eblif_tokens import BACKSLASH
 
 
 class Tokenizer:
@@ -31,10 +29,10 @@ class Tokenizer:
         self.current_line_tokens = []
         if isinstance(input_source, str):
             if zipfile.is_zipfile(input_source):
-                zip = zipfile.ZipFile(input_source)
+                zipped = zipfile.ZipFile(input_source)
                 filename = Path(input_source).name
                 filename = filename[: filename.rindex(".")]
-                stream = zip.open(filename)
+                stream = zipped.open(filename)
                 stream = io.TextIOWrapper(stream)
                 self.input_stream = stream
             else:

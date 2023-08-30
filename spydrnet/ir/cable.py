@@ -1,9 +1,9 @@
+from copy import deepcopy
 from spydrnet.ir import Bundle
 from spydrnet.ir import Wire
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
 from spydrnet.global_state.global_callback import _call_create_cable
-from copy import deepcopy, copy, error
 
 
 class Cable(Bundle):

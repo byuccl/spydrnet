@@ -1,4 +1,3 @@
-import spydrnet as sdn
 from spydrnet.ir import Library
 from spydrnet.parsers.verilog.parser import VerilogParser
 import spydrnet.parsers.verilog.verilog_tokens as vt

@@ -14,6 +14,7 @@ import pathlib
 import pkgutil
 import sys
 from pathlib import Path
+import requests
 
 # ===================
 #  Setup Logging
@@ -141,9 +142,6 @@ def determine_example_netlists_path(download_option):
         response = input()
         if response == "y":
             print("Downloading example netlists...")
-
-            import requests
-
             url = (
                 "https://github.com/byuccl/spydrnet/archive/refs/heads/next_release.zip"
             )
@@ -200,19 +198,20 @@ def get_example_netlist_names(path):
 get_example_netlist_names(example_netlists_path)
 
 
-def load_example_netlist_by_name(name, format=EDIF):
+def load_example_netlist_by_name(name, netlist_format=EDIF):
     example_netlists_path = determine_example_netlists_path(True)
     get_example_netlist_names(example_netlists_path)
     error_message = "Example netlist not found. Either run 'export EXAMPLE_NETLISTS_PATH=<path>' or allow downloading to /tmp/spydrnet_example_netlists."
-    if format is EDIF:
+    if netlist_format is EDIF:
         assert name in example_netlist_names, error_message
         return parse(Path(example_netlists_path, "EDIF_netlists", name + ".edf.zip"))
-    elif format is VERILOG:
+    if netlist_format is VERILOG:
         assert name in verilog_example_netlist_names, error_message
         return parse(Path(example_netlists_path, "verilog_netlists", name + ".v.zip"))
-    elif format is EBLIF:
+    if netlist_format is EBLIF:
         assert name in eblif_example_netlist_names, error_message
         return parse(Path(example_netlists_path, "eblif_netlists", name + ".eblif.zip"))
-    else:  # if no version is recognized, default to edif
-        assert name in example_netlist_names, error_message
-        return parse(Path(example_netlists_path, "EDIF_netlists", name + ".edf.zip"))
+
+    # if no version is recognized, default to edif
+    assert name in example_netlist_names, error_message
+    return parse(Path(example_netlists_path, "EDIF_netlists", name + ".edf.zip"))

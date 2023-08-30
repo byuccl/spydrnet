@@ -34,9 +34,9 @@ class Comparer:
         # except Exception:
         #     import pdb; pdb.set_trace()
         for orig_library in self.ir_orig.libraries:
-            if orig_library.name == None:
+            if orig_library.name is None:
                 # ports with no name are not compared
-                print("WARNING: library with name == None exists and is not compared")
+                print("WARNING: library with name is None exists and is not compared")
                 continue
             else:
                 patterns = orig_library.name
@@ -66,10 +66,10 @@ class Comparer:
         # except Exception:
         #     import pdb; pdb.set_trace()
         for orig_definition in library_orig.definitions:
-            if orig_definition.name == None:
+            if orig_definition.name is None:
                 # ports with no name are not compared
                 print(
-                    "WARNING: definitions with name == None exist but are not compared"
+                    "WARNING: definitions with name is None exist but are not compared"
                 )
                 continue
             else:
@@ -97,9 +97,9 @@ class Comparer:
         #     self.compare_ports(orig_port, composer_port)
         # do a smarter compare
         for orig_port in definition_orig.ports:
-            if orig_port.name == None:
+            if orig_port.name is None:
                 # ports with no name are not compared
-                print("WARNING: ports with name == None exist and are not compared")
+                print("WARNING: ports with name is None exist and are not compared")
                 continue
             else:
                 patterns = orig_port.name
@@ -118,9 +118,9 @@ class Comparer:
         )
 
         for orig_cable in definition_orig.cables:
-            if orig_cable.name == None:
+            if orig_cable.name is None:
                 # ports with no name are not compared
-                print("WARNING: cables with name == None exist and are not compared")
+                print("WARNING: cables with name is None exist and are not compared")
                 continue
             else:
                 patterns = orig_cable.name
@@ -133,9 +133,9 @@ class Comparer:
         # for orig_instance, composer_cable in zip(definition_orig.children, definition_composer.children):
         #     self.compare_instances(orig_instance, composer_cable)
         for orig_instance in definition_orig.children:
-            if orig_instance.name == None:
+            if orig_instance.name is None:
                 # ports with no name are not compared
-                print("WARNING: children with name == None exist and are not compared")
+                print("WARNING: children with name is None exist and are not compared")
                 continue
             else:
                 if orig_instance.name.startswith("SDN_Assignment_"):
@@ -349,7 +349,7 @@ class Comparer:
         )
 
         assert (
-            instances_orig.reference == None and instances_composer.reference == None
+            instances_orig.reference is None and instances_composer.reference is None
         ) or (
             self.get_identifier(instances_orig.reference)
             == self.get_identifier(instances_composer.reference)
@@ -371,7 +371,7 @@ class Comparer:
 
     @staticmethod
     def get_identifier(obj):
-        if obj == None:
+        if obj is None:
             return None
         return obj.name
         # if "EDIF.identifier" in obj:
@@ -379,7 +379,7 @@ class Comparer:
 
     @staticmethod
     def get_original_identifier(obj):
-        if obj == None:
+        if obj is None:
             return None
         if "EDIF.original_identifier" in obj:
             return obj["EDIF.original_identifier"]

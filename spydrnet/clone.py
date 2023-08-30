@@ -1,6 +1,3 @@
-from spydrnet import ir
-from copy import deepcopy, copy, error
-
 """provide the clone function for spydrnet."""
 
 

@@ -1,8 +1,7 @@
 # Copyright 2020 Dallin Skouson, Andrew Keller, Michael Wirthlin
 
-from spydrnet.ir import *
 from collections import deque
-from spydrnet.uniquify import uniquify
+from spydrnet.ir import *
 
 """How to flatten (brainstorm):
 start at the top and take all of the subelements out and add them to the top definition

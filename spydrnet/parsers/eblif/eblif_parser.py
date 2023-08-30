@@ -73,14 +73,14 @@ class EBLIFParser:
         self.work = None
         self.blackbox_holder = self.BlackboxHolder()
 
-    def createTokenizer(self):
+    def create_tokenizer(self):
         self.tokenizer = Tokenizer(self.file_name)
 
     #######################################################
     # parse functions
     #######################################################
     def parse(self):
-        self.createTokenizer()
+        self.create_tokenizer()
         self.parse_eblif()
         return self.netlist
 
@@ -95,8 +95,7 @@ class EBLIFParser:
                 self.parse_comment()
             elif token == et.MODEL:
                 self.parse_model()
-            else:
-                None
+
         self.set_subcircuit_names_by_convention()
         self.insert_comments_into_netlist_data()
         self.add_blackbox_definitions()
@@ -129,8 +128,7 @@ class EBLIFParser:
                 is_blackbox = True
             elif token == et.END:
                 break
-            else:
-                None
+
         if is_blackbox:
             self.primitives.add_definition(model)
         else:
@@ -295,7 +293,7 @@ class EBLIFParser:
             # cable_info = self.current_instance_info[key]
             cable_name, cable_index = self.get_port_name_and_index(cable_info)  # get connected cable name and wire index
             port_name, pin_index = self.get_port_name_and_index(key)  # get own port name and pin index
-            if (cable_name == et.UNCONN):  # intentionally disconnected so put that into metadata
+            if cable_name == et.UNCONN:  # intentionally disconnected so put that into metadata
                 try:
                     instance[et.UNCONN]
                 except KeyError:

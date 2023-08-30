@@ -4,7 +4,8 @@ from collections import deque
 
 # from spydrnet.ir import *
 
-"""Code to make definitions unique throughout a netlist.
+"""
+Code to make definitions unique throughout a netlist.
 expected parameters,
 uniqify -- Makes all definitions unique below the top instance. definitions that are not referenced below the top instance will not be unique.
 """

@@ -1,4 +1,4 @@
-from copy import copy, deepcopy, error
+from copy import copy, deepcopy
 
 from spydrnet.global_state import global_callback
 from spydrnet.global_state.global_callback import _call_create_definition

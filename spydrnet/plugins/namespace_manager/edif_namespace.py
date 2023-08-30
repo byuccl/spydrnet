@@ -1,7 +1,6 @@
-from spydrnet.plugins.namespace_manager.default_namespace import DefaultNamespace
-from spydrnet.ir import Netlist, Library, Definition
 import re
 from spydrnet.plugins.namespace_manager.default_namespace import DefaultNamespace
+from spydrnet.ir import Netlist, Library, Definition
 
 
 class EdifNamespace(DefaultNamespace):
@@ -120,7 +119,7 @@ class EdifNamespace(DefaultNamespace):
         return True
 
     def __init__(self):
-        self.namespaces = {}
+        super().__init__()
         self.edif_namespaces = {}
 
     def no_conflict(self, element, key, value):

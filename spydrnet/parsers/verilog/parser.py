@@ -4,12 +4,9 @@
 
 from spydrnet.parsers.verilog.tokenizer import VerilogTokenizer, VerilogTokenizerSimple
 import spydrnet.parsers.verilog.verilog_tokens as vt
-from spydrnet.ir import Netlist, Library, Definition, Port, Cable, Instance, OuterPin
+from spydrnet.ir import Netlist, Definition, Instance, OuterPin
 from spydrnet.plugins import namespace_manager
 import spydrnet as sdn
-
-from functools import reduce
-import re
 
 
 class VerilogParser:
@@ -56,7 +53,7 @@ class VerilogParser:
             if name in self.name_lookup:
                 return self.name_lookup[name]
             else:
-                definition = sdn.Definition()
+                definition = Definition()
                 definition.name = name
                 self.name_lookup[name] = definition
                 return definition
@@ -182,7 +179,7 @@ class VerilogParser:
     #######################################################
 
     def parse_verilog(self):
-        self.netlist = sdn.Netlist()
+        self.netlist = Netlist()
         self.netlist.name = "SDN_VERILOG_NETLIST"
         self.work = self.netlist.create_library("work")
         self.primitives = self.netlist.create_library("hdi_primitives")
@@ -335,7 +332,7 @@ class VerilogParser:
         self.current_definition = definition
         self.assignment_count = 0
         if self.netlist.top_instance is None:
-            self.netlist.top_instance = sdn.Instance()
+            self.netlist.top_instance = Instance()
             self.netlist.top_instance.name = definition.name + "_top"
             self.netlist.top_instance.reference = definition
             self.netlist.name = "SDN_VERILOG_NETLIST_" + definition.name
@@ -557,7 +554,7 @@ class VerilogParser:
         )
 
         # get the left and right out of the port (in case we got more information out of an instance?)
-        if left == None and right == None:
+        if left is None and right is None:
             left = port.lower_index + len(port.pins) - 1
             right = port.lower_index
             if not port.is_downto:
@@ -775,7 +772,7 @@ class VerilogParser:
                         new_level = current_level
                         break
 
-            self.netlist.top_instance = sdn.Instance()
+            self.netlist.top_instance = Instance()
             self.netlist.top_instance.name = new_level.name + "_top"
             self.netlist.top_instance.reference = new_level
             self.netlist.name = "SDN_VERILOG_NETLIST_" + new_level.name
@@ -996,7 +993,7 @@ class VerilogParser:
         )
 
     def pin_sort_func(self, p):
-        if isinstance(p, sdn.OuterPin):
+        if isinstance(p, OuterPin):
             return p.inner_pin.port.pins.index(p.inner_pin)
         return p.port.pins.index(p)
 
@@ -1198,7 +1195,7 @@ class VerilogParser:
 
     def get_assignment_library(self):
         """create or return a previously created assignment library"""
-        if self.assigns == None:
+        if self.assigns is None:
             self.assigns = self.netlist.create_library(name="SDN_VERILOG_ASSIGNMENT")
 
         return self.assigns
@@ -1208,7 +1205,7 @@ class VerilogParser:
         proposed_name = "SDN_VERILOG_ASSIGNMENT_" + str(width)
         library = self.get_assignment_library()
         definition = next(library.get_definitions(proposed_name), None)
-        if definition == None:
+        if definition is None:
             definition = library.create_definition(name=proposed_name)
             in_port = definition.create_port("i")
             out_port = definition.create_port("o")
@@ -1382,7 +1379,7 @@ class VerilogParser:
     ):
         cable_generator = self.current_definition.get_cables(name)
         cable = next(cable_generator, None)
-        if cable == None:
+        if cable is None:
             cable = self.current_definition.create_cable()
             self.populate_new_cable(cable, name, left_index, right_index, var_type)
             return cable
@@ -1479,12 +1476,12 @@ class VerilogParser:
         definition=None,
         defining=False,
     ):
-        if definition == None:
+        if definition is None:
             definition = self.current_definition
 
         port_generator = definition.get_ports(name)
         port = next(port_generator, None)
-        if port == None:
+        if port is None:
             port = definition.create_port()
             self.populate_new_port(port, name, left_index, right_index, direction)
             return port

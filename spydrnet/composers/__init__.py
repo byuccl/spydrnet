@@ -7,7 +7,6 @@ from spydrnet.composers.eblif.eblif_composer import EBLIFComposer
 def compose(
     netlist,
     filename,
-    voters=[],
     definition_list=[],
     write_blackbox=True,
     write_eblif_cname=True,
