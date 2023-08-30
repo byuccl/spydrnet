@@ -127,8 +127,8 @@ class Comparer:
         composer_generator = sdn.get_instances(definition_composer, pattern)
         orig_generator = sdn.get_instances(definition_orig, pattern)
         # i just need to make sure that they both contain the same number of each width assignment
-        composer_dict = dict()
-        orig_dict = dict()
+        composer_dict = {}
+        orig_dict = {}
 
         ci = next(composer_generator, None)
         while ci is not None:

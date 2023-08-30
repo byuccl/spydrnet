@@ -50,7 +50,7 @@ def get_reverse_topological_order(ir):
         if not is_black_box(child):
             depth_first_search.extend(trace_definition(child.reference))
     visited = set()
-    reverse_topological_order = list()
+    reverse_topological_order = []
     while len(depth_first_search) != 0:
         definition = depth_first_search.popleft()
         if definition not in visited:
@@ -138,9 +138,9 @@ def definition_clean_up(definition):
 
 
 def make_definition_copies(def_to_copy, num_of_copies):
-    copies = dict()
+    copies = {}
     copies[def_to_copy] = collections.deque()
-    definition_copies[def_to_copy] = list()
+    definition_copies[def_to_copy] = []
     for i in range(num_of_copies):
         def_copy = sdn.Definition()
         copy_definition(def_to_copy, def_copy, i)
@@ -171,11 +171,11 @@ def libraries_definitions(my_netlist):
         print("   DEFINITIONS IN '",library.name,"':",definitions)
 
 
-definition_count = dict()
-original_inner_pin_to_new_inner_pin = dict()
-instance_map = dict()
-outer_pin_map = dict()
-definition_copies = dict()
+definition_count = {}
+original_inner_pin_to_new_inner_pin = {}
+instance_map = {}
+outer_pin_map = {}
+definition_copies = {}
 
 example_name = 'unique_challenge'
 ir = sdn.load_example_netlist_by_name(example_name)

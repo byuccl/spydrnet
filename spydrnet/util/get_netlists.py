@@ -79,7 +79,7 @@ def _get_netlists(object_collection, patterns, key, is_case, is_re, filter_func)
 
 def _get_netlists_raw(object_collection, patterns, key, is_case, is_re):
     found = set()
-    namemap = dict()
+    namemap = {}
     while object_collection:
         obj = object_collection.pop()
         if isinstance(obj, Netlist):
@@ -87,7 +87,7 @@ def _get_netlists_raw(object_collection, patterns, key, is_case, is_re):
                 found.add(obj)
                 name = obj.get(key, None)
                 if name not in namemap:
-                    namemap[name] = list()
+                    namemap[name] = []
                 namemap[name].append(obj)
         elif isinstance(obj, Library):
             netlist = obj.netlist

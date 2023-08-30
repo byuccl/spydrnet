@@ -1,4 +1,4 @@
-from collections import deque, OrderedDict
+from collections import deque
 from spydrnet.ir import Port
 from spydrnet.ir import Cable
 import spydrnet.parsers.verilog.verilog_tokens as vt
@@ -18,7 +18,7 @@ class Composer:
         reverse - (bool) Compose the netlist bottom to top
         """
         self.file = None
-        self.direction_string_map = dict()
+        self.direction_string_map = {}
         self.direction_string_map[Port.Direction.IN] = "input"
         self.direction_string_map[Port.Direction.OUT] = "output"
         self.direction_string_map[Port.Direction.INOUT] = "inout"
@@ -35,7 +35,7 @@ class Composer:
     def run(self, ir, file_out="out.v"):
         self._open_file(file_out)
         self._compose(ir)
-        
+
     def _open_file(self, file_name):
         f = open(file_name, "w")
         self.file = f
@@ -61,7 +61,7 @@ class Composer:
         #self.written = set()
         to_write = deque()
         to_write.append(instance.reference)
-        while(len(to_write) != 0):
+        while len(to_write) != 0:
             definition = to_write.popleft()
             if definition in self.written:
                 continue
@@ -80,7 +80,7 @@ class Composer:
         to_write_stack = []
         to_write_list.append(instance.reference)
         to_write_stack.append(instance.reference)
-        while(len(to_write_list) != 0):
+        while len(to_write_list) != 0:
             definition = to_write_list.popleft()
             if definition in visited:
                 continue
@@ -90,7 +90,7 @@ class Composer:
                     to_write_list.append(c.reference)
                     to_write_stack.append(c.reference)
         # print(list(x.name for x in to_write_stack if len(x.children) > 0))
-        while(to_write_stack):
+        while to_write_stack:
             definition = to_write_stack.pop()
             if definition not in self.written:
                 self.written.add(definition)
@@ -136,7 +136,7 @@ class Composer:
     def _write_module(self, definition):
         '''write the constraints then the module header then the module body'''
         if self.definition_list:
-            if not (definition.name in self.definition_list):
+            if not definition.name in self.definition_list:
                 return
         if definition.library.name == "SDN_VERILOG_ASSIGNMENT":
             return  # don't write assignment definitions
@@ -308,7 +308,7 @@ class Composer:
         self.file.write(vt.CLOSE_PARENTHESIS)
         self.file.write(vt.SEMI_COLON)
         self.file.write(vt.NEW_LINE)
-    
+
     def pin_sort_func(self, p):
         if isinstance(p, sdn.OuterPin):
             return p.inner_pin.port.pins.index(p.inner_pin)
@@ -528,7 +528,7 @@ class Composer:
         assert name is not None, self._error_string("name of o is not set", o)
         name = self._fix_name(name)
         self.file.write(name)
-    
+
     def _fix_name(self, name):
         if name[0] == '\\':
             if name[-1] != " ":
@@ -577,14 +577,14 @@ class Composer:
         #the bundle is multibit and the indicies match the upper and lower(or none): nothing to be written
         #the bundle is multibit but the indicies match each other or one is none: write a single index
         #the bundle is multibit but the indicies don't match each other: write both indicies
-        
+
         if width == 1:
             assert (low_index == None or low_index == lower_bundle), \
                 self._error_string("attempted to index bundle out of bounds at " + str(low_index), bundle)
             assert (high_index == None or high_index == upper_bundle), \
                 self._error_string("attempted to index bundle out of bounds at " + str(high_index), bundle)
             return
-        elif (low_index == lower_bundle and high_index == upper_bundle) or (low_index == None and high_index == None):
+        elif (low_index == lower_bundle and high_index == upper_bundle) or (low_index is None and high_index is None):
             self.file.write("[" + str(high_index) + ":" + str(low_index) + "]")
             return
         elif low_index == high_index or low_index is None or high_index is None:
@@ -631,10 +631,10 @@ class Composer:
                 now_none = True
             else:
                 next_name = p.wire.cable.name
-                if now_none == True:
+                if now_none is True:
                     aliased = True
                 index = self._index_of_wire_in_cable(p.wire)
-                if last_index == None:
+                if last_index is None:
                     last_index = index
                 else:
                     if index != last_index + 1:

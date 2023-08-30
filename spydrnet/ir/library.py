@@ -27,7 +27,7 @@ class Library(FirstClassElement):
 
         super().__init__()
         self._netlist = None
-        self._definitions = list()
+        self._definitions = []
         _call_create_library(self)
         if name != None:
             self.name = name
@@ -135,7 +135,7 @@ class Library(FirstClassElement):
             excluded_definitions = set(definitions)
         assert all(x.library == self for x in excluded_definitions), "Some definitions to remove are not included in " \
                                                                      "the library "
-        included_definitions = list()
+        included_definitions = []
         for definition in self._definitions:
             if definition not in excluded_definitions:
                 included_definitions.append(definition)
@@ -181,7 +181,7 @@ class Library(FirstClassElement):
         c._netlist = None
         c._data = deepcopy(self._data)
 
-        new_definitions = list()
+        new_definitions = []
         for definition in self._definitions:
             new_definitions.append(definition._clone(memo))
         c._definitions = new_definitions
@@ -202,7 +202,7 @@ class Library(FirstClassElement):
          * all definitions are cloned within the library.
 
          """
-        memo = dict()
+        memo = {}
         c = self._clone(memo)
         c._clone_rip(memo)
         return c

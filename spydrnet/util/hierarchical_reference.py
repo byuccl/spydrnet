@@ -1,5 +1,5 @@
-import spydrnet.ir as ir
 import weakref
+from spydrnet import ir
 
 from spydrnet.shortcuts.getter import GetterShortcuts
 
@@ -220,9 +220,9 @@ class HRef(GetterShortcuts):
         href = HRef(item, parent)
         if href in flyweight:
             return flyweight[href]()
-        else:
-            flyweight[href] = weakref.ref(href)
-            return href
+        
+        flyweight[href] = weakref.ref(href)
+        return href
 
     __slots__ = ['_hashcode', 'parent', 'item', '__weakref__']
 
@@ -277,7 +277,7 @@ class HRef(GetterShortcuts):
         if self.is_valid is False:
             return False
         href = self
-        search_stack = list()
+        search_stack = []
         instances = set()
         while href:
             item = href.item
@@ -295,8 +295,7 @@ class HRef(GetterShortcuts):
                 for parent in reference.references:
                     if parent in instances:
                         return False
-                    else:
-                        search_stack.append(parent)
+                    search_stack.append(parent)
         return True
 
     @property
@@ -370,7 +369,7 @@ class HRef(GetterShortcuts):
 
         """
         hseperator = '/'
-        names = list()
+        names = []
         index = None
         item = self.item
         if isinstance(item, ir.Wire):

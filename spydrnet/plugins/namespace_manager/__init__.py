@@ -16,7 +16,7 @@ def _load_policies():
 
 class NamespaceManager(CallbackListener, ABC):
     default = None
-    policies = dict()
+    policies = {}
 
     def __init__(self):
         super().__init__()

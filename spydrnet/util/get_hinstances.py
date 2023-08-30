@@ -79,7 +79,7 @@ def _get_instances(object_collection, patterns, recursive, is_case, is_re, filte
 def _get_instances_raw(object_collection, patterns, recursive, is_case, is_re):
     in_namemap = set()
     in_yield = set()
-    namemap = dict()
+    namemap = {}
     instance_search = set()
     while object_collection:
         obj = object_collection.pop()
@@ -165,7 +165,7 @@ def _get_instances_raw(object_collection, patterns, recursive, is_case, is_re):
 def _update_namemap(href, recursive, found, namemap):
     currently_recursive = True
     search_stack = [(href, False)]
-    name_stack = list()
+    name_stack = []
     while search_stack:
         href, visited = search_stack.pop()
         if visited:
@@ -176,7 +176,7 @@ def _update_namemap(href, recursive, found, namemap):
             if len(name_stack) > 1:
                 hname = '/'.join(name_stack[1:])
                 if hname not in namemap:
-                    namemap[hname] = list()
+                    namemap[hname] = []
                 namemap[hname].append(href)
             if currently_recursive:
                 currently_recursive = recursive

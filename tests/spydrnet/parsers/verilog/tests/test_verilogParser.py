@@ -38,7 +38,7 @@ class TestVerilogParser(unittest.TestCase):
     ###################################################
 
     def test_module_header_parameter_parsing(self):
-        expected = dict()
+        expected = {}
         expected["INIT"] = "1'h1"
         expected["[1:0] INIT0"] = "2'h0"
         expected["[0] INIT1"] = "1'b0"
@@ -1136,7 +1136,7 @@ class TestVerilogParser(unittest.TestCase):
             c.wires[0].connect_pin(p.pins[0])
 
         for _ in range(count):
-            parser.parse_port_declaration(dict())
+            parser.parse_port_declaration({})
 
 
     @unittest.expectedFailure
@@ -1157,7 +1157,7 @@ class TestVerilogParser(unittest.TestCase):
         #the ports are in the definition but not connected this should fail
 
         for _ in range(count):
-            parser.parse_port_declaration(properties = dict())
+            parser.parse_port_declaration(properties = {})
 
     def test_create_or_update_port_on_instance(self):
         parser = VerilogParser()

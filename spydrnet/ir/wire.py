@@ -14,7 +14,7 @@ class Wire(Element):
 
     def __init__(self):
         self._cable = None
-        self._pins = list()
+        self._pins = []
 
     @property
     def cable(self):
@@ -125,7 +125,7 @@ class Wire(Element):
 
     def _clone_rip_and_replace(self, memo):
         """Remove from its current environment and place it into the new cloned environment with references held in the memo dictionary"""
-        new_pins = list()
+        new_pins = []
         for p in self._pins:
             assert p in memo, "the pin must be cloned"
             new_pins.append(memo[p])
@@ -136,7 +136,7 @@ class Wire(Element):
         """Remove from its current environmnet.
 
         This will remove all pin pointers and create a floating stand alone instance."""
-        self._pins = list()
+        self._pins = []
         pass
 
     def _clone(self, memo):
@@ -161,7 +161,7 @@ class Wire(Element):
          * The wire is orphaned from any cable.
          * No pins are connected to the wire
          """
-        c = self._clone(dict())
+        c = self._clone({})
         c._clone_rip()
         return c
 

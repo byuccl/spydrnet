@@ -212,13 +212,13 @@ def _get_cables_raw(object_collection, patterns, key, is_case, is_re, selection,
                 object_collection.append(obj.item)
 
     if other_cables:
-        namemap = dict()
+        namemap = {}
         for other_cable in other_cables:
             if other_cable not in found:
                 found.add(other_cable)
                 name = other_cable[key] if key in other_cable else ''
                 if name not in namemap:
-                    namemap[name] = list()
+                    namemap[name] = []
                 namemap[name].append(other_cable)
         for pattern in patterns:
             pattern_is_absolute = _is_pattern_absolute(pattern, is_case, is_re)
@@ -229,7 +229,7 @@ def _get_cables_raw(object_collection, patterns, key, is_case, is_re, selection,
                     for port in result:
                         yield port
             else:
-                names_to_remove = list()
+                names_to_remove = []
                 for name in namemap:
                     if _value_matches_pattern(name, pattern, is_case, is_re):
                         result = namemap[name]

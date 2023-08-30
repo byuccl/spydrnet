@@ -1,5 +1,5 @@
-import spydrnet as sdn
 from pathlib import Path
+import spydrnet as sdn
 
 base_file_path = Path(sdn.base_dir, 'support_files', 'architecture_libraries')
 

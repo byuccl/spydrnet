@@ -45,7 +45,7 @@ class TestPort(unittest.TestCase):
 
     @unittest.expectedFailure
     def test_direction_set_bad_type(self):
-        self.port.direction = list()
+        self.port.direction = []
 
     def test_initialize_pins(self):
         self.port.create_pins(2)

@@ -54,6 +54,6 @@ class InnerPin(Pin):
          * The pin will not be referenced to by any wires or outer pins
 
         """
-        c = self._clone(dict())
+        c = self._clone({})
         c._clone_rip()
         return c

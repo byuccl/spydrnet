@@ -23,7 +23,7 @@ sys.path.pop(0)
 with open("README.rst", "r") as fh:
     long_description = fh.read().replace(':ref:','')
 
-support_files = list()
+support_files = []
 folder_path = Path(Path(__file__).parent).joinpath("spydrnet", "support_files")
 for filename in Path.glob(folder_path, "**/*"):
     if filename.is_file() and \

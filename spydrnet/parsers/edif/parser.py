@@ -27,10 +27,10 @@ class EdifParser:
         return parser
 
     def __init__(self):
-        self.edif_identifier_namespace = dict() # class -> object -> subclass -> identifier -> object
+        self.edif_identifier_namespace = {} # class -> object -> subclass -> identifier -> object
         self.filename = None
         self.file_handle = None
-        self.elements = list()
+        self.elements = []
         self.tokenizer = None
 
     def parse(self):
@@ -755,7 +755,7 @@ class EdifParser:
         self.expect(DESIGN)
         # self.tokenizer.next()
         instance = Instance()
-        instance['metadata_prefix'] = list()
+        instance['metadata_prefix'] = []
         self.elements.append(instance)
         instance['metadata_prefix'] = ['EDIF']
         if self.begin_construct():
@@ -794,7 +794,7 @@ class EdifParser:
     def parse_comment(self):
         self.prefix_append('comments')
         self.expect(COMMENT)
-        comment = list()
+        comment = []
         while self.not_end_construct():
             comment.append(self.parse_stringToken())
         comment = (*comment,)
@@ -814,7 +814,7 @@ class EdifParser:
     def parse_property_like_element(self):
         self.parse_nameDef()
 
-        property_ = dict()
+        property_ = {}
         identifier = self.elements[-1].pop('.'.join([*self.elements[-1]['metadata_prefix'], 'identifier']))
         property_['identifier'] = identifier
 
@@ -1073,7 +1073,7 @@ class EdifParser:
         element = self.elements[-1]
         key = '.'.join(element['metadata_prefix'])
         if key not in element:
-            element[key] = list()
+            element[key] = []
         element[key].append(attribute)
 
     def skip_until_next_construct(self):

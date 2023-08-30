@@ -84,7 +84,7 @@ class DefaultNamespace:
         return False
 
     def __init__(self):
-        self.namespaces = dict()
+        self.namespaces = {}
 
     def no_conflict(self, element, key, value):
         if key != ".NAME":
@@ -101,7 +101,7 @@ class DefaultNamespace:
         if key == ".NAME":
             element_type = type(element)
             if element_type not in self.namespaces:
-                self.namespaces[element_type] = dict()
+                self.namespaces[element_type] = {}
             namespace = self.namespaces[element_type]
             if ".NAME" in element:
                 old_name = element[".NAME"]

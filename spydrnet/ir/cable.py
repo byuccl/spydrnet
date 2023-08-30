@@ -27,7 +27,7 @@ class Cable(Bundle):
 
         """
         super().__init__()
-        self._wires = list()
+        self._wires = []
         _call_create_cable(self)
         if name != None:
             self.name = name
@@ -162,7 +162,7 @@ class Cable(Bundle):
         from spydrnet.ir import Cable as CableExtended
         c = CableExtended()
         memo[self] = c
-        new_wires = list()
+        new_wires = []
         for w in self._wires:
             new_wires.append(w._clone(memo))
         c._wires = new_wires
@@ -185,7 +185,7 @@ class Cable(Bundle):
          * is_downto, is_scalar, lower_index will be maintained
          * the wires in the cable will all have the cable set as the parent
         """
-        c = self._clone(dict())
+        c = self._clone({})
         c._clone_rip()
         return c
 

@@ -149,21 +149,21 @@ example_netlists_path = determine_example_netlists_path(False)
 
 base_dir = Path(Path(__file__).absolute()).parent
 
-example_netlist_names = list()
+example_netlist_names = []
 edif_path = Path(example_netlists_path).joinpath('EDIF_netlists')
 for filename in Path.glob(edif_path, "*"):
     basename = Path(filename).name
     example_netlist_names.append(basename[:basename.index('.')])
 example_netlist_names.sort()
 
-verilog_example_netlist_names = list()
+verilog_example_netlist_names = []
 verilog_path = Path(example_netlists_path).joinpath('verilog_netlists')
 for filename in Path.glob(verilog_path, "*"):
     basename = Path(filename).name
     verilog_example_netlist_names.append(basename[:basename.index('.')])
 verilog_example_netlist_names.sort()
 
-eblif_example_netlist_names = list()
+eblif_example_netlist_names = []
 eblif_path = Path(example_netlists_path).joinpath('eblif_netlists')
 for filename in Path.glob(eblif_path, "*"):
     basename = Path(filename).name

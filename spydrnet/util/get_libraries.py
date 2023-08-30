@@ -193,14 +193,14 @@ def _get_libraries_raw(object_collection, patterns, key, is_case, is_re, selecti
                 object_collection.append(obj.item)
 
     if other_libraries:
-        namemap = dict()
+        namemap = {}
         for other_instance in other_libraries:
             if other_instance in found:
                 continue
             found.add(other_instance)
             name = other_instance[key] if key in other_instance else ''
             if name not in namemap:
-                namemap[name] = list()
+                namemap[name] = []
             namemap[name].append(other_instance)
         for pattern in patterns:
             pattern_is_absolute = _is_pattern_absolute(pattern, is_case, is_re)

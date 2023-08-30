@@ -27,7 +27,7 @@ class Tokenizer:
         self.token = None
         self.next_token = None
         self.line_number = 0
-        self.current_line_tokens = list()
+        self.current_line_tokens = []
         if isinstance(input_source, str):
             if zipfile.is_zipfile(input_source):
                 zip = zipfile.ZipFile(input_source)

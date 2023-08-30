@@ -51,7 +51,7 @@ class Netlist(FirstClassElement):
         properties - (dict) the dictionary which holds the properties
         """
         super().__init__()
-        self._libraries = list()
+        self._libraries = []
         self._top_instance = None
         _call_create_netlist(self)
 
@@ -227,7 +227,7 @@ class Netlist(FirstClassElement):
             excluded_libraries = set(libraries)
         assert all(x.netlist == self for x in excluded_libraries), "Some libraries to remove are not included in " \
                                                                    "netlist "
-        included_libraries = list()
+        included_libraries = []
         for library in self._libraries:
             if library not in excluded_libraries:
                 included_libraries.append(library)
@@ -261,7 +261,7 @@ class Netlist(FirstClassElement):
         memo[self] = c
         c._data = deepcopy(self._data)
 
-        new_libraries = list()
+        new_libraries = []
         for library in self._libraries:
             new_libraries.append(library._clone(memo))
         c._libraries = new_libraries
@@ -288,7 +288,7 @@ class Netlist(FirstClassElement):
         This clone function should act just the way you would expect
         All references are internal to the netlist that has been cloned.
         """
-        memo = dict()
+        memo = {}
         c = self._clone(memo)
         c._clone_rip(memo)
         return c

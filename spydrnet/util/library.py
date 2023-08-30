@@ -1,9 +1,9 @@
+from copy import deepcopy
 from spydrnet.ir import FirstClassElement
 from spydrnet.ir import Definition
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
 from spydrnet.global_state.global_callback import _call_create_library
-from copy import deepcopy, copy, error
 
 
 class Library(FirstClassElement):
@@ -26,11 +26,11 @@ class Library(FirstClassElement):
         """
         super().__init__()
         self._netlist = None
-        self._definitions = list()
+        self._definitions = []
         _call_create_library(self)
-        if name!= None:
+        if name is not None:
             self.name = name
-        if properties != None:
+        if properties is not None:
             assert isinstance(properties, dict), "properties must be a dictionary"
             for key in properties:
                 self[key] = properties[key]
@@ -123,7 +123,7 @@ class Library(FirstClassElement):
             excluded_definitions = set(definitions)
         assert all(x.library == self for x in excluded_definitions), "Some definitions to remove are not included in " \
                                                                      "the library "
-        included_definitions = list()
+        included_definitions = []
         for definition in self._definitions:
             if definition not in excluded_definitions:
                 included_definitions.append(definition)
@@ -155,7 +155,7 @@ class Library(FirstClassElement):
                     new_references.add(ref)
             for instance in definition._children:
                 instance._reference._references.add(instance)
-                
+
             definition._references = new_references
 
 
@@ -168,8 +168,8 @@ class Library(FirstClassElement):
         memo[self] = c
         c._netlist = None
         c._data = deepcopy(self._data)
-        
-        new_definitions = list()
+
+        new_definitions = []
         for definition in self._definitions:
             new_definitions.append(definition._clone(memo))
         c._definitions = new_definitions
@@ -188,7 +188,7 @@ class Library(FirstClassElement):
          * the references lists (of definitions) both inside and outsde the library will be updated to reflect the change
          * all definitions are cloned within the library.
          '''
-        memo = dict()
+        memo = {}
         c = self._clone(memo)
         c._clone_rip(memo)
         return c

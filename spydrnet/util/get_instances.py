@@ -99,7 +99,7 @@ def _get_instances(object_collection, patterns, key, is_case, is_re, selection, 
 
 def _get_instances_raw(object_collection, patterns, key, is_case, is_re, selection, recursive):
     found = set()
-    other_instances = list()
+    other_instances = []
     while object_collection:
         obj = object_collection.pop()
         if isinstance(obj, Definition):
@@ -175,14 +175,14 @@ def _get_instances_raw(object_collection, patterns, key, is_case, is_re, selecti
                     object_collection.append(item)
 
     if other_instances:
-        namemap = dict()
+        namemap = {}
         for other_instance in other_instances:
             if other_instance in found:
                 continue
             found.add(other_instance)
             name = other_instance[key] if key in other_instance else ''
             if name not in namemap:
-                namemap[name] = list()
+                namemap[name] = []
             namemap[name].append(other_instance)
         for pattern in patterns:
             pattern_is_absolute = _is_pattern_absolute(pattern, is_case, is_re)

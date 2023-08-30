@@ -7,7 +7,7 @@ class TestEdififyNames(unittest.TestCase):
 
     def test_simple_conversion(self):
         ed = EdififyNames()
-        l = list()
+        l = []
         i = sdn.Instance()
         i.name = "name"
         l = [i]
@@ -15,7 +15,7 @@ class TestEdififyNames(unittest.TestCase):
 
     def test_invalid_name(self):
         ed = EdififyNames()
-        l = list()
+        l = []
         i = sdn.Instance()
         i.name = "*this_is+an$*`id[0:3]"
         l = [i]
@@ -24,7 +24,7 @@ class TestEdififyNames(unittest.TestCase):
 
     def test_duplicate_name(self):
         ed = EdififyNames()
-        l = list()
+        l = []
         i = sdn.Instance()
         i.name = 'name'
         i2 = sdn.Instance()
@@ -34,7 +34,7 @@ class TestEdififyNames(unittest.TestCase):
 
     def test_duplicate_number_increment(self):
         ed = EdififyNames()
-        l = list()
+        l = []
         i = sdn.Instance()
         i.name = 'name'
         i_duplicate = sdn.Instance()
@@ -46,7 +46,7 @@ class TestEdififyNames(unittest.TestCase):
 
     def test_length(self):
         ed = EdififyNames()
-        l = list()
+        l = []
         test_str = ""
         answer_str = ""
         for _ in range(ed.name_length_target + 5):
@@ -60,7 +60,7 @@ class TestEdififyNames(unittest.TestCase):
 
     def test_length_2(self):
         ed = EdififyNames()
-        l = list()
+        l = []
         test_str = "$"
         answer_str = "&_"
         for _ in range(ed.name_length_target + 5):
@@ -74,7 +74,7 @@ class TestEdififyNames(unittest.TestCase):
 
     def test_length_3(self):
         ed = EdififyNames()
-        l = list()
+        l = []
 
         instance_1 = sdn.Instance()
         name_1 = '&_'

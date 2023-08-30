@@ -80,7 +80,7 @@ def _get_hports(object_collection, patterns, recursive, is_case, is_re, filter_f
 def _get_hports_raw(object_collection, patterns, recursive, is_case, is_re):
     in_namemap = set()
     in_yield = set()
-    namemap = dict()
+    namemap = {}
     bypass_namesearch = set()
     while object_collection:
         obj = object_collection.pop()
@@ -186,7 +186,7 @@ def _get_hports_raw(object_collection, patterns, recursive, is_case, is_re):
 
 def _update_hport_namemap(href_instance, recursive, found, namemap):
     search_stack = [(href_instance, False)]
-    name_stack = list()
+    name_stack = []
     while search_stack:
         href_instance, visited = search_stack.pop()
         if visited:
@@ -204,7 +204,7 @@ def _update_hport_namemap(href_instance, recursive, found, namemap):
                     if hport not in found:
                         found.add(hport)
                         if port_hname not in namemap:
-                            namemap[port_hname] = list()
+                            namemap[port_hname] = []
                         namemap[port_hname].append(hport)
                     name_stack.pop()
                 if recursive:

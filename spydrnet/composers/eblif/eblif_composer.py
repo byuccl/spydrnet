@@ -106,7 +106,7 @@ class EBLIFComposer:
             self.compose_latches(categories["EBLIF.latch"])
     
     def separate_by_type(self):
-        dict_by_types = dict()
+        dict_by_types = {}
         for instance in self.current_model.children:
             try:
                 instance["EBLIF.type"]
@@ -117,7 +117,7 @@ class EBLIFComposer:
             try:
                 dict_by_types[type]
             except KeyError:
-                dict_by_types[type] = list()
+                dict_by_types[type] = []
             dict_by_types[type].append(instance)
         return dict_by_types
     

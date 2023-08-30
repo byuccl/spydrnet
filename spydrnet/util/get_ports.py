@@ -125,14 +125,14 @@ def _get_ports_raw(object_collection, patterns, key, is_case, is_re):
                 object_collection.append(obj.item)
 
     if other_ports:
-        namemap = dict()
+        namemap = {}
         for other_port in other_ports:
             if other_port in found:
                 continue
             found.add(other_port)
             name = other_port[key] if key in other_port else ''
             if name not in namemap:
-                namemap[name] = list()
+                namemap[name] = []
             namemap[name].append(other_port)
         for pattern in patterns:
             pattern_is_absolute = _is_pattern_absolute(pattern, is_case, is_re)
@@ -143,7 +143,7 @@ def _get_ports_raw(object_collection, patterns, key, is_case, is_re):
                     for port in result:
                         yield port
             else:
-                names_to_remove = list()
+                names_to_remove = []
                 for name in namemap:
                     if _value_matches_pattern(name, pattern, is_case, is_re):
                         result = namemap[name]

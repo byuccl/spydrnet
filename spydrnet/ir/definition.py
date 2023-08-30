@@ -26,9 +26,9 @@ class Definition(FirstClassElement):
         """
         super().__init__()
         self._library = None
-        self._ports = list()
-        self._cables = list()
-        self._children = list()
+        self._ports = []
+        self._cables = []
+        self._children = []
         self._references = set()
         _call_create_definition(self)
 
@@ -70,7 +70,8 @@ class Definition(FirstClassElement):
         target = list(value)
         target_set = set(target)
         assert len(target) == len(target_set) and set(self._ports) == target_set, \
-            "Set of values do not match, this function can only reorder values, values must be unique"
+            "Set of values do not match, this function can only reorder \
+                values, values must be unique"
         self._ports = target
 
     @property
@@ -324,7 +325,7 @@ class Definition(FirstClassElement):
             excluded_children = set(children)
         assert all(
             x.parent == self for x in excluded_children), "Some children are not parented by the definition"
-        included_children = list()
+        included_children = []
         for child in self._children:
             if child not in excluded_children:
                 included_children.append(child)
@@ -409,7 +410,7 @@ class Definition(FirstClassElement):
             excluded_cables = set(cables)
         assert all(
             x.definition == self for x in excluded_cables), "Some cables are not included in the definition"
-        included_cables = list()
+        included_cables = []
         for cable in self._cables:
             if cable not in excluded_cables:
                 included_cables.append(cable)
@@ -466,17 +467,17 @@ class Definition(FirstClassElement):
         c._data = deepcopy(self._data)
         c._library = None
 
-        new_ports = list()
+        new_ports = []
         for p in self.ports:
             new_ports.append(p._clone(memo))
         c._ports = new_ports
 
-        new_cables = list()
+        new_cables = []
         for ca in self.cables:
             new_cables.append(ca._clone(memo))
         c._cables = new_cables
 
-        new_children = list()
+        new_children = []
         for ch in self.children:
             new_children.append(ch._clone(memo))
         c._children = new_children
@@ -508,7 +509,7 @@ class Definition(FirstClassElement):
          * the cloned instances will still point to the reference to which the pointed before. They will also be members of the references list of those definitions.
 
         """
-        c = self._clone(dict())
+        c = self._clone({})
         c._clone_rip()
         return c
 

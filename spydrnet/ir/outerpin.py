@@ -90,7 +90,7 @@ class OuterPin(Pin):
          * the pin will be orphaned from any instance
          * the pin will not be connected to any inner pins
         """
-        c = self._clone(dict())
+        c = self._clone({})
         c._clone_rip()
         return c
 

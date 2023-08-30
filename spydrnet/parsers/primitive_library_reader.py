@@ -22,9 +22,9 @@ class PrimitiveLibraryReader():
     def __init__(self, architecture, netlist):
         self.input_file = architecture
         self.netlist = netlist
-        self.definition_list = list()
-        self.netlist_defs = dict()
-        self.parsed_defs = dict()
+        self.definition_list = []
+        self.netlist_defs = {}
+        self.parsed_defs = {}
         self.parser = None
     
     def run(self):
@@ -74,7 +74,7 @@ class PrimitiveLibraryReader():
         return cnt
 
     def create_port_dict(self, definition):
-        port_dict = dict()
+        port_dict = {}
         for port in definition.get_ports():
             port_dict[port.name] = port.direction
             # print(port.name + " has direction " + str(port.direction))

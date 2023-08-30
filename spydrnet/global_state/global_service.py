@@ -1,6 +1,6 @@
 from spydrnet.ir import Netlist, Library, Definition, Port, Cable, Instance
 
-_registered_lookups = dict()
+_registered_lookups = {}
 _registered_hierarchical_lookup = None
 
 

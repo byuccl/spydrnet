@@ -177,14 +177,14 @@ def _get_definitions_raw(object_collection, patterns, key, is_case, is_re, selec
                 object_collection.append(obj.item)
 
     if other_definitions:
-        namemap = dict()
+        namemap = {}
         for other_definition in other_definitions:
             if other_definition in found:
                 continue
             found.add(other_definition)
             name = other_definition[key] if key in other_definition else ''
             if name not in namemap:
-                namemap[name] = list()
+                namemap[name] = []
             namemap[name].append(other_definition)
         for pattern in patterns:
             pattern_is_absolute = _is_pattern_absolute(pattern, is_case, is_re)
@@ -194,7 +194,7 @@ def _get_definitions_raw(object_collection, patterns, key, is_case, is_re, selec
                     for definition in result:
                         yield definition
             else:
-                names_to_remove = list()
+                names_to_remove = []
                 for name in namemap:
                     if _value_matches_pattern(name, pattern, is_case, is_re):
                         result = namemap[name]

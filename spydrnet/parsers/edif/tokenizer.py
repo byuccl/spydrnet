@@ -85,7 +85,7 @@ class EdifTokenizer:
         try:
             self.line_number = 1
             in_quote = False
-            token_buffer = list()
+            token_buffer = []
             for buffer in iter(partial(self.input_stream.read, 32768), ""):
                 for ch in buffer:
                     if ch == "\n":

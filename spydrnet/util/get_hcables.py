@@ -91,7 +91,7 @@ def _get_hcables(object_collection, selection, patterns, recursive, is_case, is_
 def _get_hcables_raw(object_collection, selection, patterns, recursive, is_case, is_re):
     in_namemap = set()
     in_yield = set()
-    namemap = dict()
+    namemap = {}
     hpin_search = set()
     bypass_namesearch = set()
     while object_collection:
@@ -236,7 +236,7 @@ def _get_hcables_raw(object_collection, selection, patterns, recursive, is_case,
 
 def _update_hcable_namemap(href_instance, recursive, found, namemap):
     search_stack = [(href_instance, False)]
-    name_stack = list()
+    name_stack = []
     while search_stack:
         href_instance, visited = search_stack.pop()
         if visited:
@@ -254,7 +254,7 @@ def _update_hcable_namemap(href_instance, recursive, found, namemap):
                     if hcable not in found:
                         found.add(hcable)
                         if cable_hname not in namemap:
-                            namemap[cable_hname] = list()
+                            namemap[cable_hname] = []
                         namemap[cable_hname].append(hcable)
                     name_stack.pop()
                 if recursive:

@@ -38,9 +38,9 @@ class Instance(FirstClassElement):
         self._pins = OrderedDict()
         self._is_top_instance = False
         _call_create_instance(self)
-        if name != None:
+        if name is not None:
             self.name = name
-        if properties != None:
+        if properties is not None:
             assert isinstance(
                 properties, dict), "properties must be a dictionary"
             for key in properties:

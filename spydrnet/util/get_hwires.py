@@ -91,7 +91,7 @@ def _get_hwires(object_collection, selection, patterns, recursive, is_case, is_r
 def _get_hwires_raw(object_collection, selection, patterns, recursive, is_case, is_re):
     in_namemap = set()
     in_yield = set()
-    namemap = dict()
+    namemap = {}
     hpin_search = set()
     bypass_namesearch = set()
     while object_collection:
@@ -238,7 +238,7 @@ def _get_hwires_raw(object_collection, selection, patterns, recursive, is_case, 
 
 def _update_hwire_namemap(href_instance, recursive, found, namemap):
     search_stack = [(href_instance, False)]
-    name_stack = list()
+    name_stack = []
     while search_stack:
         href_instance, visited = search_stack.pop()
         if visited:
@@ -262,7 +262,7 @@ def _update_hwire_namemap(href_instance, recursive, found, namemap):
                             else:
                                 hname = "{}[{}]".format(cable_hname, cable.lower_index + wire_index)
                             if hname not in namemap:
-                                namemap[hname] = list()
+                                namemap[hname] = []
                             namemap[hname].append(hwire)
                     name_stack.pop()
                 if recursive:
@@ -295,15 +295,15 @@ def _get_hwires_from_hpins(hpin_search, selection):
 
 
 def _get_inner_hwire_from_hpin(hpin):
-        wire = hpin.item.wire
-        if wire:
-            cable = wire.cable
-            if cable:
-                hport = hpin.parent
-                hinst = hport.parent
-                hcable = HRef.from_parent_and_item(hinst, cable)
-                hwire = HRef.from_parent_and_item(hcable, wire)
-                return hwire
+    wire = hpin.item.wire
+    if wire:
+        cable = wire.cable
+        if cable:
+            hport = hpin.parent
+            hinst = hport.parent
+            hcable = HRef.from_parent_and_item(hinst, cable)
+            hwire = HRef.from_parent_and_item(hcable, wire)
+            return hwire
 
 
 def _get_outer_hwire_from_hpin(hpin):

@@ -27,7 +27,7 @@ class ComposeEdif:
         self.output_filename = file_out
         self._edifify_netlist(ir)
         self._data_ = ir
-        if (isinstance(ir, str)):
+        if isinstance(ir, str):
             self.filename = ir
             self._read_data_()  # only needed if we start to accept the json format files
             print(
@@ -100,7 +100,7 @@ class ComposeEdif:
             nonlocal output_list
             nonlocal get_dependents
             stack = [o]
-            while(len(stack) > 0):
+            while len(stack) > 0:
                 o = stack[-1]
                 for child in get_dependents(o):
                     if child not in visited:
@@ -499,7 +499,7 @@ class ComposeEdif:
 
     def _get_edif_name_(self, netlistObj):
         name = netlistObj["EDIF.identifier"]
-        if not ("oldName" in netlistObj):
+        if not "oldName" in netlistObj:
             return name
         else:
             oldName = netlistObj["oldName"]

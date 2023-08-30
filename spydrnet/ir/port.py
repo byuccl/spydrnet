@@ -45,7 +45,7 @@ class Port(Bundle):
         """
         super().__init__()
         self._direction = self.Direction.UNDEFINED
-        self._pins = list()
+        self._pins = []
         _call_create_port(self)
         if name != None:
             self.name = name
@@ -246,7 +246,7 @@ class Port(Bundle):
         c = PortExtended()
         memo[self] = c
         c._direction = deepcopy(self._direction)
-        new_pins = list()
+        new_pins = []
         for p in self._pins:
             new_pins.append(p._clone(memo))
         c._pins = new_pins
@@ -270,7 +270,7 @@ class Port(Bundle):
          * direction, downto, is_scalar, lower_index will all be maintained
 
         """
-        c = self._clone(dict())
+        c = self._clone({})
         c._clone_rip()
         return c
 

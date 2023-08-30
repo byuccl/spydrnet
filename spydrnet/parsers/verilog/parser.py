@@ -48,7 +48,7 @@ class VerilogParser:
         modules that are instanced before they are declared'''
 
         def __init__(self):
-            self.name_lookup = dict()
+            self.name_lookup = {}
             self.defined = set()
 
         def get_blackbox(self, name):
@@ -104,7 +104,7 @@ class VerilogParser:
 
         self.blackbox_holder = self.BlackboxHolder()
 
-        self.implicitly_mapped_ports = dict()
+        self.implicitly_mapped_ports = {}
 
     def parse(self):
         ''' parse a verilog netlist represented by verilog file
@@ -179,7 +179,7 @@ class VerilogParser:
         self.current_library = self.work
 
         preprocessor_defines = set()
-        star_properties = dict()
+        star_properties = {}
         time_scale = None
         primitive_cell = False
 
@@ -206,7 +206,7 @@ class VerilogParser:
                     self.current_definition["VERILOG.TimeScale"] = time_scale
                 if len(star_properties.keys()) > 0:
                     self.current_definition["VERILOG.InlineConstraints"] = star_properties
-                    star_properties = dict()
+                    star_properties = {}
 
             elif token == vt.PRIMITIVE:
                 # self.parse_primitive()
@@ -214,8 +214,8 @@ class VerilogParser:
                 #     self.current_definition["VERILOG.TimeScale"] = time_scale
                 # if len(star_properties.keys()) > 0:
                 #     self.current_definition["VERILOG.InlineConstraints"] = star_properties
-                #     star_properties = dict()
-                star_properties = dict()
+                #     star_properties = {}
+                star_properties = {}
                 while token != vt.END_PRIMITIVE:
                     token = self.next_token()
 
@@ -299,7 +299,7 @@ class VerilogParser:
                 while token != vt.END_TASK:
                     token = self.next_token()
             elif token in vt.PORT_DIRECTIONS:
-                self.parse_port_declaration(dict())
+                self.parse_port_declaration({})
             else:
                 token = self.next_token()
 
@@ -358,7 +358,7 @@ class VerilogParser:
 
         token = self.next_token()
 
-        parameter_dictionary = dict()
+        parameter_dictionary = {}
 
         while token != ")":
             # this is happening twice for all but the first one.. could simplify
@@ -552,14 +552,14 @@ class VerilogParser:
         direction_tokens = [vt.INPUT, vt.OUTPUT, vt.INOUT]
         variable_tokens = [vt.WIRE, vt.REG, vt.TRI0, vt.TRI1]
         token = self.peek_token()
-        params = dict()
+        params = {}
         while token != vt.END_MODULE:
             if token in direction_tokens:
                 self.parse_port_declaration(params)
-                params = dict()
+                params = {}
             elif token in variable_tokens:
                 self.parse_cable_declaration(params)
-                params = dict()
+                params = {}
             elif token == vt.ASSIGN:
                 o_cable, o_left, o_right, i_cable, i_left, i_right = self.parse_assign()
                 self.connect_wires_for_assign(
@@ -568,7 +568,7 @@ class VerilogParser:
                 self.parse_defparam_parameters()
             elif vt.is_valid_identifier(token):
                 self.parse_instantiation(params)
-                params = dict()
+                params = {}
             elif token == vt.OPEN_PARENTHESIS:
                 stars = self.parse_star_property()
                 for k, v in stars.items():
@@ -666,7 +666,7 @@ class VerilogParser:
 
         token = self.next_token()
         if token == vt.COMMA: # continue listing wires
-            self.parse_cable_declaration(dict(), var_type)
+            self.parse_cable_declaration({}, var_type)
         else:
             assert token == vt.SEMI_COLON, self.error_string(
                 vt.SEMI_COLON, "to end cable declaration", token)
@@ -677,7 +677,7 @@ class VerilogParser:
             "module identifier", "for instantiation", token)
         def_name = token.strip()
 
-        parameter_dict = dict()
+        parameter_dict = {}
         token = self.peek_token()
         if token == vt.OCTOTHORP:
             parameter_dict = self.parse_parameter_mapping()
@@ -747,7 +747,7 @@ class VerilogParser:
         and must come after the associated instance (I'm not sure this is the verilog spec but
         it is the way quartus wrote my example and is much simpler)
         '''
-        params = dict()
+        params = {}
         token = self.next_token()
         assert token == vt.DEFPARAM, self.error_string(vt.DEFPARAM, "to being defparam statement", token)
         token = self.next_token()
@@ -773,7 +773,7 @@ class VerilogParser:
 
 
     def parse_parameter_mapping(self):
-        params = dict()
+        params = {}
         token = self.next_token()
         assert token == vt.OCTOTHORP, self.error_string(
             vt.OCTOTHORP, "to begin parameter mapping", token)
@@ -828,7 +828,7 @@ class VerilogParser:
 
         peeked_token = self.peek_token()
         if peeked_token != vt.DOT: # the ports are implicitly mapped
-            token_list = list()
+            token_list = []
             while (token != vt.CLOSE_PARENTHESIS):
                 token_list.append(token)
                 token = self.next_token()
@@ -934,7 +934,7 @@ class VerilogParser:
                 else:
                     port = port_list[index]
 
-                pins = list()
+                pins = []
                 for pin in self.current_instance.pins:
                     if pin.inner_pin in port.pins:
                         pins.append(pin)
@@ -1037,7 +1037,7 @@ class VerilogParser:
         token = self.next_token()
         assert token == vt.STAR, self.error_string(
             vt.STAR, "to begin star property", token)
-        properties_dict = dict()
+        properties_dict = {}
         token = self.next_token()
         while token != vt.STAR:
             assert vt.is_valid_identifier(token)
@@ -1151,7 +1151,7 @@ class VerilogParser:
 
     def set_single_parameter(self, var, k, v):
         if "VERILOG.Parameters" not in var:
-            var["VERILOG.Parameters"] = dict()
+            var["VERILOG.Parameters"] = {}
 
         if k not in var["VERILOG.Parameters"] or var["VERILOG.Parameters"][k] is None:
             var["VERILOG.Parameters"][k] = v

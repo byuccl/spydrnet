@@ -16,7 +16,7 @@ class TestListView(unittest.TestCase):
     def test_comparison(self):
         list_copy = list(range(10))
         self.assertEqual(self.list_view, list_copy)
-        empty_list = list()
+        empty_list = []
         self.assertNotEqual(self.list_view, empty_list)
 
     def test_iter(self):

@@ -31,7 +31,7 @@ class FirstClassElement(Element):
 
     def __init__(self):
         """Initialize an element with an empty data dictionary."""
-        self._data = dict()
+        self._data = {}
 
     @property
     def data(self):
