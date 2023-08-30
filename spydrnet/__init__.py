@@ -154,19 +154,21 @@ verilog_example_netlist_names = []
 eblif_example_netlist_names = []
 
 def get_example_netlist_names(path):
+    example_netlist_names.clear()
     edif_path = Path(path).joinpath('EDIF_netlists')
     for filename in Path.glob(edif_path, "*"):
         basename = Path(filename).name
         example_netlist_names.append(basename[:basename.index('.')])
     example_netlist_names.sort()
 
-
+    verilog_example_netlist_names.clear()
     verilog_path = Path(path).joinpath('verilog_netlists')
     for filename in Path.glob(verilog_path, "*"):
         basename = Path(filename).name
         verilog_example_netlist_names.append(basename[:basename.index('.')])
     verilog_example_netlist_names.sort()
 
+    eblif_example_netlist_names.clear()
     eblif_path = Path(path).joinpath('eblif_netlists')
     for filename in Path.glob(eblif_path, "*"):
         basename = Path(filename).name
