@@ -1,6 +1,7 @@
 import zipfile
 import tempfile
 from pathlib import Path
+import os
 
 """
 Init for Spydrnet. The functions below can be called directly
@@ -8,7 +9,7 @@ Init for Spydrnet. The functions below can be called directly
 """
 
 
-def parse(filename, architecture=None):
+def parse(filename, **kwArgs):
     """
     The parse function is able to parse an EDIF (.edf) file, a Verilog file (.v), or an EBLIF file (.eblif).
 
@@ -53,17 +54,16 @@ def parse(filename, architecture=None):
                 zip.extract(basename_less_final_extension, tempdirname)
                 # filename = Path(tempdirname).joinpath(basename_less_final_extension)
                 filename = Path(tempdirname, basename_less_final_extension)
-                return _parse(filename, architecture)
+                return _parse(filename, **kwArgs)
 
-    return _parse(filename, architecture)
+    return _parse(filename, **kwArgs)
 
 
-def _parse(filename, architecture=None):
+def _parse(filename, **kwArgs):
     extension = get_lowercase_extension(filename)
     if extension in [".edf", ".edif", ".edn"]:
         from spydrnet.parsers.edif.parser import EdifParser
-
-        parser = EdifParser.from_filename(filename)
+        parser = EdifParser.from_filename(filename, **kwArgs)
     elif extension in [".v", ".vh", ".vm"]:
         from spydrnet.parsers.verilog.parser import VerilogParser
 
@@ -76,9 +76,9 @@ def _parse(filename, architecture=None):
         raise RuntimeError("Extension {} not recognized.".format(extension))
     parser.parse()
 
-    if architecture:
-        read_primitive_library(architecture, parser.netlist)
-        if extension in [".eblif", ".blif"]:
+    if 'architecture' in kwArgs:
+        read_primitive_library(kwArgs["architecture"], parser.netlist)
+        if extension in [".eblif",".blif"]:
             set_eblif_names(parser.netlist)
     return parser.netlist
 

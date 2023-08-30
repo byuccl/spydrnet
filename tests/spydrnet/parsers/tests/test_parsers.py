@@ -21,7 +21,7 @@ class TestParseWithArchitecture(unittest.TestCase):
                 for port in definition.get_ports():
                     self.assertEqual(port.direction, sdn.UNDEFINED)
 
-        netlist_2 = sdn.parse("b13.v", XILINX_7SERIES)
+        netlist_2 = sdn.parse("b13.v", architecture=XILINX_7SERIES)
         for definition in netlist_2.get_definitions():
             if definition is not netlist_2.top_instance.reference:
                 for port in definition.get_ports():
@@ -42,7 +42,7 @@ class TestParseWithArchitecture(unittest.TestCase):
                 for port in definition.get_ports():
                     self.assertEqual(port.direction, sdn.UNDEFINED, definition.name)
 
-        netlist_2 = sdn.parse("toggle.eblif", XILINX_7SERIES)
+        netlist_2 = sdn.parse("toggle.eblif", architecture=XILINX_7SERIES)
         for definition in netlist_2.get_definitions():
             if definition is not netlist_2.top_instance.reference:
                 for port in definition.get_ports():
