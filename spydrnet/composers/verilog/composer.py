@@ -2,18 +2,20 @@ from collections import deque, OrderedDict
 from spydrnet.ir import Port
 from spydrnet.ir import Cable
 import spydrnet.parsers.verilog.verilog_tokens as vt
-
+import spydrnet as sdn
 
 class Composer:
 
-    def __init__(self, definition_list=None, write_blackbox=False):
+    def __init__(self, definition_list=None, write_blackbox=False, defparam = False, reverse=False):
         """ Write a verilog netlist from SDN netlist
 
         parameters
         ----------
 
-        definition_list - (list[str]) list of defintions to write
+        definition_list - (list[str]) list of definitions to write
         write_blackbox - (bool) Skips writing black boxes/verilog primitives
+        defparam - (bool) Compose parameters in *defparam* statements instead of using #()
+        reverse - (bool) Compose the netlist bottom to top
         """
         self.file = None
         self.direction_string_map = dict()
@@ -25,12 +27,15 @@ class Composer:
         self.indent_count = 4  # set the indentation level for various components
         self.write_blackbox = write_blackbox
         self.definition_list = definition_list
+        self.defparam = defparam
+        self.module_body_ports_written = []
+        self.reverse = reverse
 
 
     def run(self, ir, file_out="out.v"):
         self._open_file(file_out)
         self._compose(ir)
-
+        
     def _open_file(self, file_name):
         f = open(file_name, "w")
         self.file = f
@@ -39,7 +44,10 @@ class Composer:
         self._write_header(netlist)
         instance = netlist.top_instance
         if instance is not None:
-            self._write_from_top(instance)
+            if self.reverse:
+                self._write_from_bottom(instance)
+            else:
+                self._write_from_top(instance)
         for library in netlist.libraries:
             for definition in library.definitions:
                 if definition not in self.written:
@@ -47,7 +55,7 @@ class Composer:
 
     def _write_header(self, netlist):
         self.file.write("//Generated from netlist by SpyDrNet\n")
-        self.file.write("//netlist name: " + netlist.name + "\n")
+        self.file.write("//netlist name: " + self._fix_name(netlist.name) + "\n")
 
     def _write_from_top(self, instance):
         #self.written = set()
@@ -65,6 +73,28 @@ class Composer:
                 "definition has no name set", definition)
             self._write_module(definition)
 
+    def _write_from_bottom(self, instance):
+        # ****this may need more work****
+        visited = []
+        to_write_list = deque()
+        to_write_stack = []
+        to_write_list.append(instance.reference)
+        to_write_stack.append(instance.reference)
+        while(len(to_write_list) != 0):
+            definition = to_write_list.popleft()
+            if definition in visited:
+                continue
+            visited.append(definition)
+            for c in definition.children:
+                if c.reference not in visited:
+                    to_write_list.append(c.reference)
+                    to_write_stack.append(c.reference)
+        # print(list(x.name for x in to_write_stack if len(x.children) > 0))
+        while(to_write_stack):
+            definition = to_write_stack.pop()
+            if definition not in self.written:
+                self.written.add(definition)
+                self._write_module(definition)
 
     ###########################################################################
     # Write verilog constructs
@@ -110,7 +140,7 @@ class Composer:
                 return
         if definition.library.name == "SDN_VERILOG_ASSIGNMENT":
             return  # don't write assignment definitions
-        if definition.library.name == "SDN.verilog_primitives":
+        if definition.library.name == "hdi_primitives":
             if not self.write_blackbox:
                 return
             self.file.write(vt.CELL_DEFINE)
@@ -119,7 +149,7 @@ class Composer:
         self._write_module_header(definition)
         self._write_module_body(definition)
         self.file.write(vt.END_MODULE)
-        if definition.library.name == "SDN.verilog_primitives":
+        if definition.library.name == "hdi_primitives":
             self.file.write(vt.NEW_LINE)
             self.file.write(vt.END_CELL_DEFINE)
 
@@ -142,7 +172,7 @@ class Composer:
     def _write_module_body(self, definition):
         '''write out the module body start with ports, then do assignments then instances'''
         self._write_module_body_ports(definition)
-        if definition.library.name != "SDN.verilog_primitives":
+        if definition.library.name != "hdi_primitives":
             self._write_module_body_cables(definition)
             self._write_assignments(definition)
             self._write_module_body_instances(definition)
@@ -158,15 +188,24 @@ class Composer:
         self.file.write(self.indent_count * vt.SPACE)
         self._write_name(instance.reference)
         self.file.write(vt.SPACE)
-        if "VERILOG.Parameters" in instance:
-            self._write_instance_parameters(instance)
-            self.file.write(self.indent_count * vt.SPACE)
+        if not self.defparam:
+            if "VERILOG.Parameters" in instance:
+                self._write_instance_parameters(instance)
+                self.file.write(self.indent_count * vt.SPACE)
         self._write_name(instance)
         self.file.write(vt.NEW_LINE)
         self._write_instance_ports(instance)
         self.file.write(vt.NEW_LINE)
+        if self.defparam:
+            if "VERILOG.Parameters" in instance:
+                for key, value in instance["VERILOG.Parameters"].items():
+                    to_write = (self.indent_count * vt.SPACE) + vt.DEFPARAM + vt.SPACE
+                    to_write += self._fix_name(instance.name) + vt.DOT + key + vt.EQUAL
+                    to_write += value + vt.SEMI_COLON + vt.NEW_LINE
+                    self.file.write(to_write)
 
     def _write_module_body_ports(self, definition):
+        self.module_body_ports_written = []
         for p in definition.ports:
             self._write_module_body_port(p)
         self.file.write(vt.NEW_LINE)
@@ -176,6 +215,9 @@ class Composer:
         if len(cables) == 0:
             cables.append(port) #adding the port will let composer to still print out disconnected ports
         for c in cables:
+            if c.name in self.module_body_ports_written:
+                continue
+            self.module_body_ports_written.append(c.name)
             self._write_star_constraints(port)
             self.file.write(self.indent_count * vt.SPACE)
             self.file.write(self.direction_string_map[port.direction])
@@ -186,7 +228,9 @@ class Composer:
             self.file.write(vt.NEW_LINE)
 
     def _write_module_body_cables(self, definition):
-        for c in definition.cables:
+        cable_list = list(c for c in definition.cables)
+        cable_list.reverse()
+        for c in cable_list:
             self._write_module_body_cable(c)
         self.file.write(vt.NEW_LINE)
 
@@ -208,17 +252,47 @@ class Composer:
         {wire_1, wire_2}'''
         self.file.write(vt.OPEN_BRACE)
         first = True
+        previous_cable = Cable()
+        first_index = 0
+        previous_index = 0
+        has_to_write = False
         for w in wires:
             if w is not None:
-                if not first:
-                    self.file.write(vt.COMMA)
-                    self.file.write(vt.SPACE)
                 index = self._index_of_wire_in_cable(w)
-                self._write_bundle_with_indicies(w.cable, index, None)
+                if w.cable.name == previous_cable.name:
+                    if index == (previous_index - 1):
+                        previous_index = index
+                    else:
+                        #write the previous and save new stuff
+                        if not first:
+                            self.file.write(vt.COMMA)
+                            self.file.write(vt.SPACE)
+                        self._write_bundle_with_indicies(previous_cable, previous_index, first_index)
+                        first = False
+                        previous_cable = w.cable
+                        first_index = index
+                        previous_index = index
+                else:
+                    if has_to_write:
+                        #write the previous and save new stuff
+                        if not first:
+                            self.file.write(vt.COMMA)
+                            self.file.write(vt.SPACE)
+                        self._write_bundle_with_indicies(previous_cable, previous_index, first_index)
+                        first = False
+                    previous_cable = w.cable
+                    first_index = index
+                    previous_index = index
+                has_to_write = True
             else:
-                break
+                None
+                # break
+        if has_to_write:
+            if not first:
+                self.file.write(vt.COMMA)
+                self.file.write(vt.SPACE)
+            self._write_bundle_with_indicies(previous_cable, previous_index, first_index)
 
-            first = False
         self.file.write(vt.CLOSE_BRACE)
 
     def _write_module_header_ports(self, definition):
@@ -234,6 +308,11 @@ class Composer:
         self.file.write(vt.CLOSE_PARENTHESIS)
         self.file.write(vt.SEMI_COLON)
         self.file.write(vt.NEW_LINE)
+    
+    def pin_sort_func(self, p):
+        if isinstance(p, sdn.OuterPin):
+            return p.inner_pin.port.pins.index(p.inner_pin)
+        return p.port.pins.index(p)
 
     def _write_module_header_port(self, port):
         '''does not write the input output or width, 
@@ -242,8 +321,10 @@ class Composer:
         aliased = self._is_pinset_concatenated(port.pins, port.name)
         if aliased:
             wires = []
-            for p in port.pins:
-                wires.append(p.wire)
+            pin_list = list(p for p in port.pins)
+            pin_list.sort(reverse=True, key=self.pin_sort_func)
+            for pin in pin_list:
+                wires.append(pin.wire)
             self.file.write(vt.DOT)
             self._write_name(port)
             self.file.write(vt.OPEN_PARENTHESIS)
@@ -358,12 +439,50 @@ class Composer:
             if not first:
                 self.file.write(vt.COMMA)
                 self.file.write(vt.NEW_LINE)
-            self._write_instance_port(instance, p)
+            if p.name:
+                self._write_instance_port(instance, p)
+            else:
+                self._write_implicitly_mapped_instance_port(instance, p)
             first = False
         self.file.write(vt.NEW_LINE)
         self.file.write(self.indent_count * vt.SPACE)
         self.file.write(vt.CLOSE_PARENTHESIS)
         self.file.write(vt.SEMI_COLON)
+
+    def _write_implicitly_mapped_instance_port(self, instance, port):
+        '''Ports that have no name must be implicitly mapped. E.g. inst(VCC_net) rather than inst(.p(VCC_net))'''
+        self.file.write(2*self.indent_count * vt.SPACE)
+        # self.file.write(vt.DOT)
+        # self._write_name(port)
+        # self.file.write(vt.OPEN_PARENTHESIS)
+        pins = []
+        for p in port.pins:
+            pins.append(instance.pins[p])
+        if pins[0].wire is not None:
+            name = pins[0].wire.cable.name
+        else:
+            name = None
+        concatenated = self._is_pinset_concatenated(pins, name)
+        wires = []
+        pin_list = list(p for p in port.pins)
+        pin_list.sort(reverse=True, key=self.pin_sort_func)
+        for pin in pin_list:
+            wires.append(pin.wire)
+        if concatenated:
+            self._write_concatenation(wires)
+        else:
+            if pins[0].wire is not None:
+                last = -1
+                wl = wires[last]
+                wr = wires[0]
+                while wl is None:  # get the last named non none wire.
+                    last = last - 1
+                    wl = wires[last]
+                il = self._index_of_wire_in_cable(wl)
+                ir = self._index_of_wire_in_cable(wr)
+                self._write_bundle_with_indicies(wl.cable, ir, il)
+
+        # self.file.write(vt.CLOSE_PARENTHESIS)
 
     def _write_instance_port(self, instance, port):
         self.file.write(2*self.indent_count * vt.SPACE)
@@ -379,10 +498,15 @@ class Composer:
             name = None
         concatenated = self._is_pinset_concatenated(pins, name)
         wires = []
+        sorted_wires = []
+        pin_list = list(p for p in pins)
+        pin_list.sort(reverse=True, key=self.pin_sort_func)
+        for pin in pin_list:
+            sorted_wires.append(pin.wire)
         for p in pins:
             wires.append(p.wire)
         if concatenated:
-            self._write_concatenation(wires)
+            self._write_concatenation(sorted_wires)
         else:
             if pins[0].wire is not None:
                 last = -1
@@ -400,11 +524,17 @@ class Composer:
     def _write_name(self, o):
         '''write the name of an o. this is split out to give an error message if the name is not set
         In the future this could be changed to add a name to os that do not have a name set'''
-        assert o.name is not None, self._error_string("name of o is not set", o)
-        if o.name[0] == '\\':
-            assert o.name[-1] == ' ', self._error_string(
-                "the o name starts with escape and does not end with a space.", o)
-        self.file.write(o.name)
+        name = o.name
+        assert name is not None, self._error_string("name of o is not set", o)
+        name = self._fix_name(name)
+        self.file.write(name)
+    
+    def _fix_name(self, name):
+        if name[0] == '\\':
+            if name[-1] != " ":
+                name+=" "
+        return name
+
 
     def _write_brackets_defining(self, bundle):
         '''write the brackets for port or cable definitions'''
@@ -455,6 +585,7 @@ class Composer:
                 self._error_string("attempted to index bundle out of bounds at " + str(high_index), bundle)
             return
         elif (low_index == lower_bundle and high_index == upper_bundle) or (low_index == None and high_index == None):
+            self.file.write("[" + str(high_index) + ":" + str(low_index) + "]")
             return
         elif low_index == high_index or low_index is None or high_index is None:
             index = low_index
@@ -513,7 +644,20 @@ class Composer:
             if next_name != name and not now_none:
                 aliased = True
                 break
-            
+
+        # if all the wires connected to the pins are from the same cable, don't count as aliased
+        # otherwise, return previous answer
+        # TODO maybe also check if all of the cable is used. So no skipped wires.
+        # name = None
+        # for p in pins:
+        #     if p.wire is None:
+        #         continue
+        #     if not name:
+        #         name = p.wire.cable.name
+        #         continue
+        #     if p.wire.cable.name is not name:
+        #         return aliased
+        # return False
         return aliased
 
     def _all_wires_and_cables_from_pinset(self, pins):

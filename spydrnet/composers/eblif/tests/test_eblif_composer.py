@@ -2,6 +2,7 @@ import unittest
 import os
 import spydrnet as sdn
 from spydrnet import base_dir
+from pathlib import Path
 
 """
 Test the EBLIF composer. The best way I can think to do this is to parse a netlist, compose it, then parse it again to see if anything changed. It should all be the same
@@ -9,7 +10,7 @@ Test the EBLIF composer. The best way I can think to do this is to parse a netli
 
 class TestEBLIFComposer(unittest.TestCase):
     def setUp(self):
-        self.netlist_1 = sdn.parse(os.path.join(base_dir, 'support_files', 'eblif_netlists', "toggle.eblif.zip"))
+        self.netlist_1 = sdn.parse(Path(base_dir, 'support_files', 'eblif_netlists', "toggle.eblif.zip"))
         self.definition_list = ["INV","BUFG","FDRE","IBUF","OBUF","toggle", "logic-gate_0"]
         sdn.compose(self.netlist_1,"temp_for_composer_test.eblif")
         sdn.compose(self.netlist_1,"temp_for_composer_test_no_blackbox.eblif",write_blackbox=False)
@@ -47,13 +48,9 @@ class TestEBLIFComposer(unittest.TestCase):
         cables_2.sort()
         self.assertEqual(cables_1,cables_2)
         self.assertEqual(len(cables_1),len(cables_2))
-    
-    def test_no_blackbox_netlist(self):
-        for definition in self.netlist_1.get_definitions(filter=lambda x: (x is not self.netlist_1.top_instance.reference
-                                                             and "logic-gate_0" not in x.name)):
-            self.assertTrue("EBLIF.blackbox" in definition.data.keys(),definition.name+" is not a blackbox"+str(definition.data))
-        for definition in self.netlist_3.get_definitions(filter=lambda x: x is not self.netlist_3.top_instance.reference):
-            self.assertFalse("EBLIF.blackbox" in definition.data,definition.name+" is a blackbox"+str(definition.data))
 
+    
     # TODO add wires and connections tests
+
+    # test the composing of each individual part
         

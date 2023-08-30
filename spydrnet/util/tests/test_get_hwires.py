@@ -217,7 +217,7 @@ class TestGetHWires(unittest.TestCase):
 
         # look at wire_name
         href = next(sdn.get_hwires(middle_floating_wire))
-        assert ('middle/middle_cable[1]', href.name)
+        assert ('middle/middle_cable[1]' == href.name)
         hrefs = set(sdn.get_hwires(netlist.top_instance, recursive=True))
         assert (href in hrefs)
 

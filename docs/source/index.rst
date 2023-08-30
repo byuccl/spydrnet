@@ -12,7 +12,7 @@
    :maxdepth: 2
 
    install
-   tutorial
+   overview/index
    reference/index
    auto_examples/index
    developer/index

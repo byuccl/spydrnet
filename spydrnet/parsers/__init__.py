@@ -1,6 +1,7 @@
-import os
 import zipfile
 import tempfile
+from pathlib import Path
+import os
 
 """
 Init for Spydrnet. The functions below can be called directly
@@ -35,9 +36,9 @@ def parse(filename, **kwArgs):
 
     The same applies for EBLIF files
     """
-    basename_less_final_extension = os.path.splitext(
-        os.path.basename(filename))[0]
-    extension = get_lowercase_extension(filename)
+
+    basename_less_final_extension = Path(filename).stem
+    extension = get_lowercase_extension(filename)     
     if extension == ".zip":
         assert zipfile.is_zipfile(filename), \
             "Input filename {} with extension .zip is not a zip file.".format(
@@ -67,11 +68,27 @@ def _parse(filename, **kwArgs):
         parser = EBLIFParser.from_filename(filename)
     else:
         raise RuntimeError("Extension {} not recognized.".format(extension))
-    parser.parse()
+    parser.parse()     
+
+    if 'architecture' in kwArgs:
+        read_primitive_library(kwArgs["architecture"], parser.netlist)
+        if extension in [".eblif",".blif"]:
+            set_eblif_names(parser.netlist)
     return parser.netlist
 
 
 def get_lowercase_extension(filename):
-    extension = os.path.splitext(filename)[1]
+    extension = Path(filename).suffix
     extension_lower = extension.lower()
     return extension_lower
+
+def read_primitive_library(architecture, netlist):
+    from spydrnet.parsers.primitive_library_reader import PrimitiveLibraryReader
+    reader = PrimitiveLibraryReader(architecture, netlist)
+    reader.run()
+
+def set_eblif_names(netlist):
+    from spydrnet.parsers.eblif.eblif_parser import EBLIFParser
+    eblif_parser = EBLIFParser()
+    eblif_parser.netlist = netlist
+    eblif_parser.set_subcircuit_names_by_convention()
