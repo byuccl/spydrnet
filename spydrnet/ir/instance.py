@@ -21,7 +21,8 @@ class Instance(FirstClassElement):
     For example, when writing definition 1, we instance definition 2. Definition 1 is the parent, the instance is the child, and definition 2 is the instance's reference.
 
     """
-    __slots__ = ['_parent', '_reference', '_pins','_is_top_instance']
+
+    __slots__ = ["_parent", "_reference", "_pins", "_is_top_instance"]
 
     def __init__(self, name=None, properties=None):
         """Creates an empty object of type instance.
@@ -41,8 +42,7 @@ class Instance(FirstClassElement):
         if name is not None:
             self.name = name
         if properties is not None:
-            assert isinstance(
-                properties, dict), "properties must be a dictionary"
+            assert isinstance(properties, dict), "properties must be a dictionary"
             for key in properties:
                 self[key] = properties[key]
 
@@ -52,7 +52,6 @@ class Instance(FirstClassElement):
         return self._parent
 
     def test(self):
-
         return True
 
     @property
@@ -69,7 +68,8 @@ class Instance(FirstClassElement):
         parameters
         ----------
 
-        value - (Definition) the definition that this instance should be an instance of"""
+        value - (Definition) the definition that this instance should be an instance of
+        """
         global_callback._call_instance_reference(self, value)
         if value is None:
             for pin in self.pins:
@@ -84,9 +84,10 @@ class Instance(FirstClassElement):
                 self._reference._references.remove(self)
         else:
             if self._reference is not None:
-                assert len(self.reference.ports) == len(value.ports) and all(len(x.pins) == len(y.pins) for x, y in
-                                                                             zip(self.reference.ports, value.ports)), \
-                    "Reference reassignment only supported for definitions with matching port positions"
+                assert len(self.reference.ports) == len(value.ports) and all(
+                    len(x.pins) == len(y.pins)
+                    for x, y in zip(self.reference.ports, value.ports)
+                ), "Reference reassignment only supported for definitions with matching port positions"
                 self._reference._references.remove(self)
                 for cur_port, new_port in zip(self.reference.ports, value.ports):
                     for cur_pin, new_pin in zip(cur_port.pins, new_port.pins):
@@ -106,12 +107,14 @@ class Instance(FirstClassElement):
 
     def get_ports(self, *args, **kwargs):
         from spydrnet.util.get_ports import get_ports
+
         return get_ports(self, *args, **kwargs)
 
     @property
     def pins(self):
         """Get the pins on this instance.
-        Can do instance.pins[<inner_pin>] to get the inner pin's associated outer pins."""
+        Can do instance.pins[<inner_pin>] to get the inner pin's associated outer pins.
+        """
         return OuterPinsView(self._pins)
 
     def _clone_rip_and_replace_in_definition(self, memo):
@@ -147,8 +150,11 @@ class Instance(FirstClassElement):
         clone the instance leaving all references in tact.
         The instance can then either be ripped or ripped and replaced
         """
-        assert self not in memo, "the object should not have been copied twice in this pass"
+        assert (
+            self not in memo
+        ), "the object should not have been copied twice in this pass"
         from spydrnet.ir import Instance as InstanceExtended
+
         c = InstanceExtended()
         memo[self] = c
         c._parent = None
@@ -200,23 +206,23 @@ class Instance(FirstClassElement):
     def __str__(self):
         """Re-define the print function so it is easier to read"""
         rep = super().__str__()
-        rep = rep[:-1] + '; '
+        rep = rep[:-1] + "; "
         if self.parent is None:
-            rep += 'parent definition undefined'
+            rep += "parent definition undefined"
         elif self.parent.name is None:
-            rep += 'parent definition.name undefined'
+            rep += "parent definition.name undefined"
         else:
-            rep += 'parent definition.name \'' + self.parent.name + '\''
+            rep += "parent definition.name '" + self.parent.name + "'"
 
-        rep += '; '
+        rep += "; "
 
         if self.reference is None:
-            rep += 'reference definition undefined'
+            rep += "reference definition undefined"
         elif self.reference.name is None:
-            rep += 'reference definition.name undefined'
+            rep += "reference definition.name undefined"
         else:
-            rep += 'reference definition.name \'' + self.reference.name + '\''
-        rep += '>'
+            rep += "reference definition.name '" + self.reference.name + "'"
+        rep += ">"
         return rep
 
     def __lt__(self, other):
@@ -227,5 +233,5 @@ class Instance(FirstClassElement):
         return self._is_top_instance
 
     @is_top_instance.setter
-    def is_top_instance(self,value):
+    def is_top_instance(self, value):
         self._is_top_instance = value

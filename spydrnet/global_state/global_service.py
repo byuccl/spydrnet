@@ -7,7 +7,8 @@ _registered_hierarchical_lookup = None
 def register_lookup(key, func):
     if key in _registered_lookups:
         raise ValueError(
-            "Cannot register a fast lookup under the key {}, lookup already registered.")
+            "Cannot register a fast lookup under the key {}, lookup already registered."
+        )
     else:
         _registered_lookups[key] = func
 

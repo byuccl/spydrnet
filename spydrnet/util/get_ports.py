@@ -1,5 +1,16 @@
-from spydrnet.ir import Element, FirstClassElement, InnerPin, OuterPin, Wire, Netlist, Library, Definition, Instance,\
-    Port, Cable
+from spydrnet.ir import (
+    Element,
+    FirstClassElement,
+    InnerPin,
+    OuterPin,
+    Wire,
+    Netlist,
+    Library,
+    Definition,
+    Instance,
+    Port,
+    Cable,
+)
 from spydrnet.util.hierarchical_reference import HRef
 from spydrnet.global_state.global_service import lookup
 from spydrnet.util.patterns import _is_pattern_absolute, _value_matches_pattern
@@ -35,25 +46,29 @@ def get_ports(obj, *args, **kwargs):
         This is a single input function that can be used to filter out unwanted virtual instances. If not specifed, all
         matching virtual instances are returned. Otherwise, virtual instances that cause the filter function to evaluate
         to true are the only items returned.
-    
+
     Returns
     -------
     ports : generator
         The ports associated with a particular object or collection of objects.
-    
+
     """
     # Check argument list
-    if len(args) == 1 and 'patterns' in kwargs:
+    if len(args) == 1 and "patterns" in kwargs:
         raise TypeError("get_ports() got multiple values for argument 'patterns'")
-    if len(args) > 1 or any(x not in {'patterns', 'key', 'filter', 'is_case', 'is_re'} for x in kwargs):
+    if len(args) > 1 or any(
+        x not in {"patterns", "key", "filter", "is_case", "is_re"} for x in kwargs
+    ):
         raise TypeError("Unknown usage. Please see help for more information.")
 
     # Default values
-    filter_func = kwargs.get('filter', lambda x: True)
-    is_case = kwargs.get('is_case', True)
-    is_re = kwargs.get('is_re', False)
-    patterns = args[0] if len(args) == 1 else kwargs.get('patterns', ".*" if is_re else "*")
-    key = kwargs.get('key', ".NAME")
+    filter_func = kwargs.get("filter", lambda x: True)
+    is_case = kwargs.get("is_case", True)
+    is_re = kwargs.get("is_re", False)
+    patterns = (
+        args[0] if len(args) == 1 else kwargs.get("patterns", ".*" if is_re else "*")
+    )
+    key = kwargs.get("key", ".NAME")
 
     if isinstance(obj, (FirstClassElement, InnerPin, OuterPin, Wire)) is False:
         try:
@@ -63,8 +78,10 @@ def get_ports(obj, *args, **kwargs):
     else:
         object_collection = [obj]
     if all(isinstance(x, (Element, HRef)) for x in object_collection) is False:
-        raise TypeError("get_ports() supports netlist elements and hierarchical references, or a collection of "
-                        "these as the object searched")
+        raise TypeError(
+            "get_ports() supports netlist elements and hierarchical references, or a collection of "
+            "these as the object searched"
+        )
 
     if isinstance(patterns, str):
         patterns = (patterns,)
@@ -73,7 +90,9 @@ def get_ports(obj, *args, **kwargs):
 
 
 def _get_ports(object_collection, patterns, key, is_case, is_re, filter_func):
-    for result in filter(filter_func, _get_ports_raw(object_collection, patterns, key, is_case, is_re)):
+    for result in filter(
+        filter_func, _get_ports_raw(object_collection, patterns, key, is_case, is_re)
+    ):
         yield result
 
 
@@ -92,8 +111,10 @@ def _get_ports_raw(object_collection, patterns, key, is_case, is_re):
                         yield result
                 else:
                     for port in obj.ports:
-                        value = port[key] if key in port else ''
-                        if port not in found and _value_matches_pattern(value, pattern, is_case, is_re):
+                        value = port[key] if key in port else ""
+                        if port not in found and _value_matches_pattern(
+                            value, pattern, is_case, is_re
+                        ):
                             found.add(port)
                             yield port
         elif isinstance(obj, Netlist):
@@ -130,7 +151,7 @@ def _get_ports_raw(object_collection, patterns, key, is_case, is_re):
             if other_port in found:
                 continue
             found.add(other_port)
-            name = other_port[key] if key in other_port else ''
+            name = other_port[key] if key in other_port else ""
             if name not in namemap:
                 namemap[name] = []
             namemap[name].append(other_port)

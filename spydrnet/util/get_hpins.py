@@ -1,4 +1,15 @@
-from spydrnet import FirstClassElement, InnerPin, OuterPin, Wire, Netlist, Library, Definition, Instance, Port, Cable
+from spydrnet import (
+    FirstClassElement,
+    InnerPin,
+    OuterPin,
+    Wire,
+    Netlist,
+    Library,
+    Definition,
+    Instance,
+    Port,
+    Cable,
+)
 from spydrnet.util.hierarchical_reference import HRef
 from spydrnet.util.patterns import _is_pattern_absolute, _value_matches_pattern
 
@@ -33,26 +44,29 @@ def get_hpins(obj, *args, **kwargs):
         This is a single input function that can be used to filter out unwanted virtual instances. If not specifed, all
         matching virtual instances are returned. Otherwise, virtual instances that cause the filter function to evaluate
         to true are the only items returned.
-    
+
     Returns
     -------
     href_pins : generator
         The hierarchical references to pins associated with a particular object or collection of objects.
-    
+
     """
     # Check argument list
-    if len(args) == 1 and 'patterns' in kwargs:
+    if len(args) == 1 and "patterns" in kwargs:
         raise TypeError("get_hwires() got multiple values for argument 'patterns'")
-    if len(args) > 1 or any(x not in {'patterns', 'recursive', 'filter', 'is_case', 'is_re'} for x in
-                            kwargs):
+    if len(args) > 1 or any(
+        x not in {"patterns", "recursive", "filter", "is_case", "is_re"} for x in kwargs
+    ):
         raise TypeError("Unknown usage. Please see help for more information.")
 
     # Default values
-    filter_func = kwargs.get('filter', lambda x: True)
-    recursive = kwargs.get('recursive', False)
-    is_case = kwargs.get('is_case', True)
-    is_re = kwargs.get('is_re', False)
-    patterns = args[0] if len(args) == 1 else kwargs.get('patterns', ".*" if is_re else "*")
+    filter_func = kwargs.get("filter", lambda x: True)
+    recursive = kwargs.get("recursive", False)
+    is_case = kwargs.get("is_case", True)
+    is_re = kwargs.get("is_re", False)
+    patterns = (
+        args[0] if len(args) == 1 else kwargs.get("patterns", ".*" if is_re else "*")
+    )
 
     if isinstance(obj, (FirstClassElement, InnerPin, OuterPin, Wire)) is False:
         try:
@@ -61,19 +75,32 @@ def get_hpins(obj, *args, **kwargs):
             object_collection = [obj]
     else:
         object_collection = [obj]
-    if all(isinstance(x, (HRef, FirstClassElement, InnerPin, OuterPin, Wire)) for x in object_collection) is False:
-        raise TypeError("get_hwires() supports all netlist related objects and hierarchical references or a "
-                        "collection of theses as the object searched, unsupported object provided")
+    if (
+        all(
+            isinstance(x, (HRef, FirstClassElement, InnerPin, OuterPin, Wire))
+            for x in object_collection
+        )
+        is False
+    ):
+        raise TypeError(
+            "get_hwires() supports all netlist related objects and hierarchical references or a "
+            "collection of theses as the object searched, unsupported object provided"
+        )
 
     if isinstance(patterns, str):
         patterns = (patterns,)
     assert isinstance(patterns, (FirstClassElement, InnerPin, OuterPin, Wire)) is False
 
-    return _get_hpins(object_collection, patterns, recursive, is_case, is_re, filter_func)
+    return _get_hpins(
+        object_collection, patterns, recursive, is_case, is_re, filter_func
+    )
 
 
 def _get_hpins(object_collection, patterns, recursive, is_case, is_re, filter_func):
-    for result in filter(filter_func, _get_hpins_raw(object_collection, patterns, recursive, is_case, is_re)):
+    for result in filter(
+        filter_func,
+        _get_hpins_raw(object_collection, patterns, recursive, is_case, is_re),
+    ):
         yield result
 
 
@@ -131,20 +158,28 @@ def _get_hpins_raw(object_collection, patterns, recursive, is_case, is_re):
                     if isinstance(pin, OuterPin):
                         instance = pin.instance
                         if instance:
-                            href_inst = HRef.from_parent_and_item(href_parent_instance, pin.instance)
+                            href_inst = HRef.from_parent_and_item(
+                                href_parent_instance, pin.instance
+                            )
                             inner_pin = pin.inner_pin
                             if inner_pin:
                                 inner_port = inner_pin.port
                                 if inner_port:
-                                    href_port = HRef.from_parent_and_item(href_inst, inner_port)
-                                    href_pin = HRef.from_parent_and_item(href_port, inner_pin)
+                                    href_port = HRef.from_parent_and_item(
+                                        href_inst, inner_port
+                                    )
+                                    href_pin = HRef.from_parent_and_item(
+                                        href_port, inner_pin
+                                    )
                                     if href_pin not in in_yield:
                                         in_yield.add(href_pin)
                                         yield href_pin
                     else:
                         port = pin.port
                         if port:
-                            href_port = HRef.from_parent_and_item(href_parent_instance, port)
+                            href_port = HRef.from_parent_and_item(
+                                href_parent_instance, port
+                            )
                             href_pin = HRef.from_parent_and_item(href_port, pin)
                             if href_pin not in in_yield:
                                 in_yield.add(href_pin)
@@ -198,14 +233,16 @@ def _update_hwire_namemap(href_instance, recursive, found, namemap):
             name_stack.pop()
         else:
             search_stack.append((href_instance, True))
-            name_stack.append(href_instance.item.name if href_instance.item.name else '')
+            name_stack.append(
+                href_instance.item.name if href_instance.item.name else ""
+            )
             item = href_instance.item
             reference = item.reference
             if reference:
                 for port in reference.ports:
                     hport = HRef.from_parent_and_item(href_instance, port)
-                    name_stack.append(port.name if port.name else '')
-                    port_hname = '/'.join(name_stack[1:])
+                    name_stack.append(port.name if port.name else "")
+                    port_hname = "/".join(name_stack[1:])
                     for pins_index, pin in enumerate(port.pins):
                         hpin = HRef.from_parent_and_item(hport, pin)
                         if hpin not in found:
@@ -213,7 +250,9 @@ def _update_hwire_namemap(href_instance, recursive, found, namemap):
                             if port.is_scalar:
                                 hname = port_hname
                             else:
-                                hname = "{}[{}]".format(port_hname, port.lower_index + pins_index)
+                                hname = "{}[{}]".format(
+                                    port_hname, port.lower_index + pins_index
+                                )
                             if hname not in namemap:
                                 namemap[hname] = []
                             namemap[hname].append(hpin)

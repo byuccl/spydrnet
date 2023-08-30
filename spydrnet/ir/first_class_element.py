@@ -27,7 +27,8 @@ class FirstClassElement(Element):
     The only key that is reserved is 'NAME'. It is the primary name of the element. NAME may be undefined or inferred,
     for example, a pin on a port may be nameless, but infer its name for its parent port and position.
     """
-    __slots__ = ['_data',]
+
+    __slots__ = ["_data",]
 
     def __init__(self):
         """Initialize an element with an empty data dictionary."""
@@ -73,7 +74,7 @@ class FirstClassElement(Element):
         self._data.__setitem__(sys.intern(key), value)
 
     def __delitem__(self, key):
-        """ delete the item from the data structure"""
+        """delete the item from the data structure"""
         global_callback._call_dictionary_delete(self, key)
         self._data.__delitem__(key)
 
@@ -98,10 +99,10 @@ class FirstClassElement(Element):
     def __str__(self):
         """Re-define the print function so it is easier to read"""
         rep = str(type(self))
-        rep = rep[:-1] + '; '
+        rep = rep[:-1] + "; "
         if self.name is None:
-            rep += 'name undefined'
+            rep += "name undefined"
         else:
-            rep += 'name \'' + self.name + '\''
-        rep += '>'
+            rep += "name '" + self.name + "'"
+        rep += ">"
         return rep

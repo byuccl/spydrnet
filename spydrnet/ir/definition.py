@@ -13,7 +13,8 @@ class Definition(FirstClassElement):
 
     Contains a pointer to parent library, ports, cables, and instances.
     """
-    __slots__ = ['_library', '_ports', '_cables', '_children', '_references']
+
+    __slots__ = ["_library", "_ports", "_cables", "_children", "_references"]
 
     def __init__(self, name=None, properties=None):
         """Creates an empty object of type definition
@@ -36,8 +37,7 @@ class Definition(FirstClassElement):
             self.name = name
 
         if properties != None:
-            assert isinstance(
-                properties, dict), "properties must be a dictionary"
+            assert isinstance(properties, dict), "properties must be a dictionary"
             for key in properties:
                 self[key] = properties[key]
 
@@ -69,8 +69,9 @@ class Definition(FirstClassElement):
         """
         target = list(value)
         target_set = set(target)
-        assert len(target) == len(target_set) and set(self._ports) == target_set, \
-            "Set of values do not match, this function can only reorder \
+        assert (
+            len(target) == len(target_set) and set(self._ports) == target_set
+        ), "Set of values do not match, this function can only reorder \
                 values, values must be unique"
         self._ports = target
 
@@ -94,8 +95,9 @@ class Definition(FirstClassElement):
         """
         target = list(value)
         target_set = set(target)
-        assert len(target) == len(target_set) and set(self._cables) == set(target), \
-            "Set of values do not match, this function can only reorder values, values must be unique"
+        assert len(target) == len(target_set) and set(self._cables) == set(
+            target
+        ), "Set of values do not match, this function can only reorder values, values must be unique"
         self._cables = target
 
     @property
@@ -118,8 +120,9 @@ class Definition(FirstClassElement):
         """
         target = list(value)
         target_set = set(target)
-        assert len(target) == len(target_set) and set(self._children) == target_set, \
-            "Set of values do not match, this function can only reorder values, values must be unique"
+        assert (
+            len(target) == len(target_set) and set(self._children) == target_set
+        ), "Set of values do not match, this function can only reorder values, values must be unique"
         self._children = target
 
     @property
@@ -140,7 +143,16 @@ class Definition(FirstClassElement):
             return False
         return True
 
-    def create_port(self, name=None, properties=None, is_downto=None, is_scalar=None, lower_index=None, direction=None, pins=None):
+    def create_port(
+        self,
+        name=None,
+        properties=None,
+        is_downto=None,
+        is_scalar=None,
+        lower_index=None,
+        direction=None,
+        pins=None,
+    ):
         """Create a port, add it to the definition, and return that port.
 
         parameters
@@ -154,8 +166,7 @@ class Definition(FirstClassElement):
         direction - (Enum) Define the possible directions for a given port. (UNDEFINED, INOUT, IN, OUT)
         pins - (int) Create number of pins in the newly created port
         """
-        port = Port(name, properties, is_downto,
-                    is_scalar, lower_index, direction)
+        port = Port(name, properties, is_downto, is_scalar, lower_index, direction)
         self.add_port(port)
         if pins:
             port.create_pins(pins)
@@ -213,8 +224,9 @@ class Definition(FirstClassElement):
             excluded_ports = ports
         else:
             excluded_ports = set(ports)
-        assert all(x.definition == self for x in excluded_ports), "Some ports to remove are not included in the " \
-                                                                  "definition."
+        assert all(x.definition == self for x in excluded_ports), (
+            "Some ports to remove are not included in the " "definition."
+        )
         for port in excluded_ports:
             self._remove_port(port)
         self._ports = list(x for x in self._ports if x not in excluded_ports)
@@ -287,7 +299,9 @@ class Definition(FirstClassElement):
         position - (int, default None) the index in the children list at which to add the instance.
         """
         assert instance.parent is not self, "Instance already included in definition"
-        assert instance.parent is None, "Instance already belongs to a different definition"
+        assert (
+            instance.parent is None
+        ), "Instance already belongs to a different definition"
         global_callback._call_definition_add_child(self, instance)
         if position is not None:
             self._children.insert(position, instance)
@@ -324,7 +338,8 @@ class Definition(FirstClassElement):
         else:
             excluded_children = set(children)
         assert all(
-            x.parent == self for x in excluded_children), "Some children are not parented by the definition"
+            x.parent == self for x in excluded_children
+        ), "Some children are not parented by the definition"
         included_children = []
         for child in self._children:
             if child not in excluded_children:
@@ -340,7 +355,15 @@ class Definition(FirstClassElement):
         global_callback._call_definition_remove_child(self, child)
         child._parent = None
 
-    def create_cable(self, name=None, properties=None, is_downto=None, is_scalar=None, lower_index=None, wires=None):
+    def create_cable(
+        self,
+        name=None,
+        properties=None,
+        is_downto=None,
+        is_scalar=None,
+        lower_index=None,
+        wires=None,
+    ):
         """Create a cable, add it to the definition, and return the cable.
 
         parameters
@@ -372,7 +395,9 @@ class Definition(FirstClassElement):
         position - (int, default None) the position in the cable list at which to add the cable
         """
         assert cable.definition is not self, "Cable already included in definition"
-        assert cable.definition is None, "Cable already belongs to a different definition"
+        assert (
+            cable.definition is None
+        ), "Cable already belongs to a different definition"
         global_callback._call_definition_add_cable(self, cable)
         if position is not None:
             self._cables.insert(position, cable)
@@ -409,7 +434,8 @@ class Definition(FirstClassElement):
         else:
             excluded_cables = set(cables)
         assert all(
-            x.definition == self for x in excluded_cables), "Some cables are not included in the definition"
+            x.definition == self for x in excluded_cables
+        ), "Some cables are not included in the definition"
         included_cables = []
         for cable in self._cables:
             if cable not in excluded_cables:
@@ -430,7 +456,8 @@ class Definition(FirstClassElement):
         """If an instance that is a reference of this definition was cloned then update the list of references of the definition.
 
         For each of the children instances, we should also update the reference to refer to any cloned dictionaries
-        inner pins now also need to be updated with new inner pins for each of the definitions that was cloned."""
+        inner pins now also need to be updated with new inner pins for each of the definitions that was cloned.
+        """
         new_references = set()
         for instance in self._references:
             # if the instance was cloned then replace it in our references also update its reference
@@ -460,8 +487,11 @@ class Definition(FirstClassElement):
 
         clone leaving all references in tact.
         the element can then either be ripped or ripped and replaced"""
-        assert self not in memo, "the object should not have been copied twice in this pass"
+        assert (
+            self not in memo
+        ), "the object should not have been copied twice in this pass"
         from spydrnet.ir import Definition as DefinitionExtended
+
         c = DefinitionExtended()
         memo[self] = c
         c._data = deepcopy(self._data)
@@ -519,21 +549,21 @@ class Definition(FirstClassElement):
     def __str__(self):
         """Re-define the print function so it is easier to read"""
         rep = super().__str__()
-        rep = rep[:-1] + '; '
+        rep = rep[:-1] + "; "
         if self.library is None:
-            rep += 'Library undefined'
+            rep += "Library undefined"
         elif self.library.name is None:
-            rep += 'Library.name undefined'
+            rep += "Library.name undefined"
         else:
-            rep += 'Library.name \'' + self.library.name + '\''
-        rep += '; '
-        rep += 'ports: '
+            rep += "Library.name '" + self.library.name + "'"
+        rep += "; "
+        rep += "ports: "
         rep += str(sum(1 for _ in self.get_ports()))
-        rep += '; cables: '
+        rep += "; cables: "
         rep += str(sum(1 for _ in self.get_cables()))
-        rep += '; children: '
+        rep += "; children: "
         rep += str(len(self.children))
-        rep += '; references: '
+        rep += "; references: "
         rep += str(len(self.references))
-        rep += '>'
+        rep += ">"
         return rep

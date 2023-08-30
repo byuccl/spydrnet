@@ -12,9 +12,10 @@ class Library(FirstClassElement):
 
     Contains a pointer to parent netlist and definitions.
     """
-    __slots__ = ['_netlist', '_definitions']
 
-    def __init__(self, name = None, properties = None):
+    __slots__ = ["_netlist", "_definitions"]
+
+    def __init__(self, name=None, properties=None):
         """
         creates an empty object of type Library
 
@@ -62,8 +63,9 @@ class Library(FirstClassElement):
         """
         value_list = list(value)
         value_set = set(value_list)
-        assert len(value_list) == len(value_set) and set(self._definitions) == value_set, \
-            "Set of values do not match, this function can only reorder values, values must be unique"
+        assert (
+            len(value_list) == len(value_set) and set(self._definitions) == value_set
+        ), "Set of values do not match, this function can only reorder values, values must be unique"
         self._definitions = value_list
 
     def create_definition(self):
@@ -87,7 +89,9 @@ class Library(FirstClassElement):
 
         """
         assert definition.library is not self, "Definition already included in library"
-        assert definition.library is None, "Definition already belongs to a different library"
+        assert (
+            definition.library is None
+        ), "Definition already belongs to a different library"
         global_callback._call_library_add_definition(self, definition)
         if position is not None:
             self._definitions.insert(position, definition)
@@ -121,8 +125,9 @@ class Library(FirstClassElement):
             excluded_definitions = definitions
         else:
             excluded_definitions = set(definitions)
-        assert all(x.library == self for x in excluded_definitions), "Some definitions to remove are not included in " \
-                                                                     "the library "
+        assert all(x.library == self for x in excluded_definitions), (
+            "Some definitions to remove are not included in " "the library "
+        )
         included_definitions = []
         for definition in self._definitions:
             if definition not in excluded_definitions:
@@ -138,15 +143,14 @@ class Library(FirstClassElement):
         global_callback._call_library_remove_definition(self, definition)
         definition._library = None
 
-
     def _clone_rip_and_replace(self, memo):
-        '''remove from its current environment and place it into the new cloned environment with references held in the memo dictionary'''
-        pass #this function will need to call rip and replace in library on each of the definitions when called from the netlist.
+        """remove from its current environment and place it into the new cloned environment with references held in the memo dictionary"""
+        pass  # this function will need to call rip and replace in library on each of the definitions when called from the netlist.
         for definition in self._definitions:
             definition._clone_rip_and_replace(memo)
 
     def _clone_rip(self, memo):
-        '''remove from its current environmnet. This will remove all pin pointers and create a floating stand alone instance.'''   
+        """remove from its current environmnet. This will remove all pin pointers and create a floating stand alone instance."""
         # references lists of definitions need to be vacated except those that were cloned.
         for definition in self._definitions:
             new_references = set()
@@ -158,12 +162,13 @@ class Library(FirstClassElement):
 
             definition._references = new_references
 
-
     def _clone(self, memo):
-        '''not api safe clone function
+        """not api safe clone function
         clone leaving all references in tact.
-        the element can then either be ripped or ripped and replaced'''
-        assert self not in memo, "the object should not have been copied twice in this pass"
+        the element can then either be ripped or ripped and replaced"""
+        assert (
+            self not in memo
+        ), "the object should not have been copied twice in this pass"
         c = Library()
         memo[self] = c
         c._netlist = None
@@ -180,14 +185,14 @@ class Library(FirstClassElement):
         return c
 
     def clone(self):
-        '''
+        """
         Clone the library in an api safe manner.
         The following describes the structure of the returned object:
          * the instances that pointed to reference definitions within the library will have updated references
          * the instances that pointed to reference definitions outside the library will maintain their definitions
          * the references lists (of definitions) both inside and outsde the library will be updated to reflect the change
          * all definitions are cloned within the library.
-         '''
+        """
         memo = {}
         c = self._clone(memo)
         c._clone_rip(memo)

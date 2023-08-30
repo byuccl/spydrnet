@@ -1,4 +1,3 @@
-
 from spydrnet import get_active_plugins
 import importlib
 import typing
@@ -18,30 +17,32 @@ if typing.TYPE_CHECKING:
     from spydrnet.ir.library import Library
     from spydrnet.ir.netlist import Netlist
 
-RegisterModule = [('element', 'Element'),
-                  ('first_class_element', 'FirstClassElement'),
-                  ('bundle', 'Bundle'),
-                  ('pin', 'Pin'),
-                  ('innerpin', 'InnerPin'),
-                  ('outerpin', 'OuterPin'),
-                  ('port', 'Port'),
-                  ('wire', 'Wire'),
-                  ('cable', 'Cable'),
-                  ('instance', 'Instance'),
-                  ('definition', 'Definition'),
-                  ('library', 'Library'),
-                  ('netlist', 'Netlist')]
+RegisterModule = [
+    ("element", "Element"),
+    ("first_class_element", "FirstClassElement"),
+    ("bundle", "Bundle"),
+    ("pin", "Pin"),
+    ("innerpin", "InnerPin"),
+    ("outerpin", "OuterPin"),
+    ("port", "Port"),
+    ("wire", "Wire"),
+    ("cable", "Cable"),
+    ("instance", "Instance"),
+    ("definition", "Definition"),
+    ("library", "Library"),
+    ("netlist", "Netlist"),
+]
 
 # Following section will extend all the classes imported in this file
 for filename, eachModule in RegisterModule:
-    cls = getattr(importlib.import_module(
-        "spydrnet.ir."+filename), eachModule)
+    cls = getattr(importlib.import_module("spydrnet.ir." + filename), eachModule)
     locals()[eachModule] = type(cls.__name__, (cls,), {})
 
     for name, plugin in get_active_plugins().items():
         try:
-            ext_cls = getattr(importlib.import_module(
-                "%s.ir.%s" % (name, filename)), eachModule)
+            ext_cls = getattr(
+                importlib.import_module("%s.ir.%s" % (name, filename)), eachModule
+            )
             cls_bases = (ext_cls, cls)
             locals()[eachModule] = type(cls.__name__, cls_bases, {})
             cls = locals()[eachModule]

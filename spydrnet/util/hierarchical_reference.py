@@ -84,6 +84,7 @@ class HRef(GetterShortcuts):
     .. attribute:: item: the item of the object
     .. attribute:: parent: the parent of the object
     """
+
     @staticmethod
     def get_all_hrefs_of_item(item):
         """Get all the href of the itsm
@@ -220,11 +221,11 @@ class HRef(GetterShortcuts):
         href = HRef(item, parent)
         if href in flyweight:
             return flyweight[href]()
-        
+
         flyweight[href] = weakref.ref(href)
         return href
 
-    __slots__ = ['_hashcode', 'parent', 'item', '__weakref__']
+    __slots__ = ["_hashcode", "parent", "item", "__weakref__"]
 
     def __init__(self, item, parent=None):
         """Initialize the href
@@ -236,7 +237,7 @@ class HRef(GetterShortcuts):
         parent - the parent obejct of this href
 
         """
-        self._hashcode = hash(hash(parent)*31 + hash(item))
+        self._hashcode = hash(hash(parent) * 31 + hash(item))
         self.parent = parent
         self.item = item
 
@@ -261,8 +262,9 @@ class HRef(GetterShortcuts):
         return False
 
     def __repr__(self):
-        return "<{} {} '{}' at 0x{:016X}>".format(self.__class__.__name__, self.item.__class__.__name__, self.name,
-                                                  id(self))
+        return "<{} {} '{}' at 0x{:016X}>".format(
+            self.__class__.__name__, self.item.__class__.__name__, self.name, id(self)
+        )
 
     def __str__(self):
         name = self.name
@@ -285,8 +287,9 @@ class HRef(GetterShortcuts):
                 instances.add(item)
                 parent = item.parent
                 if parent and len(parent.references) > 1 and href.parent:
-                    search_stack += (x for x in parent.references if x !=
-                                     href.parent.item)
+                    search_stack += (
+                        x for x in parent.references if x != href.parent.item
+                    )
             href = href.parent
         while search_stack:
             instance = search_stack.pop()
@@ -300,9 +303,7 @@ class HRef(GetterShortcuts):
 
     @property
     def is_valid(self):
-        """Checks if the href is valid
-
-        """
+        """Checks if the href is valid"""
         href = self
         while href:
             hparent = href.parent  # href
@@ -365,10 +366,8 @@ class HRef(GetterShortcuts):
 
     @property
     def name(self):
-        """Stores the name of the href
-
-        """
-        hseperator = '/'
+        """Stores the name of the href"""
+        hseperator = "/"
         names = []
         index = None
         item = self.item

@@ -10,10 +10,19 @@ class Cable(Bundle):
     """Representation of several wires in a collection.
 
     Much like ports, cables extend the bundle class, giving them indexing ability. They represent several wires in a collection or bus that are generally related.
-    This could be thought of much like vector types in VHDL ie std_logic_vector (7 downto 0)"""
-    __slots__ = ['_wires']
+    This could be thought of much like vector types in VHDL ie std_logic_vector (7 downto 0)
+    """
 
-    def __init__(self, name=None, properties=None, is_downto=None, is_scalar=None, lower_index=None):
+    __slots__ = ["_wires"]
+
+    def __init__(
+        self,
+        name=None,
+        properties=None,
+        is_downto=None,
+        is_scalar=None,
+        lower_index=None,
+    ):
         """Create a cable with no wires and default values for a bundle.
 
         parameters
@@ -42,8 +51,7 @@ class Cable(Bundle):
             self.lower_index = lower_index
 
         if properties != None:
-            assert isinstance(
-                properties, dict), "properties must be a dictionary"
+            assert isinstance(properties, dict), "properties must be a dictionary"
             for key in properties:
                 self[key] = properties[key]
 
@@ -65,8 +73,9 @@ class Cable(Bundle):
         value_list = list(value)
         value_set = set(value_list)
         # try:
-        assert len(value_list) == len(value_set) and set(self._wires) == value_set, \
-            "Set of values does not match, assigment can only be used for reordering, values must be unique"
+        assert (
+            len(value_list) == len(value_set) and set(self._wires) == value_set
+        ), "Set of values does not match, assigment can only be used for reordering, values must be unique"
         # except:
         #     import pdb; pdb.set_trace()
         self._wires = value_list
@@ -133,7 +142,8 @@ class Cable(Bundle):
         else:
             excluded_wires = set(wires)
         assert all(
-            x.cable == self for x in excluded_wires), "Some wires do not belong to this cable"
+            x.cable == self for x in excluded_wires
+        ), "Some wires do not belong to this cable"
         for wire in excluded_wires:
             self._remove_wire(wire)
         self._wires = list(x for x in self._wires if x not in excluded_wires)
@@ -158,8 +168,11 @@ class Cable(Bundle):
         """Not api safe clone function
         clone leaving all references in tact.
         the element can then either be ripped or ripped and replaced"""
-        assert self not in memo, "the object should not have been copied twice in this pass"
+        assert (
+            self not in memo
+        ), "the object should not have been copied twice in this pass"
         from spydrnet.ir import Cable as CableExtended
+
         c = CableExtended()
         memo[self] = c
         new_wires = []
@@ -192,15 +205,15 @@ class Cable(Bundle):
     def __str__(self):
         """Re-define the print function so it is easier to read"""
         rep = str(type(self))
-        rep = rep[:-1] + '; '
+        rep = rep[:-1] + "; "
         if self.is_downto is not None and self.is_downto is True:
-            rep += 'is_downto: True; '
+            rep += "is_downto: True; "
         else:
-            rep += 'is_downto: False; '
+            rep += "is_downto: False; "
         if self.is_scalar is True:
-            rep += 'is_scalar: True; '
+            rep += "is_scalar: True; "
         else:
-            rep += 'is_scalar: False; '
-        rep += 'lower index: ' + str(self.lower_index)
-        rep += '>'
+            rep += "is_scalar: False; "
+        rep += "lower index: " + str(self.lower_index)
+        rep += ">"
         return rep

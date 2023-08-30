@@ -1,5 +1,15 @@
-from spydrnet.ir import InnerPin, OuterPin, Wire, Netlist, Library, Definition, Cable, Element,\
-    Instance, Port
+from spydrnet.ir import (
+    InnerPin,
+    OuterPin,
+    Wire,
+    Netlist,
+    Library,
+    Definition,
+    Cable,
+    Element,
+    Instance,
+    Port,
+)
 from spydrnet.util.hierarchical_reference import HRef
 from spydrnet.util.selection import Selection
 from spydrnet.global_state.global_service import lookup
@@ -13,7 +23,7 @@ def get_cables(obj, *args, **kwargs):
     Get cables *within* an object.
 
     Parameters
-    ----------    
+    ----------
     obj : object, Iterable - required
         The object or objects associated with this query. Queries return a collection objects associated with the
         provided object or objects that match the query criteria. For example, `sdn.get_cables(definition, ...)` would
@@ -42,34 +52,49 @@ def get_cables(obj, *args, **kwargs):
         This is a single input function that can be used to filter out unwanted virtual instances. If not specifed, all
         matching virtual instances are returned. Otherwise, virtual instances that cause the filter function to evaluate
         to true are the only items returned.
-    
+
     Returns
     -------
     cables : generator
         The cables associated with a particular object or collection of objects.
-    
+
     """
     # Check argument list
-    if len(args) == 1 and 'patterns' in kwargs:
+    if len(args) == 1 and "patterns" in kwargs:
         raise TypeError("get_cables() got multiple values for argument 'patterns'")
-    if len(args) > 1 or any(x not in {'patterns', 'key', 'filter', 'is_case', 'is_re', 'selection', 'recursive'}
-                            for x in kwargs):
+    if len(args) > 1 or any(
+        x
+        not in {
+            "patterns",
+            "key",
+            "filter",
+            "is_case",
+            "is_re",
+            "selection",
+            "recursive",
+        }
+        for x in kwargs
+    ):
         raise TypeError("Unknown usage. Please see help for more information.")
 
     # Default values
-    selection = kwargs.get('selection', Selection.INSIDE)
+    selection = kwargs.get("selection", Selection.INSIDE)
     if isinstance(selection, str):
         if selection in Selection.__members__:
             selection = Selection[selection]
     if isinstance(selection, Selection) is False:
-        raise TypeError("selection must be '{}'".format("', '".join(Selection.__members__.keys())))
+        raise TypeError(
+            "selection must be '{}'".format("', '".join(Selection.__members__.keys()))
+        )
 
-    filter_func = kwargs.get('filter', lambda x: True)
-    is_case = kwargs.get('is_case', True)
-    is_re = kwargs.get('is_re', False)
-    patterns = args[0] if len(args) == 1 else kwargs.get('patterns', ".*" if is_re else "*")
-    key = kwargs.get('key', ".NAME")
-    recursive = kwargs.get('recursive', False)
+    filter_func = kwargs.get("filter", lambda x: True)
+    is_case = kwargs.get("is_case", True)
+    is_re = kwargs.get("is_re", False)
+    patterns = (
+        args[0] if len(args) == 1 else kwargs.get("patterns", ".*" if is_re else "*")
+    )
+    key = kwargs.get("key", ".NAME")
+    recursive = kwargs.get("recursive", False)
 
     if isinstance(obj, (Element, HRef)) is False:
         try:
@@ -79,22 +104,41 @@ def get_cables(obj, *args, **kwargs):
     else:
         object_collection = [obj]
     if all(isinstance(x, (Element, HRef)) for x in object_collection) is False:
-        raise TypeError("get_cables() only supports netlists, libraries, and definitions, or a collection of these as "
-                        "the object searched")
+        raise TypeError(
+            "get_cables() only supports netlists, libraries, and definitions, or a collection of these as "
+            "the object searched"
+        )
 
     if isinstance(patterns, str):
         patterns = (patterns,)
 
-    return _get_cables(object_collection, patterns, key, is_case, is_re, selection, recursive, filter_func)
+    return _get_cables(
+        object_collection,
+        patterns,
+        key,
+        is_case,
+        is_re,
+        selection,
+        recursive,
+        filter_func,
+    )
 
 
-def _get_cables(object_collection, patterns, key, is_case, is_re, selection, recursive, filter_func):
-    for result in filter(filter_func, _get_cables_raw(object_collection, patterns, key, is_case, is_re, selection,
-                                                      recursive)):
+def _get_cables(
+    object_collection, patterns, key, is_case, is_re, selection, recursive, filter_func
+):
+    for result in filter(
+        filter_func,
+        _get_cables_raw(
+            object_collection, patterns, key, is_case, is_re, selection, recursive
+        ),
+    ):
         yield result
 
 
-def _get_cables_raw(object_collection, patterns, key, is_case, is_re, selection, recursive):
+def _get_cables_raw(
+    object_collection, patterns, key, is_case, is_re, selection, recursive
+):
     found = set()
     other_cables = set()
     searched_wires = set()
@@ -111,8 +155,10 @@ def _get_cables_raw(object_collection, patterns, key, is_case, is_re, selection,
                             yield result
                     else:
                         for cable in obj.cables:
-                            value = cable[key] if key in cable else ''
-                            if cable not in found and _value_matches_pattern(value, pattern, is_case, is_re):
+                            value = cable[key] if key in cable else ""
+                            if cable not in found and _value_matches_pattern(
+                                value, pattern, is_case, is_re
+                            ):
                                 found.add(cable)
                                 yield cable
                 if recursive or selection == Selection.ALL:
@@ -216,7 +262,7 @@ def _get_cables_raw(object_collection, patterns, key, is_case, is_re, selection,
         for other_cable in other_cables:
             if other_cable not in found:
                 found.add(other_cable)
-                name = other_cable[key] if key in other_cable else ''
+                name = other_cable[key] if key in other_cable else ""
                 if name not in namemap:
                     namemap[name] = []
                 namemap[name].append(other_cable)

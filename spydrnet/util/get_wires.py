@@ -1,5 +1,15 @@
-from spydrnet import InnerPin, OuterPin, Wire, Netlist, Library, Definition, Instance, Port, Cable,\
-    Element
+from spydrnet import (
+    InnerPin,
+    OuterPin,
+    Wire,
+    Netlist,
+    Library,
+    Definition,
+    Instance,
+    Port,
+    Cable,
+    Element,
+)
 from spydrnet.util.hierarchical_reference import HRef
 from spydrnet.util.selection import Selection
 
@@ -26,28 +36,31 @@ def get_wires(obj, *args, **kwargs):
         This is a single input function that can be used to filter out unwanted virtual instances. If not specifed, all
         matching virtual instances are returned. Otherwise, virtual instances that cause the filter function to evaluate
         to true are the only items returned.
-    
+
     Returns
     -------
     wires : generator
         The wires associated with a particular object or collection of objects.
-    
+
     """
     # Check argument list
-    if len(args) > 0 or any(x not in {'selection', 'recursive', 'filter'} for x in
-                            kwargs):
+    if len(args) > 0 or any(
+        x not in {"selection", "recursive", "filter"} for x in kwargs
+    ):
         raise TypeError("Unknown usage. Please see help for more information.")
 
     # Default values
-    selection = kwargs.get('selection', Selection.INSIDE)
+    selection = kwargs.get("selection", Selection.INSIDE)
     if isinstance(selection, str):
         if selection in Selection.__members__:
             selection = Selection[selection]
     if isinstance(selection, Selection) is False:
-        raise TypeError("selection must be '{}'".format("', '".join(Selection.__members__.keys())))
+        raise TypeError(
+            "selection must be '{}'".format("', '".join(Selection.__members__.keys()))
+        )
 
-    filter_func = kwargs.get('filter', lambda x: True)
-    recursive = kwargs.get('recursive', False)
+    filter_func = kwargs.get("filter", lambda x: True)
+    recursive = kwargs.get("recursive", False)
 
     if isinstance(obj, (Element, HRef)) is False:
         try:
@@ -57,14 +70,18 @@ def get_wires(obj, *args, **kwargs):
     else:
         object_collection = [obj]
     if all(isinstance(x, (HRef, Element)) for x in object_collection) is False:
-        raise TypeError("get_hwires() supports all netlist related objects and hierarchical references or a "
-                        "collection of theses as the object searched, unsupported object provided")
+        raise TypeError(
+            "get_hwires() supports all netlist related objects and hierarchical references or a "
+            "collection of theses as the object searched, unsupported object provided"
+        )
 
     return _get_wires(object_collection, selection, recursive, filter_func)
 
 
 def _get_wires(object_collection, selection, recursive, filter_func):
-    for result in filter(filter_func, _get_wires_raw(object_collection, selection, recursive)):
+    for result in filter(
+        filter_func, _get_wires_raw(object_collection, selection, recursive)
+    ):
         yield result
 
 

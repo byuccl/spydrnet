@@ -1,5 +1,15 @@
-from spydrnet.ir import Element, InnerPin, OuterPin, Wire, Netlist, Library, Definition, Instance,\
-    Port, Cable
+from spydrnet.ir import (
+    Element,
+    InnerPin,
+    OuterPin,
+    Wire,
+    Netlist,
+    Library,
+    Definition,
+    Instance,
+    Port,
+    Cable,
+)
 from spydrnet.util.hierarchical_reference import HRef
 from spydrnet.util.selection import Selection
 
@@ -23,26 +33,30 @@ def get_pins(obj, *args, **kwargs):
         This is a single input function that can be used to filter out unwanted virtual instances. If not specifed, all
         matching virtual instances are returned. Otherwise, virtual instances that cause the filter function to evaluate
         to true are the only items returned.
-    
+
     Returns
     -------
     pins : generator
        The pins associated with a particular object or collection of objects.
-    
+
     """
     # Check argument list
-    if len(args) > 0 or any(x not in {'filter', 'selection'} for x in kwargs):
+    if len(args) > 0 or any(x not in {"filter", "selection"} for x in kwargs):
         raise TypeError("Unknown usage. Please see help for more information.")
 
     # Default values
-    selection = kwargs.get('selection', Selection.INSIDE)
+    selection = kwargs.get("selection", Selection.INSIDE)
     if isinstance(selection, str):
         if selection in Selection.__members__:
             selection = Selection[selection]
     if selection not in {Selection.INSIDE, Selection.OUTSIDE}:
-        raise TypeError("selection must be '{}'".format("', '".join([Selection.INSIDE.name, Selection.OUTSIDE.name])))
+        raise TypeError(
+            "selection must be '{}'".format(
+                "', '".join([Selection.INSIDE.name, Selection.OUTSIDE.name])
+            )
+        )
 
-    filter_func = kwargs.get('filter', lambda x: True)
+    filter_func = kwargs.get("filter", lambda x: True)
 
     if isinstance(obj, (Element, HRef)) is False:
         try:
@@ -52,8 +66,10 @@ def get_pins(obj, *args, **kwargs):
     else:
         object_collection = [obj]
     if all(isinstance(x, (Element, HRef)) for x in object_collection) is False:
-        raise TypeError("get_ports() supports netlist elements and hierarchical references, or a collection of "
-                        "these as the object searched")
+        raise TypeError(
+            "get_ports() supports netlist elements and hierarchical references, or a collection of "
+            "these as the object searched"
+        )
 
     return _get_ports(object_collection, selection, filter_func)
 

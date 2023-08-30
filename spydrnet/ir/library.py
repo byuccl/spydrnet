@@ -12,7 +12,8 @@ class Library(FirstClassElement):
 
     Contains a pointer to parent netlist and definitions.
     """
-    __slots__ = ['_netlist', '_definitions']
+
+    __slots__ = ["_netlist", "_definitions"]
 
     def __init__(self, name=None, properties=None):
         """
@@ -33,8 +34,7 @@ class Library(FirstClassElement):
             self.name = name
 
         if properties != None:
-            assert isinstance(
-                properties, dict), "properties must be a dictionary"
+            assert isinstance(properties, dict), "properties must be a dictionary"
             for key in properties:
                 self[key] = properties[key]
 
@@ -66,8 +66,9 @@ class Library(FirstClassElement):
         """
         value_list = list(value)
         value_set = set(value_list)
-        assert len(value_list) == len(value_set) and set(self._definitions) == value_set, \
-            "Set of values do not match, this function can only reorder values, values must be unique"
+        assert (
+            len(value_list) == len(value_set) and set(self._definitions) == value_set
+        ), "Set of values do not match, this function can only reorder values, values must be unique"
         self._definitions = value_list
 
     def create_definition(self, name=None, properties=None):
@@ -96,8 +97,18 @@ class Library(FirstClassElement):
         position - int, (default None)
             the index in the library list at which to add the definition
         """
-        assert definition.library is not self, "Definition " + str(definition) + " already included in library " + str(self)
-        assert definition.library is None, "Definition " + str(definition) + " already belongs to a different library " + str(definition.library)
+        assert definition.library is not self, (
+            "Definition "
+            + str(definition)
+            + " already included in library "
+            + str(self)
+        )
+        assert definition.library is None, (
+            "Definition "
+            + str(definition)
+            + " already belongs to a different library "
+            + str(definition.library)
+        )
         global_callback._call_library_add_definition(self, definition)
         if position is not None:
             self._definitions.insert(position, definition)
@@ -133,8 +144,9 @@ class Library(FirstClassElement):
             excluded_definitions = definitions
         else:
             excluded_definitions = set(definitions)
-        assert all(x.library == self for x in excluded_definitions), "Some definitions to remove are not included in " \
-                                                                     "the library "
+        assert all(x.library == self for x in excluded_definitions), (
+            "Some definitions to remove are not included in " "the library "
+        )
         included_definitions = []
         for definition in self._definitions:
             if definition not in excluded_definitions:
@@ -175,7 +187,9 @@ class Library(FirstClassElement):
         clone leaving all references in tact.
         The element can then either be ripped or ripped and replaced
         """
-        assert self not in memo, "the object should not have been copied twice in this pass"
+        assert (
+            self not in memo
+        ), "the object should not have been copied twice in this pass"
         c = Library()
         memo[self] = c
         c._netlist = None
@@ -201,7 +215,7 @@ class Library(FirstClassElement):
          * the references lists (of definitions) both inside and outsde the library will be updated to reflect the change
          * all definitions are cloned within the library.
 
-         """
+        """
         memo = {}
         c = self._clone(memo)
         c._clone_rip(memo)
@@ -210,12 +224,12 @@ class Library(FirstClassElement):
     def __str__(self):
         """Re-define the print function so it is easier to read"""
         rep = super().__str__()
-        rep = rep[:-1] + '; '
+        rep = rep[:-1] + "; "
         if self.netlist is None:
-            rep += 'parent netlist undefined'
+            rep += "parent netlist undefined"
         elif self.netlist.name is None:
-            rep += 'parent netlist.name undefined'
+            rep += "parent netlist.name undefined"
         else:
-            rep += 'parent netlist.name \'' + self.netlist.name + '\''
-        rep += '>'
+            rep += "parent netlist.name '" + self.netlist.name + "'"
+        rep += ">"
         return rep

@@ -5,7 +5,6 @@ from spydrnet.plugins.namespace_manager.default_namespace import DefaultNamespac
 
 
 class EdifNamespace(DefaultNamespace):
-
     @classmethod
     def is_name_of_element_valid(cls, element):
         """

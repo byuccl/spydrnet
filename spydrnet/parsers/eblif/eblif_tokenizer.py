@@ -5,6 +5,7 @@ import io
 from spydrnet.parsers.eblif.eblif_tokens import BACKSLASH
 from pathlib import Path
 
+
 class Tokenizer:
     @staticmethod
     def from_stream(stream):
@@ -22,7 +23,7 @@ class Tokenizer:
         tokenizer = Tokenizer(filename)
         return tokenizer
 
-    def __init__(self,input_source):
+    def __init__(self, input_source):
         # self.file = file
         self.token = None
         self.next_token = None
@@ -32,14 +33,14 @@ class Tokenizer:
             if zipfile.is_zipfile(input_source):
                 zip = zipfile.ZipFile(input_source)
                 filename = Path(input_source).name
-                filename = filename[:filename.rindex(".")]
+                filename = filename[: filename.rindex(".")]
                 stream = zip.open(filename)
                 stream = io.TextIOWrapper(stream)
                 self.input_stream = stream
             else:
-                self.input_stream = open(input_source, 'r')
+                self.input_stream = open(input_source, "r")
         elif isinstance(input_source, Path):
-            self.input_stream = open(input_source,"r")
+            self.input_stream = open(input_source, "r")
         else:
             if isinstance(input_source, io.TextIOBase) is False:
                 self.input_stream = io.TextIOWrapper(input_source)
@@ -47,15 +48,15 @@ class Tokenizer:
                 self.input_stream = input_source
 
         self.generator = self.generate_tokens()
-    
+
     def generate_tokens(self):
-        # with open(file) as file:   
-        for line in self.input_stream: 
-            self.current_line_tokens.clear()     
+        # with open(file) as file:
+        for line in self.input_stream:
+            self.current_line_tokens.clear()
             for word in line.split():
                 self.current_line_tokens.append(word)
                 yield word
-            self.line_number+=1
+            self.line_number += 1
             yield "\n"
 
     def has_next(self):
@@ -72,7 +73,7 @@ class Tokenizer:
         else:
             self.token = next(self.generator)
         # print(self.token)
-        if (self.token is BACKSLASH):
+        if self.token is BACKSLASH:
             # print("BACKSLASH!!!!")
             # print("Token is " + self.token)
             self.next()

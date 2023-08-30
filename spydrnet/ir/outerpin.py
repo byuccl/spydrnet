@@ -7,7 +7,8 @@ class OuterPin(Pin):
     Pins that correspond to instances. These pins can be thought of as on the outside of an instance. There can be many
     outer pins for each inner pin
     """
-    __slots__ = ['_instance', '_inner_pin']
+
+    __slots__ = ["_instance", "_inner_pin"]
 
     @staticmethod
     def from_instance_and_inner_pin(instance, inner_pin):
@@ -20,6 +21,7 @@ class OuterPin(Pin):
 
         inner_pin - (InnerPin) the inner pin with which to associate this outer pin"""
         from spydrnet.ir import OuterPin as OuterPinExtended
+
         return OuterPinExtended(instance, inner_pin)
 
     def __init__(self, instance=None, inner_pin=None):
@@ -30,7 +32,8 @@ class OuterPin(Pin):
 
         instance - (Instance) the instance with which to associate this outper pin.
 
-        inner_pin - (InnerPin) a definition's inner pin to be associated with this instance outer pin."""
+        inner_pin - (InnerPin) a definition's inner pin to be associated with this instance outer pin.
+        """
         super().__init__()
         self._instance = instance
         self._inner_pin = inner_pin
@@ -47,7 +50,10 @@ class OuterPin(Pin):
 
     def __eq__(self, other):
         if isinstance(other, OuterPin):
-            return self._instance == other._instance and self._inner_pin == other._inner_pin
+            return (
+                self._instance == other._instance
+                and self._inner_pin == other._inner_pin
+            )
         return False
 
     def __hash__(self):
@@ -56,7 +62,9 @@ class OuterPin(Pin):
     def _clone_rip_and_replace(self, memo):
         """remove from its current environment and place it into the new cloned environment with references held in the memo dictionary"""
         if self._wire != None:
-            assert self._wire in memo, "can't call this function when the wire has not been cloned yet"
+            assert (
+                self._wire in memo
+            ), "can't call this function when the wire has not been cloned yet"
             self._wire = memo[self._wire]
 
     def _clone_rip(self):
@@ -72,8 +80,11 @@ class OuterPin(Pin):
 
         clone leaving all references in tact.
         the element can then either be ripped or ripped and replaced"""
-        assert self not in memo, "the object should not have been copied twice in this pass"
+        assert (
+            self not in memo
+        ), "the object should not have been copied twice in this pass"
         from spydrnet.ir import OuterPin as OuterPinExtended
+
         c = OuterPinExtended()
         memo[self] = c
         c._instance = None

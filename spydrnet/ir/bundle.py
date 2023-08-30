@@ -7,7 +7,8 @@ class Bundle(FirstClassElement):
     Since both of these objects represent arrays of objects they both inherit from
     this parent class.
     """
-    __slots__ = ['_definition', '_is_downto', '_is_scalar', '_lower_index']
+
+    __slots__ = ["_definition", "_is_downto", "_is_scalar", "_lower_index"]
 
     def __init__(self):
         super().__init__()
@@ -82,8 +83,7 @@ class Bundle(FirstClassElement):
         """
         _items = self._items()
         if _items and len(_items) > 1 and value is True:
-            raise RuntimeError(
-                "Cannot set is_scalar to True on a multi-item bundle")
+            raise RuntimeError("Cannot set is_scalar to True on a multi-item bundle")
         self._is_scalar = value
 
     @property
@@ -108,8 +108,7 @@ class Bundle(FirstClassElement):
         """
         _items = self._items()
         if _items and len(_items) > 1 and value is False:
-            raise RuntimeError(
-                "Cannot set is_array to False on a multi-item bundle")
+            raise RuntimeError("Cannot set is_array to False on a multi-item bundle")
         self._is_scalar = not value
 
     @property

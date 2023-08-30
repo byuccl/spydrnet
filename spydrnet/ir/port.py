@@ -15,7 +15,8 @@ class Port(Bundle):
 
     Ports contain information about the quantity and directon of pins that go into and out of the defined struture when instanced.
     """
-    __slots__ = ['_direction', '_pins']
+
+    __slots__ = ["_direction", "_pins"]
 
     class Direction(Enum):
         """Define the possible directions for a given port.
@@ -24,12 +25,21 @@ class Port(Bundle):
 
         UNDEFINED, INOUT, IN, OUT
         """
+
         UNDEFINED = 0
         INOUT = 1
         IN = 2
         OUT = 3
 
-    def __init__(self, name=None, properties=None, is_downto=None, is_scalar=None, lower_index=None, direction=None):
+    def __init__(
+        self,
+        name=None,
+        properties=None,
+        is_downto=None,
+        is_scalar=None,
+        lower_index=None,
+        direction=None,
+    ):
         """Setup an empty port
 
         parameters
@@ -62,8 +72,7 @@ class Port(Bundle):
             self.direction = direction
 
         if properties != None:
-            assert isinstance(
-                properties, dict), "properties must be a dictionary"
+            assert isinstance(properties, dict), "properties must be a dictionary"
             for key in properties:
                 self[key] = properties[key]
 
@@ -103,7 +112,8 @@ class Port(Bundle):
                     break
         else:
             raise TypeError(
-                "Type {} cannot be assigned to direction".format(type(value)))
+                "Type {} cannot be assigned to direction".format(type(value))
+            )
 
     @property
     def pins(self):
@@ -123,8 +133,9 @@ class Port(Bundle):
         """
         value_list = list(value)
         value_set = set(value_list)
-        assert len(value_set) == len(value_list) and set(self._pins) == value_set, \
-            "Set of values do not match, assignment can only be used to reorder values, values must be unique"
+        assert (
+            len(value_set) == len(value_list) and set(self._pins) == value_set
+        ), "Set of values do not match, assignment can only be used to reorder values, values must be unique"
         self._pins = value_list
 
     def create_pins(self, pin_count):
@@ -146,6 +157,7 @@ class Port(Bundle):
         the inner_pin created
         """
         from spydrnet.ir import InnerPin as InnerPinExtended
+
         pin = InnerPinExtended()
         self.add_pin(pin)
         if self.definition:
@@ -202,15 +214,17 @@ class Port(Bundle):
             exclude_pins = pins
         else:
             exclude_pins = set(pins)
-        assert all(isinstance(x, InnerPin) and x.port == self for x in exclude_pins), "All pins to remove must be " \
-                                                                                      "InnerPins and belong to the port"
+        assert all(isinstance(x, InnerPin) and x.port == self for x in exclude_pins), (
+            "All pins to remove must be " "InnerPins and belong to the port"
+        )
         for pin in exclude_pins:
             self._remove_pin(pin)
         self._pins = list(x for x in self._pins if x not in exclude_pins)
 
     def _remove_pin(self, pin):
         """Internal pin removal function.
-        Disconnects the wires from the pin and remvoes all the pins reference to other pins."""
+        Disconnects the wires from the pin and remvoes all the pins reference to other pins.
+        """
         global_callback._call_port_remove_pin(self, pin)
         if self.definition:
             for reference in self.definition.references:
@@ -241,8 +255,11 @@ class Port(Bundle):
         Clone leaving all references in tact.
         The element can then either be ripped or ripped and replaced.
         """
-        assert self not in memo, "the object should not have been copied twice in this pass"
+        assert (
+            self not in memo
+        ), "the object should not have been copied twice in this pass"
         from spydrnet.ir import Port as PortExtended
+
         c = PortExtended()
         memo[self] = c
         c._direction = deepcopy(self._direction)
@@ -277,7 +294,7 @@ class Port(Bundle):
     def __str__(self):
         """Re-define the print function so it is easier to read"""
         rep = super().__str__()
-        rep = rep[:-1] + '; '
+        rep = rep[:-1] + "; "
         rep += str(self.direction)
-        rep += '>'
+        rep += ">"
         return rep

@@ -1,5 +1,5 @@
 class DictView:
-    __slots__ = ['_dict']
+    __slots__ = ["_dict"]
 
     def __init__(self, dict_object):
         self._dict = dict_object

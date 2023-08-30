@@ -8,6 +8,7 @@ from spydrnet.ir import InnerPin
 from spydrnet.ir import Wire
 from spydrnet.util.selection import Selection
 
+
 class EBLIFParser:
     """
     Parse BLIF and EBLIF files into SpyDrNet
@@ -15,15 +16,15 @@ class EBLIFParser:
     """
 
     class BlackboxHolder:
-        '''this is an internal class that helps manage
-        modules that are instanced before they are declared'''
+        """this is an internal class that helps manage
+        modules that are instanced before they are declared"""
 
         def __init__(self):
             self.name_lookup = {}
             self.defined = set()
 
         def get_blackbox(self, name):
-            '''creates or returns the black box based on the name'''
+            """creates or returns the black box based on the name"""
             if name in self.name_lookup:
                 return self.name_lookup[name]
             else:
@@ -33,11 +34,11 @@ class EBLIFParser:
                 return definition
 
         def define(self, name):
-            '''adds the name to the defined set'''
+            """adds the name to the defined set"""
             self.defined.add(self.name_lookup[name])
 
         def get_undefined_blackboxes(self):
-            '''return an iterable of all undefined blackboxes'''
+            """return an iterable of all undefined blackboxes"""
             undef = set()
             for v in self.name_lookup.values():
                 if v not in self.defined:
@@ -144,7 +145,7 @@ class EBLIFParser:
             self.netlist.set_top_instance(parent_instance)
             self.netlist.name = model_def.name
         self.current_model = model_def
-        self.tokenizer.next() # should be end of line so proceed to next line
+        self.tokenizer.next()  # should be end of line so proceed to next line
         self.parse_model_ports()
 
     def parse_model_ports(self):
@@ -166,11 +167,11 @@ class EBLIFParser:
                 port = self.create_model_port(sdn.Port.Direction.IN, port_name)
                 self.current_model.add_port(port)
             else:
-                port.direction=sdn.IN
-            while len(port.pins) < index+1:
+                port.direction = sdn.IN
+            while len(port.pins) < index + 1:
                 port.create_pin()
             pin = port.pins[index]
-            self.connect_pin_to_wire(pin,port_name,index)
+            self.connect_pin_to_wire(pin, port_name, index)
             self.tokenizer.next()
 
     def parse_output_ports(self):
@@ -184,16 +185,19 @@ class EBLIFParser:
             if not port:
                 port = self.create_model_port(sdn.Port.Direction.OUT, port_name)
                 self.current_model.add_port(port)
-            if port.direction in {sdn.IN, sdn.INOUT}: # it's an input port and now an output, so it's inout
+            if port.direction in {
+                sdn.IN,
+                sdn.INOUT,
+            }:  # it's an input port and now an output, so it's inout
                 port.direction = sdn.INOUT
                 is_inout = True
             else:
                 port.direction = sdn.OUT
-            while len(port.pins) < index+1:
+            while len(port.pins) < index + 1:
                 port.create_pin()
             pin = port.pins[index]
             if not is_inout:
-                self.connect_pin_to_wire(pin,port_name,index)
+                self.connect_pin_to_wire(pin, port_name, index)
             self.tokenizer.next()
 
     def create_model_port(self, port_direction, port_name):
@@ -217,9 +221,11 @@ class EBLIFParser:
         cable = next(self.current_model.get_cables(cable_name), None)
         if not cable:
             cable = self.current_model.create_cable(name=cable_name)
-        while (len(cable.wires)-1) < wire_index: # add wires to cable until we get the right index
+        while (
+            len(cable.wires) - 1
+        ) < wire_index:  # add wires to cable until we get the right index
             wire = Wire()
-            cable.add_wire(wire,wire_index)
+            cable.add_wire(wire, wire_index)
         wire = cable.wires[wire_index]
         wire.connect_pin(pin)
 
@@ -254,8 +260,8 @@ class EBLIFParser:
             port = definition.create_port(name=name)
         if index > (len(port.pins) - 1):
             pin = InnerPin()
-            port.add_pin(pin,index)
-        self.current_instance_info[port_name_and_index] = token[equal_index+1:]
+            port.add_pin(pin, index)
+        self.current_instance_info[port_name_and_index] = token[equal_index + 1 :]
 
     def check_hierarchy(self, child_definition_name):
         if child_definition_name == self.netlist.top_instance.reference.name:
@@ -284,50 +290,61 @@ class EBLIFParser:
             # it has no parent. And now with no reference, it should have no ties to the netlist.
             old_top_instance.reference = None
 
-    def connect_instance_pins(self,instance):
+    def connect_instance_pins(self, instance):
         for key, cable_info in self.current_instance_info.items():
             # cable_info = self.current_instance_info[key]
-            cable_name, cable_index = self.get_port_name_and_index(cable_info) # get connected cable name and wire index
-            port_name, pin_index = self.get_port_name_and_index(key) # get own port name and pin index
-            if cable_name == et.UNCONN:  # intentionally disconnected so put that into metadata
+            cable_name, cable_index = self.get_port_name_and_index(cable_info)  # get connected cable name and wire index
+            port_name, pin_index = self.get_port_name_and_index(key)  # get own port name and pin index
+            if (cable_name == et.UNCONN):  # intentionally disconnected so put that into metadata
                 try:
                     instance[et.UNCONN]
                 except KeyError:
                     instance[et.UNCONN] = []
-                instance[et.UNCONN].append(port_name+"["+str(pin_index)+"]")
+                instance[et.UNCONN].append(port_name + "[" + str(pin_index) + "]")
                 continue
 
             port = next(instance.get_ports(port_name))
-            while len(port.pins) < (pin_index+1): # multibit port that isn't yet multibit
+            while len(port.pins) < (pin_index + 1):  # multibit port that isn't yet multibit
                 port.create_pin()
-            pin = next(instance.get_pins(selection=Selection.OUTSIDE, filter=lambda x: x.inner_pin.port.name == port_name and x.inner_pin is x.inner_pin.port.pins[pin_index]))
+            pin = next(
+                instance.get_pins(
+                    selection=Selection.OUTSIDE,
+                    filter=lambda x: x.inner_pin.port.name == port_name
+                    and x.inner_pin is x.inner_pin.port.pins[pin_index],
+                )
+            )
             self.connect_pin_to_wire(pin, cable_name, cable_index)
 
     def parse_comment(self):
         token = self.tokenizer.next()
         comment = ""
         while token is not et.NEW_LINE:
-            comment+=token+" "
+            comment += token + " "
             token = self.tokenizer.next()
         self.comments.append(comment)
 
     def insert_comments_into_netlist_data(self):
         self.netlist["EBLIF.comment"] = self.comments
 
-    def get_port_name_and_index(self,string):
-        index_specified = (string[-1] == "]")
+    def get_port_name_and_index(self, string):
+        index_specified = string[-1] == "]"
         if index_specified:
             open_bracket = string.rfind("[")
             if open_bracket == -1:
                 return string, 0
             else:
-                close_bracket = string.find("]",open_bracket)
+                close_bracket = string.find("]", open_bracket)
                 name = string[:open_bracket]
-                index = string[open_bracket+1:close_bracket]
+                index = string[open_bracket + 1 : close_bracket]
                 if ":" in index:
                     old_index = index
-                    index = index[:index.find(':')]
-                    print("EBLIFParser: Index was: " + old_index + ". To avoid an error, it was changed to " + index)
+                    index = index[: index.find(":")]
+                    print(
+                        "EBLIFParser: Index was: "
+                        + old_index
+                        + ". To avoid an error, it was changed to "
+                        + index
+                    )
                 return name, int(index)
         else:
             return string, 0
@@ -337,7 +354,7 @@ class EBLIFParser:
         index = 0
         if name in self.default_names.keys():
             index = self.default_names[name] + 1
-            self.default_names[name]+=1
+            self.default_names[name] += 1
         else:
             index = 0
             self.default_names[name] = 0
@@ -393,19 +410,21 @@ class EBLIFParser:
             port_nets.append(self.tokenizer.token)
             self.tokenizer.next()
         single_output_covers = []
-        while (self.check_if_init_values(self.tokenizer.peek())): # make sure next token is init values
-            single_output_cover=self.tokenizer.next()
-            single_output_cover+=" "
+        while self.check_if_init_values(
+            self.tokenizer.peek()
+        ):  # make sure next token is init values
+            single_output_cover = self.tokenizer.next()
+            single_output_cover += " "
             possible_next = self.tokenizer.next()
             if possible_next != et.NEW_LINE:
-                single_output_cover+=possible_next
+                single_output_cover += possible_next
                 self.tokenizer.next()
             single_output_covers.append(single_output_cover)
 
         # then make/get def called logic-gate_# where # is the # of ports-1
-        name = "logic-gate_"+str(len(port_nets)-1)
+        name = "logic-gate_" + str(len(port_nets) - 1)
         definition = self.blackbox_holder.get_blackbox(name)
-        for i in range(len(port_nets)-1):
+        for i in range(len(port_nets) - 1):
             port_name = "in_" + str(i)
             port = next(definition.get_ports(port_name), None)
             if not port:
@@ -420,18 +439,18 @@ class EBLIFParser:
         instance["EBLIF.output_covers"] = single_output_covers
         instance["EBLIF.type"] = "EBLIF.names"
 
-        for port, net in zip(definition.get_ports(),port_nets):
+        for port, net in zip(definition.get_ports(), port_nets):
             self.current_instance_info[port.name] = net
-        if "unconn" in port_nets[len(port_nets)-1]:
+        if "unconn" in port_nets[len(port_nets) - 1]:
             self.assign_instance_a_default_name(instance)
         else:
-            instance.name = port_nets[len(port_nets)-1] # by convention, the name of the instance is the name of the driven net
+            instance.name = port_nets[len(port_nets) - 1]  # by convention, the name of the instance is the name of the driven net
 
         self.connect_instance_pins(instance)
         self.parse_instance_info()
 
-    def check_if_init_values(self,string):
-        allowed = {'1','0','-'}
+    def check_if_init_values(self, string):
+        allowed = {"1", "0", "-"}
         for char in string:
             if char not in allowed:
                 return False
@@ -445,20 +464,20 @@ class EBLIFParser:
 
     def parse_latch(self):
         self.current_instance_info.clear()
-        self.tokenizer.next() # first collect the information
-        port_order = ["input","output","type","control","init-val"]
+        self.tokenizer.next()  # first collect the information
+        port_order = ["input", "output", "type", "control", "init-val"]
         token_list = []
         port_info = {}
         while self.tokenizer.token is not et.NEW_LINE:
             token_list.append(self.tokenizer.token)
             self.tokenizer.next()
-        for order, token in zip(port_order,token_list):
+        for order, token in zip(port_order, token_list):
             port_info[order] = token
 
         name = "generic-latch"
         definition = self.blackbox_holder.get_blackbox(name)
         if len(definition.ports) == 0:
-            for order in port_info.keys() :
+            for order in port_info.keys():
                 if order == "output":
                     port = self.create_names_port(order, Port.Direction.OUT)
                     definition.add_port(port)
@@ -468,7 +487,7 @@ class EBLIFParser:
 
         # create an instance of it
         instance = self.current_model.create_child(reference=definition)
-        instance.name = port_info["output"] # by convention, the latch name is the name of the net it drives
+        instance.name = port_info["output"]  # by convention, the latch name is the name of the net it drives
         self.current_instance = instance
         instance["EBLIF.type"] = "EBLIF.latch"
 
@@ -483,7 +502,9 @@ class EBLIFParser:
         cable_two_info = self.tokenizer.next()
         cable_one_name, cable_one_index = self.get_port_name_and_index(cable_one_info)
         cable_two_name, cable_two_index = self.get_port_name_and_index(cable_two_info)
-        wire_one, wire_two = self.get_connected_wires(cable_one_name, cable_one_index, cable_two_name, cable_two_index)
+        wire_one, wire_two = self.get_connected_wires(
+            cable_one_name, cable_one_index, cable_two_name, cable_two_index
+        )
         self.merge_wires(wire_one, wire_two)
 
     def get_connected_wires(self, cable_one_name, index_one, cable_two_name, index_two):
@@ -522,20 +543,23 @@ class EBLIFParser:
             new_wire.connect_pin(pin)
         wire_two.cable.remove_wire(wire_two)
 
-    def set_subcircuit_names_by_convention(self): # by convention, the instance names are defined by the net they drive
+    def set_subcircuit_names_by_convention(self):  # by convention, the instance names are defined by the net they drive
         for instance in self.netlist.get_instances():
             if instance["EBLIF.type"] not in ["EBLIF.subckt", "EBLIF.gate"]:
                 continue
             if "EBLIF.cname" in instance.data:
                 continue
-            iterator = instance.get_pins(selection=Selection.OUTSIDE, filter=lambda x: x.inner_pin.port.direction is sdn.OUT)
+            iterator = instance.get_pins(
+                selection=Selection.OUTSIDE,
+                filter=lambda x: x.inner_pin.port.direction is sdn.OUT,
+            )
             while True:
                 pin = next(iterator, None)
                 if pin:
                     if pin.wire:
                         name = pin.wire.cable.name
                         if len(pin.wire.cable.wires) > 1:
-                            name+="_"+str(pin.wire.cable.wires.index(pin.wire))
+                            name += "_" + str(pin.wire.cable.wires.index(pin.wire))
                         instance.name = name
                         break
                 else:

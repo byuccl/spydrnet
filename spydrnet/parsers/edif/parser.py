@@ -63,7 +63,7 @@ class EdifParser:
 
     def parse_edifVersion(self):
         self.expect(EDIF_VERSION)
-        self.prefix_append('edifVersion')
+        self.prefix_append("edifVersion")
         version_0 = self.parse_integerToken()
         version_1 = self.parse_integerToken()
         version_2 = self.parse_integerToken()
@@ -72,7 +72,7 @@ class EdifParser:
 
     def parse_edifLevel(self):
         self.expect(EDIF_LEVEL)
-        self.prefix_append('edifLevel')
+        self.prefix_append("edifLevel")
         level = self.parse_integerToken()
         if level != 0:
             self.set_attribute(level)
@@ -80,7 +80,7 @@ class EdifParser:
 
     def parse_keywordMap(self):
         self.expect(KEYWORD_MAP)
-        self.prefix_append('keywordMap')
+        self.prefix_append("keywordMap")
         self.parse_construct(self.parse_keywordLevel)
 
         while self.begin_construct():
@@ -89,7 +89,7 @@ class EdifParser:
 
     def parse_keywordLevel(self):
         self.expect(KEYWORD_LEVEL)
-        self.prefix_append('keywordLevel')
+        self.prefix_append("keywordLevel")
         level = self.parse_integerToken()
         if level != 0:
             self.set_attribute(level)
@@ -117,12 +117,14 @@ class EdifParser:
             elif self.construct_is(USER_DATA):
                 self.parse_userData()
             else:
-                self.expect("|".join([STATUS, EXTERNAL, LIBRARY, DESIGN, COMMENT, USER_DATA]))
+                self.expect(
+                    "|".join([STATUS, EXTERNAL, LIBRARY, DESIGN, COMMENT, USER_DATA])
+                )
             self.expect_end_construct()
 
     def parse_status(self):
         self.expect(STATUS)
-        self.prefix_append('status')
+        self.prefix_append("status")
         while self.begin_construct():
             if self.construct_is(WRITTEN):
                 self.parse_written()
@@ -137,7 +139,7 @@ class EdifParser:
 
     def parse_written(self):
         self.expect(WRITTEN)
-        self.prefix_append('written')
+        self.prefix_append("written")
         self.parse_construct(self.parse_timeStamp)
 
         has_author = False
@@ -164,13 +166,25 @@ class EdifParser:
             elif self.construct_is(USER_DATA):
                 self.parse_userData()
             else:
-                self.expect("|".join([AUTHOR, PROGRAM, DATA_ORIGIN, PROPERTY, METAX, COMMENT, USER_DATA]))
+                self.expect(
+                    "|".join(
+                        [
+                            AUTHOR,
+                            PROGRAM,
+                            DATA_ORIGIN,
+                            PROPERTY,
+                            METAX,
+                            COMMENT,
+                            USER_DATA,
+                        ]
+                    )
+                )
             self.expect_end_construct()
         self.prefix_pop()
 
     def parse_timeStamp(self):
         self.expect(TIME_STAMP)
-        self.prefix_append('timeStamp')
+        self.prefix_append("timeStamp")
         year = self.parse_integerToken()
         month = self.parse_integerToken()
         day = self.parse_integerToken()
@@ -182,20 +196,20 @@ class EdifParser:
 
     def parse_author(self):
         self.expect(AUTHOR)
-        self.prefix_append('author')
+        self.prefix_append("author")
         author = self.parse_stringToken()
         self.set_attribute(author)
         self.prefix_pop()
 
     def parse_program(self):
         self.expect(PROGRAM)
-        self.prefix_append('program')
+        self.prefix_append("program")
         program = self.parse_stringToken()
         self.set_attribute(program)
 
         if self.begin_construct():
             self.expect(VERSION)
-            self.prefix_append('version')
+            self.prefix_append("version")
             version = self.parse_stringToken()
             self.set_attribute(version)
             self.prefix_pop()
@@ -213,7 +227,7 @@ class EdifParser:
     def parse_library_like_element(self, is_external=False):
         library = Library()
         if is_external:
-            library['EDIF.external'] = True
+            library["EDIF.external"] = True
         self.append_new_element(library)
 
         self.parse_nameDef()
@@ -234,7 +248,7 @@ class EdifParser:
                     library.add_definition(definition)
                 except ValueError as e:
                     name = definition.name
-                    identifier = definition['EDIF.identifier']
+                    identifier = definition["EDIF.identifier"]
                     if name != identifier:
                         try:
                             definition.name = identifier
@@ -291,7 +305,9 @@ class EdifParser:
             elif self.construct_is(USER_DATA):
                 self.parse_userData()
             else:
-                self.expect('|'.join([STATUS, VIEW, VIEW_MAP, PROPERTY, COMMENT, USER_DATA]))
+                self.expect(
+                    "|".join([STATUS, VIEW, VIEW_MAP, PROPERTY, COMMENT, USER_DATA])
+                )
             self.expect_end_construct()
 
         return self.pop_element()
@@ -299,9 +315,11 @@ class EdifParser:
     def parse_cellType(self):
         self.expect(CELL_TYPE)
         self.prefix_append("cellType")
-        if self.construct_is(GENERIC) \
-                or self.construct_is(TIE) \
-                or self.construct_is(RIPPER):
+        if (
+            self.construct_is(GENERIC)
+            or self.construct_is(TIE)
+            or self.construct_is(RIPPER)
+        ):
             if not self.tokenizer.token_equals(GENERIC):
                 self.set_attribute(self.tokenizer.token)
         else:
@@ -311,7 +329,7 @@ class EdifParser:
 
     def parse_view(self):
         self.expect(VIEW)
-        self.prefix_append('view')
+        self.prefix_append("view")
         self.parse_nameDef()
         self.parse_construct(self.parse_viewType)
         self.parse_construct(self.parse_interface)
@@ -334,29 +352,44 @@ class EdifParser:
             elif self.construct_is(USER_DATA):
                 self.parse_userData()
             else:
-                self.expect('|'.join([STATUS, CONTENTS, COMMENT, PROPERTY, USER_DATA]))
+                self.expect("|".join([STATUS, CONTENTS, COMMENT, PROPERTY, USER_DATA]))
             self.expect_end_construct()
         self.prefix_pop()
 
     def parse_viewType(self):
-        self.prefix_append('viewType')
+        self.prefix_append("viewType")
         self.expect(VIEW_TYPE)
-        if self.construct_is(BEHAVIOR) \
-                or self.construct_is(DOCUMENT) \
-                or self.construct_is(GRAPHIC) \
-                or self.construct_is(LOGICMODEL) \
-                or self.construct_is(MASKLAYOUT) \
-                or self.construct_is(NETLIST) \
-                or self.construct_is(PCBLAYOUT) \
-                or self.construct_is(SCHEMATIC) \
-                or self.construct_is(STRANGER) \
-                or self.construct_is(SYMBOLIC):
+        if (
+            self.construct_is(BEHAVIOR)
+            or self.construct_is(DOCUMENT)
+            or self.construct_is(GRAPHIC)
+            or self.construct_is(LOGICMODEL)
+            or self.construct_is(MASKLAYOUT)
+            or self.construct_is(NETLIST)
+            or self.construct_is(PCBLAYOUT)
+            or self.construct_is(SCHEMATIC)
+            or self.construct_is(STRANGER)
+            or self.construct_is(SYMBOLIC)
+        ):
             if not self.tokenizer.token_equals(NETLIST):
                 self.set_attribute(self.tokenizer.token)
         else:
-            self.expect("|".join(
-                [BEHAVIOR, DOCUMENT, GRAPHIC, LOGICMODEL, MASKLAYOUT, NETLIST, PCBLAYOUT, SCHEMATIC, STRANGER,
-                 SYMBOLIC]))
+            self.expect(
+                "|".join(
+                    [
+                    BEHAVIOR,
+                    DOCUMENT,
+                    GRAPHIC,
+                    LOGICMODEL,
+                    MASKLAYOUT,
+                    NETLIST,
+                    PCBLAYOUT,
+                    SCHEMATIC,
+                    STRANGER,
+                    SYMBOLIC,
+                    ]
+                )
+            )
         self.tokenizer.next()
         self.prefix_pop()
 
@@ -403,7 +436,7 @@ class EdifParser:
             elif self.construct_is(USER_DATA):
                 self.parse_userData()
             else:
-                self.expect('|'.join([PORT, PROPERTY, COMMENT, USER_DATA]))
+                self.expect("|".join([PORT, PROPERTY, COMMENT, USER_DATA]))
             self.expect_end_construct()
 
     def parse_designator(self):
@@ -425,9 +458,9 @@ class EdifParser:
                 port = self.elements[-1]
                 port.create_pins(pin_count)
                 port.is_array = True
-                if 'EDIF.original_identifier' in port:
+                if "EDIF.original_identifier" in port:
                     # TODO: what about multi-dimensional ports, non-downto ports, and when non-square brackets are used <0:17><31:0>
-                    original_identifier = port['EDIF.original_identifier']
+                    original_identifier = port["EDIF.original_identifier"]
                     match = re.match(r".*\[(\d+):(\d+)\]", original_identifier)
                     if match:
                         left_index = int(match.group(1))
@@ -435,7 +468,7 @@ class EdifParser:
                         port.lower_index = min(right_index, left_index)
 
             else:
-                self.expect('|'.join([RENAME, ARRAY]))
+                self.expect("|".join([RENAME, ARRAY]))
             self.expect_end_construct()
         else:
             self.parse_nameDef()
@@ -475,7 +508,7 @@ class EdifParser:
             elif self.construct_is(USER_DATA):
                 self.parse_userData()
             else:
-                self.expect('|'.join([DIRECTION, PROPERTY, COMMENT, USER_DATA]))
+                self.expect("|".join([DIRECTION, PROPERTY, COMMENT, USER_DATA]))
             self.expect_end_construct()
         return self.elements.pop()
 
@@ -497,7 +530,7 @@ class EdifParser:
         elif self.construct_is(OUTPUT):
             direction = Port.Direction.OUT
         else:
-            self.expect('|'.join([INOUT, INPUT, OUTPUT]))
+            self.expect("|".join([INOUT, INPUT, OUTPUT]))
         self.tokenizer.next()
         return direction
 
@@ -512,7 +545,7 @@ class EdifParser:
                     definition.add_child(instance)
                 except ValueError as e:
                     name = instance.name
-                    identifier = instance['EDIF.identifier']
+                    identifier = instance["EDIF.identifier"]
                     if name != identifier:
                         try:
                             instance.name = identifier
@@ -535,9 +568,15 @@ class EdifParser:
                     self.multibit_add_cable(definition, cable)
                 except ValueError as e:
                     # TODO: Add warning about merging nets together
-                    existing_cable = next(definition.get_cables(cable.name, key="EDIF.identifier"), None)
+                    existing_cable = next(
+                        definition.get_cables(cable.name, key="EDIF.identifier"), None
+                    )
                     if existing_cable is None:
-                        existing_cable = next(definition.get_cables(cable['EDIF.identifier'], key="EDIF.identifier"))
+                        existing_cable = next(
+                            definition.get_cables(
+                                cable["EDIF.identifier"], key="EDIF.identifier"
+                            )
+                        )
                     for existing_wire, pending_wire in zip(existing_cable.wires, cable.wires):
                         pins = list(pending_wire.pins)
                         pending_wire.disconnect_pins_from(pins)
@@ -578,7 +617,7 @@ class EdifParser:
             elif self.construct_is(USER_DATA):
                 self.parse_userData()
             else:
-                self.expect('|'.join([INSTANCE, NET, COMMENT, USER_DATA]))
+                self.expect("|".join([INSTANCE, NET, COMMENT, USER_DATA]))
             self.expect_end_construct()
 
     def parse_instance(self):
@@ -605,50 +644,67 @@ class EdifParser:
             elif self.construct_is(USER_DATA):
                 self.parse_userData()
             else:
-                self.expect('|'.join([PROPERTY, COMMENT, USER_DATA]))
+                self.expect("|".join([PROPERTY, COMMENT, USER_DATA]))
             self.expect_end_construct()
         return self.pop_element()
 
     def parse_viewRef(self):
-        self.prefix_append('viewRef')
+        self.prefix_append("viewRef")
         self.expect(VIEW_REF)
         self.parse_nameRef()
-        view_identifier = self.elements[-1].pop('EDIF.viewRef.identifier')
+        view_identifier = self.elements[-1].pop("EDIF.viewRef.identifier")
         definition = self.elements[-2]
         if self.begin_construct():
             definition = self.parse_cellRef()
             self.expect_end_construct()
-        if definition['EDIF.view.identifier'].lower() != view_identifier.lower():
-            raise RuntimeError("Parser error, non-existant view referenced on line {}, revieved {} expected {}".format(
-                self.tokenizer.line_number, view_identifier, definition['EDIF.view.identifier']
-            ))
+        if definition["EDIF.view.identifier"].lower() != view_identifier.lower():
+            raise RuntimeError(
+                "Parser error, non-existant view referenced on line {}, revieved {} expected {}".format(
+                    self.tokenizer.line_number,
+                    view_identifier,
+                    definition["EDIF.view.identifier"],
+                )
+            )
         self.prefix_pop()
         return definition
 
     def parse_cellRef(self):
-        self.prefix_append('cellRef')
+        self.prefix_append("cellRef")
         self.expect(CELL_REF)
         self.parse_nameRef()
-        definition_identifer = self.elements[-1].pop('EDIF.viewRef.cellRef.identifier')
+        definition_identifer = self.elements[-1].pop("EDIF.viewRef.cellRef.identifier")
         library = self.elements[-3]
         if self.begin_construct():
             library = self.parse_libraryRef()
             self.expect_end_construct()
-        definition = next(library.get_definitions(definition_identifer, key="EDIF.identifier"), None)
-        assert definition is not None, "Definition not found within library by EDIF identifier. definition: " + definition_identifer + ' in ' + library.name
+        definition = next(
+            library.get_definitions(definition_identifer, key="EDIF.identifier"), None
+        )
+        assert definition is not None, (
+            "Definition not found within library by EDIF identifier. definition: "
+            + definition_identifer
+            + " in "
+            + library.name
+        )
         self.prefix_pop()
         return definition
 
     def parse_libraryRef(self):
-        self.prefix_append('libraryRef')
+        self.prefix_append("libraryRef")
         self.expect(LIBRARY_REF)
         self.parse_nameRef()
-        library_identifier = self.elements[-1].pop('EDIF.viewRef.cellRef.libraryRef.identifier')
+        library_identifier = self.elements[-1].pop("EDIF.viewRef.cellRef.libraryRef.identifier")
         environment = self.elements[-4]
         library = self.elements[-3]
-        if library['EDIF.identifier'].lower() != library_identifier.lower():
-            library = next(environment.get_libraries(library_identifier, key="EDIF.identifier"), None)
-            assert library is not None, "Library not found within netlist by EDIF identifier " + library_identifier
+        if library["EDIF.identifier"].lower() != library_identifier.lower():
+            library = next(
+                environment.get_libraries(library_identifier, key="EDIF.identifier"),
+                None,
+            )
+            assert library is not None, (
+                "Library not found within netlist by EDIF identifier "
+                + library_identifier
+            )
         self.prefix_pop()
         return library
 
@@ -668,7 +724,7 @@ class EdifParser:
             elif self.construct_is(USER_DATA):
                 self.parse_userData()
             else:
-                self.expect('|'.join([PROPERTY, COMMENT, USER_DATA]))
+                self.expect("|".join([PROPERTY, COMMENT, USER_DATA]))
             self.expect_end_construct()
         return self.pop_element()
 
@@ -688,13 +744,13 @@ class EdifParser:
             self.expect_end_construct()
 
     def parse_portRef(self):
-        self.prefix_append('portRef')
+        self.prefix_append("portRef")
         self.expect(PORT_REF)
         index = 0
         instance_or_definition = self.elements[-2]
         if self.begin_construct():
             indicies = self.parse_member()
-            assert (len(indicies) == 1)
+            assert len(indicies) == 1
             index = indicies[0]
             self.expect_end_construct()
         else:
@@ -708,22 +764,33 @@ class EdifParser:
             elif self.construct_is(VIEW_REF):
                 raise NotImplementedError()
             self.expect_end_construct()
-        port_identifier = self.elements[-1].pop('EDIF.portRef.identifier')
+        port_identifier = self.elements[-1].pop("EDIF.portRef.identifier")
         if isinstance(instance_or_definition, Instance):
             definition = instance_or_definition.reference
-            port = next(definition.get_ports(port_identifier, key="EDIF.identifier"), None)
-            assert port is not None, "Port not found within definition by EDIF identifier"
+            port = next(
+                definition.get_ports(port_identifier, key="EDIF.identifier"), None
+            )
+            assert (
+                port is not None
+            ), "Port not found within definition by EDIF identifier"
             inner_pin = port.pins[index]
             pin = instance_or_definition.pins[inner_pin]
         else:
-            port = next(instance_or_definition.get_ports(port_identifier, key="EDIF.identifier"), None)
-            assert port is not None, "Port not found within instance or definition by EDIF identifier"
+            port = next(
+                instance_or_definition.get_ports(
+                    port_identifier, key="EDIF.identifier"
+                ),
+                None,
+            )
+            assert (
+                port is not None
+            ), "Port not found within instance or definition by EDIF identifier"
             pin = port.pins[index]
         self.prefix_pop()
         return pin
 
     def parse_instanceRef(self):
-        self.prefix_append('instanceRef')
+        self.prefix_append("instanceRef")
         definition = self.elements[-2]
         self.expect(INSTANCE_REF)
         if self.begin_construct():
@@ -732,9 +799,15 @@ class EdifParser:
             self.expect_end_construct()
         else:
             self.parse_nameRef()
-        instance_identifier = self.elements[-1].pop('EDIF.portRef.instanceRef.identifier')
-        instance = next(definition.get_instances(instance_identifier, key="EDIF.identifier"), None)
-        assert instance is not None, "Instance not found within definition by EDIF identifier"
+        instance_identifier = self.elements[-1].pop(
+            "EDIF.portRef.instanceRef.identifier"
+        )
+        instance = next(
+            definition.get_instances(instance_identifier, key="EDIF.identifier"), None
+        )
+        assert (
+            instance is not None
+        ), "Instance not found within definition by EDIF identifier"
         self.prefix_pop()
         return instance
 
@@ -755,14 +828,14 @@ class EdifParser:
         self.expect(DESIGN)
         # self.tokenizer.next()
         instance = Instance()
-        instance['metadata_prefix'] = []
+        instance["metadata_prefix"] = []
         self.elements.append(instance)
-        instance['metadata_prefix'] = ['EDIF']
+        instance["metadata_prefix"] = ["EDIF"]
         if self.begin_construct():
             self.parse_rename()
             self.tokenizer.next()
         else:
-            self.prefix_append('identifier')
+            self.prefix_append("identifier")
             self.set_attribute(self.parse_identifier())
             self.prefix_pop()
         self.prefix_pop()
@@ -773,10 +846,10 @@ class EdifParser:
         self.tokenizer.next()
         library_name = self.tokenizer.next()
         for library in self.elements[0].libraries:
-            if library['EDIF.identifier'] == library_name:
+            if library["EDIF.identifier"] == library_name:
                 break
         for definition in library.definitions:
-            if definition['EDIF.identifier'] == definition_name:
+            if definition["EDIF.identifier"] == definition_name:
                 break
         instance.reference = definition
         self.elements.pop()
@@ -792,7 +865,7 @@ class EdifParser:
         raise NotImplementedError()
 
     def parse_comment(self):
-        self.prefix_append('comments')
+        self.prefix_append("comments")
         self.expect(COMMENT)
         comment = []
         while self.not_end_construct():
@@ -802,12 +875,12 @@ class EdifParser:
         self.prefix_pop()
 
     def parse_property(self):
-        self.prefix_append('properties')
+        self.prefix_append("properties")
         self.expect(PROPERTY)
         self.parse_property_like_element()
 
     def parse_metax(self):
-        self.prefix_append('metaxes')
+        self.prefix_append("metaxes")
         self.expect(METAX)
         self.parse_property_like_element()
 
@@ -815,16 +888,20 @@ class EdifParser:
         self.parse_nameDef()
 
         property_ = {}
-        identifier = self.elements[-1].pop('.'.join([*self.elements[-1]['metadata_prefix'], 'identifier']))
-        property_['identifier'] = identifier
+        identifier = self.elements[-1].pop(
+            ".".join([*self.elements[-1]["metadata_prefix"], "identifier"])
+        )
+        property_["identifier"] = identifier
 
-        original_identifier_prefix = '.'.join([*self.elements[-1]['metadata_prefix'], 'original_identifier'])
+        original_identifier_prefix = ".".join(
+            [*self.elements[-1]["metadata_prefix"], "original_identifier"]
+        )
         if original_identifier_prefix in self.elements[-1]:
             original_identifier = self.elements[-1].pop(original_identifier_prefix)
-            property_['original_identifier'] = original_identifier
+            property_["original_identifier"] = original_identifier
 
         value = self.parse_construct(self.parse_typedValue)
-        property_['value'] = value
+        property_["value"] = value
 
         self.append_attribute(property_)
 
@@ -860,7 +937,7 @@ class EdifParser:
         elif self.construct_is(STRING):
             return self.parse_string()
         else:
-            return self.expect('|'.join([BOOLEAN, INTEGER, NUMBER, STRING]))
+            return self.expect("|".join([BOOLEAN, INTEGER, NUMBER, STRING]))
 
     def parse_boolean(self):
         self.expect(BOOLEAN)
@@ -871,7 +948,7 @@ class EdifParser:
         elif self.tokenizer.token_equals(FALSE):
             result = False
         else:
-            self.expect('|'.join([TRUE, FALSE]))
+            self.expect("|".join([TRUE, FALSE]))
         self.expect_end_construct()
         return result
 
@@ -892,7 +969,7 @@ class EdifParser:
         self.expect(E)
         mantissa = self.parse_integerToken()
         exponent = self.parse_integerToken()
-        result = mantissa * 10.0 ** exponent
+        result = mantissa * 10.0**exponent
         return result
 
     def parse_string(self):
@@ -907,7 +984,7 @@ class EdifParser:
         raise NotImplementedError()
 
     def parse_nameRef(self):
-        self.prefix_append('identifier')
+        self.prefix_append("identifier")
         self.set_attribute(self.parse_identifier())
         self.prefix_pop()
 
@@ -916,7 +993,7 @@ class EdifParser:
             self.parse_rename()
             self.expect_end_construct()
         else:
-            self.prefix_append('identifier')
+            self.prefix_append("identifier")
             self.set_attribute(self.parse_identifier())
             self.prefix_pop()
 
@@ -926,17 +1003,19 @@ class EdifParser:
 
         e_index, e_short = self.separate_name_and_index(c_edif_id, "_")
         n_index, n_short = self.separate_name_and_index(c_name, "[")
-    
+
         index = n_index
         if e_index == None:
             index = None
 
         existing_cable = next(definition.get_cables(n_short), None)
-        if existing_cable == None: #maybe the name is in the EDIF.identifier only?
-            existing_cable = next(definition.get_cables(e_short, key="EDIF.identifier"), None)
-        if existing_cable is None: #if it is still none after checking both the name and EDIF.identifier...
+        if existing_cable is None:  # maybe the name is in the EDIF.identifier only?
+            existing_cable = next(
+                definition.get_cables(e_short, key="EDIF.identifier"), None
+            )
+        if existing_cable is None:  # if it is still none after checking both the name and EDIF.identifier...
             if index is None:
-                cable.is_array = False                
+                cable.is_array = False
                 cable.lower_index = 0
             else:
                 cable.is_array = True
@@ -946,10 +1025,10 @@ class EdifParser:
                 cable.lower_index = index
             definition.add_cable(cable)
 
-        else: #there is alread a cable that could need to be merged.
+        else:  # there is alread a cable that could need to be merged.
             if existing_cable.is_array == False or index == None:
-                definition.add_cable(cable) #if this works great. otherwise the parent code will handle the error
-            else: # the cables should be merged
+                definition.add_cable(cable)  # if this works great. otherwise the parent code will handle the error
+            else:  # the cables should be merged
                 if index > existing_cable.lower_index:
                     if index < existing_cable.lower_index + len(existing_cable.wires):
                         w = cable.wires[0]
@@ -959,12 +1038,14 @@ class EdifParser:
                             p = pins[0]
                             w.disconnect_pin(p)
                             ew.connect_pin(p)
-                    else: # index is outside current cable range
-                        existing_cable.create_wires(index - existing_cable.lower_index - len(existing_cable.wires))
+                    else:  # index is outside current cable range
+                        existing_cable.create_wires(
+                            index - existing_cable.lower_index - len(existing_cable.wires)
+                        )
                         wire = cable.wires[0]
                         cable.remove_wire(wire)
                         existing_cable.add_wire(wire)
-                else: #index is lower than the lowest current index in the cable
+                else:  # index is lower than the lowest current index in the cable
                     difference = existing_cable.lower_index - index
                     starting_count = len(existing_cable.wires)
                     wire = cable.wires[0]
@@ -972,44 +1053,57 @@ class EdifParser:
                     existing_cable.add_wire(wire)
                     existing_cable.create_wires(difference - 1)
                     existing_cable.lower_index = index
-                    wire_list = existing_cable.wires[starting_count:] + existing_cable.wires[:starting_count]
+                    wire_list = (
+                        existing_cable.wires[starting_count:]
+                        + existing_cable.wires[:starting_count]
+                    )
                     existing_cable.wires = wire_list
-                    
+
     def separate_name_and_index(self, name, split_character):
         name_split = name.split(split_character)
         index = None
         short_name = name
-        if split_character == "[" and (name[0] != "\\" or (len(name.split(" ")) == 2 and name.split(" ")[1] != "")):
-            if len(name_split) > 1 and name_split[-1][-1] == "]" and name_split[-1][:-1].isdigit():
+        if split_character == "[" and (
+            name[0] != "\\" or (len(name.split(" ")) == 2 and name.split(" ")[1] != "")
+        ):
+            if (
+                len(name_split) > 1
+                and name_split[-1][-1] == "]"
+                and name_split[-1][:-1].isdigit()
+            ):
                 index = int(name_split[-1][:-1])
                 for i in reversed(range(len(name))):
                     if name[i] == split_character:
                         break
                 short_name = name[:i]
-        elif split_character == "_":# and (name[0:2] == "&_" or ():
-
+        elif split_character == "_":  # and (name[0:2] == "&_" or ():
             # Assuming that all names that start with a &_ map to escaped \
             #
             # from https://www.xilinx.com/support/answers/1554.html
             #
             # "When the Cadence SIR2EDF encounters escaped Verilog names (please
-            # refer to (Xilinx Answer 2533)), "\L/R " is mapped by the Cadence 
-            # SIR2EDF netlister to "&_l_r_". The SIR2EDF netlister also creates 
-            # a map file, which shows that the identifier "&_l_r_" is mapped to 
-            # "\l/r ". Such conversions of backslashes and forward slashes may 
-            # be fairly common in netlists generated by NGD2VER if 
-            # user-specified names do not conform to Verilog naming 
+            # refer to (Xilinx Answer 2533)), "\L/R " is mapped by the Cadence
+            # SIR2EDF netlister to "&_l_r_". The SIR2EDF netlister also creates
+            # a map file, which shows that the identifier "&_l_r_" is mapped to
+            # "\l/r ". Such conversions of backslashes and forward slashes may
+            # be fairly common in netlists generated by NGD2VER if
+            # user-specified names do not conform to Verilog naming
             # restrictions."
             #
-            # Other than here we try to maintain the user supplied name and do 
+            # Other than here we try to maintain the user supplied name and do
             # not change characters. a name starting with &_ will simply become
 
-            if len(name_split) > 2 and name_split[-1] == "" and name_split[-2].isdigit() and (name[0:2] != "&_" or (name_split[-3] == "")):
+            if (
+                len(name_split) > 2
+                and name_split[-1] == ""
+                and name_split[-2].isdigit()
+                and (name[0:2] != "&_" or (name_split[-3] == ""))
+            ):
                 index = int(name_split[-2])
                 count = 0
                 for i in reversed(range(len(name))):
                     if name[i] == split_character:
-                        count+=1
+                        count += 1
                     if count == 2:
                         break
                 short_name = name[:i]
@@ -1018,11 +1112,11 @@ class EdifParser:
     def parse_rename(self):
         self.expect(RENAME)
 
-        self.prefix_append('identifier')
+        self.prefix_append("identifier")
         self.set_attribute(self.parse_identifier())
         self.prefix_pop()
 
-        self.prefix_append('original_identifier')
+        self.prefix_append("original_identifier")
         self.set_attribute(self.parse_stringToken())
         self.prefix_pop()
 
@@ -1042,24 +1136,24 @@ class EdifParser:
         return int(self.tokenizer.token)
 
     def append_new_element(self, element):
-        element['metadata_prefix'] = ['EDIF']
+        element["metadata_prefix"] = ["EDIF"]
         self.elements.append(element)
 
     def pop_element(self):
         element = self.elements.pop()
-        del element['metadata_prefix']
+        del element["metadata_prefix"]
         return element
 
     def prefix_append(self, value):
         element = self.elements[-1]
-        element['metadata_prefix'].append(value)
+        element["metadata_prefix"].append(value)
 
     def prefix_pop(self):
-        return self.elements[-1]['metadata_prefix'].pop()
+        return self.elements[-1]["metadata_prefix"].pop()
 
     def set_attribute(self, value):
         element = self.elements[-1]
-        key = '.'.join(element['metadata_prefix'])
+        key = ".".join(element["metadata_prefix"])
         if key == "EDIF.original_identifier":
             element.name = value
         elif key == "EDIF.identifier":
@@ -1071,7 +1165,7 @@ class EdifParser:
 
     def append_attribute(self, attribute):
         element = self.elements[-1]
-        key = '.'.join(element['metadata_prefix'])
+        key = ".".join(element["metadata_prefix"])
         if key not in element:
             element[key] = []
         element[key].append(attribute)
@@ -1088,7 +1182,10 @@ class EdifParser:
     def check_for_multiples(self, token, already_contains):
         if already_contains:
             raise RuntimeError(
-                "Parse error: Multiple occurances of {}, near line {}".format(token, self.tokenizer.line_number))
+                "Parse error: Multiple occurances of {}, near line {}".format(
+                    token, self.tokenizer.line_number
+                )
+            )
         return True
 
     def expect_begin_construct(self):
@@ -1121,8 +1218,10 @@ class EdifParser:
             return True
         return False
 
-    get_parent = {Library: lambda x: x.netlist,
-                  Definition: lambda x: x.library,
-                  Port: lambda x: x.definition,
-                  Cable: lambda x: x.definition,
-                  Instance: lambda x: x.parent}
+    get_parent = {
+        Library: lambda x: x.netlist,
+        Definition: lambda x: x.library,
+        Port: lambda x: x.definition,
+        Cable: lambda x: x.definition,
+        Instance: lambda x: x.parent,
+    }

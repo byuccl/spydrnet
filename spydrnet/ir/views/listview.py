@@ -1,5 +1,5 @@
 class ListView:
-    __slots__ = ['_list']
+    __slots__ = ["_list"]
 
     def __init__(self, list_object):
         self._list = list_object

@@ -88,20 +88,32 @@ class NamespaceManager(CallbackListener, ABC):
 
     def dictionary_set(self, element, key, value):
         if key == ".NS":
-            if self.ignore_ns_change is False and (key not in element or element[key] != value):
+            if self.ignore_ns_change is False and (
+                key not in element or element[key] != value
+            ):
                 if self.get_parent(element) is not None:
-                    raise ValueError("Cannot change the namespace of a object already belonging to a parent")
+                    raise ValueError(
+                        "Cannot change the namespace of a object already belonging to a parent"
+                    )
                 if value not in self.policies:
-                    raise ValueError('The namespace policy specified does not exist. Supported namespaces include: {}'.format(", ".join(self.policies)))
+                    raise ValueError(
+                        "The namespace policy specified does not exist. Supported namespaces include: {}".format(
+                            ", ".join(self.policies)
+                        )
+                    )
                 target_namespace = self.policies[value]
                 if self.is_compliant(target_namespace, element) is False:
-                    raise ValueError("The current element is not compliant with the target namespace policy.")
+                    raise ValueError(
+                        "The current element is not compliant with the target namespace policy."
+                    )
                 self.apply_namespace(value, target_namespace, element)
         elif key in {".NAME", "EDIF.identifier"}:
             if ".NS" in element:
                 target_policy = self.policies[element[".NS"]]
                 if target_policy.is_name_valid(key, value) is False:
-                    raise ValueError("Target name not valid for the current namespace policy.")
+                    raise ValueError(
+                        "Target name not valid for the current namespace policy."
+                    )
 
             parent = self.get_parent(element)
             if parent and parent in self.namespaces:
@@ -115,7 +127,9 @@ class NamespaceManager(CallbackListener, ABC):
         if key == ".NS":
             if self.ignore_ns_change is False:
                 if self.get_parent(element) is not None:
-                    raise ValueError("Cannot change the namespace of a object already belonging to a parent")
+                    raise ValueError(
+                        "Cannot change the namespace of a object already belonging to a parent"
+                    )
                 if ".NS" in element:
                     self.drop_namespace(element)
         elif key in {".NAME", "EDIF.identifier"}:
@@ -128,7 +142,9 @@ class NamespaceManager(CallbackListener, ABC):
         if key == ".NS":
             if self.ignore_ns_change is False:
                 if self.get_parent(element) is not None:
-                    raise ValueError("Cannot change the namespace of a object already belonging to a parent")
+                    raise ValueError(
+                        "Cannot change the namespace of a object already belonging to a parent"
+                    )
                 if ".NS" in element:
                     self.drop_namespace(element)
         elif key in {".NAME", "EDIF.identifier"}:
@@ -143,7 +159,10 @@ class NamespaceManager(CallbackListener, ABC):
                     if key in child:
                         no_conflict = namespace.no_conflict(child, key, child[key])
                         if no_conflict is False:
-                            raise ValueError("Adding this element would result in a naming conflict. " + child[key])
+                            raise ValueError(
+                                "Adding this element would result in a naming conflict. "
+                                + child[key]
+                            )
             if ".NS" in parent:
                 parent_namespace = parent[".NS"]
                 if ".NS" not in child or child[".NS"] != parent_namespace:
@@ -233,8 +252,10 @@ class NamespaceManager(CallbackListener, ABC):
             for element in elements:
                 if element.name:
                     namespace.update(element, ".NAME", element.name)
-                if 'EDIF.identifier' in element:
-                    namespace.update(element, "EDIF.identifier", element['EDIF.identifier'])
+                if "EDIF.identifier" in element:
+                    namespace.update(
+                        element, "EDIF.identifier", element["EDIF.identifier"]
+                    )
 
     def drop_namespace(self, original_element):
         self.ignore_ns_change = True

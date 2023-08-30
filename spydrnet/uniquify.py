@@ -1,6 +1,7 @@
 # Copyright 2020 Dallin Skouson, Andrew Keller, Michael Wirthlin
 
 from collections import deque
+
 # from spydrnet.ir import *
 
 """Code to make definitions unique throughout a netlist.
@@ -29,9 +30,8 @@ def _make_instance_unique(instance):
         name = instance.reference.name
         unique_suffix = _get_unique_name_modifier()
         new_def.name = name + unique_suffix
-        if 'EDIF.identifier' in new_def:
-            new_def['EDIF.identifier'] = new_def['EDIF.identifier'] + \
-                unique_suffix
+        if "EDIF.identifier" in new_def:
+            new_def["EDIF.identifier"] = new_def["EDIF.identifier"] + unique_suffix
     lib.add_definition(new_def, index + 1)
     instance.reference = new_def
 

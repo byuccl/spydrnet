@@ -10,7 +10,8 @@ class Wire(Element):
     """
     Represents a wire object
     """
-    __slots__ = ['_cable', '_pins']
+
+    __slots__ = ["_cable", "_pins"]
 
     def __init__(self):
         self._cable = None
@@ -30,8 +31,9 @@ class Wire(Element):
     def pins(self, value):
         value_list = list(value)
         value_set = set(value_list)
-        assert len(value_list) == len(value_set) and set(self._pins) == value_set, \
-            "Set of values do not match, assignment can only be used to reorder, values must be unique"
+        assert (
+            len(value_list) == len(value_set) and set(self._pins) == value_set
+        ), "Set of values do not match, assignment can only be used to reorder, values must be unique"
         self._pins = value_list
 
     def connect_pin(self, pin, position=None):
@@ -46,8 +48,9 @@ class Wire(Element):
         if isinstance(pin, OuterPin):
             instance = pin.instance
             inner_pin = pin.inner_pin
-            assert instance is not None and inner_pin is not None, \
-                "Outer pin must represent an instance and an inner_pin"
+            assert (
+                instance is not None and inner_pin is not None
+            ), "Outer pin must represent an instance and an inner_pin"
             assert inner_pin in instance.pins, "Pin not associated with instance"
             outer_pin = instance.pins[inner_pin]
             assert outer_pin.wire is not self, "Pin already connected to this wire"
@@ -73,11 +76,14 @@ class Wire(Element):
         if isinstance(pin, OuterPin):
             instance = pin.instance
             inner_pin = pin.inner_pin
-            assert instance is not None and inner_pin is not None, \
-                "Outer pin must represent an instance and an inner_pin"
+            assert (
+                instance is not None and inner_pin is not None
+            ), "Outer pin must represent an instance and an inner_pin"
             assert inner_pin in instance.pins, "Pin not associated with instance"
             outer_pin = instance.pins[inner_pin]
-            assert outer_pin.wire is self, "Pin is disconnected or connected to a different wire."
+            assert (
+                outer_pin.wire is self
+            ), "Pin is disconnected or connected to a different wire."
             self._disconnect_pin(pin)
             pin = outer_pin
         else:
@@ -102,16 +108,22 @@ class Wire(Element):
             if isinstance(pin, OuterPin):
                 instance = pin.instance
                 inner_pin = pin.inner_pin
-                if instance is None or inner_pin is None or inner_pin not in instance.pins or \
-                        instance.pins[inner_pin].wire is not self:
+                if (
+                    instance is None
+                    or inner_pin is None
+                    or inner_pin not in instance.pins
+                    or instance.pins[inner_pin].wire is not self
+                ):
                     all_pins_can_be_disconnected = False
                     break
             else:
                 if pin.wire != self:
                     all_pins_can_be_disconnected = False
                     break
-        assert all_pins_can_be_disconnected, "Some of the pins to disconnect are not associated with an instance, " \
-                                             "already disconnected, or connected to a different wire"
+        assert all_pins_can_be_disconnected, (
+            "Some of the pins to disconnect are not associated with an instance, "
+            "already disconnected, or connected to a different wire"
+        )
         for pin in excluded_pins:
             if isinstance(pin, OuterPin):
                 self._disconnect_pin(pin)
@@ -144,8 +156,11 @@ class Wire(Element):
 
         clone leaving all references in tact.
         the element can then either be ripped or ripped and replaced"""
-        assert self not in memo, "the object should not have been copied twice in this pass"
+        assert (
+            self not in memo
+        ), "the object should not have been copied twice in this pass"
         from spydrnet.ir import Wire as ExtendedWire
+
         c = ExtendedWire()
         memo[self] = c
         c._cable = None
@@ -160,7 +175,7 @@ class Wire(Element):
          * The wire is not connected to any pins.
          * The wire is orphaned from any cable.
          * No pins are connected to the wire
-         """
+        """
         c = self._clone({})
         c._clone_rip()
         return c
@@ -175,20 +190,25 @@ class Wire(Element):
     def __str__(self):
         """Re-define the print function so it is easier to read"""
         rep = str(type(self))
-        rep = rep[:-1] + '; '
+        rep = rep[:-1] + "; "
         if self.cable is None:
-            rep += 'Not contained by any Cable'
+            rep += "Not contained by any Cable"
         elif self.cable.name is None:
-            rep += 'Contained by Cable whose name is undefined'
+            rep += "Contained by Cable whose name is undefined"
         else:
-            rep += 'Contained by Cable.name \'' + str(self.cable.name) + '\' ' + str(self.cable)
-        rep += '>'
+            rep += (
+                "Contained by Cable.name '"
+                + str(self.cable.name)
+                + "' "
+                + str(self.cable)
+            )
+        rep += ">"
         return rep
 
     def get_driver(self):
-        '''
+        """
         returns the driver(s) of the wire
-        '''
+        """
         drivers = []
         for pin in self._pins:
             if pin.__class__ is sdn.InnerPin:

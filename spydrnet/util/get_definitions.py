@@ -1,5 +1,15 @@
-from spydrnet.ir import InnerPin, OuterPin, Wire, Netlist, Library, Definition, Element, Instance,\
-    Port, Cable
+from spydrnet.ir import (
+    InnerPin,
+    OuterPin,
+    Wire,
+    Netlist,
+    Library,
+    Definition,
+    Element,
+    Instance,
+    Port,
+    Cable,
+)
 from spydrnet.util.hierarchical_reference import HRef
 from spydrnet.util.selection import Selection
 from spydrnet.global_state.global_service import lookup
@@ -45,34 +55,51 @@ def get_definitions(obj, *args, **kwargs):
         This is a single input function that can be used to filter out unwanted virtual instances. If not specifed, all
         matching virtual instances are returned. Otherwise, virtual instances that cause the filter function to evaluate
         to true are the only items returned.
-    
+
     Returns
     -------
     definitions : generator
         The definitions associated with a particular object or collection of objects.
-    
+
     """
     # Check argument list
-    if len(args) == 1 and 'patterns' in kwargs:
+    if len(args) == 1 and "patterns" in kwargs:
         raise TypeError("get_definitions() got multiple values for argument 'patterns'")
-    if len(args) > 1 or any(x not in {'patterns', 'key', 'filter', 'is_case', 'is_re', 'selection', 'recursive'}
-                            for x in kwargs):
+    if len(args) > 1 or any(
+        x
+        not in {
+            "patterns",
+            "key",
+            "filter",
+            "is_case",
+            "is_re",
+            "selection",
+            "recursive",
+        }
+        for x in kwargs
+    ):
         raise TypeError("Unknown usage. Please see help for more information.")
 
     # Default values
-    selection = kwargs.get('selection', Selection.INSIDE)
+    selection = kwargs.get("selection", Selection.INSIDE)
     if isinstance(selection, str):
         if selection in Selection.__members__:
             selection = Selection[selection]
     if selection not in {Selection.INSIDE, Selection.OUTSIDE}:
-        raise TypeError("selection must be '{}'".format("', '".join([Selection.INSIDE.name, Selection.OUTSIDE.name])))
+        raise TypeError(
+            "selection must be '{}'".format(
+                "', '".join([Selection.INSIDE.name, Selection.OUTSIDE.name])
+            )
+        )
 
-    filter_func = kwargs.get('filter', lambda x: True)
-    is_case = kwargs.get('is_case', True)
-    is_re = kwargs.get('is_re', False)
-    patterns = args[0] if len(args) == 1 else kwargs.get('patterns', ".*" if is_re else "*")
-    key = kwargs.get('key', ".NAME")
-    recursive = kwargs.get('recursive', False)
+    filter_func = kwargs.get("filter", lambda x: True)
+    is_case = kwargs.get("is_case", True)
+    is_re = kwargs.get("is_re", False)
+    patterns = (
+        args[0] if len(args) == 1 else kwargs.get("patterns", ".*" if is_re else "*")
+    )
+    key = kwargs.get("key", ".NAME")
+    recursive = kwargs.get("recursive", False)
 
     if isinstance(obj, (Element, HRef)) is False:
         try:
@@ -82,22 +109,41 @@ def get_definitions(obj, *args, **kwargs):
     else:
         object_collection = [obj]
     if all(isinstance(x, (Element, HRef)) for x in object_collection) is False:
-        raise TypeError("get_definitions() only supports netlists and libraries or a collection of them as the object "
-                        "searched")
+        raise TypeError(
+            "get_definitions() only supports netlists and libraries or a collection of them as the object "
+            "searched"
+        )
 
     if isinstance(patterns, str):
         patterns = (patterns,)
 
-    return _get_definitions(object_collection, patterns, key, is_case, is_re, selection, recursive, filter_func)
+    return _get_definitions(
+        object_collection,
+        patterns,
+        key,
+        is_case,
+        is_re,
+        selection,
+        recursive,
+        filter_func,
+    )
 
 
-def _get_definitions(object_collection, patterns, key, is_case, is_re, selection, recursive, filter_func):
-    for result in filter(filter_func, _get_definitions_raw(object_collection, patterns, key, is_case, is_re,
-                                                           selection, recursive)):
+def _get_definitions(
+    object_collection, patterns, key, is_case, is_re, selection, recursive, filter_func
+):
+    for result in filter(
+        filter_func,
+        _get_definitions_raw(
+            object_collection, patterns, key, is_case, is_re, selection, recursive
+        ),
+    ):
         yield result
 
 
-def _get_definitions_raw(object_collection, patterns, key, is_case, is_re, selection, recursive):
+def _get_definitions_raw(
+    object_collection, patterns, key, is_case, is_re, selection, recursive
+):
     found = set()
     other_definitions = set()
     while object_collection:
@@ -113,8 +159,10 @@ def _get_definitions_raw(object_collection, patterns, key, is_case, is_re, selec
                             yield result
                     else:
                         for definition in obj.definitions:
-                            value = definition[key] if key in definition else ''
-                            if definition not in found and _value_matches_pattern(value, pattern, is_case, is_re):
+                            value = definition[key] if key in definition else ""
+                            if definition not in found and _value_matches_pattern(
+                                value, pattern, is_case, is_re
+                            ):
                                 found.add(definition)
                                 yield definition
                 if recursive:
@@ -182,7 +230,7 @@ def _get_definitions_raw(object_collection, patterns, key, is_case, is_re, selec
             if other_definition in found:
                 continue
             found.add(other_definition)
-            name = other_definition[key] if key in other_definition else ''
+            name = other_definition[key] if key in other_definition else ""
             if name not in namemap:
                 namemap[name] = []
             namemap[name].append(other_definition)
