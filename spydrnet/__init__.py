@@ -113,7 +113,7 @@ from spydrnet.util.netlist_type import EDIF, VERILOG, EBLIF
 
 def determine_example_netlists_path(download_option):
     example_netlists_path = pathlib.Path("example_netlists")
-    temp_dir_loc = pathlib.Path("/tmp/spydrnet_example_netlists/spydrnet-move_tests_and_files/example_netlists/")
+    temp_dir_loc = pathlib.Path("/tmp/spydrnet_example_netlists/spydrnet-next_release/example_netlists/")
     if "EXAMPLE_NETLISTS_PATH" in os.environ:
         example_netlists_path = pathlib.Path(os.environ["EXAMPLE_NETLISTS_PATH"])
     elif temp_dir_loc.exists():
@@ -128,7 +128,7 @@ def determine_example_netlists_path(download_option):
             print("Downloading example netlists...")
             
             import requests
-            url = "https://github.com/byuccl/spydrnet/archive/refs/heads/move_tests_and_files.zip"
+            url = "https://github.com/byuccl/spydrnet/archive/refs/heads/next_release.zip"
             filename = pathlib.Path('/tmp/spydrnet_temp.zip')
             response = requests.get(url)
             filename.write_bytes(response.content)
@@ -137,10 +137,10 @@ def determine_example_netlists_path(download_option):
             extract_loc = "/tmp/spydrnet_example_netlists"
             with zipfile.ZipFile(filename, 'r') as zip_ref:
                 zip_ref.extractall(extract_loc)
-            env_variable = extract_loc + "/spydrnet-move_tests_and_files/example_netlists/"
+            env_variable = extract_loc + "/spydrnet-next_release/example_netlists/"
             os.environ["EXAMPLE_NETLISTS_PATH"] = env_variable
             print("Example netlists located in " + os.environ["EXAMPLE_NETLISTS_PATH"])
-            example_netlists_path = temp_dir_loc
+            example_netlists_path = pathlib.Path(os.environ["EXAMPLE_NETLISTS_PATH"])
 
     example_netlists_path = example_netlists_path.resolve()
     return example_netlists_path
@@ -150,28 +150,34 @@ example_netlists_path = determine_example_netlists_path(False)
 base_dir = Path(Path(__file__).absolute()).parent
 
 example_netlist_names = []
-edif_path = Path(example_netlists_path).joinpath('EDIF_netlists')
-for filename in Path.glob(edif_path, "*"):
-    basename = Path(filename).name
-    example_netlist_names.append(basename[:basename.index('.')])
-example_netlist_names.sort()
-
 verilog_example_netlist_names = []
-verilog_path = Path(example_netlists_path).joinpath('verilog_netlists')
-for filename in Path.glob(verilog_path, "*"):
-    basename = Path(filename).name
-    verilog_example_netlist_names.append(basename[:basename.index('.')])
-verilog_example_netlist_names.sort()
-
 eblif_example_netlist_names = []
-eblif_path = Path(example_netlists_path).joinpath('eblif_netlists')
-for filename in Path.glob(eblif_path, "*"):
-    basename = Path(filename).name
-    eblif_example_netlist_names.append(basename[:basename.index('.')])
-eblif_example_netlist_names.sort()
+
+def get_example_netlist_names(path):
+    edif_path = Path(path).joinpath('EDIF_netlists')
+    for filename in Path.glob(edif_path, "*"):
+        basename = Path(filename).name
+        example_netlist_names.append(basename[:basename.index('.')])
+    example_netlist_names.sort()
+
+
+    verilog_path = Path(path).joinpath('verilog_netlists')
+    for filename in Path.glob(verilog_path, "*"):
+        basename = Path(filename).name
+        verilog_example_netlist_names.append(basename[:basename.index('.')])
+    verilog_example_netlist_names.sort()
+
+    eblif_path = Path(path).joinpath('eblif_netlists')
+    for filename in Path.glob(eblif_path, "*"):
+        basename = Path(filename).name
+        eblif_example_netlist_names.append(basename[:basename.index('.')])
+    eblif_example_netlist_names.sort()
+
+get_example_netlist_names(example_netlists_path)
 
 def load_example_netlist_by_name(name, format=EDIF):
     example_netlists_path = determine_example_netlists_path(True)
+    get_example_netlist_names(example_netlists_path)
     error_message = "Example netlist not found. Either run 'export EXAMPLE_NETLISTS_PATH=<path>' or allow downloading to /tmp/spydrnet_example_netlists."
     if format is EDIF:
         assert name in example_netlist_names, error_message
