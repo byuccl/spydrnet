@@ -1,3 +1,4 @@
+import weakref
 from abc import ABC
 
 from spydrnet.callback.callback_listener import CallbackListener
@@ -5,7 +6,6 @@ from spydrnet.plugins.namespace_manager.default_namespace import DefaultNamespac
 from spydrnet.plugins.namespace_manager.edif_namespace import EdifNamespace
 from spydrnet.ir import Netlist, Library, Definition, Port, Cable, Instance
 from spydrnet.global_state.global_service import register_lookup, deregister_lookup
-import weakref
 
 
 def _load_policies():
@@ -97,7 +97,8 @@ class NamespaceManager(CallbackListener, ABC):
                     )
                 if value not in self.policies:
                     raise ValueError(
-                        "The namespace policy specified does not exist. Supported namespaces include: {}".format(
+                        "The namespace policy specified does not exist. \
+                        Supported namespaces include: {}".format(
                             ", ".join(self.policies)
                         )
                     )

@@ -49,7 +49,8 @@ class Bundle(FirstClassElement):
 
     def _items(self):
         """
-        this function must be overridden in classes which extend this to return either a list of pins or wires
+        this function must be overridden in classes which extend this to return either a list of
+        pins or wires
         """
         raise NotImplementedError
 
@@ -71,15 +72,16 @@ class Bundle(FirstClassElement):
     def is_scalar(self, value):
         """Set the scalar status of single item bundles.
 
-        The item is not a scalar if it has more than one pin or wire in it. if it has one or zero pins this function
-        can be used to set the value or wire in it it may be a scalar. This mimics vhdl's downto usage which can
-        represent single pin arrays ie. std_logic_vector(0 downto 0) which would have a single pin but not be a scalar.
+        The item is not a scalar if it has more than one pin or wire in it. if it has one or zero
+        pins this function can be used to set the value or wire in it it may be a scalar. This
+        mimics vhdl's downto usage which can represent single pin arrays ie. std_logic_vector(0
+        downto 0) which would have a single pin but not be a scalar.
 
         parameters
         ----------
 
-        value - (boolean) True if the item is to be a scalar False if it is not. Multi element bundles cannot set
-        is_scalar to True.
+        value - (boolean) True if the item is to be a scalar False if it is not. Multi
+        elementbundles cannot set is_scalar to True.
         """
         _items = self._items()
         if _items and len(_items) > 1 and value is True:
@@ -103,8 +105,8 @@ class Bundle(FirstClassElement):
         parameters
         ----------
 
-        value - (boolean) True if the object is an array. False otherwise. Multi element bundles cannot set is_array to
-        false.
+        value - (boolean) True if the object is an array. False otherwise. Multi element bundles
+        cannot set is_array to false.
         """
         _items = self._items()
         if _items and len(_items) > 1 and value is False:

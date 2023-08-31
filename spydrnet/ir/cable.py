@@ -9,8 +9,9 @@ from spydrnet.global_state.global_callback import _call_create_cable
 class Cable(Bundle):
     """Representation of several wires in a collection.
 
-    Much like ports, cables extend the bundle class, giving them indexing ability. They represent several wires in a collection or bus that are generally related.
-    This could be thought of much like vector types in VHDL ie std_logic_vector (7 downto 0)
+    Much like ports, cables extend the bundle class, giving them indexing ability. They represent
+    several wires in a collection or bus that are generally related. This could be thought of much
+    like vector types in VHDL ie std_logic_vector (7 downto 0)
     """
 
     __slots__ = ["_wires"]
@@ -30,15 +31,17 @@ class Cable(Bundle):
 
         name - (str) the name of this instance
         properties - (dict) the dictionary which holds the properties
-        id_downto - (bool) set the downto status. Downto is False if the right index is higher than the left one, True otherwise
-        is_scalar - (bool) set the scalar status. Return True if the item is a scalar False otherwise.
+        id_downto - (bool) set the downto status. Downto is False if the right index is higher than
+                    the left one, True otherwise
+        is_scalar - (bool) set the scalar status. Return True if the item is a scalar False
+                     otherwise.
         lower_index - (int) get the value of the lower index of the array.
 
         """
         super().__init__()
         self._wires = []
         _call_create_cable(self)
-        if name != None:
+        if name is not None:
             self.name = name
 
         if is_downto is not None:
@@ -50,7 +53,7 @@ class Cable(Bundle):
         if lower_index is not None:
             self.lower_index = lower_index
 
-        if properties != None:
+        if properties is not None:
             assert isinstance(properties, dict), "properties must be a dictionary"
             for key in properties:
                 self[key] = properties[key]
@@ -75,7 +78,8 @@ class Cable(Bundle):
         # try:
         assert (
             len(value_list) == len(value_set) and set(self._wires) == value_set
-        ), "Set of values does not match, assigment can only be used for reordering, values must be unique"
+        ), "Set of values does not match, assigment can only be used for reordering, \
+            values must be unique"
         # except:
         #     import pdb; pdb.set_trace()
         self._wires = value_list
@@ -99,12 +103,15 @@ class Cable(Bundle):
         return wire
 
     def add_wire(self, wire, position=None):
-        """Adds a wire to the cable at the given position. This wire must not belong to a cable already
+        """
+        Adds a wire to the cable at the given position. This wire must not belong to 
+        a cable already
 
         parameters
         ----------
 
-        wire - (Wire) the wire to be added to the cable. This wire must not belong to any other cable.
+        wire - (Wire) the wire to be added to the cable. This wire must not belong to any other
+        cable.
 
         position - (int, default None) the index in the wires list at which to add the wire.
         """
@@ -118,7 +125,8 @@ class Cable(Bundle):
         wire._cable = self
 
     def remove_wire(self, wire):
-        """removes the given wire from the cable and return it. The wire must belong to this cable
+        """
+        removes the given wire from the cable and return it. The wire must belong to this cable
 
         parameters
         ----------
@@ -154,12 +162,14 @@ class Cable(Bundle):
         wire._cable = None
 
     def _clone_rip_and_replace(self, memo):
-        """Remove from its current environment and place it into the new cloned environment with references held in the memo dictionary"""
+        """Remove from its current environment and place it into the new cloned environment with
+        references held in the memo dictionary"""
         for w in self._wires:
             w._clone_rip_and_replace(memo)
 
     def _clone_rip(self):
-        """Remove from its current environmnet. This will remove all pin pointers and create a floating stand alone instance."""
+        """Remove from its current environmnet. This will remove all pin pointers and create a
+        floating stand alone instance."""
         for w in self._wires:
             w._clone_rip()
             w._cable = self

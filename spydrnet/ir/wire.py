@@ -33,7 +33,8 @@ class Wire(Element):
         value_set = set(value_list)
         assert (
             len(value_list) == len(value_set) and set(self._pins) == value_set
-        ), "Set of values do not match, assignment can only be used to reorder, values must be unique"
+        ), "Set of values do not match, assignment can only be used to reorder, values \
+            must be unique"
         self._pins = value_list
 
     def connect_pin(self, pin, position=None):
@@ -136,7 +137,8 @@ class Wire(Element):
         pin._wire = None
 
     def _clone_rip_and_replace(self, memo):
-        """Remove from its current environment and place it into the new cloned environment with references held in the memo dictionary"""
+        """Remove from its current environment and place it into the new cloned environment with
+        references held in the memo dictionary"""
         new_pins = []
         for p in self._pins:
             assert p in memo, "the pin must be cloned"

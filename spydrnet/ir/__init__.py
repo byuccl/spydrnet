@@ -1,6 +1,6 @@
-from spydrnet import get_active_plugins
 import importlib
 import typing
+from spydrnet import get_active_plugins
 
 if typing.TYPE_CHECKING:
     from spydrnet.ir.element import Element

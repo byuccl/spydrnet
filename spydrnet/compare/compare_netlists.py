@@ -24,7 +24,7 @@ class Comparer:
             self.ir_composer
         ), "Environments do not have the same original identifier"
         # if there is no top instance in either then this test passes.
-        if self.ir_composer.top_instance != None or self.ir_orig.top_instance != None:
+        if self.ir_composer.top_instance is not None or self.ir_orig.top_instance is not None:
             self.compare_instances(
                 self.ir_orig.top_instance, self.ir_composer.top_instance
             )

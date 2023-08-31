@@ -1,9 +1,9 @@
+from copy import deepcopy
 from spydrnet.ir import FirstClassElement
 from spydrnet.ir import Definition
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
 from spydrnet.global_state.global_callback import _call_create_library
-from copy import deepcopy, copy, error
 
 
 class Library(FirstClassElement):
@@ -30,10 +30,10 @@ class Library(FirstClassElement):
         self._netlist = None
         self._definitions = []
         _call_create_library(self)
-        if name != None:
+        if name is not None:
             self.name = name
 
-        if properties != None:
+        if properties is not None:
             assert isinstance(properties, dict), "properties must be a dictionary"
             for key in properties:
                 self[key] = properties[key]
@@ -68,7 +68,8 @@ class Library(FirstClassElement):
         value_set = set(value_list)
         assert (
             len(value_list) == len(value_set) and set(self._definitions) == value_set
-        ), "Set of values do not match, this function can only reorder values, values must be unique"
+        ), "Set of values do not match, this function can only reorder values, values must \
+            be unique"
         self._definitions = value_list
 
     def create_definition(self, name=None, properties=None):
@@ -161,8 +162,10 @@ class Library(FirstClassElement):
         definition._library = None
 
     def _clone_rip_and_replace(self, memo):
-        """Remove from its current environment and place it into the new cloned environment with references held in the memo dictionary"""
-        pass  # this function will need to call rip and replace in library on each of the definitions when called from the netlist.
+        """Remove from its current environment and place it into the new cloned environment with
+        references held in the memo dictionary"""
+        pass  # this function will need to call rip and replace in library on each of
+              # the definitions when called from the netlist.
         for definition in self._definitions:
             definition._clone_rip_and_replace(memo)
 
@@ -210,9 +213,12 @@ class Library(FirstClassElement):
 
         The following describes the structure of the returned object:
 
-         * the instances that pointed to reference definitions within the library will have updated references
-         * the instances that pointed to reference definitions outside the library will maintain their definitions
-         * the references lists (of definitions) both inside and outsde the library will be updated to reflect the change
+         * the instances that pointed to reference definitions within the library will have updated
+           references
+         * the instances that pointed to reference definitions outside the library will maintain
+           their definitions
+         * the references lists (of definitions) both inside and outsde the library will be updated
+           to reflect the change
          * all definitions are cloned within the library.
 
         """

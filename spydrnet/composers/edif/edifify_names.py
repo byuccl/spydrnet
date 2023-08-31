@@ -66,7 +66,8 @@ class EdififyNames:
         self.name_length_target = 256
 
     def _length_good(self, identifier):
-        """returns a boolean indicating whether or not the indentifier fits the 256 character limit"""
+        """returns a boolean indicating whether or not the indentifier fits the 256 character
+        limit"""
 
         return len(identifier) < self.name_length_target
 

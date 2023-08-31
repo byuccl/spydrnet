@@ -7,7 +7,8 @@ class CallbackListener:
     In this class are all of the functions that are used as callbacks. There are also
     register methods whos function is to register the callback functions that are present.
 
-    callbacks are netlist dependent. If a callback is registered to one netlist it is not automatically registered to all netlists.
+    callbacks are netlist dependent. If a callback is registered to one netlist it is not
+    automatically registered to all netlists.
     """
 
     def __init__(self):

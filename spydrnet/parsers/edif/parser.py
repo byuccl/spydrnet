@@ -1,10 +1,10 @@
+from functools import reduce
+import re
+
 from spydrnet.parsers.edif.tokenizer import EdifTokenizer
 from spydrnet.parsers.edif.edif_tokens import *
 from spydrnet.ir import Netlist, Library, Definition, Port, Cable, Instance
 from spydrnet.plugins import namespace_manager
-
-from functools import reduce
-import re
 
 
 class EdifParser:
@@ -459,7 +459,8 @@ class EdifParser:
                 port.create_pins(pin_count)
                 port.is_array = True
                 if "EDIF.original_identifier" in port:
-                    # TODO: what about multi-dimensional ports, non-downto ports, and when non-square brackets are used <0:17><31:0>
+                    # TODO: what about multi-dimensional ports, non-downto ports, and when
+                    # non-square brackets are used <0:17><31:0>
                     original_identifier = port["EDIF.original_identifier"]
                     match = re.match(r".*\[(\d+):(\d+)\]", original_identifier)
                     if match:
@@ -659,7 +660,8 @@ class EdifParser:
             self.expect_end_construct()
         if definition["EDIF.view.identifier"].lower() != view_identifier.lower():
             raise RuntimeError(
-                "Parser error, non-existant view referenced on line {}, revieved {} expected {}".format(
+                "Parser error, non-existant view referenced on line {}, \
+                revieved {} expected {}".format(
                     self.tokenizer.line_number,
                     view_identifier,
                     definition["EDIF.view.identifier"],

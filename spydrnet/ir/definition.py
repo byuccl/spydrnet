@@ -33,10 +33,10 @@ class Definition(FirstClassElement):
         self._references = set()
         _call_create_definition(self)
 
-        if name != None:
+        if name is not None:
             self.name = name
 
-        if properties != None:
+        if properties is not None:
             assert isinstance(properties, dict), "properties must be a dictionary"
             for key in properties:
                 self[key] = properties[key]
@@ -85,7 +85,8 @@ class Definition(FirstClassElement):
     @cables.setter
     def cables(self, value):
         """
-        Reorder the cables in this definition. Use add_cable and remove_cable to add or remove cables.
+        Reorder the cables in this definition. Use add_cable and remove_cable to add or remove
+        cables.
 
 
         parameters
@@ -97,7 +98,8 @@ class Definition(FirstClassElement):
         target_set = set(target)
         assert len(target) == len(target_set) and set(self._cables) == set(
             target
-        ), "Set of values do not match, this function can only reorder values, values must be unique"
+        ), "Set of values do not match, this function can only reorder values, values \
+            must be unique"
         self._cables = target
 
     @property
@@ -110,8 +112,8 @@ class Definition(FirstClassElement):
     @children.setter
     def children(self, value):
         """
-        Reorder the list of instances instantiated in this definition use add_child and remove_child to add or remove
-        instances to or from the definition
+        Reorder the list of instances instantiated in this definition use add_child and remove_child
+        to add or remove instances to or from the definition
 
         parameters
         ----------
@@ -122,7 +124,8 @@ class Definition(FirstClassElement):
         target_set = set(target)
         assert (
             len(target) == len(target_set) and set(self._children) == target_set
-        ), "Set of values do not match, this function can only reorder values, values must be unique"
+        ), "Set of values do not match, this function can only reorder values, values \
+            must be unique"
         self._children = target
 
     @property
@@ -136,8 +139,8 @@ class Definition(FirstClassElement):
         """
         Check to see if this definition represents a leaf cell.
 
-        Leaf cells are cells with no children instances or no
-        children cables. Blackbox cells are considered leaf cells as well as direct pass through cells with cables only
+        Leaf cells are cells with no children instances or no children cables. Blackbox cells are
+        considered leaf cells as well as direct pass through cells with cables only
         """
         if len(self._children) > 0 or len(self._cables) > 0:
             return False
@@ -160,10 +163,13 @@ class Definition(FirstClassElement):
 
         name - (str) the name of this instance
         properties - (dict) the dictionary which holds the properties
-        id_downto - (bool) set the downto status. Downto is False if the right index is higher than the left one, True otherwise
-        is_scalar - (bool) set the scalar status. Return True if the item is a scalar False otherwise.
+        id_downto - (bool) set the downto status. Downto is False if the right index is higher than
+                    the left one, True otherwise
+        is_scalar - (bool) set the scalar status. Return True if the item is a scalar False
+                    otherwise.
         lower_index - (int) get the value of the lower index of the array.
-        direction - (Enum) Define the possible directions for a given port. (UNDEFINED, INOUT, IN, OUT)
+        direction - (Enum) Define the possible directions for a given port. (UNDEFINED, INOUT, IN,
+                    OUT)
         pins - (int) Create number of pins in the newly created port
         """
         port = Port(name, properties, is_downto, is_scalar, lower_index, direction)
@@ -259,8 +265,8 @@ class Definition(FirstClassElement):
         parameters
         ----------
 
-        name - (str) the name of this instance
-        properties - (dict) the dictionary which holds the properties
+        name - (str) the name of this instance properties - (dict) the dictionary which holds the
+        properties
 
         Example
         -------
@@ -274,7 +280,8 @@ class Definition(FirstClassElement):
 
         To create a child with optional parameters
 
-        >>> child_instance = definition.create_child(name="child_instance", reference=reference_definition)
+        >>> child_instance = definition.create_child(name="child_instance", 
+                                                     reference=reference_definition)
 
         The reference of the instance is the definition that initialized this instance.
         """
@@ -371,8 +378,10 @@ class Definition(FirstClassElement):
 
         name - (str) the name of this instance
         properties - (dict) the dictionary which holds the properties
-        id_downto - (bool) set the downto status. Downto is False if the right index is higher than the left one, True otherwise
-        is_scalar - (bool) set the scalar status. Return True if the item is a scalar False otherwise.
+        id_downto - (bool) set the downto status. Downto is False if the right index is higher than
+                    the left one, True otherwise
+        is_scalar - (bool) set the scalar status. Return True if the item is a scalar False
+                     otherwise.
         lower_index - (int) get the value of the lower index of the array.
         wires - (int) Create number of wires in the newly created cable
         """
@@ -453,10 +462,13 @@ class Definition(FirstClassElement):
         cable._definition = None
 
     def _clone_rip_and_replace(self, memo):
-        """If an instance that is a reference of this definition was cloned then update the list of references of the definition.
+        """
+        If an instance that is a reference of this definition was cloned then update the list of
+        references of the definition.
 
-        For each of the children instances, we should also update the reference to refer to any cloned dictionaries
-        inner pins now also need to be updated with new inner pins for each of the definitions that was cloned.
+        For each of the children instances, we should also update the reference to refer to any
+        cloned dictionaries inner pins now also need to be updated with new inner pins for each of
+        the definitions that was cloned.
         """
         new_references = set()
         for instance in self._references:
@@ -535,8 +547,10 @@ class Definition(FirstClassElement):
         The cloned object will have the following properties
 
          * the definition will be orphaned and will not belong to any library
-         * each of the sub elements of the definition will also be cloned and the connection structure between them will be updated.
-         * the cloned instances will still point to the reference to which the pointed before. They will also be members of the references list of those definitions.
+         * each of the sub elements of the definition will also be cloned and the connection
+           structure between them will be updated.
+         * the cloned instances will still point to the reference to which the pointed before. They
+           will also be members of the references list of those definitions.
 
         """
         c = self._clone({})
@@ -544,7 +558,9 @@ class Definition(FirstClassElement):
         return c
 
     # def __repr__(self):
-    #     return "<spydrnet.definition " + str(self.name) + ", cables:"+str(len(self.cables)) + ", children:"+str(len(self.children)) + ", ports:"+str(len(self.ports)) + ", references:"+str(len(self.references)) + ">"
+    #     return "<spydrnet.definition " + str(self.name) + ", cables:"+str(len(self.cables)) + \
+    #           ", children:"+str(len(self.children)) + ", ports:"+str(len(self.ports)) + \
+    #           ", references:"+str(len(self.references)) + ">"
 
     def __str__(self):
         """Re-define the print function so it is easier to read"""

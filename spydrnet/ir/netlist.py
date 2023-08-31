@@ -1,10 +1,10 @@
+from copy import deepcopy
 from spydrnet.ir import FirstClassElement
 from spydrnet.ir import Library
 from spydrnet.ir import Instance
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
 from spydrnet.global_state.global_callback import _call_create_netlist
-from copy import deepcopy, copy, error
 from spydrnet.ir import Definition
 
 
@@ -56,9 +56,9 @@ class Netlist(FirstClassElement):
         self._top_instance = None
         _call_create_netlist(self)
 
-        if name != None:
+        if name is not None:
             self.name = name
-        if properties != None:
+        if properties is not None:
             assert isinstance(properties, dict), "properties must be a dictionary"
             for key in properties:
                 self[key] = properties[key]
@@ -94,7 +94,8 @@ class Netlist(FirstClassElement):
         value_set = set(value_list)
         assert (
             len(value_list) == len(value_set) and set(self._libraries) == value_set
-        ), "Set of values do not match, this assignment can only reorder values, values must be unique"
+        ), "Set of values do not match, this assignment can only reorder values, \
+            values must be unique"
         self._libraries = value_list
 
     @property
@@ -117,7 +118,8 @@ class Netlist(FirstClassElement):
 
         Parameters
         ----------
-        instance - (Instance or Definition) the instance to set as the top instance. If a definition is passed into the funciton,
+        instance - (Instance or Definition) the instance to set as the top instance. If a definition
+                    is passed into the funciton,
         creates a new instance with that definition and set it as the top instance.
         """
         assert (
@@ -126,8 +128,8 @@ class Netlist(FirstClassElement):
             or isinstance(instance, Definition)
         ), "Must specify an instance"
         global_callback._call_netlist_top_instance(self, instance)
-        # TODO: should We have a DRC that makes sure the instance is of a definition contained in netlist? I think no
-        #  but I am open to hear other points of veiw.
+        # TODO: should We have a DRC that makes sure the instance is of a definition contained in
+        # netlist? I think no but I am open to hear other points of veiw.
         if self.top_instance:
             self.top_instance.is_top_instance = False
         if isinstance(instance, Definition):
@@ -147,7 +149,8 @@ class Netlist(FirstClassElement):
 
         Parameters
         ----------
-        instance - (Instance or Definition) the instance to set as the top instance. If a definition is passed into the funciton,
+        instance - (Instance or Definition) the instance to set as the top instance. If a definition
+                    is passed into the funciton,
         creates a new instance with that definition and set it as the top instance.
         """
         assert (
@@ -156,8 +159,8 @@ class Netlist(FirstClassElement):
             or isinstance(instance, Definition)
         ), "Must specify an instance"
         global_callback._call_netlist_top_instance(self, instance)
-        # TODO: should We have a DRC that makes sure the instance is of a definition contained in netlist? I think no
-        #  but I am open to hear other points of veiw.
+        # TODO: should We have a DRC that makes sure the instance is of a definition contained in
+        # netlist? I think no but I am open to hear other points of veiw.
 
         if isinstance(instance, Definition):
             top = Instance()
@@ -278,7 +281,7 @@ class Netlist(FirstClassElement):
             new_libraries.append(library._clone(memo))
         c._libraries = new_libraries
 
-        if self._top_instance == None:
+        if self._top_instance is None:
             c._top_instance = None
         else:
             if self._top_instance in memo:

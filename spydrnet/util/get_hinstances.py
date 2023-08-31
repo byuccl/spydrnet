@@ -23,32 +23,36 @@ def get_hinstances(obj, *args, **kwargs):
     Parameters
     ----------
     obj : object, Iterable - required
-        The object or objects associated with this query. Queries return a collection of objects associated with the
-        provided object or objects that match the query criteria. For example, `sdn.get_instances(netlist, ...)` would
-        return all of the instances *within* the provided definition that match the additional criteria.
+        The object or objects associated with this query. Queries return a collection of objects
+        associated with the provided object or objects that match the query criteria. For example,
+        `sdn.get_instances(netlist, ...)` would return all of the instances *within* the provided
+        definition that match the additional criteria.
     patterns : str, Iterable - optional, positional or named, default: wildcard
-        The search patterns. Patterns can be a single string or an Iterable collection of strings. Patterns can be
-        absolute or they can contain wildcards or regular expressions. If `patterns` is not provided, then it defaults
-        to a wildcard.
+        The search patterns. Patterns can be a single string or an Iterable collection of strings.
+        Patterns can be absolute or they can contain wildcards or regular expressions. If
+        `patterns` is not provided, then it defaults to a wildcard.
     is_case : bool - optional, named, default: True
-        Specify if patterns should be treated as case sensitive. Only applies to patterns. Does not alter fast lookup
-        behavior (if namespace policy uses case insensitive indexing, this parameter will not prevent a fast lookup
-        from returning a matching object even if the case is not an exact match).
+        Specify if patterns should be treated as case sensitive. Only applies to patterns. Does not
+        alter fast lookup behavior (if namespace policy uses case insensitive indexing, this
+        parameter will not prevent a fast lookup from returning a matching object even if the case
+        is not an exact match).
     is_re: bool - optional, named, default: False
-        Specify if patterns are regular expressions. If `False`, a pattern can still contain `*` and `?` wildcards. A
-        `*` matches zero or more characters. A `?` matches upto a single character.
+        Specify if patterns are regular expressions. If `False`, a pattern can still contain `*`
+        and `?` wildcards. A `*` matches zero or more characters. A `?` matches upto a single
+        character.
     recursive : bool - optional, default: False
-        Specify if search should be recursive or not meaning that sub hierarchical instances within an instance are
-        included or not.
+        Specify if search should be recursive or not meaning that sub hierarchical instances within
+        an instance are included or not.
     filter : function
-        This is a single input function that can be used to filter out unwanted virtual instances. If not specifed, all
-        matching virtual instances are returned. Otherwise, virtual instances that cause the filter function to evaluate
-        to true are the only items returned.
+        This is a single input function that can be used to filter out unwanted virtual instances.
+        If not specifed, all matching virtual instances are returned. Otherwise, virtual instances
+        that cause the filter function to evaluate to true are the only items returned.
 
     Returns
     -------
     href_instances : generator
-        The hierarchical references to instances associated with a particular object or collection of objects.
+        The hierarchical references to instances associated with a particular object or collection
+        of objects.
 
     """
     # Check argument list
@@ -83,8 +87,8 @@ def get_hinstances(obj, *args, **kwargs):
         is False
     ):
         raise TypeError(
-            "get_hinstances() supports all netlist related objects and hierarchical references or a "
-            "collection of theses as the object searched, unsupported object provided"
+            "get_hinstances() supports all netlist related objects and hierarchical references or \
+            a collection of these as the object searched, unsupported object provided"
         )
 
     if isinstance(patterns, str):

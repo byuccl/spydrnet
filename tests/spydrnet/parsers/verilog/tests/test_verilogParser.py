@@ -1591,17 +1591,17 @@ class TestVerilogParser(unittest.TestCase):
         c1, o_left, o_right, c2, i_left, i_right = parser.parse_assign()
         assert c1.name == "cable1"
         assert c2.name == "cable2"
-        assert o_left == None
-        assert o_right == None
-        assert i_left == None
-        assert i_right == None
+        assert o_left is None
+        assert o_right is None
+        assert i_left is None
+        assert i_right is None
         c1, o_left, o_right, c2, i_left, i_right = parser.parse_assign()
         assert c1.name == "SR2"
         assert c2.name == "\\<const0>"
         assert o_left == 2
-        assert o_right == None
-        assert i_left == None
-        assert i_right == None
+        assert o_right is None
+        assert i_left is None
+        assert i_right is None
 
     ############################################
     ##Parse star parameters
@@ -1680,9 +1680,9 @@ class TestVerilogParser(unittest.TestCase):
         stars2 = parser.parse_star_property()
 
         assert "KEEP" in stars0
-        assert stars0["KEEP"] == None
+        assert stars0["KEEP"] is None
         assert "DONT_TOUCH" in stars0
-        assert stars0["DONT_TOUCH"] == None
+        assert stars0["DONT_TOUCH"] is None
         assert "BEL" in stars0
         assert stars0["BEL"] == '"C6LUT"'
 
@@ -1692,9 +1692,9 @@ class TestVerilogParser(unittest.TestCase):
         assert stars1["RLOC"] == '"X0Y0"'
 
         assert "KEEP" in stars2
-        assert stars2["KEEP"] == None
+        assert stars2["KEEP"] is None
         assert "DONT_TOUCH" in stars2
-        assert stars2["DONT_TOUCH"] == None
+        assert stars2["DONT_TOUCH"] is None
 
     ############################################
     ##test hierarchy
@@ -1858,12 +1858,12 @@ class TestVerilogParser(unittest.TestCase):
 
         for i in range(len(tests)):
             left1 = tests[i][0] + cable1.lower_index
-            if tests[i][1] != None:
+            if tests[i][1] is not None:
                 right1 = tests[i][1] + cable1.lower_index
             else:
                 right1 = None
             left2 = tests[i][0] + cable2.lower_index
-            if tests[i][1] != None:
+            if tests[i][1] is not None:
                 right2 = tests[i][1] + cable2.lower_index
             else:
                 right2 = None

@@ -201,7 +201,8 @@ get_example_netlist_names(example_netlists_path)
 def load_example_netlist_by_name(name, netlist_format=EDIF):
     example_netlists_path = determine_example_netlists_path(True)
     get_example_netlist_names(example_netlists_path)
-    error_message = "Example netlist not found. Either run 'export EXAMPLE_NETLISTS_PATH=<path>' or allow downloading to /tmp/spydrnet_example_netlists."
+    error_message = "Example netlist not found. Either run 'export EXAMPLE_NETLISTS_PATH=<path>' \
+                        or allow downloading to /tmp/spydrnet_example_netlists."
     if netlist_format is EDIF:
         assert name in example_netlist_names, error_message
         return parse(Path(example_netlists_path, "EDIF_netlists", name + ".edf.zip"))

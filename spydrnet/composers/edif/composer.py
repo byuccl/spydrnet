@@ -1,7 +1,7 @@
 import json
-from spydrnet.ir import *
 import inspect  # used for debug.
 from datetime import datetime
+from spydrnet.ir import *
 from spydrnet.composers.edif.edifify_names import EdififyNames
 
 
@@ -22,7 +22,8 @@ class ComposeEdif:
         Keyword Arguments:
         ir -- the object(environment) to be composed to edif (default None)
 
-        file_out -- the path and name of the file to which the edif will be written (default "out.edf")
+        file_out -- the path and name of the file to which the edif will be written (default
+                    "out.edf")
         """
         self.output_filename = file_out
         self._edifify_netlist(ir)
@@ -31,7 +32,8 @@ class ComposeEdif:
             self.filename = ir
             self._read_data_()  # only needed if we start to accept the json format files
             print(
-                "currently input files directly to the composer are unsupported! read in with the parser first."
+                "currently input files directly to the composer are unsupported! read in with \
+                the parser first."
             )
         else:
             self._data_ = ir
@@ -267,7 +269,9 @@ class ComposeEdif:
         self._new_line_()
 
     def _output_name_of_object_(self, obj):
-        # if '.NAME' not in obj or (obj['.NAME'] == obj['EDIF.identifier'] and obj.get('EDIF.rename', False) is False):
+        # if '.NAME' not in obj or
+        #       (obj['.NAME'] == obj['EDIF.identifier'] and
+        #           obj.get('EDIF.rename', False) is False):
         #     self._output_.write(obj['EDIF.identifier'])
         # else:
         #     identifier = obj['EDIF.identifier']
@@ -420,7 +424,7 @@ class ComposeEdif:
             self._lisp_increment_()
             self._output_.write("joined")
             self._new_line_()
-            # for port in cable.getConnectionList(): #TODO fuction cable.getConnectionList() needs to be created
+            # for port in cable.getConnectionList(): #TODO create fuction cable.getConnectionList()
             for pin in wire.pins:
                 # port = pin.port
                 # print(type(pin))

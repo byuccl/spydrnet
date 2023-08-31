@@ -1,5 +1,4 @@
 from spydrnet.ir import Pin
-from copy import deepcopy, copy, error
 
 
 class InnerPin(Pin):
@@ -23,15 +22,17 @@ class InnerPin(Pin):
         return self._port
 
     def _clone_rip_and_replace(self, memo):
-        """Remove from its current environment and place it into the new cloned environment with references held in the memo dictionary"""
-        if self._wire != None:
+        """Remove from its current environment and place it into the new cloned environment with
+        references held in the memo dictionary"""
+        if self._wire is not None:
             assert (
                 self._wire in memo
             ), "wire must have been cloned in order to rip and replace innerpin"
             self._wire = memo[self._wire]
 
     def _clone_rip(self):
-        """Remove from its current environmnet. This will remove all pin pointers and create a floating stand alone instance."""
+        """Remove from its current environmnet. This will remove all pin pointers and create a
+        floating stand alone instance."""
         self._wire = None
 
     def _clone(self, memo):

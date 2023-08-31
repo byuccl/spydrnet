@@ -70,22 +70,17 @@ class Tokenizer:
             self.next_token = None
         else:
             self.token = next(self.generator)
-        # print(self.token)
         if self.token is BACKSLASH:
-            # print("BACKSLASH!!!!")
-            # print("Token is " + self.token)
             self.next()
-            # print("Token is " + self.token)
             self.next()
-            # print("Token is " + self.token)
         return self.token
 
     def peek(self):
         if self.next_token:
             return self.next_token
-        else:
-            self.next_token = next(self.generator)
-            return self.next_token
+
+        self.next_token = next(self.generator)
+        return self.next_token
 
     def expect(self, other):
         if not self.token_equals(other):
@@ -101,10 +96,10 @@ class Tokenizer:
     def equals(self, this, that):
         if this == that:
             return True
-        else:
-            lowercase_this = this.lower()
-            if lowercase_this == that:
-                return True
-            elif lowercase_this == that.lower():
-                return True
+
+        lowercase_this = this.lower()
+        if lowercase_this == that:
+            return True
+        if lowercase_this == that.lower():
+            return True
         return False

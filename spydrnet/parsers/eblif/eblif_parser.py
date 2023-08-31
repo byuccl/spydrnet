@@ -263,7 +263,8 @@ class EBLIFParser:
 
     def check_hierarchy(self, child_definition_name):
         if child_definition_name == self.netlist.top_instance.reference.name:
-            # print(self.current_definition.name + " is instancing the current top instance (" + name+ " which is a "+ self.netlist.top_instance.reference.name+")")
+            # print(self.current_definition.name + " is instancing the current top instance (" + \
+            # name+ " which is a "+ self.netlist.top_instance.reference.name+")")
             old_top_instance = self.netlist.top_instance
             new_level = self.current_model
             # we know the current top is not right. So now we can move it up a level.
@@ -284,8 +285,9 @@ class EBLIFParser:
             self.netlist.top_instance.reference = new_level
             self.netlist.name = new_level.name
 
-            # this instance should just go away. It was created to be the top instance but we don't want that
-            # it has no parent. And now with no reference, it should have no ties to the netlist.
+            # this instance should just go away. It was created to be the top instance but we don't
+            # want that it has no parent. And now with no reference, it should have no ties to the
+            # netlist.
             old_top_instance.reference = None
 
     def connect_instance_pins(self, instance):
@@ -442,7 +444,8 @@ class EBLIFParser:
         if "unconn" in port_nets[len(port_nets) - 1]:
             self.assign_instance_a_default_name(instance)
         else:
-            instance.name = port_nets[len(port_nets) - 1]  # by convention, the name of the instance is the name of the driven net
+            # by convention, the name of the instance is the name of the driven net
+            instance.name = port_nets[len(port_nets) - 1]
 
         self.connect_instance_pins(instance)
         self.parse_instance_info()
@@ -541,7 +544,10 @@ class EBLIFParser:
             new_wire.connect_pin(pin)
         wire_two.cable.remove_wire(wire_two)
 
-    def set_subcircuit_names_by_convention(self):  # by convention, the instance names are defined by the net they drive
+    def set_subcircuit_names_by_convention(self):
+        """
+        by convention, the instance names are defined by the net they drive
+        """
         for instance in self.netlist.get_instances():
             if instance["EBLIF.type"] not in ["EBLIF.subckt", "EBLIF.gate"]:
                 continue

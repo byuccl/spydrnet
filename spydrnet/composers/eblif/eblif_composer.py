@@ -1,6 +1,6 @@
+from pathlib import Path
 from spydrnet.util.selection import Selection
 import spydrnet as sdn
-from pathlib import Path
 
 
 class EBLIFComposer:
@@ -174,7 +174,8 @@ class EBLIFComposer:
             )
             in_pin_list.reverse()
             for pin in in_pin_list:
-                # for pin in name_instance.get_pins(selection=Selection.OUTSIDE,filter=lambda x: x.inner_pin.port.direction is sdn.IN):
+                # for pin in name_instance.get_pins(selection=Selection.OUTSIDE,
+                #                          filter=lambda x: x.inner_pin.port.direction is sdn.IN):
                 if pin.wire:
                     to_write += pin.wire.cable.name
                     if (len(pin.wire.cable.wires) > 1):  # if a multi bit wire, add the index

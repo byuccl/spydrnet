@@ -1,19 +1,20 @@
+from copy import deepcopy
+from enum import Enum
 from spydrnet.ir import Bundle
 from spydrnet.ir import InnerPin
 from spydrnet.ir import OuterPin
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
 from spydrnet.global_state.global_callback import _call_create_port
-from copy import deepcopy, copy, error
 
-from enum import Enum
 
 
 class Port(Bundle):
     """
     Located on the inside of a definition.
 
-    Ports contain information about the quantity and directon of pins that go into and out of the defined struture when instanced.
+    Ports contain information about the quantity and directon of pins that go into and out of the
+    defined struture when instanced.
     """
 
     __slots__ = ["_direction", "_pins"]
@@ -47,17 +48,20 @@ class Port(Bundle):
 
         name - (str) the name of this instance
         properties - (dict) the dictionary which holds the properties
-        id_downto - (bool) set the downto status. Downto is False if the right index is higher than the left one, True otherwise
-        is_scalar - (bool) set the scalar status. Return True if the item is a scalar False otherwise.
+        id_downto - (bool) set the downto status. Downto is False if the right index is higher than
+                    the left one, True otherwise
+        is_scalar - (bool) set the scalar status. Return True if the item is a scalar False
+                    otherwise.
         lower_index - (int) get the value of the lower index of the array.
-        direction - (Enum) Define the possible directions for a given port. (UNDEFINED, INOUT, IN, OUT)
+        direction - (Enum) Define the possible directions for a given port. (UNDEFINED, INOUT, IN,
+                    OUT)
 
         """
         super().__init__()
         self._direction = self.Direction.UNDEFINED
         self._pins = []
         _call_create_port(self)
-        if name != None:
+        if name is not None:
             self.name = name
 
         if is_downto is not None:
@@ -71,7 +75,7 @@ class Port(Bundle):
         if direction is not None:
             self.direction = direction
 
-        if properties != None:
+        if properties is not None:
             assert isinstance(properties, dict), "properties must be a dictionary"
             for key in properties:
                 self[key] = properties[key]
@@ -95,7 +99,10 @@ class Port(Bundle):
         parameters
         ----------
 
-        value - (Port.Direction or int or str) when a Port.Direction is passed in it will set the port accordingly. when an int is passed in it will be 0: UNDEFINED, 1: INOUT, 2: IN, 3: OUT. if a string is passed in it is case insensitively compared with the names and assigned accordingly
+        value - (Port.Direction or int or str) when a Port.Direction is passed in it will set the
+        port accordingly. when an int is passed in it will be 0: UNDEFINED, 1: INOUT, 2: IN, 3: OUT.
+        if a string is passed in it is case insensitively compared with the names and assigned
+        accordingly
         """
         if isinstance(value, self.Direction):
             self._direction = value
@@ -122,8 +129,10 @@ class Port(Bundle):
 
     @pins.setter
     def pins(self, value):
-        """This function can set the pins for the port, but it can only be used to reorder the pins in the port.
-        It cannot be used to add or remove pins from the port. to do this use the add_pin or remove_pin functions instead
+        """
+        This function can set the pins for the port, but it can only be used to reorder the pins
+        in the port. It cannot be used to add or remove pins from the port. to do this use the
+        add_pin or remove_pin functions instead
 
         parameters
         ----------
@@ -135,7 +144,8 @@ class Port(Bundle):
         value_set = set(value_list)
         assert (
             len(value_set) == len(value_list) and set(self._pins) == value_set
-        ), "Set of values do not match, assignment can only be used to reorder values, values must be unique"
+        ), "Set of values do not match, assignment can only be used to reorder values, values \
+            must be unique"
         self._pins = value_list
 
     def create_pins(self, pin_count):
@@ -188,7 +198,8 @@ class Port(Bundle):
     def remove_pin(self, pin):
         """Remove the given pin from the port.
 
-        The pin must belong to the port in order to be removed. Wires are disconnected from the pin that is removed.
+        The pin must belong to the port in order to be removed. Wires are disconnected from the pin
+        that is removed.
 
         parameters
         ----------
@@ -238,7 +249,8 @@ class Port(Bundle):
         pin._port = None
 
     def _clone_rip_and_replace(self, memo):
-        """Remove from its current environment and place it into the new cloned environment with references held in the memo dictionary"""
+        """Remove from its current environment and place it into the new cloned environment with
+        references held in the memo dictionary"""
         for p in self._pins:
             p._clone_rip_and_replace(memo)
 

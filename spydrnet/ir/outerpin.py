@@ -1,11 +1,10 @@
 from spydrnet.ir import Pin
-from copy import deepcopy, copy, error
 
 
 class OuterPin(Pin):
     """
-    Pins that correspond to instances. These pins can be thought of as on the outside of an instance. There can be many
-    outer pins for each inner pin
+    Pins that correspond to instances. These pins can be thought of as on the outside of an
+    instance. There can be many outer pins for each inner pin
     """
 
     __slots__ = ["_instance", "_inner_pin"]
@@ -32,7 +31,8 @@ class OuterPin(Pin):
 
         instance - (Instance) the instance with which to associate this outper pin.
 
-        inner_pin - (InnerPin) a definition's inner pin to be associated with this instance outer pin.
+        inner_pin - (InnerPin) a definition's inner pin to be associated with this instance outer
+        pin.
         """
         super().__init__()
         self._instance = instance
@@ -60,8 +60,9 @@ class OuterPin(Pin):
         return hash((self._instance, self._inner_pin))
 
     def _clone_rip_and_replace(self, memo):
-        """remove from its current environment and place it into the new cloned environment with references held in the memo dictionary"""
-        if self._wire != None:
+        """remove from its current environment and place it into the new cloned environment with
+        references held in the memo dictionary"""
+        if self._wire is not None:
             assert (
                 self._wire in memo
             ), "can't call this function when the wire has not been cloned yet"

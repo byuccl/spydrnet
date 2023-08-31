@@ -217,7 +217,8 @@ class Composer:
     def _write_module_body_port(self, port):
         _, cables = self._all_wires_and_cables_from_pinset(port.pins)
         if len(cables) == 0:
-            cables.append(port)  # adding the port will let composer to still print out disconnected ports
+            # adding the port will let composer to still print out disconnected ports
+            cables.append(port)
         for c in cables:
             if c.name in self.module_body_ports_written:
                 continue
@@ -472,7 +473,10 @@ class Composer:
         self.file.write(vt.SEMI_COLON)
 
     def _write_implicitly_mapped_instance_port(self, instance, port):
-        """Ports that have no name must be implicitly mapped. E.g. inst(VCC_net) rather than inst(.p(VCC_net))"""
+        """
+        Ports that have no name must be implicitly mapped. E.g. inst(VCC_net) rather than
+        inst(.p(VCC_net))
+        """
         self.file.write(2 * self.indent_count * vt.SPACE)
         # self.file.write(vt.DOT)
         # self._write_name(port)
@@ -567,7 +571,8 @@ class Composer:
         width = len(array)
 
         assert width != 0, self._error_string(
-            "bundle has 0 width, this will not write correctly please add a pin to the port or wire to the cable.",
+            "bundle has 0 width, this will not write correctly please add a \
+            pin to the port or wire to the cable.",
             bundle,
         )
 
@@ -583,7 +588,7 @@ class Composer:
     def _write_brackets(self, bundle, low_index, high_index):
         """write a bundle's brackets based on the low and high indicies given
         does not write out the name, works on both cables and ports"""
-        if low_index == None and high_index == None:
+        if low_index is None and high_index is None:
             return  # nothing to write.
 
         if isinstance(bundle, Cable):
@@ -597,15 +602,17 @@ class Composer:
 
         # intended logic
         # the bundle is a single bit: assert indicies are within but nothing to be written
-        # the bundle is multibit and the indicies match the upper and lower(or none): nothing to be written
-        # the bundle is multibit but the indicies match each other or one is none: write a single index
+        # the bundle is multibit and the indicies match the upper and
+        #       lower(or none): nothing to be written
+        # the bundle is multibit but the indicies match each other or
+        #       one is none: write a single index
         # the bundle is multibit but the indicies don't match each other: write both indicies
 
         if width == 1:
-            assert low_index == None or low_index == lower_bundle, self._error_string(
+            assert low_index is None or low_index == lower_bundle, self._error_string(
                 "attempted to index bundle out of bounds at " + str(low_index), bundle
             )
-            assert high_index == None or high_index == upper_bundle, self._error_string(
+            assert high_index is None or high_index == upper_bundle, self._error_string(
                 "attempted to index bundle out of bounds at " + str(high_index), bundle
             )
             return
@@ -687,8 +694,8 @@ class Composer:
                 aliased = True
                 break
 
-        # if all the wires connected to the pins are from the same cable, don't count as aliased
-        # otherwise, return previous answer
+        # if all the wires connected to the pins are from the same cable,
+        # don't count as aliased. Otherwise, return previous answer
         # TODO maybe also check if all of the cable is used. So no skipped wires.
         # name = None
         # for p in pins:

@@ -23,24 +23,25 @@ def get_wires(obj, *args, **kwargs):
     Parameters
     ----------
     obj : object, Iterable - required
-        The object or objects associated with this query. Queries return a collection of objects associated with the
-        provided object or objects that match the query criteria. For example, `sdn.get_instances(netlist, ...)` would
-        return all of the instances *within* the provided definition that match the additional criteria.
+		The object or objects associated with this query. Queries return a collection of objects
+		associated with the provided object or objects that match the query criteria. For example,
+		`sdn.get_instances(netlist, ...)` would return all of the instances *within* the provided
+		definition that match the additional criteria.
     recursive : bool - optional, default: False
-        Specify if search should be recursive or not meaning that sub hierarchical instances within an instance are
-        included or not.
+		Specify if search should be recursive or not meaning that sub hierarchical instances within
+		an instance are included or not.
     selection : Selection.{INSIDE, OUTSIDE, BOTH, ALL}, default: INSIDE
-        This parameter determines the wires that are returned based on the instance associated with the object that is
-        being searched.
+		This parameter determines the wires that are returned based on the instance associated with
+		the object that is being searched.
     filter : function
-        This is a single input function that can be used to filter out unwanted virtual instances. If not specifed, all
-        matching virtual instances are returned. Otherwise, virtual instances that cause the filter function to evaluate
-        to true are the only items returned.
+		This is a single input function that can be used to filter out unwanted virtual instances.
+		If not specifed, all matching virtual instances are returned. Otherwise, virtual instances
+		that cause the filter function to evaluate to true are the only items returned.
 
     Returns
     -------
     wires : generator
-        The wires associated with a particular object or collection of objects.
+		The wires associated with a particular object or collection of objects.
 
     """
     # Check argument list

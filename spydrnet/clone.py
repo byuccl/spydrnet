@@ -13,12 +13,16 @@ def clone(element):
 
     Properties
      * cloned using python's built in deepcopy functionality.
-     * expected to be string objects but if you store something else there make sure you override deepcopy on that object.
+     * expected to be string objects but if you store something else there make sure you override
+       deepcopy on that object.
 
     Instances have some special considerations
-     * when cloned without the library containing the reference definition the instance will still point to the definition of it's clone.
-     * in the same case as the above point the references of the definition will be updated accordingly
-     * when a library is cloned some of the instances may be defined in another library these instances will follow the premises above
+     * when cloned without the library containing the reference definition the instance will still
+       point to the definition of it's clone.
+     * in the same case as the above point the references of the definition will be updated
+       accordingly
+     * when a library is cloned some of the instances may be defined in another library these
+       instances will follow the premises above
      * instances defined and referenced in the cloned library will point to the cloned definition
 
     """

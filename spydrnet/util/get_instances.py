@@ -26,36 +26,42 @@ def get_instances(obj, *args, **kwargs):
     Parameters
     ----------
     obj : object, Iterable - required
-        The object or objects associated with this query. Queries return a collection objects associated with the
-        provided object or objects that match the query criteria. For example, `sdn.get_instances(definition, ...)` would
-        return all of the instances *within* the provided definition that match the additional criteria.
+        The object or objects associated with this query. Queries return a collection objects
+        associated with the provided object or objects that match the query criteria. For example,
+        `sdn.get_instances(definition, ...)` would return all of the instances *within* the 
+        provided definition that match the additional criteria.
     patterns : str, Iterable - optional, positional or named, default: wildcard
-        The search patterns. Patterns can be a single string or an Iterable collection of strings. Patterns can be
-        absolute or they can contain wildcards or regular expressions. If `patterns` is not provided, then it defaults
-        to a wildcard. Patterns are queried against the object property value stored under a specified key. Fast lookups
-        are only attempted on absolute patterns that are not regular expressions and contain no wildcards.
+        The search patterns. Patterns can be a single string or an Iterable collection of strings. 
+        Patterns can be absolute or they can contain wildcards or regular expressions. If 
+        `patterns` is not provided, then it defaults to a wildcard. Patterns are queried against 
+        the object property value stored under a specified key. Fast lookups are only attempted on 
+        absolute patterns that are not regular expressions and contain no wildcards.
     key : str, optional, default: ".NAME"
         This is the key that controls which value is being searched.
     is_case : bool - optional, named, default: True
-        Specify if patterns should be treated as case sensitive. Only applies to patterns. Does not alter fast lookup
-        behavior (if namespace policy uses case insensitive indexing, this parameter will not prevent a fast lookup
-        from returning a matching object even if the case is not an exact match).
+        Specify if patterns should be treated as case sensitive. Only applies to patterns. Does not
+        alter fast lookup behavior (if namespace policy uses case insensitive indexing, this 
+        parameter will not prevent a fast lookup from returning a matching object even if the case
+        is not an exact match).
     is_re: bool - optional, named, default: False
-        Specify if patterns are regular expressions. If `False`, a pattern can still contain `*` and `?` wildcards. A
-        `*` matches zero or more characters. A `?` matches upto a single character.
+        Specify if patterns are regular expressions. If `False`, a pattern can still contain `*` 
+        and `?` wildcards. A `*` matches zero or more characters. A `?` matches upto a single
+        character.
     selection : Selection.{INSIDE, OUTSIDE}, default: INSIDE
-        This parameter determines the instances that are returned based on the definition or instance that is being
-        searched. This parameter only applies to objects that are definitions. If the selection is "INSIDE" (default),
-        then the function will return all of the instances that are inside the definition (i.e., the definition's
-        children) that match the remainder of the search criteria. If the selection is "OUTSIDE", then the function will
-        return all of the instances of the provided definition that match the remainder of the search criteria.
+        This parameter determines the instances that are returned based on the definition or 
+        instance that is being searched. This parameter only applies to objects that are 
+        definitions. If the selection is "INSIDE" (default), then the function will return all of
+        the instances that are inside the definition (i.e., the definition's children) that match 
+        the remainder of the search criteria. If the selection is "OUTSIDE", then the function will
+        return all of the instances of the provided definition that match the remainder of the 
+        search criteria.
     recursive : bool - optional, default: False
-        Specify if search should be recursive or not meaning that sub hierarchical instances within an instance are
-        included or not.
+        Specify if search should be recursive or not meaning that sub hierarchical instances within
+        an instance are included or not.
     filter : function
-        This is a single input function that can be used to filter out unwanted virtual instances. If not specifed, all
-        matching virtual instances are returned. Otherwise, virtual instances that cause the filter function to evaluate
-        to true are the only items returned.
+        This is a single input function that can be used to filter out unwanted virtual instances. 
+        If not specifed, all matching virtual instances are returned. Otherwise, virtual instances
+        that cause the filter function to evaluate to true are the only items returned.
 
     Returns
     -------
@@ -111,8 +117,8 @@ def get_instances(obj, *args, **kwargs):
         object_collection = [obj]
     if all(isinstance(x, (Element, HRef)) for x in object_collection) is False:
         raise TypeError(
-            "get_instances() only supports netlists, libraries, and definitions, or a collection of these "
-            "as the object searched"
+            "get_instances() only supports netlists, libraries, and definitions, or a collection \
+            of these as the object searched"
         )
 
     if isinstance(patterns, str):

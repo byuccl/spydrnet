@@ -5,9 +5,9 @@ from functools import partial
 import re
 import zipfile
 import io
+from pathlib import Path
 import spydrnet.parsers.verilog.verilog_tokens as vt
 from spydrnet.parsers.verilog.verilog_token_factory import TokenFactory
-from pathlib import Path
 
 
 class VerilogTokenizer:
@@ -108,10 +108,11 @@ class VerilogTokenizer:
         finally:
             self.input_stream.close()
 
-        # if the input doesn't end in white space there will be one token left in the token factory try and get it.
+        # if the input doesn't end in white space there will be one token left in the token factory
+        # try and get it.
 
         result = tf.flush()
-        if result != None:
+        if result is not None:
             yield result
 
     def close(self):

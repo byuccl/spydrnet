@@ -133,7 +133,9 @@ BREAKER_TOKENS = {
     "\\",
     '"',
     "`",
-}  # single quote should not be included here because of 1'b0 type of declarations (these should be one token)
+}
+# single quote should not be included here because of 1'b0 type of declarations (these should be one
+# token)
 
 SINGLE_CHARACTER_TOKENS = {
     OPEN_PARENTHESIS,

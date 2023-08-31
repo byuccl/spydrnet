@@ -264,10 +264,12 @@ class VerilogParser:
 
     def parse_primitive(self, definition_list=[], bypass_name_check=False):
         """
-        similar to parse module but it will only look for the inputs and outputs to get an idea of how those things look
+        similar to parse module but it will only look for the inputs and outputs to get an idea of
+        how those things look
 
-        definition_list is an optional parameter that is used by primitive_library_reader as primitive libraries are parsed. If the primitive name is not
-        in the definition list, it is not needed and will be skipped.
+        definition_list is an optional parameter that is used by primitive_library_reader as
+        primitive libraries are parsed. If the primitive name is not in the definition list, it is
+        not needed and will be skipped.
         """
         token = self.next_token()
         assert token == vt.MODULE or token == vt.PRIMITIVE, self.error_string(
@@ -304,7 +306,7 @@ class VerilogParser:
 
         while token != vt.END_MODULE and token != vt.END_PRIMITIVE:
             token = self.peek_token()
-            if (token == vt.FUNCTION):  # these constructs may contain input output or inout
+            if token == vt.FUNCTION:  # these constructs may contain input output or inout
                 while token != vt.END_FUNCTION:
                     token = self.next_token()
             elif token == vt.TASK:  # these constructs may contain input output or inout
@@ -342,7 +344,8 @@ class VerilogParser:
         self.parse_module_body()
 
     def parse_module_header(self):
-        """parse a module header and add the parameter dictionary and port list to the current_definition"""
+        """parse a module header and add the parameter dictionary and port list to the
+        current_definition"""
         token = self.peek_token()
         if token == "#":
             self.parse_module_header_parameters()
@@ -363,7 +366,8 @@ class VerilogParser:
         )
 
     def parse_module_header_parameters(self):
-        """parse a parameter block in a module header, add all parameters to the current definition"""
+        """parse a parameter block in a module header, add all parameters to the current
+        definition"""
         token = self.next_token()
         assert token == vt.OCTOTHORP, self.error_string(
             vt.OCTOTHORP, "to begin parameter map", token
@@ -387,7 +391,7 @@ class VerilogParser:
             token = self.peek_token()
             if token == vt.OPEN_BRACKET:
                 left, right = self.parse_brackets()
-                if right != None:
+                if right is not None:
                     key = "[" + str(left) + ":" + str(right) + "] "
                 else:
                     key = "[" + str(left) + "] "
@@ -449,10 +453,14 @@ class VerilogParser:
                 token = self.peek_token()  # setup the next token
 
     def parse_module_header_port_alias(self):
-        """parse the port alias portion of the module header
-        this parses the port alias section so that the port name is only a port and the mapped wires are the cables names that connect to that port.
+        """
+        parse the port alias portion of the module header
 
-        this requires that the cables names be kept in a dictionary to allow for setting the direction when the direction is given to the internal port names.
+        this parses the port alias section so that the port name is only a port and the mapped wires
+        are the cables names that connect to that port.
+
+        this requires that the cables names be kept in a dictionary to allow for setting the
+        direction when the direction is given to the internal port names.
 
         example syntax
         .canale({\\canale[3] ,\\canale[2] ,\\canale[1] ,\\canale[0] }),"""
@@ -489,7 +497,8 @@ class VerilogParser:
         # connect the wires to the pins
         assert len(port.pins) == len(
             wires
-        ), "Internal Error: the pins in a created port and the number of wires the aliased cable do not match up"
+        ), "Internal Error: the pins in a created port and the number of wires the \
+            aliased cable do not match up"
 
         pin_list = list(p for p in port.pins)
         pin_list.sort(reverse=True, key=self.pin_sort_func)
@@ -497,10 +506,12 @@ class VerilogParser:
             wires[i].connect_pin(pin_list[i])
 
     def parse_cable_concatenation(self):
-        """parse a concatenation structure of cables, create the cables mentioned, and deal with indicies
-        return a list of ordered wires that represents the cable concatenation
+        """
+        parse a concatenation structure of cables, create the cables mentioned, and deal with
+        indicies return a list of ordered wires that represents the cable concatenation
         example syntax
-        {wire1, wire2, wire3, wire4}"""
+        {wire1, wire2, wire3, wire4}
+        """
         token = self.next_token()
         assert token == vt.OPEN_BRACE, self.error_string(
             vt.OPEN_BRACE, "to start cable concatenation", token
@@ -582,11 +593,10 @@ class VerilogParser:
         """
         parse through a module body
 
-        module bodies consist of port declarations,
-        wire and reg declarations
-        and instantiations
+        module bodies consist of port declarations, wire and reg declarations and instantiations
 
-        expects port declarations to start with the direction and then include the cable type if provided
+        expects port declarations to start with the direction and then include the cable type if
+        provided
         """
         direction_tokens = [vt.INPUT, vt.OUTPUT, vt.INOUT]
         variable_tokens = [vt.WIRE, vt.REG, vt.TRI0, vt.TRI1]
@@ -755,7 +765,8 @@ class VerilogParser:
 
         # the current definition is instancing the current top instance, so a change needs to be made
         if def_name == self.netlist.top_instance.reference.name:
-            # print(self.current_definition.name + " is instancing the current top instance (" + name+ " which is a "+ self.netlist.top_instance.reference.name+")")
+            # print(self.current_definition.name + " is instancing the current top instance (" + \
+            # name+ " which is a "+ self.netlist.top_instance.reference.name+")")
             old_top_instance = self.netlist.top_instance
 
             new_level = self.current_definition
@@ -779,8 +790,9 @@ class VerilogParser:
 
             # print("New top instance is "+ self.netlist.top_instance.name)
 
-            # this instance should just go away. It was created to be the top instance but we don't want that
-            # it has no parent. And now with no reference, it should have no ties to the netlist.
+            # this instance should just go away. It was created to be the top instance but we don't
+            # want that it has no parent. And now with no reference, it should have no ties to the
+            # netlist.
             old_top_instance.reference = None
 
         token = self.peek_token()
@@ -809,10 +821,11 @@ class VerilogParser:
 
         this looks like:
 
-        defparam \\avs_s1_readdata[12]~output .bus_hold = "false"; //single backslash to escape name
+        defparam \\avs_s1_readdata[12]~output .bus_hold = "false"; //single backslash to escape
+        name
 
-        and must come after the associated instance (I'm not sure this is the verilog spec but
-        it is the way quartus wrote my example and is much simpler)
+        and must come after the associated instance (I'm not sure this is the verilog spec but it
+        is the way quartus wrote my example and is much simpler)
         """
         params = {}
         token = self.next_token()
@@ -1087,7 +1100,8 @@ class VerilogParser:
         the "cable" is a constant,
             attach it to the \\<const0> or \\<const1> cable.
         the cable is inverted,
-            create a new cable and an inverter block similar to the assign but with an inversion in the block
+            create a new cable and an inverter block similar to the assign but with an inversion in
+            the block
         """
         token = self.next_token()
 
@@ -1215,7 +1229,8 @@ class VerilogParser:
             in_port.direction = sdn.Port.Direction.IN
             out_port.direction = sdn.Port.Direction.OUT
 
-            # no need for this. It actually messes with other spydrnet functions like uniquify() and is_leaf()
+            # no need for this. It actually messes with other spydrnet functions like uniquify() and
+            # is_leaf()
             # cable = definition.create_cable("through")
             # cable.create_wires(width)
             # for i in range(width):
@@ -1292,7 +1307,7 @@ class VerilogParser:
     def get_wires_from_cable(self, cable, left, right):
         wires = []
 
-        if left != None and right != None:
+        if left is not None and right is not None:
             left = left - cable.lower_index
             right = right - cable.lower_index
             temp_wires = cable.wires[min(left, right) : max(left, right) + 1]
@@ -1301,8 +1316,8 @@ class VerilogParser:
             for w in temp_wires:
                 wires.append(w)
 
-        elif left != None or right != None:
-            if left != None:
+        elif left is not None or right is not None:
+            if left is not None:
                 index = left - cable.lower_index
             else:
                 index = right - cable.lower_index
@@ -1354,8 +1369,10 @@ class VerilogParser:
     """
 
     def connect_resized_port_cable(self, resized_cable, resized_port):
-        """One to one connector. Don't use with alias statements. this expects that the given cable should completely fill the port...
-        after a cable has been updated that is attached to a port it may need to update the port and reconnect the
+        """
+        One to one connector. Don't use with alias statements. this expects that the given cable
+        should completely fill the port... after a cable has been updated that is attached to a port
+        it may need to update the port and reconnect the
         """
         assert len(resized_cable.wires) == len(resized_port.pins), self.error_string(
             "cable and port to have same size",

@@ -13,7 +13,8 @@ class Pin(Element):
 
     @property
     def wire(self):
-        """Get the wire the pin is connected to. This value cannot be modified directly by the end user."""
+        """Get the wire the pin is connected to. This value cannot be modified directly by the end
+        user."""
         return self._wire
 
     def __str__(self):

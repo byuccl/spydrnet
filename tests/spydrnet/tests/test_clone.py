@@ -67,7 +67,7 @@ class TestClone(unittest.TestCase):
         assert p2.is_array == array
         assert len(p2.wires) == wirecount
         assert p2[key] == value
-        assert p2.definition == None
+        assert p2.definition is None
         for pin in p2.wires:
             assert pin.cable is p2
             assert len(pin.pins) == 0
@@ -110,7 +110,7 @@ class TestClone(unittest.TestCase):
         def2.create_port()
         def2.create_cable()
         def3 = clone(def2)
-        assert def3.library == None
+        assert def3.library is None
         assert len(def3.children) == len(def2.children)
         assert len(def3.cables) == len(def2.cables)
         assert len(def3.ports) == len(def2.ports)
@@ -127,8 +127,8 @@ class TestClone(unittest.TestCase):
         port = Port()
         pin = port.create_pin()
         pin2 = pin.clone()
-        assert pin2.wire == None
-        assert pin2.port == None
+        assert pin2.wire is None
+        assert pin2.port is None
 
     def test_instance(self):
         def1 = Definition()
@@ -138,7 +138,7 @@ class TestClone(unittest.TestCase):
         child = def1.create_child()
         child.reference = def2
         inst2 = clone(child)
-        assert inst2.parent == None
+        assert inst2.parent is None
         assert inst2.reference is def2
         assert set(inst2.pins.keys()).difference(set(child.pins.keys())) == set()
         for v in inst2.pins.values():
@@ -155,7 +155,7 @@ class TestClone(unittest.TestCase):
         ins2.reference = def2
         ins3.reference = def3
         lib3 = clone(lib1)
-        assert lib3.netlist == None
+        assert lib3.netlist is None
         assert len(lib3.definitions) == len(lib1.definitions)
         for d in lib3.definitions:
             assert d not in lib1.definitions
@@ -331,9 +331,9 @@ class TestClone(unittest.TestCase):
         op._wire = wire
         op._inner_pin = inner
         op2 = clone(op)
-        assert op2.wire == None
-        assert op2.instance == None
-        assert op2.inner_pin == None
+        assert op2.wire is None
+        assert op2.instance is None
+        assert op2.inner_pin is None
 
     def create_and_clone_port(
         self, pincount, direction, array, downto, index, key, value
@@ -353,10 +353,10 @@ class TestClone(unittest.TestCase):
         assert p2.direction == direction
         assert len(p2.pins) == pincount
         assert p2[key] == value
-        assert p2.definition == None
+        assert p2.definition is None
         for pin in p2.pins:
             assert pin.port is p2
-            assert pin.wire == None
+            assert pin.wire is None
 
     def test_port_array(self):
         pincount = 10
@@ -402,4 +402,4 @@ class TestClone(unittest.TestCase):
         wire = cable.create_wire()
         wire2 = clone(wire)
         assert len(wire2.pins) == 0
-        assert wire2.cable == None
+        assert wire2.cable is None

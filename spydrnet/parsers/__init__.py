@@ -10,14 +10,16 @@ Init for Spydrnet. The functions below can be called directly
 
 def parse(filename, architecture=None):
     """
-    The parse function is able to parse an EDIF (.edf) file, a Verilog file (.v), or an EBLIF file (.eblif).
+    The parse function is able to parse an EDIF (.edf) file, a Verilog file (.v), or an EBLIF file
+    (.eblif).
 
     This functions also supports the parsing of .zip files. Such as the ones in support_files folder
 
     Returns
     -------
     Netlist
-        The netlist that comes as the result of the parsing of the file if the file was parsed successfully
+        The netlist that comes as the result of the parsing of the file if the file was parsed
+        successfully
 
     Examples
     --------
@@ -49,7 +51,8 @@ def parse(filename, architecture=None):
                 files = zip.namelist()
                 assert (
                     len(files) == 1 and files[0] == basename_less_final_extension
-                ), "Only single file archives allowed with a file whose name matches the name of the archive"
+                ), "Only single file archives allowed with a file whose name matches \
+                    the name of the archive"
                 zip.extract(basename_less_final_extension, tempdirname)
                 # filename = Path(tempdirname).joinpath(basename_less_final_extension)
                 filename = Path(tempdirname, basename_less_final_extension)

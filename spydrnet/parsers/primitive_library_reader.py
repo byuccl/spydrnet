@@ -11,7 +11,9 @@ PARAMETER = "parameter"
 
 class PrimitiveLibraryReader:
     """
-    A class to extract primitive port information from a Verilog file and insert it into the netlist. The input file is parsed using the Verilog Parser and if any module information is found for a definition in the given netlist, the port information (i.e. directions) is added.
+    A class to extract primitive port information from a Verilog file and insert it into the
+    netlist. The input file is parsed using the Verilog Parser and if any module information is
+    found for a definition in the given netlist, the port information (i.e. directions) is added.
 
     parameters
     ----------
