@@ -284,8 +284,7 @@ class HRef(GetterShortcuts):
     @property
     def is_unique(self):
         """
-        A hierarchical reference must be valid to be unique. If it is not valid, it may not be
-        unique.
+        A hierarchical reference must be valid to be unique. If it is not valid, it may not be unique.
         : return:
         """
         if self.is_valid is False:

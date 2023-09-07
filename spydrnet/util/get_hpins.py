@@ -1,4 +1,4 @@
-from spydrnet import (
+from spydrnet.ir import (
     FirstClassElement,
     InnerPin,
     OuterPin,
