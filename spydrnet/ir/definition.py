@@ -1,4 +1,4 @@
-from copy import copy, deepcopy, error
+from copy import copy, deepcopy
 
 from spydrnet.global_state import global_callback
 from spydrnet.global_state.global_callback import _call_create_definition
@@ -13,7 +13,8 @@ class Definition(FirstClassElement):
 
     Contains a pointer to parent library, ports, cables, and instances.
     """
-    __slots__ = ['_library', '_ports', '_cables', '_children', '_references']
+
+    __slots__ = ["_library", "_ports", "_cables", "_children", "_references"]
 
     def __init__(self, name=None, properties=None):
         """Creates an empty object of type definition
@@ -26,18 +27,17 @@ class Definition(FirstClassElement):
         """
         super().__init__()
         self._library = None
-        self._ports = list()
-        self._cables = list()
-        self._children = list()
+        self._ports = []
+        self._cables = []
+        self._children = []
         self._references = set()
         _call_create_definition(self)
 
-        if name != None:
+        if name is not None:
             self.name = name
 
-        if properties != None:
-            assert isinstance(
-                properties, dict), "properties must be a dictionary"
+        if properties is not None:
+            assert isinstance(properties, dict), "properties must be a dictionary"
             for key in properties:
                 self[key] = properties[key]
 
@@ -69,8 +69,10 @@ class Definition(FirstClassElement):
         """
         target = list(value)
         target_set = set(target)
-        assert len(target) == len(target_set) and set(self._ports) == target_set, \
-            "Set of values do not match, this function can only reorder values, values must be unique"
+        assert (
+            len(target) == len(target_set) and set(self._ports) == target_set
+        ), "Set of values do not match, this function can only reorder \
+                values, values must be unique"
         self._ports = target
 
     @property
@@ -83,7 +85,8 @@ class Definition(FirstClassElement):
     @cables.setter
     def cables(self, value):
         """
-        Reorder the cables in this definition. Use add_cable and remove_cable to add or remove cables.
+        Reorder the cables in this definition. Use add_cable and remove_cable to add or remove
+        cables.
 
 
         parameters
@@ -93,8 +96,10 @@ class Definition(FirstClassElement):
         """
         target = list(value)
         target_set = set(target)
-        assert len(target) == len(target_set) and set(self._cables) == set(target), \
-            "Set of values do not match, this function can only reorder values, values must be unique"
+        assert len(target) == len(target_set) and set(self._cables) == set(
+            target
+        ), "Set of values do not match, this function can only reorder values, values \
+            must be unique"
         self._cables = target
 
     @property
@@ -107,8 +112,8 @@ class Definition(FirstClassElement):
     @children.setter
     def children(self, value):
         """
-        Reorder the list of instances instantiated in this definition use add_child and remove_child to add or remove
-        instances to or from the definition
+        Reorder the list of instances instantiated in this definition use add_child and remove_child
+        to add or remove instances to or from the definition
 
         parameters
         ----------
@@ -117,8 +122,10 @@ class Definition(FirstClassElement):
         """
         target = list(value)
         target_set = set(target)
-        assert len(target) == len(target_set) and set(self._children) == target_set, \
-            "Set of values do not match, this function can only reorder values, values must be unique"
+        assert (
+            len(target) == len(target_set) and set(self._children) == target_set
+        ), "Set of values do not match, this function can only reorder values, values \
+            must be unique"
         self._children = target
 
     @property
@@ -132,14 +139,23 @@ class Definition(FirstClassElement):
         """
         Check to see if this definition represents a leaf cell.
 
-        Leaf cells are cells with no children instances or no
-        children cables. Blackbox cells are considered leaf cells as well as direct pass through cells with cables only
+        Leaf cells are cells with no children instances or no children cables. Blackbox cells are
+        considered leaf cells as well as direct pass through cells with cables only
         """
         if len(self._children) > 0 or len(self._cables) > 0:
             return False
         return True
 
-    def create_port(self, name=None, properties=None, is_downto=None, is_scalar=None, lower_index=None, direction=None, pins=None):
+    def create_port(
+        self,
+        name=None,
+        properties=None,
+        is_downto=None,
+        is_scalar=None,
+        lower_index=None,
+        direction=None,
+        pins=None,
+    ):
         """Create a port, add it to the definition, and return that port.
 
         parameters
@@ -147,14 +163,16 @@ class Definition(FirstClassElement):
 
         name - (str) the name of this instance
         properties - (dict) the dictionary which holds the properties
-        id_downto - (bool) set the downto status. Downto is False if the right index is higher than the left one, True otherwise
-        is_scalar - (bool) set the scalar status. Return True if the item is a scalar False otherwise.
+        id_downto - (bool) set the downto status. Downto is False if the right index is higher than
+                    the left one, True otherwise
+        is_scalar - (bool) set the scalar status. Return True if the item is a scalar False
+                    otherwise.
         lower_index - (int) get the value of the lower index of the array.
-        direction - (Enum) Define the possible directions for a given port. (UNDEFINED, INOUT, IN, OUT)
+        direction - (Enum) Define the possible directions for a given port. (UNDEFINED, INOUT, IN,
+                    OUT)
         pins - (int) Create number of pins in the newly created port
         """
-        port = Port(name, properties, is_downto,
-                    is_scalar, lower_index, direction)
+        port = Port(name, properties, is_downto, is_scalar, lower_index, direction)
         self.add_port(port)
         if pins:
             port.create_pins(pins)
@@ -212,8 +230,9 @@ class Definition(FirstClassElement):
             excluded_ports = ports
         else:
             excluded_ports = set(ports)
-        assert all(x.definition == self for x in excluded_ports), "Some ports to remove are not included in the " \
-                                                                  "definition."
+        assert all(x.definition == self for x in excluded_ports), (
+            "Some ports to remove are not included in the " "definition."
+        )
         for port in excluded_ports:
             self._remove_port(port)
         self._ports = list(x for x in self._ports if x not in excluded_ports)
@@ -246,8 +265,8 @@ class Definition(FirstClassElement):
         parameters
         ----------
 
-        name - (str) the name of this instance
-        properties - (dict) the dictionary which holds the properties
+        name - (str) the name of this instance properties - (dict) the dictionary which holds the
+        properties
 
         Example
         -------
@@ -261,7 +280,8 @@ class Definition(FirstClassElement):
 
         To create a child with optional parameters
 
-        >>> child_instance = definition.create_child(name="child_instance", reference=reference_definition)
+        >>> child_instance = definition.create_child(name="child_instance", 
+                                                     reference=reference_definition)
 
         The reference of the instance is the definition that initialized this instance.
         """
@@ -286,7 +306,9 @@ class Definition(FirstClassElement):
         position - (int, default None) the index in the children list at which to add the instance.
         """
         assert instance.parent is not self, "Instance already included in definition"
-        assert instance.parent is None, "Instance already belongs to a different definition"
+        assert (
+            instance.parent is None
+        ), "Instance already belongs to a different definition"
         global_callback._call_definition_add_child(self, instance)
         if position is not None:
             self._children.insert(position, instance)
@@ -323,8 +345,9 @@ class Definition(FirstClassElement):
         else:
             excluded_children = set(children)
         assert all(
-            x.parent == self for x in excluded_children), "Some children are not parented by the definition"
-        included_children = list()
+            x.parent == self for x in excluded_children
+        ), "Some children are not parented by the definition"
+        included_children = []
         for child in self._children:
             if child not in excluded_children:
                 included_children.append(child)
@@ -339,7 +362,15 @@ class Definition(FirstClassElement):
         global_callback._call_definition_remove_child(self, child)
         child._parent = None
 
-    def create_cable(self, name=None, properties=None, is_downto=None, is_scalar=None, lower_index=None, wires=None):
+    def create_cable(
+        self,
+        name=None,
+        properties=None,
+        is_downto=None,
+        is_scalar=None,
+        lower_index=None,
+        wires=None,
+    ):
         """Create a cable, add it to the definition, and return the cable.
 
         parameters
@@ -347,8 +378,10 @@ class Definition(FirstClassElement):
 
         name - (str) the name of this instance
         properties - (dict) the dictionary which holds the properties
-        id_downto - (bool) set the downto status. Downto is False if the right index is higher than the left one, True otherwise
-        is_scalar - (bool) set the scalar status. Return True if the item is a scalar False otherwise.
+        id_downto - (bool) set the downto status. Downto is False if the right index is higher than
+                    the left one, True otherwise
+        is_scalar - (bool) set the scalar status. Return True if the item is a scalar False
+                     otherwise.
         lower_index - (int) get the value of the lower index of the array.
         wires - (int) Create number of wires in the newly created cable
         """
@@ -371,7 +404,9 @@ class Definition(FirstClassElement):
         position - (int, default None) the position in the cable list at which to add the cable
         """
         assert cable.definition is not self, "Cable already included in definition"
-        assert cable.definition is None, "Cable already belongs to a different definition"
+        assert (
+            cable.definition is None
+        ), "Cable already belongs to a different definition"
         global_callback._call_definition_add_cable(self, cable)
         if position is not None:
             self._cables.insert(position, cable)
@@ -408,8 +443,9 @@ class Definition(FirstClassElement):
         else:
             excluded_cables = set(cables)
         assert all(
-            x.definition == self for x in excluded_cables), "Some cables are not included in the definition"
-        included_cables = list()
+            x.definition == self for x in excluded_cables
+        ), "Some cables are not included in the definition"
+        included_cables = []
         for cable in self._cables:
             if cable not in excluded_cables:
                 included_cables.append(cable)
@@ -426,10 +462,14 @@ class Definition(FirstClassElement):
         cable._definition = None
 
     def _clone_rip_and_replace(self, memo):
-        """If an instance that is a reference of this definition was cloned then update the list of references of the definition.
+        """
+        If an instance that is a reference of this definition was cloned then update the list of
+        references of the definition.
 
-        For each of the children instances, we should also update the reference to refer to any cloned dictionaries
-        inner pins now also need to be updated with new inner pins for each of the definitions that was cloned."""
+        For each of the children instances, we should also update the reference to refer to any
+        cloned dictionaries inner pins now also need to be updated with new inner pins for each of
+        the definitions that was cloned.
+        """
         new_references = set()
         for instance in self._references:
             # if the instance was cloned then replace it in our references also update its reference
@@ -459,24 +499,27 @@ class Definition(FirstClassElement):
 
         clone leaving all references in tact.
         the element can then either be ripped or ripped and replaced"""
-        assert self not in memo, "the object should not have been copied twice in this pass"
+        assert (
+            self not in memo
+        ), "the object should not have been copied twice in this pass"
         from spydrnet.ir import Definition as DefinitionExtended
+
         c = DefinitionExtended()
         memo[self] = c
         c._data = deepcopy(self._data)
         c._library = None
 
-        new_ports = list()
+        new_ports = []
         for p in self.ports:
             new_ports.append(p._clone(memo))
         c._ports = new_ports
 
-        new_cables = list()
+        new_cables = []
         for ca in self.cables:
             new_cables.append(ca._clone(memo))
         c._cables = new_cables
 
-        new_children = list()
+        new_children = []
         for ch in self.children:
             new_children.append(ch._clone(memo))
         c._children = new_children
@@ -504,35 +547,39 @@ class Definition(FirstClassElement):
         The cloned object will have the following properties
 
          * the definition will be orphaned and will not belong to any library
-         * each of the sub elements of the definition will also be cloned and the connection structure between them will be updated.
-         * the cloned instances will still point to the reference to which the pointed before. They will also be members of the references list of those definitions.
+         * each of the sub elements of the definition will also be cloned and the connection
+           structure between them will be updated.
+         * the cloned instances will still point to the reference to which the pointed before. They
+           will also be members of the references list of those definitions.
 
         """
-        c = self._clone(dict())
+        c = self._clone({})
         c._clone_rip()
         return c
 
     # def __repr__(self):
-    #     return "<spydrnet.definition " + str(self.name) + ", cables:"+str(len(self.cables)) + ", children:"+str(len(self.children)) + ", ports:"+str(len(self.ports)) + ", references:"+str(len(self.references)) + ">"
+    #     return "<spydrnet.definition " + str(self.name) + ", cables:"+str(len(self.cables)) + \
+    #           ", children:"+str(len(self.children)) + ", ports:"+str(len(self.ports)) + \
+    #           ", references:"+str(len(self.references)) + ">"
 
     def __str__(self):
         """Re-define the print function so it is easier to read"""
         rep = super().__str__()
-        rep = rep[:-1] + '; '
+        rep = rep[:-1] + "; "
         if self.library is None:
-            rep += 'Library undefined'
+            rep += "Library undefined"
         elif self.library.name is None:
-            rep += 'Library.name undefined'
+            rep += "Library.name undefined"
         else:
-            rep += 'Library.name \'' + self.library.name + '\''
-        rep += '; '
-        rep += 'ports: '
+            rep += "Library.name '" + self.library.name + "'"
+        rep += "; "
+        rep += "ports: "
         rep += str(sum(1 for _ in self.get_ports()))
-        rep += '; cables: '
+        rep += "; cables: "
         rep += str(sum(1 for _ in self.get_cables()))
-        rep += '; children: '
+        rep += "; children: "
         rep += str(len(self.children))
-        rep += '; references: '
+        rep += "; references: "
         rep += str(len(self.references))
-        rep += '>'
+        rep += ">"
         return rep

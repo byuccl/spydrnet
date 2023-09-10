@@ -8,14 +8,14 @@ This section aims to help you do a spydrnet release, meaning you make the latest
 
 1. Merge each contributors' branches into one branch (the 'next_release' branch)
 2. run `git merge master` while the next-release branch is checked out.
-3. :ref:`update_release_notes`
+3. :ref:`update_release_notes` (remember to commit and push afterwards).
 4. :ref:`update_documentation` and ensure it can build properly
 5. On Github, create a pull request with the updated code in the next_release branch.
 6. Accept and merge the pull request when the checks have finished.
-7. Move to the master branch using `git checkout master`
+7. Move to the master branch using `git checkout master` and run `git pull`
 8. :ref:`create_and_update_tag`
-9. :ref:`build_documentation`
-10. :ref:`build_package` (this will update the documentation’s version number)
+9. :ref:`build_package` (this will update the documentation's version number)
+10. :ref:`build_documentation`
 11. :ref:`publish_packages`
 12. :ref:`github_release`
 13. :ref:`publish_documentation`
@@ -90,6 +90,29 @@ If you mess up, you can use the following instructions to force update your tag
 
 >>> git push --tags -f
 
+.. _build_package:
+
+Build the Python Package
+-------------------------
+
+Refer to pypi.org if necessary. They have a tutorial called “uploading packages”
+
+Upgrade pip if needed.
+
+>>> python3 -m pip install --upgrade pip
+
+Make sure everything is up to date
+
+>>> python3 -m pip install --upgrade setuptools wheel
+
+Make sure you are in the top level directory. Make the python archive package:
+
+>>> python3 setup.py sdist bdist_wheel
+
+The build files will be stored in the following directories 
+
+spydrnet/build and spydrnet/dist
+
 .. _build_documentation:
 
 Build the Documentation
@@ -106,29 +129,6 @@ then run the following:
 >>> make html
 
 Make sure that each one executes without errors. Try to minimize warnings as well, although the most important thing is that the documentation looks the way you want it to.
-
-.. _build_package:
-
-Build the Python Package
--------------------------
-
-Refer to pypi.org if necessary. They have a tutorial called “uploading packages”
-
-Upgrade pip if needed.
-
->>> python3 -m pip install --upgrade pip
-
-Make sure everything is up to date
-
->>> python3 -m pip install --user --upgrade setuptools wheel
-
-Make the python archive package:
-
->>> python3 setup.py sdist bdist_wheel
-
-The build files will be stored in the following directories 
-
-spydrnet/build and spydrnet/dist
 
 .. _publish_packages:
 
@@ -163,10 +163,11 @@ proper release number.
 
 Enter a description–it could just be a reiteration of the release notes or other relevant information.
 
-Three files should be added as assets to the new release:
+Four files should be added as assets to the new release:
     1. The .tar.gz file from the previous step
     2. The .whl file from the previous step
     3. The spydrnet_reference pdf document created in the :ref:`build_documentation` step. Go to docs/latex folder, change the `spydrnet_reference.pdf` name to `spydrnet_reference-new_release_number.pdf`, and then copy it to the assets under the new release.
+    4. The `pylint_output.txt`
 
 .. _publish_documentation:
 

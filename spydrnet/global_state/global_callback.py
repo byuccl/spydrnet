@@ -1,30 +1,30 @@
-_container_create_netlist = list()
-_container_create_library = list()
-_container_create_definition = list()
-_container_create_port = list()
-_container_create_cable = list()
-_container_create_instance = list()
-_container_cable_add_wire = list()
-_container_cable_remove_wire = list()
-_container_definition_add_port = list()
-_container_definition_remove_port = list()
-_container_definition_add_child = list()
-_container_definition_remove_child = list()
-_container_definition_add_cable = list()
-_container_definition_remove_cable = list()
-_container_instance_reference = list()
-_container_library_add_definition = list()
-_container_library_remove_definition = list()
-_container_netlist_top_instance = list()
-_container_netlist_add_library = list()
-_container_netlist_remove_library = list()
-_container_port_add_pin = list()
-_container_port_remove_pin = list()
-_container_wire_connect_pin = list()
-_container_wire_disconnect_pin = list()
-_container_dictionary_set = list()
-_container_dictionary_delete = list()
-_container_dictionary_pop = list()
+_container_create_netlist = []
+_container_create_library = []
+_container_create_definition = []
+_container_create_port = []
+_container_create_cable = []
+_container_create_instance = []
+_container_cable_add_wire = []
+_container_cable_remove_wire = []
+_container_definition_add_port = []
+_container_definition_remove_port = []
+_container_definition_add_child = []
+_container_definition_remove_child = []
+_container_definition_add_cable = []
+_container_definition_remove_cable = []
+_container_instance_reference = []
+_container_library_add_definition = []
+_container_library_remove_definition = []
+_container_netlist_top_instance = []
+_container_netlist_add_library = []
+_container_netlist_remove_library = []
+_container_port_add_pin = []
+_container_port_remove_pin = []
+_container_wire_connect_pin = []
+_container_wire_disconnect_pin = []
+_container_dictionary_set = []
+_container_dictionary_delete = []
+_container_dictionary_pop = []
 
 
 def _call_create_netlist(*args, **kwargs):
@@ -271,7 +271,8 @@ def register_dictionary_pop(*args, **kwargs):
 
 
 def _register(container_to_register, method):
-    # TODO: look into inlining this function perhaps, not not be necessary since is won't be called often.
+    # TODO: look into inlining this function perhaps, may not be necessary since it won't be called
+    # often.
     assert method not in container_to_register
     container_to_register.append(method)
 
@@ -385,6 +386,7 @@ def deregister_dictionary_pop(*args, **kwargs):
 
 
 def _deregister(container_to_deregister, method):
-    # TODO: look into inlining this function perhaps, may not be necessary since it won't be called often.
+    # TODO: look into inlining this function perhaps, may not be necessary since it won't be called
+    # often.
     assert method in container_to_deregister
     container_to_deregister.remove(method)

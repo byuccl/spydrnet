@@ -24,7 +24,7 @@ SpyDrNet can be used to create netlists from scratch. Because it is a low-level 
 
 **Loading Example Netlists**
 
-Several example netlists are included with the package to introduce the framework, its features, and functionality. To list and load these netlists, modify the following example: 
+Several example netlists are included in the repository to introduce the framework, its features, and functionality. To list and load these netlists, see the :ref:`using_example_netlists` page and then run the following: 
 
 .. code:: python
 

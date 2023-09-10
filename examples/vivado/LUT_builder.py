@@ -119,8 +119,8 @@ prim_LUT_port_output = prim_LUT_def.create_port(name="O", direction=sdn.OUT)
 prim_LUT_pin_output = prim_LUT_port_output.create_pin()
 
 # Create lookup table input ports and pins, and store them in lists
-prim_LUT_port_input_list = list()
-prim_LUT_pin_input_list = list()
+prim_LUT_port_input_list = []
+prim_LUT_pin_input_list = []
 for i in range(LUT_SIZE):
     prim_LUT_port_input = prim_LUT_def.create_port(
         name="I" + str(i), direction=sdn.IN
@@ -143,8 +143,8 @@ my_LUT_port_output = my_LUT_def.create_port(name="Q", direction=sdn.OUT)
 my_LUT_pin_output = my_LUT_port_output.create_pin()
 
 # Create ports and pins for the inputs to the custom LUT
-my_prim_LUT_port_input_list = list()
-my_LUT_pin_input_list = list()
+my_prim_LUT_port_input_list = []
+my_LUT_pin_input_list = []
 for i in range(LUT_SIZE):
     my_LUT_port_input = my_LUT_def.create_port(
         name=string.ascii_uppercase[i], direction=sdn.IN
@@ -153,8 +153,8 @@ for i in range(LUT_SIZE):
     my_LUT_pin_input_list.append(my_LUT_port_input.create_pin())
 
 # Create cables with wires to connect primitive LUT instance to ports
-my_LUT_cable_list = list()
-my_LUT_wire_list = list()
+my_LUT_cable_list = []
+my_LUT_wire_list = []
 
 # cables with wires for input ports
 for i in range(LUT_SIZE):
@@ -172,7 +172,7 @@ my_LUT_inst = my_LUT_def.create_child(
 )
 
 # Modify the lookup table configuration
-my_LUT_inst_properties = list()
+my_LUT_inst_properties = []
 my_LUT_inst_properties.append(
     {"identifier": "INIT", "value": "16'h" + str(hex(LUT_CONFIG))[2:]}
 )
@@ -206,7 +206,7 @@ top_led_OBUF_inst = top_def.create_child(
 )
 
 # instance switch input buffers
-top_sw_IBUF_inst_list = list()
+top_sw_IBUF_inst_list = []
 for i in range(LUT_SIZE):
     top_sw_IBUF_inst_list.append(
         top_def.create_child(

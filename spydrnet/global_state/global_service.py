@@ -1,13 +1,14 @@
 from spydrnet.ir import Netlist, Library, Definition, Port, Cable, Instance
 
-_registered_lookups = dict()
+_registered_lookups = {}
 _registered_hierarchical_lookup = None
 
 
 def register_lookup(key, func):
     if key in _registered_lookups:
         raise ValueError(
-            "Cannot register a fast lookup under the key {}, lookup already registered.")
+            "Cannot register a fast lookup under the key {}, lookup already registered."
+        )
     else:
         _registered_lookups[key] = func
 

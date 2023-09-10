@@ -4,7 +4,8 @@
 #See the license that accompanies SpyDrNet tools for more information
 #
 #Currently implemented vendors:
-#Xilinx vivado tested with and designed for files from Vivado/2019.1/data/verilog/src/xeclib (other versions should hopefully work)
+#Xilinx vivado tested with and designed for files from Vivado/2019.1/data/verilog/src/xeclib (other
+#versions should hopefully work)
 #
 #Future capabilities
 #accept files from other locations for Xilinx
@@ -21,7 +22,8 @@ class PrimativeParser:
     Parses primative libraries for use with the tools
 
     This class is a standalone class as of the first release. 
-    Hopefully the xilinx part of this parser can be combined with the structural verilog parser so that they can share code
+    Hopefully the xilinx part of this parser can be combined with the structural verilog parser so
+    that they can share code
 
     Extracts the ports, parameters, and names of primatives
     The primative libraries can be found in the following location
@@ -49,7 +51,7 @@ class PrimativeParser:
             Definition created from the verilog file
         '''
         if not verilog_file.endswith('.v'):
-           print("File " + verilog_file + " in directory does not end with the proper extension") 
+            print("File " + verilog_file + " in directory does not end with the proper extension")
         with open(verilog_file) as vf:
             self._vivado_parse(vf)
 
@@ -69,7 +71,8 @@ class PrimativeParser:
             elif statement[0] == 'parameter':
                 pass
             elif statement[0] == 'module':
-                name = statement[1] #this is lazy but I think it might work with all the xilinx verilog files for now....
+                #this is lazy but I think it might work with all xilinx verilog files for now....
+                name = statement[1]
             elif statement[0] == 'input':
                 self._vivado_get_port_info(statement, inputs)
             elif statement[0] == 'output':
@@ -79,7 +82,7 @@ class PrimativeParser:
             else:
                 pass
 
-        if(VERBOSE):
+        if VERBOSE:
             print("\nModule " + name)
             print("Inputs:")
             print(inputs)
@@ -103,7 +106,7 @@ class PrimativeParser:
         else:
             for i in range(1,len(line)):
                 port_container[line[i]] = ''
-    
+
     def _vivado_create_definition(self, name, parameters, inputs, outputs, inouts):
         definition = SpyDrNet.create_definition()
         for i, val in inputs.items():
@@ -113,7 +116,7 @@ class PrimativeParser:
         for io, val in inouts.items():
             definition.add_port(self._create_port(io,val,SpyDrNet.Port.Direction.INOUT))
         return definition
-        
+
     def _create_port(self, name, indicies, direction):
         port = SpyDrNet.create_port(name = name)
         port.set_direction(direction)

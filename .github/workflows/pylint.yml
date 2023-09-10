@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   build:
-    if: github.ref == 'refs/heads/master'
+    # if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -22,4 +22,4 @@ jobs:
         pip install pylint-exit
     - name: Analysing the code with pylint
       run: |
-        pylint --rcfile=.pylintrc spydrnet/ || pylint-exit $?        
+        pylint --rcfile=.pylintrc spydrnet/ || pylint-exit --error-fail $?        

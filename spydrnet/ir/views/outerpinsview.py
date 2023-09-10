@@ -3,7 +3,6 @@ from spydrnet.ir import OuterPin
 
 
 class OuterPinsView(DictView):
-
     def __init__(self, dict_object):
         super().__init__(dict_object)
 

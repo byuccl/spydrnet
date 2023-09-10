@@ -1,8 +1,7 @@
 # Copyright 2020 Dallin Skouson, Andrew Keller, Michael Wirthlin
 
-from spydrnet.ir import *
 from collections import deque
-from spydrnet.uniquify import uniquify
+from spydrnet.ir import *
 
 """How to flatten (brainstorm):
 start at the top and take all of the subelements out and add them to the top definition
@@ -74,7 +73,7 @@ def _bring_to_top(e, add_to_name, top_definition):
         d = e.parent
         d.remove_child(e)
     # _rename_element(c)
-    if(add_to_name != ''):
+    if add_to_name != "":
         e.name = add_to_name + "/" + e.name
     else:
         e.name = e.name
@@ -101,6 +100,7 @@ def _bring_to_top(e, add_to_name, top_definition):
 
 #     recurse(top_instance, 0)
 
+
 def flatten(netlist):
     """
     starts at the top instance and brings all the different subelements to the top level.
@@ -115,7 +115,7 @@ def flatten(netlist):
     # put all of tops children on a stack
     for chld in top_definition.children:
         instance_queue.append(chld)
-        name_queue.append('')
+        name_queue.append("")
 
     to_remove = []
     # for each of the children on the stack
