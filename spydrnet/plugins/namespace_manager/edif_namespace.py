@@ -1,11 +1,9 @@
-from spydrnet.plugins.namespace_manager.default_namespace import DefaultNamespace
-from spydrnet.ir import Netlist, Library, Definition
 import re
 from spydrnet.plugins.namespace_manager.default_namespace import DefaultNamespace
+from spydrnet.ir import Netlist, Library, Definition
 
 
 class EdifNamespace(DefaultNamespace):
-
     @classmethod
     def is_name_of_element_valid(cls, element):
         """
@@ -121,8 +119,8 @@ class EdifNamespace(DefaultNamespace):
         return True
 
     def __init__(self):
-        self.namespaces = dict()
-        self.edif_namespaces = dict()
+        super().__init__()
+        self.edif_namespaces = {}
 
     def no_conflict(self, element, key, value):
         element_type = type(element)
@@ -145,7 +143,7 @@ class EdifNamespace(DefaultNamespace):
         element_type = type(element)
         if key == ".NAME":
             if element_type not in self.namespaces:
-                self.namespaces[element_type] = dict()
+                self.namespaces[element_type] = {}
             namespace = self.namespaces[element_type]
             if ".NAME" in element:
                 old_name = element[".NAME"]
@@ -154,7 +152,7 @@ class EdifNamespace(DefaultNamespace):
             namespace[value] = element
         elif key == "EDIF.identifier":
             if element_type not in self.edif_namespaces:
-                self.edif_namespaces[element_type] = dict()
+                self.edif_namespaces[element_type] = {}
             namespace = self.edif_namespaces[element_type]
             if "EDIF.identifier" in element:
                 old_name = element["EDIF.identifier"].lower()

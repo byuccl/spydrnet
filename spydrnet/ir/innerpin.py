@@ -1,5 +1,4 @@
-from spydrnet.ir.pin import Pin
-from copy import deepcopy, copy, error
+from spydrnet.ir import Pin
 
 
 class InnerPin(Pin):
@@ -8,7 +7,8 @@ class InnerPin(Pin):
     These pins can be thought of as on the inside of a definition. There can be
     many outer pins for each inner pin
     """
-    __slots__ = ['_port']
+
+    __slots__ = ["_port"]
 
     def __init__(self):
         super().__init__()
@@ -29,13 +29,17 @@ class InnerPin(Pin):
         return self._port.pins.index(self)
 
     def _clone_rip_and_replace(self, memo):
-        """Remove from its current environment and place it into the new cloned environment with references held in the memo dictionary"""
-        if self._wire != None:
-            assert self._wire in memo, "wire must have been cloned in order to rip and replace innerpin"
+        """Remove from its current environment and place it into the new cloned environment with
+        references held in the memo dictionary"""
+        if self._wire is not None:
+            assert (
+                self._wire in memo
+            ), "wire must have been cloned in order to rip and replace innerpin"
             self._wire = memo[self._wire]
 
     def _clone_rip(self):
-        """Remove from its current environmnet. This will remove all pin pointers and create a floating stand alone instance."""
+        """Remove from its current environmnet. This will remove all pin pointers and create a
+        floating stand alone instance."""
         self._wire = None
 
     def _clone(self, memo):
@@ -43,8 +47,12 @@ class InnerPin(Pin):
 
         Clone leaving all references in tact.
         the element can then either be ripped or ripped and replaced"""
-        assert self not in memo, "the object should not have been copied twice in this pass"
-        c = InnerPin()
+        assert (
+            self not in memo
+        ), "the object should not have been copied twice in this pass"
+        from spydrnet.ir import InnerPin as InnerPinExtended
+
+        c = InnerPinExtended()
         memo[self] = c
         c._wire = self._wire
         c._port = None
@@ -60,6 +68,6 @@ class InnerPin(Pin):
          * The pin will not be referenced to by any wires or outer pins
 
         """
-        c = self._clone(dict())
+        c = self._clone({})
         c._clone_rip()
         return c

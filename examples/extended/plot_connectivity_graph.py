@@ -116,7 +116,7 @@ def get_leaf_instance_nodes(top_instance_node):
     """
     This function returns all leaf instance nodes in a netlist.
     """
-    leaf_instance_nodes = list()
+    leaf_instance_nodes = []
     search_stack = [top_instance_node]
     while search_stack:
         current_node = search_stack.pop()
@@ -139,9 +139,9 @@ def get_downstream_nodes(node, include_top_ports):
     This function finds downstream nodes (leaf instance and optionally top_level ports) from a given node. There are 
     some involved traversals included in this function (going from an InnerPin to and OuterPin and visa-versa).
     """
-    downstream_nodes = list()    
+    downstream_nodes = []  
     found_pin_nodes = set()
-    search_stack = list()
+    search_stack = []
     # Find starting wires if provided node is a leaf instance.
     if isinstance(node.item, sdn.Instance):
         instance = node.item
@@ -227,10 +227,10 @@ class Node:
     def __init__(self, parent, item):
         self.parent = parent
         self.item = item
-        self.children = dict()
+        self.children = {}
         
     def get_hiearchical_name(self):
-        parents = list()
+        parents = []
         parent = self.parent
         while parent:
             parents.append(parent)

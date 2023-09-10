@@ -7,8 +7,8 @@ Welcome to SpyDrNet!
 .. image:: https://img.shields.io/pypi/pyversions/spydrnet.svg
    :target: https://pypi.org/project/spydrnet/
 
-.. image:: https://travis-ci.com/byuccl/spydrnet.svg?branch=master
-   :target: https://travis-ci.com/byuccl/spydrnet
+.. image:: https://app.travis-ci.com/byuccl/spydrnet.svg?branch=master
+   :target: https://app.travis-ci.com/github/byuccl/spydrnet
 
 A flexible framework for analyzing and transforming `netlists <https://en.wikipedia.org/wiki/Netlist>`_. Built to fill an important gap in FPGA research and reliability. Currently available as a pure Python package.
 
@@ -20,11 +20,11 @@ A flexible framework for analyzing and transforming `netlists <https://en.wikipe
 Simple Examples
 ---------------
 
-SpyDrNet can be used to create netlists from scratch. Because it is a low-level framework, manual netlist creation can be tedious (much like writting a high level application in assembly). To assist in rapid productivity, parsers and composers are provided for common netlist formats. Currently only `EDIF <https://en.wikipedia.org/wiki/EDIF>`_ is supported, but the roadmap includes structural Verilog, structural VHDL, Verilog Quartus Mapping Files (`Intel's VQM <https://www.intel.com/content/www/us/en/programmable/quartushelp/17.0/mapIdTopics/mwh1465406414431.htm>`_), and JSON.
+SpyDrNet can be used to create netlists from scratch. Because it is a low-level framework, manual netlist creation can be tedious (much like writting a high level application in assembly). To assist in rapid productivity, parsers and composers are provided for common netlist formats. Currently `EDIF <https://en.wikipedia.org/wiki/EDIF>`_ and structural Verilog are supported, but the roadmap also includes structural VHDL, Verilog Quartus Mapping Files (`Intel's VQM <https://www.intel.com/content/www/us/en/programmable/quartushelp/17.0/mapIdTopics/mwh1465406414431.htm>`_), and JSON.
 
 **Loading Example Netlists**
 
-Several example netlists are included with the package to introduce the framework, its features, and functionality. To list and load these netlists, modify the following example: 
+Several example netlists are included in the repository to introduce the framework, its features, and functionality. To list and load these netlists, see the :ref:`using_example_netlists` page and then run the following: 
 
 .. code:: python
 

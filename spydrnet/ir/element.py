@@ -5,4 +5,5 @@ class Element(GetterShortcuts):
     """
     Represents an object
     """
+
     __slots__ = tuple()

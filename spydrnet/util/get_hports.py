@@ -1,4 +1,15 @@
-from spydrnet import FirstClassElement, InnerPin, OuterPin, Wire, Netlist, Library, Definition, Instance, Port, Cable
+from spydrnet.ir import (
+    FirstClassElement,
+    InnerPin,
+    OuterPin,
+    Wire,
+    Netlist,
+    Library,
+    Definition,
+    Instance,
+    Port,
+    Cable,
+)
 from spydrnet.util.hierarchical_reference import HRef
 from spydrnet.util.patterns import _is_pattern_absolute, _value_matches_pattern
 
@@ -12,47 +23,54 @@ def get_hports(obj, *args, **kwargs):
     Parameters
     ----------
     obj : object, Iterable - required
-        The object or objects associated with this query. Queries return a collection of objects associated with the
-        provided object or objects that match the query criteria. For example, `sdn.get_instances(netlist, ...)` would
-        return all of the instances *within* the provided definition that match the additional criteria.
+        The object or objects associated with this query. Queries return a collection 
+        of objects associated with the provided object or objects that match the query 
+        criteria. For example, `sdn.get_instances(netlist, ...)` would return all of 
+        the instances *within* the provided definition that match the additional criteria.
     patterns : str, Iterable - optional, positional or named, default: wildcard
-        The search patterns. Patterns can be a single string or an Iterable collection of strings. Patterns can be
-        absolute or they can contain wildcards or regular expressions. If `patterns` is not provided, then it defaults
-        to a wildcard.
+        The search patterns. Patterns can be a single string or an Iterable collection of 
+        strings. Patterns can be absolute or they can contain wildcards or regular expressions. 
+        If `patterns` is not provided, then it defaults to a wildcard.
     recursive : bool - optional, default: False
-        Specify if search should be recursive or not meaning that sub hierarchical pins within an instance are
-        included or not.
+        Specify if search should be recursive or not meaning that sub hierarchical pins 
+        within an instance are included or not.
     is_case : bool - optional, named, default: True
-        Specify if patterns should be treated as case sensitive. Only applies to patterns. Does not alter fast lookup
-        behavior (if namespace policy uses case insensitive indexing, this parameter will not prevent a fast lookup
-        from returning a matching object even if the case is not an exact match).
+        Specify if patterns should be treated as case sensitive. Only applies to patterns. Does 
+        not alter fast lookup behavior (if namespace policy uses case insensitive indexing, this 
+        parameter will not prevent a fast lookup from returning a matching object even if the 
+        case is not an exact match).
     is_re: bool - optional, named, default: False
-        Specify if patterns are regular expressions. If `False`, a pattern can still contain `*` and `?` wildcards. A
-        `*` matches zero or more characters. A `?` matches upto a single character.
+        Specify if patterns are regular expressions. If `False`, a pattern can still contain `*` 
+        and `?` wildcards. A `*` matches zero or more characters. A `?` matches upto a single 
+        character.
     filter : function
-        This is a single input function that can be used to filter out unwanted virtual instances. If not specifed, all
-        matching virtual instances are returned. Otherwise, virtual instances that cause the filter function to evaluate
-        to true are the only items returned.
-    
+        This is a single input function that can be used to filter out unwanted virtual instances. 
+        If not specifed, all matching virtual instances are returned. Otherwise, virtual instances
+        that cause the filter function to evaluate to true are the only items returned.
+
     Returns
     -------
     href_ports : generator
-        The hierarchical references to ports associated with a particular object or collection of objects.
-    
+        The hierarchical references to ports associated with a particular object or collection 
+        of objects.
+
     """
     # Check argument list
-    if len(args) == 1 and 'patterns' in kwargs:
+    if len(args) == 1 and "patterns" in kwargs:
         raise TypeError("get_hports() got multiple values for argument 'patterns'")
-    if len(args) > 1 or any(x not in {'patterns', 'recursive', 'filter', 'is_case', 'is_re'} for x in
-                            kwargs):
+    if len(args) > 1 or any(
+        x not in {"patterns", "recursive", "filter", "is_case", "is_re"} for x in kwargs
+    ):
         raise TypeError("Unknown usage. Please see help for more information.")
 
     # Default values
-    filter_func = kwargs.get('filter', lambda x: True)
-    recursive = kwargs.get('recursive', False)
-    is_case = kwargs.get('is_case', True)
-    is_re = kwargs.get('is_re', False)
-    patterns = args[0] if len(args) == 1 else kwargs.get('patterns', ".*" if is_re else "*")
+    filter_func = kwargs.get("filter", lambda x: True)
+    recursive = kwargs.get("recursive", False)
+    is_case = kwargs.get("is_case", True)
+    is_re = kwargs.get("is_re", False)
+    patterns = (
+        args[0] if len(args) == 1 else kwargs.get("patterns", ".*" if is_re else "*")
+    )
 
     if isinstance(obj, (FirstClassElement, InnerPin, OuterPin, Wire)) is False:
         try:
@@ -61,26 +79,39 @@ def get_hports(obj, *args, **kwargs):
             object_collection = [obj]
     else:
         object_collection = [obj]
-    if all(isinstance(x, (HRef, FirstClassElement, InnerPin, OuterPin, Wire)) for x in object_collection) is False:
-        raise TypeError("get_hports() supports all netlist related objects and hierarchical references or a "
-                        "collection of theses as the object searched, unsupported object provided")
+    if (
+        all(
+            isinstance(x, (HRef, FirstClassElement, InnerPin, OuterPin, Wire))
+            for x in object_collection
+        )
+        is False
+    ):
+        raise TypeError(
+            "get_hports() supports all netlist related objects and hierarchical references or a "
+            "collection of theses as the object searched, unsupported object provided"
+        )
 
     if isinstance(patterns, str):
         patterns = (patterns,)
     assert isinstance(patterns, (FirstClassElement, InnerPin, OuterPin, Wire)) is False
 
-    return _get_hports(object_collection, patterns, recursive, is_case, is_re, filter_func)
+    return _get_hports(
+        object_collection, patterns, recursive, is_case, is_re, filter_func
+    )
 
 
 def _get_hports(object_collection, patterns, recursive, is_case, is_re, filter_func):
-    for result in filter(filter_func, _get_hports_raw(object_collection, patterns, recursive, is_case, is_re)):
+    for result in filter(
+        filter_func,
+        _get_hports_raw(object_collection, patterns, recursive, is_case, is_re),
+    ):
         yield result
 
 
 def _get_hports_raw(object_collection, patterns, recursive, is_case, is_re):
     in_namemap = set()
     in_yield = set()
-    namemap = dict()
+    namemap = {}
     bypass_namesearch = set()
     while object_collection:
         obj = object_collection.pop()
@@ -105,7 +136,7 @@ def _get_hports_raw(object_collection, patterns, recursive, is_case, is_re):
                             hport = HRef.from_parent_and_item(obj, port)
                             if hport not in in_yield:
                                 in_yield.add(hport)
-                                yield(hport)
+                                yield (hport)
                         # get internal cables recursively
                         if recursive:
                             for child in reference.children:
@@ -121,28 +152,34 @@ def _get_hports_raw(object_collection, patterns, recursive, is_case, is_re):
                     href_wire = HRef.from_parent_and_item(obj, wire)
                     object_collection.append(href_wire)
             elif isinstance(item, Wire):
-                    href_parent_cable = obj.parent
-                    href_parent_instance = href_parent_cable.parent
-                    for pin in item.pins:
-                        if isinstance(pin, OuterPin):
-                            instance = pin.instance
-                            if instance:
-                                href_inst = HRef.from_parent_and_item(href_parent_instance, pin.instance)
-                                inner_pin = pin.inner_pin
-                                if inner_pin:
-                                    inner_port = inner_pin.port
-                                    if inner_port:
-                                        href_port = HRef.from_parent_and_item(href_inst, inner_port)
-                                        if href_port not in in_yield:
-                                            in_yield.add(href_port)
-                                            yield href_port
-                        else:
-                            port = pin.port
-                            if port:
-                                href_port = HRef.from_parent_and_item(href_parent_instance, port)
-                                if href_port not in in_yield:
-                                    in_yield.add(href_port)
-                                    yield href_port
+                href_parent_cable = obj.parent
+                href_parent_instance = href_parent_cable.parent
+                for pin in item.pins:
+                    if isinstance(pin, OuterPin):
+                        instance = pin.instance
+                        if instance:
+                            href_inst = HRef.from_parent_and_item(
+                                href_parent_instance, pin.instance
+                            )
+                            inner_pin = pin.inner_pin
+                            if inner_pin:
+                                inner_port = inner_pin.port
+                                if inner_port:
+                                    href_port = HRef.from_parent_and_item(
+                                        href_inst, inner_port
+                                    )
+                                    if href_port not in in_yield:
+                                        in_yield.add(href_port)
+                                        yield href_port
+                    else:
+                        port = pin.port
+                        if port:
+                            href_port = HRef.from_parent_and_item(
+                                href_parent_instance, port
+                            )
+                            if href_port not in in_yield:
+                                in_yield.add(href_port)
+                                yield href_port
             elif isinstance(item, InnerPin):
                 hport = obj.parent
                 if hport not in in_yield:
@@ -186,25 +223,27 @@ def _get_hports_raw(object_collection, patterns, recursive, is_case, is_re):
 
 def _update_hport_namemap(href_instance, recursive, found, namemap):
     search_stack = [(href_instance, False)]
-    name_stack = list()
+    name_stack = []
     while search_stack:
         href_instance, visited = search_stack.pop()
         if visited:
             name_stack.pop()
         else:
             search_stack.append((href_instance, True))
-            name_stack.append(href_instance.item.name if href_instance.item.name else '')
+            name_stack.append(
+                href_instance.item.name if href_instance.item.name else ""
+            )
             item = href_instance.item
             reference = item.reference
             if reference:
                 for port in reference.ports:
                     hport = HRef.from_parent_and_item(href_instance, port)
-                    name_stack.append(port.name if port.name else '')
-                    port_hname = '/'.join(name_stack[1:])
+                    name_stack.append(port.name if port.name else "")
+                    port_hname = "/".join(name_stack[1:])
                     if hport not in found:
                         found.add(hport)
                         if port_hname not in namemap:
-                            namemap[port_hname] = list()
+                            namemap[port_hname] = []
                         namemap[port_hname].append(hport)
                     name_stack.pop()
                 if recursive:

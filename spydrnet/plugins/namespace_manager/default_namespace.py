@@ -5,8 +5,8 @@ class DefaultNamespace:
     @classmethod
     def is_compliant(cls, element):
         """
-        is_compliant means that the naming of the element is a valid name and that there are no namespace conflicts
-        among its children
+        is_compliant means that the naming of the element is a valid name and that there are no
+        namespace conflicts among its children
         :param element:
         :return:
         """
@@ -84,7 +84,7 @@ class DefaultNamespace:
         return False
 
     def __init__(self):
-        self.namespaces = dict()
+        self.namespaces = {}
 
     def no_conflict(self, element, key, value):
         if key != ".NAME":
@@ -101,7 +101,7 @@ class DefaultNamespace:
         if key == ".NAME":
             element_type = type(element)
             if element_type not in self.namespaces:
-                self.namespaces[element_type] = dict()
+                self.namespaces[element_type] = {}
             namespace = self.namespaces[element_type]
             if ".NAME" in element:
                 old_name = element[".NAME"]

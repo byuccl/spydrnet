@@ -8,4 +8,5 @@ Developer's Guide
     
     contribute
     repository
+    formatting
     testing

@@ -2,7 +2,7 @@ from functools import partial
 import re
 import zipfile
 import io
-import os
+from pathlib import Path
 
 
 class EdifTokenizer:
@@ -30,7 +30,17 @@ class EdifTokenizer:
         if isinstance(input_source, str):
             if zipfile.is_zipfile(input_source):
                 zip = zipfile.ZipFile(input_source)
-                filename = os.path.basename(input_source)
+                filename = Path(input_source).name
+                filename = filename[: filename.rindex(".")]
+                stream = zip.open(filename)
+                stream = io.TextIOWrapper(stream)
+                self.input_stream = stream
+            else:
+                self.input_stream = open(input_source, "r")
+        elif isinstance(input_source, Path):
+            if zipfile.is_zipfile(input_source):
+                zip = zipfile.ZipFile(input_source)
+                filename = Path(input_source).name
                 filename = filename[: filename.rindex(".")]
                 stream = zip.open(filename)
                 stream = io.TextIOWrapper(stream)
@@ -75,7 +85,7 @@ class EdifTokenizer:
         try:
             self.line_number = 1
             in_quote = False
-            token_buffer = list()
+            token_buffer = []
             for buffer in iter(partial(self.input_stream.read, 32768), ""):
                 for ch in buffer:
                     if ch == "\n":
@@ -180,7 +190,7 @@ class EdifTokenizer:
 
     def is_valid_stringToken(self):
         if re.match(
-            r'"(?:[a-zA-Z]|(?:%[ \t\n\r]*(?:(?:[-+]?\d+[ \t\n\r]+)*(?:[-+]?\d+))*[ \t\n\r]*%)|[0-9]|[\!\#\$\&\'\(\)\*\+\,\-\.\/\:\;\<\=\>\?\@\[\\\]\^\_\`\{\|\}\~]|[ \t\n\r])*"',
+            r'"(?:[a-zA-Z]|(?:%[ \t\n\r]*(?:(?:[-+]?\d+[ \t\n\r]+)*(?:[-+]?\d+))*[ \t\n\r]*%)|[0-9]|[\!\#\$\%\&\'\(\)\*\+\,\-\.\/\:\;\<\=\>\?\@\[\\\]\^\_\`\{\|\}\~]|[ \t\n\r])*"',
             self.token,
         ):
             return True

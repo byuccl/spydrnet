@@ -7,7 +7,8 @@ class CallbackListener:
     In this class are all of the functions that are used as callbacks. There are also
     register methods whos function is to register the callback functions that are present.
 
-    callbacks are netlist dependent. If a callback is registered to one netlist it is not automatically registered to all netlists.
+    callbacks are netlist dependent. If a callback is registered to one netlist it is not
+    automatically registered to all netlists.
     """
 
     def __init__(self):
@@ -84,7 +85,7 @@ class CallbackListener:
 
     def wire_disconnect_pin(self, wire, pin):
         raise NotImplementedError
-    
+
     def dictionary_set(self, element, key, value):
         raise NotImplementedError
 
@@ -119,40 +120,73 @@ class CallbackListener:
         if self.cable_remove_wire.__func__ is not CallbackListener.cable_remove_wire:
             self.register_cable_remove_wire()
 
-        if self.definition_add_port.__func__ is not CallbackListener.definition_add_port:
+        if (
+            self.definition_add_port.__func__
+            is not CallbackListener.definition_add_port
+        ):
             self.register_definition_add_port()
 
-        if self.definition_remove_port.__func__ is not CallbackListener.definition_remove_port:
+        if (
+            self.definition_remove_port.__func__
+            is not CallbackListener.definition_remove_port
+        ):
             self.register_definition_remove_port()
 
-        if self.definition_add_child.__func__ is not CallbackListener.definition_add_child:
+        if (
+            self.definition_add_child.__func__
+            is not CallbackListener.definition_add_child
+        ):
             self.register_definition_add_child()
 
-        if self.definition_remove_child.__func__ is not CallbackListener.definition_remove_child:
+        if (
+            self.definition_remove_child.__func__
+            is not CallbackListener.definition_remove_child
+        ):
             self.register_definition_remove_child()
 
-        if self.definition_add_cable.__func__ is not CallbackListener.definition_add_cable:
+        if (
+            self.definition_add_cable.__func__
+            is not CallbackListener.definition_add_cable
+        ):
             self.register_definition_add_cable()
 
-        if self.definition_remove_cable.__func__ is not CallbackListener.definition_remove_cable:
+        if (
+            self.definition_remove_cable.__func__
+            is not CallbackListener.definition_remove_cable
+        ):
             self.register_definition_remove_cable()
 
         if self.instance_reference.__func__ is not CallbackListener.instance_reference:
             self.register_instance_reference()
 
-        if self.library_add_definition.__func__ is not CallbackListener.library_add_definition:
+        if (
+            self.library_add_definition.__func__
+            is not CallbackListener.library_add_definition
+        ):
             self.register_library_add_definition()
 
-        if self.library_remove_definition.__func__ is not CallbackListener.library_remove_definition:
+        if (
+            self.library_remove_definition.__func__
+            is not CallbackListener.library_remove_definition
+        ):
             self.register_library_remove_definition()
 
-        if self.netlist_top_instance.__func__ is not CallbackListener.netlist_top_instance:
+        if (
+            self.netlist_top_instance.__func__
+            is not CallbackListener.netlist_top_instance
+        ):
             self.register_netlist_top_instance()
 
-        if self.netlist_add_library.__func__ is not CallbackListener.netlist_add_library:
+        if (
+            self.netlist_add_library.__func__
+            is not CallbackListener.netlist_add_library
+        ):
             self.register_netlist_add_library()
 
-        if self.netlist_remove_library.__func__ is not CallbackListener.netlist_remove_library:
+        if (
+            self.netlist_remove_library.__func__
+            is not CallbackListener.netlist_remove_library
+        ):
             self.register_netlist_remove_library()
 
         if self.port_add_pin.__func__ is not CallbackListener.port_add_pin:
@@ -164,7 +198,10 @@ class CallbackListener:
         if self.wire_connect_pin.__func__ is not CallbackListener.wire_connect_pin:
             self.register_wire_connect_pin()
 
-        if self.wire_disconnect_pin.__func__ is not CallbackListener.wire_disconnect_pin:
+        if (
+            self.wire_disconnect_pin.__func__
+            is not CallbackListener.wire_disconnect_pin
+        ):
             self.register_wire_disconnect_pin()
 
         if self.dictionary_set.__func__ is not CallbackListener.dictionary_set:
@@ -175,7 +212,7 @@ class CallbackListener:
 
         if self.dictionary_pop.__func__ is not CallbackListener.dictionary_pop:
             self.register_dictionary_pop()
-                
+
     def register_create_netlist(self):
         global_callback.register_create_netlist(self.create_netlist)
 
@@ -225,7 +262,9 @@ class CallbackListener:
         global_callback.register_library_add_definition(self.library_add_definition)
 
     def register_library_remove_definition(self):
-        global_callback.register_library_remove_definition(self.library_remove_definition)
+        global_callback.register_library_remove_definition(
+            self.library_remove_definition
+        )
 
     def register_netlist_top_instance(self):
         global_callback.register_netlist_top_instance(self.netlist_top_instance)
@@ -282,40 +321,73 @@ class CallbackListener:
         if self.cable_remove_wire.__func__ is not CallbackListener.cable_remove_wire:
             self.deregister_cable_remove_wire()
 
-        if self.definition_add_port.__func__ is not CallbackListener.definition_add_port:
+        if (
+            self.definition_add_port.__func__
+            is not CallbackListener.definition_add_port
+        ):
             self.deregister_definition_add_port()
 
-        if self.definition_remove_port.__func__ is not CallbackListener.definition_remove_port:
+        if (
+            self.definition_remove_port.__func__
+            is not CallbackListener.definition_remove_port
+        ):
             self.deregister_definition_remove_port()
 
-        if self.definition_add_child.__func__ is not CallbackListener.definition_add_child:
+        if (
+            self.definition_add_child.__func__
+            is not CallbackListener.definition_add_child
+        ):
             self.deregister_definition_add_child()
 
-        if self.definition_remove_child.__func__ is not CallbackListener.definition_remove_child:
+        if (
+            self.definition_remove_child.__func__
+            is not CallbackListener.definition_remove_child
+        ):
             self.deregister_definition_remove_child()
 
-        if self.definition_add_cable.__func__ is not CallbackListener.definition_add_cable:
+        if (
+            self.definition_add_cable.__func__
+            is not CallbackListener.definition_add_cable
+        ):
             self.deregister_definition_add_cable()
 
-        if self.definition_remove_cable.__func__ is not CallbackListener.definition_remove_cable:
+        if (
+            self.definition_remove_cable.__func__
+            is not CallbackListener.definition_remove_cable
+        ):
             self.deregister_definition_remove_cable()
 
         if self.instance_reference.__func__ is not CallbackListener.instance_reference:
             self.deregister_instance_reference()
 
-        if self.library_add_definition.__func__ is not CallbackListener.library_add_definition:
+        if (
+            self.library_add_definition.__func__
+            is not CallbackListener.library_add_definition
+        ):
             self.deregister_library_add_definition()
 
-        if self.library_remove_definition.__func__ is not CallbackListener.library_remove_definition:
+        if (
+            self.library_remove_definition.__func__
+            is not CallbackListener.library_remove_definition
+        ):
             self.deregister_library_remove_definition()
 
-        if self.netlist_top_instance.__func__ is not CallbackListener.netlist_top_instance:
+        if (
+            self.netlist_top_instance.__func__
+            is not CallbackListener.netlist_top_instance
+        ):
             self.deregister_netlist_top_instance()
 
-        if self.netlist_add_library.__func__ is not CallbackListener.netlist_add_library:
+        if (
+            self.netlist_add_library.__func__
+            is not CallbackListener.netlist_add_library
+        ):
             self.deregister_netlist_add_library()
 
-        if self.netlist_remove_library.__func__ is not CallbackListener.netlist_remove_library:
+        if (
+            self.netlist_remove_library.__func__
+            is not CallbackListener.netlist_remove_library
+        ):
             self.deregister_netlist_remove_library()
 
         if self.port_add_pin.__func__ is not CallbackListener.port_add_pin:
@@ -327,7 +399,10 @@ class CallbackListener:
         if self.wire_connect_pin.__func__ is not CallbackListener.wire_connect_pin:
             self.deregister_wire_connect_pin()
 
-        if self.wire_disconnect_pin.__func__ is not CallbackListener.wire_disconnect_pin:
+        if (
+            self.wire_disconnect_pin.__func__
+            is not CallbackListener.wire_disconnect_pin
+        ):
             self.deregister_wire_disconnect_pin()
 
         if self.dictionary_set.__func__ is not CallbackListener.dictionary_set:
@@ -388,7 +463,9 @@ class CallbackListener:
         global_callback.deregister_library_add_definition(self.library_add_definition)
 
     def deregister_library_remove_definition(self):
-        global_callback.deregister_library_remove_definition(self.library_remove_definition)
+        global_callback.deregister_library_remove_definition(
+            self.library_remove_definition
+        )
 
     def deregister_netlist_top_instance(self):
         global_callback.deregister_netlist_top_instance(self.netlist_top_instance)

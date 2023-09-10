@@ -9,11 +9,15 @@ Reference
 .. toctree::
    :maxdepth: 2
 
-   introduction
-   element_data
    classes/index.rst
-   clone
-   uniquify
+   using_example_netlists
+   netlist_types
+   built_in_architecture
+   functions/index
+   element_data
    NamespaceManager
    verilog_support
+   eblif_support
    Callback_Framework
+   extensions
+   archive/index

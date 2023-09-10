@@ -75,7 +75,7 @@ ff.reference = fdce_definition
 ff['EDIF.identifier'] = 'out_reg_4_'
 # Set the original identifier for the new instance (Being use to be consistence with example)
 ff['EDIF.original_identifier'] = 'out_reg[4]'
-properties = list()
+properties = []
 # Create properties for the new instance
 properties.append({'identifier': 'INIT', 'value': "1'b0"})
 ff['EDIF.properties'] = properties
