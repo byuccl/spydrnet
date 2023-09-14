@@ -12,7 +12,7 @@ This section aims to help you do a spydrnet release, meaning you make the latest
 4. :ref:`update_documentation` and ensure it can build properly
 5. On Github, create a pull request with the updated code in the next_release branch.
 6. Accept and merge the pull request when the checks have finished.
-7. Move to the master branch using `git checkout master`
+7. Move to the master branch using `git checkout master` and run `git pull`
 8. :ref:`create_and_update_tag`
 9. :ref:`build_package` (this will update the documentation's version number)
 10. :ref:`build_documentation`
@@ -103,9 +103,9 @@ Upgrade pip if needed.
 
 Make sure everything is up to date
 
->>> python3 -m pip install --user --upgrade setuptools wheel
+>>> python3 -m pip install --upgrade setuptools wheel
 
-Make the python archive package:
+Make sure you are in the top level directory. Make the python archive package:
 
 >>> python3 setup.py sdist bdist_wheel
 
@@ -163,10 +163,11 @@ proper release number.
 
 Enter a description–it could just be a reiteration of the release notes or other relevant information.
 
-Three files should be added as assets to the new release:
+Four files should be added as assets to the new release:
     1. The .tar.gz file from the previous step
     2. The .whl file from the previous step
     3. The spydrnet_reference pdf document created in the :ref:`build_documentation` step. Go to docs/latex folder, change the `spydrnet_reference.pdf` name to `spydrnet_reference-new_release_number.pdf`, and then copy it to the assets under the new release.
+    4. The `pylint_output.txt`
 
 .. _publish_documentation:
 

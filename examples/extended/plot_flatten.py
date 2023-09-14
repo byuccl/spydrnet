@@ -97,14 +97,14 @@ def clean_up(instance):
 def flatten_definition(definition, top_definition=False):
     # Create a copy of the list of children
     children = definition.children.copy()
-    created = list()
+    created = []
     # Loop through each pre-existing child of the definition
     for child in children:
-        leaf_grandchildren = list()
+        leaf_grandchildren = []
         child_reference = child.reference
         # Create a copy of the list of the children for the current child reference
         grandchildren = child_reference.children.copy()
-        map = dict()
+        map = {}
         # Check if progress information should be printed
         if top_definition and not is_black_box(child):
             print("Need to move cells from", child['EDIF.identifier'],

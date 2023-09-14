@@ -28,7 +28,7 @@ for definition in netlist_1.get_definitions():
             print(port.name + " " + str(port.direction))
 
 print("\nUsing the primitive library:")
-netlist_2 = sdn.parse("b13.v", XILINX_7SERIES)
+netlist_2 = sdn.parse("b13.v", architecture=XILINX_7SERIES)
 for definition in netlist_2.get_definitions():
     if definition is not netlist_2.top_instance.reference:
         for port in definition.get_ports():

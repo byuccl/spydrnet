@@ -1,11 +1,14 @@
 # Copyright 2020 Dallin Skouson, Andrew Keller, Michael Wirthlin
 
 from collections import deque
+
 # from spydrnet.ir import *
 
-"""Code to make definitions unique throughout a netlist.
+"""
+Code to make definitions unique throughout a netlist.
 expected parameters,
-uniqify -- Makes all definitions unique below the top instance. definitions that are not referenced below the top instance will not be unique.
+uniqify -- Makes all definitions unique below the top instance. definitions that are not referenced
+below the top instance will not be unique.
 """
 
 
@@ -29,9 +32,8 @@ def _make_instance_unique(instance):
         name = instance.reference.name
         unique_suffix = _get_unique_name_modifier()
         new_def.name = name + unique_suffix
-        if 'EDIF.identifier' in new_def:
-            new_def['EDIF.identifier'] = new_def['EDIF.identifier'] + \
-                unique_suffix
+        if "EDIF.identifier" in new_def:
+            new_def["EDIF.identifier"] = new_def["EDIF.identifier"] + unique_suffix
     lib.add_definition(new_def, index + 1)
     instance.reference = new_def
 
@@ -42,12 +44,18 @@ def _is_unique(instance):
 
 
 def uniquify(netlist):
-    """Make the instances in the netlist unique
-    uniqification is done in place. Each instance will correspond to exactly one definition and each definition will correspond to exactly one instance with the exception of leaf cells.
-    Leaf cells are can be instanced unlimited numbers of times. Any netlist elements that are not instantiated by the top instance will not be modified and may retain duplicate instances
-    Currently there is no guarantee that the original definition names will be maintained, but it is guaranteed that they will be unique within the scope of all hardware that is below the top instance.
+    """
+    Make the instances in the netlist unique
+    -----------------------------------------
+    Uniqification is done in place. Each instance will correspond to exactly one definition and each
+    definition will correspond to exactly one instance with the exception of leaf cells. Leaf cells
+    are can be instanced unlimited numbers of times. Any netlist elements that are not instantiated
+    by the top instance will not be modified and may retain duplicate instances Currently there is
+    no guarantee that the original definition names will be maintained, but it is guaranteed that
+    they will be unique within the scope of all hardware that is below the top instance.
 
-    Renaming is predictable. the string: _sdn_unique_# will be added to the end of the definition names.
+    Renaming is predictable. the string: _sdn_unique_# will be added to the end of the definition
+    names.
 
     :param netlist: the netlist that will be uniquified
 
@@ -57,7 +65,8 @@ def uniquify(netlist):
 
     # import pdb; pdb.set_trace()
     # starting with top.
-    # top must be unique below top. otherwise we have infinite harware recursion which is does not make much sense.
+    # top must be unique below top. otherwise we have infinite harware recursion which is does not
+    # make much sense.
     instance_queue = deque()
 
     top_instance = netlist.top_instance

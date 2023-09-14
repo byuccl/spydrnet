@@ -1,21 +1,23 @@
+from copy import deepcopy
+from enum import Enum
 from spydrnet.ir import Bundle
 from spydrnet.ir import InnerPin
 from spydrnet.ir import OuterPin
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
 from spydrnet.global_state.global_callback import _call_create_port
-from copy import deepcopy, copy, error
 
-from enum import Enum
 
 
 class Port(Bundle):
     """
     Located on the inside of a definition.
 
-    Ports contain information about the quantity and directon of pins that go into and out of the defined struture when instanced.
+    Ports contain information about the quantity and directon of pins that go into and out of the
+    defined struture when instanced.
     """
-    __slots__ = ['_direction', '_pins']
+
+    __slots__ = ["_direction", "_pins"]
 
     class Direction(Enum):
         """Define the possible directions for a given port.
@@ -24,12 +26,21 @@ class Port(Bundle):
 
         UNDEFINED, INOUT, IN, OUT
         """
+
         UNDEFINED = 0
         INOUT = 1
         IN = 2
         OUT = 3
 
-    def __init__(self, name=None, properties=None, is_downto=None, is_scalar=None, lower_index=None, direction=None):
+    def __init__(
+        self,
+        name=None,
+        properties=None,
+        is_downto=None,
+        is_scalar=None,
+        lower_index=None,
+        direction=None,
+    ):
         """Setup an empty port
 
         parameters
@@ -37,17 +48,20 @@ class Port(Bundle):
 
         name - (str) the name of this instance
         properties - (dict) the dictionary which holds the properties
-        id_downto - (bool) set the downto status. Downto is False if the right index is higher than the left one, True otherwise
-        is_scalar - (bool) set the scalar status. Return True if the item is a scalar False otherwise.
+        id_downto - (bool) set the downto status. Downto is False if the right index is higher than
+                    the left one, True otherwise
+        is_scalar - (bool) set the scalar status. Return True if the item is a scalar False
+                    otherwise.
         lower_index - (int) get the value of the lower index of the array.
-        direction - (Enum) Define the possible directions for a given port. (UNDEFINED, INOUT, IN, OUT)
+        direction - (Enum) Define the possible directions for a given port. (UNDEFINED, INOUT, IN,
+                    OUT)
 
         """
         super().__init__()
         self._direction = self.Direction.UNDEFINED
-        self._pins = list()
+        self._pins = []
         _call_create_port(self)
-        if name != None:
+        if name is not None:
             self.name = name
 
         if is_downto is not None:
@@ -61,9 +75,8 @@ class Port(Bundle):
         if direction is not None:
             self.direction = direction
 
-        if properties != None:
-            assert isinstance(
-                properties, dict), "properties must be a dictionary"
+        if properties is not None:
+            assert isinstance(properties, dict), "properties must be a dictionary"
             for key in properties:
                 self[key] = properties[key]
 
@@ -86,7 +99,10 @@ class Port(Bundle):
         parameters
         ----------
 
-        value - (Port.Direction or int or str) when a Port.Direction is passed in it will set the port accordingly. when an int is passed in it will be 0: UNDEFINED, 1: INOUT, 2: IN, 3: OUT. if a string is passed in it is case insensitively compared with the names and assigned accordingly
+        value - (Port.Direction or int or str) when a Port.Direction is passed in it will set the
+        port accordingly. when an int is passed in it will be 0: UNDEFINED, 1: INOUT, 2: IN, 3: OUT.
+        if a string is passed in it is case insensitively compared with the names and assigned
+        accordingly
         """
         if isinstance(value, self.Direction):
             self._direction = value
@@ -103,7 +119,8 @@ class Port(Bundle):
                     break
         else:
             raise TypeError(
-                "Type {} cannot be assigned to direction".format(type(value)))
+                "Type {} cannot be assigned to direction".format(type(value))
+            )
 
     @property
     def pins(self):
@@ -112,8 +129,10 @@ class Port(Bundle):
 
     @pins.setter
     def pins(self, value):
-        """This function can set the pins for the port, but it can only be used to reorder the pins in the port.
-        It cannot be used to add or remove pins from the port. to do this use the add_pin or remove_pin functions instead
+        """
+        This function can set the pins for the port, but it can only be used to reorder the pins
+        in the port. It cannot be used to add or remove pins from the port. to do this use the
+        add_pin or remove_pin functions instead
 
         parameters
         ----------
@@ -123,8 +142,10 @@ class Port(Bundle):
         """
         value_list = list(value)
         value_set = set(value_list)
-        assert len(value_set) == len(value_list) and set(self._pins) == value_set, \
-            "Set of values do not match, assignment can only be used to reorder values, values must be unique"
+        assert (
+            len(value_set) == len(value_list) and set(self._pins) == value_set
+        ), "Set of values do not match, assignment can only be used to reorder values, values \
+            must be unique"
         self._pins = value_list
 
     def create_pins(self, pin_count):
@@ -146,6 +167,7 @@ class Port(Bundle):
         the inner_pin created
         """
         from spydrnet.ir import InnerPin as InnerPinExtended
+
         pin = InnerPinExtended()
         self.add_pin(pin)
         if self.definition:
@@ -176,7 +198,8 @@ class Port(Bundle):
     def remove_pin(self, pin):
         """Remove the given pin from the port.
 
-        The pin must belong to the port in order to be removed. Wires are disconnected from the pin that is removed.
+        The pin must belong to the port in order to be removed. Wires are disconnected from the pin
+        that is removed.
 
         parameters
         ----------
@@ -202,15 +225,17 @@ class Port(Bundle):
             exclude_pins = pins
         else:
             exclude_pins = set(pins)
-        assert all(isinstance(x, InnerPin) and x.port == self for x in exclude_pins), "All pins to remove must be " \
-                                                                                      "InnerPins and belong to the port"
+        assert all(isinstance(x, InnerPin) and x.port == self for x in exclude_pins), (
+            "All pins to remove must be " "InnerPins and belong to the port"
+        )
         for pin in exclude_pins:
             self._remove_pin(pin)
         self._pins = list(x for x in self._pins if x not in exclude_pins)
 
     def _remove_pin(self, pin):
         """Internal pin removal function.
-        Disconnects the wires from the pin and remvoes all the pins reference to other pins."""
+        Disconnects the wires from the pin and remvoes all the pins reference to other pins.
+        """
         global_callback._call_port_remove_pin(self, pin)
         if self.definition:
             for reference in self.definition.references:
@@ -224,7 +249,8 @@ class Port(Bundle):
         pin._port = None
 
     def _clone_rip_and_replace(self, memo):
-        """Remove from its current environment and place it into the new cloned environment with references held in the memo dictionary"""
+        """Remove from its current environment and place it into the new cloned environment with
+        references held in the memo dictionary"""
         for p in self._pins:
             p._clone_rip_and_replace(memo)
 
@@ -241,12 +267,15 @@ class Port(Bundle):
         Clone leaving all references in tact.
         The element can then either be ripped or ripped and replaced.
         """
-        assert self not in memo, "the object should not have been copied twice in this pass"
+        assert (
+            self not in memo
+        ), "the object should not have been copied twice in this pass"
         from spydrnet.ir import Port as PortExtended
+
         c = PortExtended()
         memo[self] = c
         c._direction = deepcopy(self._direction)
-        new_pins = list()
+        new_pins = []
         for p in self._pins:
             new_pins.append(p._clone(memo))
         c._pins = new_pins
@@ -270,14 +299,14 @@ class Port(Bundle):
          * direction, downto, is_scalar, lower_index will all be maintained
 
         """
-        c = self._clone(dict())
+        c = self._clone({})
         c._clone_rip()
         return c
 
     def __str__(self):
         """Re-define the print function so it is easier to read"""
         rep = super().__str__()
-        rep = rep[:-1] + '; '
+        rep = rep[:-1] + "; "
         rep += str(self.direction)
-        rep += '>'
+        rep += ">"
         return rep

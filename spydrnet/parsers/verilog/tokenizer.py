@@ -5,10 +5,9 @@ from functools import partial
 import re
 import zipfile
 import io
-import os
+from pathlib import Path
 import spydrnet.parsers.verilog.verilog_tokens as vt
 from spydrnet.parsers.verilog.verilog_token_factory import TokenFactory
-from pathlib import Path
 
 
 class VerilogTokenizer:
@@ -37,14 +36,22 @@ class VerilogTokenizer:
             if zipfile.is_zipfile(input_source):
                 zip = zipfile.ZipFile(input_source)
                 filename = Path(input_source).name
-                filename = filename[:filename.rindex(".")]
+                filename = filename[: filename.rindex(".")]
                 stream = zip.open(filename)
                 stream = io.TextIOWrapper(stream)
                 self.input_stream = stream
             else:
-                self.input_stream = open(input_source, 'r')
+                self.input_stream = open(input_source, "r")
         elif isinstance(input_source, Path):
-            self.input_stream = open(input_source,"r")
+            if zipfile.is_zipfile(input_source):
+                zip = zipfile.ZipFile(input_source)
+                filename = Path(input_source).name
+                filename = filename[: filename.rindex(".")]
+                stream = zip.open(filename)
+                stream = io.TextIOWrapper(stream)
+                self.input_stream = stream
+            else:
+                self.input_stream = open(input_source, "r")
         else:
             if isinstance(input_source, io.TextIOBase) is False:
                 self.input_stream = io.TextIOWrapper(input_source)
@@ -77,14 +84,16 @@ class VerilogTokenizer:
             return self.next_token
         else:
             token = next(self.generator)
-            while len(token) >= 2 and (token[0:2] == vt.OPEN_LINE_COMMENT
-                                       or token[0:2] == vt.OPEN_BLOCK_COMMENT):
+            while len(token) >= 2 and (
+                token[0:2] == vt.OPEN_LINE_COMMENT
+                or token[0:2] == vt.OPEN_BLOCK_COMMENT
+            ):
                 token = next(self.generator)
             self.next_token = token
             return self.next_token
 
     def generate_tokens(self):
-        '''give independent tokens from the token factory'''
+        """give independent tokens from the token factory"""
 
         try:
             self.line_number = 1
@@ -99,10 +108,11 @@ class VerilogTokenizer:
         finally:
             self.input_stream.close()
 
-        # if the input doesn't end in white space there will be one token left in the token factory try and get it.
+        # if the input doesn't end in white space there will be one token left in the token factory
+        # try and get it.
 
         result = tf.flush()
-        if result != None:
+        if result is not None:
             yield result
 
     def close(self):
@@ -110,7 +120,7 @@ class VerilogTokenizer:
             self.input_stream.close()
 
 
-class VerilogTokenizerSimple():
+class VerilogTokenizerSimple:
     def __init__(self, token_list):
         self.token = None
         self.next_token = None
@@ -146,8 +156,10 @@ class VerilogTokenizerSimple():
             return self.next_token
         else:
             token = next(self.generator)
-            while len(token) >= 2 and (token[0:2] == vt.OPEN_LINE_COMMENT
-                                       or token[0:2] == vt.OPEN_BLOCK_COMMENT):
+            while len(token) >= 2 and (
+                token[0:2] == vt.OPEN_LINE_COMMENT
+                or token[0:2] == vt.OPEN_BLOCK_COMMENT
+            ):
                 token = next(self.generator)
             self.next_token = token
             return self.next_token

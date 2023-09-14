@@ -1,9 +1,20 @@
+SpyDrNet 1.13.0
+----------------
+August 14, 2023
+
+* Moved the example netlists and tests out of the python package and added documentation how to use the example netlists
+* Updated to use pathlib instead of os
+* Added Github actions check to run Pylint and to fail if score is too low
+* Added documentation about Pylint and code formatting
+* Various minor improvements
+* Other small edits to documentation
+
 SpyDrNet 1.12.2
 ----------------
 April 18, 2023
 
-Bug fix for Verilog parser for partially connected ports being misaligned and fixed primitive name with a space at the end.
-Changed some of the os.path to pathlib to conform to updated coding standards
+* Bug fix for Verilog parser for partially connected ports being misaligned and fixed primitive name with a space at the end.
+* Changed some of the os.path to pathlib to conform to updated coding standards
 
 SpyDrNet 1.12.1
 ----------------

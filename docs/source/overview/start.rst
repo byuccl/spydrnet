@@ -65,7 +65,7 @@ write_blackbox
 
 write_eblif_cname 
 
-- Flag
+- Flag used for eblif (Yosys to F4PGA) 
 
 defparam 
 

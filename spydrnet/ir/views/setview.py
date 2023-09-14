@@ -1,5 +1,5 @@
 class SetView:
-    __slots__ = ['_set']
+    __slots__ = ["_set"]
 
     def __init__(self, set_object):
         self._set = set_object

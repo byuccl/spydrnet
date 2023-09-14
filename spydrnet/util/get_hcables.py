@@ -1,4 +1,15 @@
-from spydrnet import FirstClassElement, InnerPin, OuterPin, Wire, Netlist, Library, Definition, Instance, Port, Cable
+from spydrnet import (
+    FirstClassElement,
+    InnerPin,
+    OuterPin,
+    Wire,
+    Netlist,
+    Library,
+    Definition,
+    Instance,
+    Port,
+    Cable,
+)
 from spydrnet.util.hierarchical_reference import HRef
 from spydrnet.util.selection import Selection
 from spydrnet.util.patterns import _is_pattern_absolute, _value_matches_pattern
@@ -13,57 +24,67 @@ def get_hcables(obj, *args, **kwargs):
     Parameters
     ----------
     obj : object, Iterable - required
-        The object or objects associated with this query. Queries return a collection of objects associated with the
-        provided object or objects that match the query criteria. For example, `sdn.get_instances(netlist, ...)` would
-        return all of the instances *within* the provided definition that match the additional criteria.
+        The object or objects associated with this query. Queries return a collection of objects
+        associated with the provided object or objects that match the query criteria. For example, 
+        `sdn.get_instances(netlist, ...)` would return all of the instances *within* the provided
+        definition that match the additional criteria.
     patterns : str, Iterable - optional, positional or named, default: wildcard
-        The search patterns. Patterns can be a single string or an Iterable collection of strings. Patterns can be
-        absolute or they can contain wildcards or regular expressions. If `patterns` is not provided, then it defaults
-        to a wildcard.
+        The search patterns. Patterns can be a single string or an Iterable collection of strings.
+        Patterns can be absolute or they can contain wildcards or regular expressions. If 
+        `patterns` is not provided, then it defaults to a wildcard.
     is_case : bool - optional, named, default: True
-        Specify if patterns should be treated as case sensitive. Only applies to patterns. Does not alter fast lookup
-        behavior (if namespace policy uses case insensitive indexing, this parameter will not prevent a fast lookup
-        from returning a matching object even if the case is not an exact match).
+        Specify if patterns should be treated as case sensitive. Only applies to patterns. Does not
+        alter fast lookup behavior (if namespace policy uses case insensitive indexing, this 
+        parameter will not prevent a fast lookup from returning a matching object even if the case
+        is not an exact match).
     is_re: bool - optional, named, default: False
-        Specify if patterns are regular expressions. If `False`, a pattern can still contain `*` and `?` wildcards. A
-        `*` matches zero or more characters. A `?` matches upto a single character.
+        Specify if patterns are regular expressions. If `False`, a pattern can still contain `*`
+        and `?` wildcards. A `*` matches zero or more characters. A `?` matches upto a single
+        character.
     selection : Selection.{INSIDE, OUTSIDE, BOTH, ALL}, default: INSIDE
-        This parameter determines the wires that are returned based on the instance associated with the object that is
-        being searched.
+        This parameter determines the wires that are returned based on the instance associated
+        with the object that is being searched.
     recursive : bool - optional, default: False
-        Specify if search should be recursive or not meaning that sub hierarchical instances within an instance are
-        included or not.
+        Specify if search should be recursive or not meaning that sub hierarchical instances within
+        an instance are included or not.
     filter : function
-        This is a single input function that can be used to filter out unwanted virtual instances. If not specifed, all
-        matching virtual instances are returned. Otherwise, virtual instances that cause the filter function to evaluate
-        to true are the only items returned.
-    
+        This is a single input function that can be used to filter out unwanted virtual instances.
+        If not specifed, all matching virtual instances are returned. Otherwise, virtual instances
+        that cause the filter function to evaluate to true are the only items returned.
+
     Returns
     -------
     href_cables : generator
-        The hierarchical references to cables associated with a particular object or collection of objects.
-    
+        The hierarchical references to cables associated with a particular object or collection
+        of objects.
+
     """
     # Check argument list
-    if len(args) == 1 and 'patterns' in kwargs:
+    if len(args) == 1 and "patterns" in kwargs:
         raise TypeError("get_hwires() got multiple values for argument 'patterns'")
-    if len(args) > 1 or any(x not in {'patterns', 'selection', 'recursive', 'filter', 'is_case', 'is_re'} for x in
-                            kwargs):
+    if len(args) > 1 or any(
+        x not in {"patterns", "selection", "recursive", "filter", "is_case", "is_re"}
+        for x in kwargs
+    ):
         raise TypeError("Unknown usage. Please see help for more information.")
 
     # Default values
-    selection = kwargs.get('selection', Selection.INSIDE)
+    selection = kwargs.get("selection", Selection.INSIDE)
     if isinstance(selection, str):
         if selection in Selection.__members__:
             selection = Selection[selection]
     if isinstance(selection, Selection) is False:
-        raise TypeError("selection must be '{}'".format("', '".join(Selection.__members__.keys())))
+        raise TypeError(
+            "selection must be '{}'".format("', '".join(Selection.__members__.keys()))
+        )
 
-    filter_func = kwargs.get('filter', lambda x: True)
-    recursive = kwargs.get('recursive', False)
-    is_case = kwargs.get('is_case', True)
-    is_re = kwargs.get('is_re', False)
-    patterns = args[0] if len(args) == 1 else kwargs.get('patterns', ".*" if is_re else "*")
+    filter_func = kwargs.get("filter", lambda x: True)
+    recursive = kwargs.get("recursive", False)
+    is_case = kwargs.get("is_case", True)
+    is_re = kwargs.get("is_re", False)
+    patterns = (
+        args[0] if len(args) == 1 else kwargs.get("patterns", ".*" if is_re else "*")
+    )
 
     if isinstance(obj, (FirstClassElement, InnerPin, OuterPin, Wire)) is False:
         try:
@@ -72,26 +93,43 @@ def get_hcables(obj, *args, **kwargs):
             object_collection = [obj]
     else:
         object_collection = [obj]
-    if all(isinstance(x, (HRef, FirstClassElement, InnerPin, OuterPin, Wire)) for x in object_collection) is False:
-        raise TypeError("get_hwires() supports all netlist related objects and hierarchical references or a "
-                        "collection of theses as the object searched, unsupported object provided")
+    if (
+        all(
+            isinstance(x, (HRef, FirstClassElement, InnerPin, OuterPin, Wire))
+            for x in object_collection
+        )
+        is False
+    ):
+        raise TypeError(
+            "get_hwires() supports all netlist related objects and hierarchical references or a "
+            "collection of theses as the object searched, unsupported object provided"
+        )
 
     if isinstance(patterns, str):
         patterns = (patterns,)
     assert isinstance(patterns, (FirstClassElement, InnerPin, OuterPin, Wire)) is False
 
-    return _get_hcables(object_collection, selection, patterns, recursive, is_case, is_re, filter_func)
+    return _get_hcables(
+        object_collection, selection, patterns, recursive, is_case, is_re, filter_func
+    )
 
 
-def _get_hcables(object_collection, selection, patterns, recursive, is_case, is_re, filter_func):
-    for result in filter(filter_func, _get_hcables_raw(object_collection, selection, patterns, recursive, is_case, is_re)):
+def _get_hcables(
+    object_collection, selection, patterns, recursive, is_case, is_re, filter_func
+):
+    for result in filter(
+        filter_func,
+        _get_hcables_raw(
+            object_collection, selection, patterns, recursive, is_case, is_re
+        ),
+    ):
         yield result
 
 
 def _get_hcables_raw(object_collection, selection, patterns, recursive, is_case, is_re):
     in_namemap = set()
     in_yield = set()
-    namemap = dict()
+    namemap = {}
     hpin_search = set()
     bypass_namesearch = set()
     while object_collection:
@@ -118,14 +156,18 @@ def _get_hcables_raw(object_collection, selection, patterns, recursive, is_case,
                                 hcable = HRef.from_parent_and_item(obj, cable)
                                 if hcable not in in_yield:
                                     in_yield.add(hcable)
-                                    yield(hcable)
+                                    yield (hcable)
                             # get internal cables recursively
                             if recursive or selection == Selection.ALL:
                                 for child in reference.children:
                                     href_child = HRef.from_parent_and_item(obj, child)
                                     bypass_namesearch.add(href_child)
                                     object_collection.append(href_child)
-                        if selection in {Selection.OUTSIDE, Selection.BOTH, Selection.ALL}:
+                        if selection in {
+                            Selection.OUTSIDE,
+                            Selection.BOTH,
+                            Selection.ALL,
+                        }:
                             for port in reference.ports:
                                 href_port = HRef.from_parent_and_item(obj, port)
                                 for pin in port.pins:
@@ -150,11 +192,15 @@ def _get_hcables_raw(object_collection, selection, patterns, recursive, is_case,
                     href_parent_instance = href_parent_cable.parent
                     for pin in item.pins:
                         if isinstance(pin, OuterPin):
-                            href_inst = HRef.from_parent_and_item(href_parent_instance, pin.instance)
+                            href_inst = HRef.from_parent_and_item(
+                                href_parent_instance, pin.instance
+                            )
                             inner_wire = pin.inner_pin.wire
                             if inner_wire:
                                 inner_cable = inner_wire.cable
-                                href_cable = HRef.from_parent_and_item(href_inst, inner_cable)
+                                href_cable = HRef.from_parent_and_item(
+                                    href_inst, inner_cable
+                                )
                                 if href_cable not in in_yield:
                                     in_yield.add(href_cable)
                                     yield href_cable
@@ -167,7 +213,9 @@ def _get_hcables_raw(object_collection, selection, patterns, recursive, is_case,
                                     outer_wire = outer_pin.wire
                                     if outer_wire:
                                         outer_cable = outer_wire.cable
-                                        href_cable = HRef.from_parent_and_item(href_parent, outer_cable)
+                                        href_cable = HRef.from_parent_and_item(
+                                            href_parent, outer_cable
+                                        )
                                         if href_cable not in in_yield:
                                             in_yield.add(href_cable)
                                             yield href_cable
@@ -179,7 +227,9 @@ def _get_hcables_raw(object_collection, selection, patterns, recursive, is_case,
                     href_inst = href_cable.parent
                     for pin in item.pins:
                         if isinstance(pin, OuterPin):
-                            href_inst = HRef.from_parent_and_item(obj.parent, pin.instance)
+                            href_inst = HRef.from_parent_and_item(
+                                obj.parent, pin.instance
+                            )
                             inner_pin = pin.inner_pin
                             port = inner_pin.port
                             href_port = HRef.from_parent_and_item(href_inst, port)
@@ -236,25 +286,27 @@ def _get_hcables_raw(object_collection, selection, patterns, recursive, is_case,
 
 def _update_hcable_namemap(href_instance, recursive, found, namemap):
     search_stack = [(href_instance, False)]
-    name_stack = list()
+    name_stack = []
     while search_stack:
         href_instance, visited = search_stack.pop()
         if visited:
             name_stack.pop()
         else:
             search_stack.append((href_instance, True))
-            name_stack.append(href_instance.item.name if href_instance.item.name else '')
+            name_stack.append(
+                href_instance.item.name if href_instance.item.name else ""
+            )
             item = href_instance.item
             reference = item.reference
             if reference:
                 for cable in reference.cables:
                     hcable = HRef.from_parent_and_item(href_instance, cable)
-                    name_stack.append(cable.name if cable.name else '')
-                    cable_hname = '/'.join(name_stack[1:])
+                    name_stack.append(cable.name if cable.name else "")
+                    cable_hname = "/".join(name_stack[1:])
                     if hcable not in found:
                         found.add(hcable)
                         if cable_hname not in namemap:
-                            namemap[cable_hname] = list()
+                            namemap[cable_hname] = []
                         namemap[cable_hname].append(hcable)
                     name_stack.pop()
                 if recursive:
@@ -274,26 +326,30 @@ def _get_hwires_from_hpins(hpin_search, selection):
             if hwire_inside and hwire_inside not in found_hwires:
                 found_hwires.add(hwire_inside)
                 yield hwire_inside
-                search_stack += (x for x in _get_hpins_from_hwire(hwire_inside) if x != hpin)
+                search_stack += (
+                    x for x in _get_hpins_from_hwire(hwire_inside) if x != hpin
+                )
 
         if selection in {Selection.OUTSIDE, Selection.BOTH, Selection.ALL}:
             hwire_outside = _get_outer_hwire_from_hpin(hpin)
             if hwire_outside and hwire_outside not in found_hwires:
                 found_hwires.add(hwire_outside)
                 yield hwire_outside
-                search_stack += (x for x in _get_hpins_from_hwire(hwire_outside) if x != hpin)
+                search_stack += (
+                    x for x in _get_hpins_from_hwire(hwire_outside) if x != hpin
+                )
 
 
 def _get_inner_hwire_from_hpin(hpin):
-        wire = hpin.item.wire
-        if wire:
-            cable = wire.cable
-            if cable:
-                hport = hpin.parent
-                hinst = hport.parent
-                hcable = HRef.from_parent_and_item(hinst, cable)
-                hwire = HRef.from_parent_and_item(hcable, wire)
-                return hwire
+    wire = hpin.item.wire
+    if wire:
+        cable = wire.cable
+        if cable:
+            hport = hpin.parent
+            hinst = hport.parent
+            hcable = HRef.from_parent_and_item(hinst, cable)
+            hwire = HRef.from_parent_and_item(hcable, wire)
+            return hwire
 
 
 def _get_outer_hwire_from_hpin(hpin):

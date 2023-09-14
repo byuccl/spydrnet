@@ -1,10 +1,10 @@
+from copy import deepcopy
 from spydrnet.ir import FirstClassElement
 from spydrnet.ir import Library
 from spydrnet.ir import Instance
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
 from spydrnet.global_state.global_callback import _call_create_netlist
-from copy import deepcopy, copy, error
 from spydrnet.ir import Definition
 
 
@@ -38,7 +38,8 @@ class Netlist(FirstClassElement):
     >>> work_library = netlist.create_library()
     >>> work_library['EDIF.identifier'] = 'work'
     """
-    __slots__ = ['_libraries', '_top_instance']
+
+    __slots__ = ["_libraries", "_top_instance"]
 
     def __init__(self, name=None, properties=None):
         """
@@ -51,15 +52,14 @@ class Netlist(FirstClassElement):
         properties - (dict) the dictionary which holds the properties
         """
         super().__init__()
-        self._libraries = list()
+        self._libraries = []
         self._top_instance = None
         _call_create_netlist(self)
 
-        if name != None:
+        if name is not None:
             self.name = name
-        if properties != None:
-            assert isinstance(
-                properties, dict), "properties must be a dictionary"
+        if properties is not None:
+            assert isinstance(properties, dict), "properties must be a dictionary"
             for key in properties:
                 self[key] = properties[key]
 
@@ -70,6 +70,7 @@ class Netlist(FirstClassElement):
         Shortcut to :func:`~spydrnet.compose`.
         """
         from spydrnet.composers import compose
+
         compose(self, *args, **kwargs)
 
     @property
@@ -91,8 +92,10 @@ class Netlist(FirstClassElement):
         """
         value_list = list(value)
         value_set = set(value_list)
-        assert len(value_list) == len(value_set) and set(self._libraries) == value_set, \
-            "Set of values do not match, this assignment can only reorder values, values must be unique"
+        assert (
+            len(value_list) == len(value_set) and set(self._libraries) == value_set
+        ), "Set of values do not match, this assignment can only reorder values, \
+            values must be unique"
         self._libraries = value_list
 
     @property
@@ -115,14 +118,18 @@ class Netlist(FirstClassElement):
 
         Parameters
         ----------
-        instance - (Instance or Definition) the instance to set as the top instance. If a definition is passed into the funciton,
+        instance - (Instance or Definition) the instance to set as the top instance. If a definition
+                    is passed into the funciton,
         creates a new instance with that definition and set it as the top instance.
         """
-        assert instance is None or isinstance(instance, Instance) or isinstance(
-            instance, Definition), "Must specify an instance"
+        assert (
+            instance is None
+            or isinstance(instance, Instance)
+            or isinstance(instance, Definition)
+        ), "Must specify an instance"
         global_callback._call_netlist_top_instance(self, instance)
-        # TODO: should We have a DRC that makes sure the instance is of a definition contained in netlist? I think no
-        #  but I am open to hear other points of veiw.
+        # TODO: should We have a DRC that makes sure the instance is of a definition contained in
+        # netlist? I think no but I am open to hear other points of veiw.
         if self.top_instance:
             self.top_instance.is_top_instance = False
         if isinstance(instance, Definition):
@@ -135,21 +142,25 @@ class Netlist(FirstClassElement):
             if instance:
                 instance.is_top_instance = True
 
-    def set_top_instance(self, instance, instance_name='instance'):
+    def set_top_instance(self, instance, instance_name="instance"):
         """Sets the top instance of the design.
 
         The instance must not be null and should probably come from this netlist
 
         Parameters
         ----------
-        instance - (Instance or Definition) the instance to set as the top instance. If a definition is passed into the funciton,
+        instance - (Instance or Definition) the instance to set as the top instance. If a definition
+                    is passed into the funciton,
         creates a new instance with that definition and set it as the top instance.
         """
-        assert instance is None or isinstance(instance, Instance) or isinstance(
-            instance, Definition), "Must specify an instance"
+        assert (
+            instance is None
+            or isinstance(instance, Instance)
+            or isinstance(instance, Definition)
+        ), "Must specify an instance"
         global_callback._call_netlist_top_instance(self, instance)
-        # TODO: should We have a DRC that makes sure the instance is of a definition contained in netlist? I think no
-        #  but I am open to hear other points of veiw.
+        # TODO: should We have a DRC that makes sure the instance is of a definition contained in
+        # netlist? I think no but I am open to hear other points of veiw.
 
         if isinstance(instance, Definition):
             top = Instance()
@@ -225,9 +236,10 @@ class Netlist(FirstClassElement):
             excluded_libraries = libraries
         else:
             excluded_libraries = set(libraries)
-        assert all(x.netlist == self for x in excluded_libraries), "Some libraries to remove are not included in " \
-                                                                   "netlist "
-        included_libraries = list()
+        assert all(x.netlist == self for x in excluded_libraries), (
+            "Some libraries to remove are not included in " "netlist "
+        )
+        included_libraries = []
         for library in self._libraries:
             if library not in excluded_libraries:
                 included_libraries.append(library)
@@ -255,18 +267,21 @@ class Netlist(FirstClassElement):
 
         The element can then either be ripped or ripped and replaced.
         """
-        assert self not in memo, "the object should not have been copied twice in this pass"
+        assert (
+            self not in memo
+        ), "the object should not have been copied twice in this pass"
         from spydrnet.ir import Netlist as NetlistExtended
+
         c = NetlistExtended()
         memo[self] = c
         c._data = deepcopy(self._data)
 
-        new_libraries = list()
+        new_libraries = []
         for library in self._libraries:
             new_libraries.append(library._clone(memo))
         c._libraries = new_libraries
 
-        if self._top_instance == None:
+        if self._top_instance is None:
             c._top_instance = None
         else:
             if self._top_instance in memo:
@@ -288,7 +303,7 @@ class Netlist(FirstClassElement):
         This clone function should act just the way you would expect
         All references are internal to the netlist that has been cloned.
         """
-        memo = dict()
+        memo = {}
         c = self._clone(memo)
         c._clone_rip(memo)
         return c
@@ -296,14 +311,14 @@ class Netlist(FirstClassElement):
     def __str__(self):
         """Re-define the print function so it is easier to read"""
         rep = super().__str__()
-        rep = rep[:-1] + '; '
+        rep = rep[:-1] + "; "
         if self.top_instance is None:
-            rep += 'top_instance undefined'
+            rep += "top_instance undefined"
         elif self.top_instance.name is None:
-            rep += 'top_instance.name undefined'
+            rep += "top_instance.name undefined"
         else:
-            rep += 'top_instance.name \'' + self.top_instance.name + '\''
-        rep += '>'
+            rep += "top_instance.name '" + self.top_instance.name + "'"
+        rep += ">"
         return rep
 
     def is_unique(self):

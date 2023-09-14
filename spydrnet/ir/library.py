@@ -1,9 +1,9 @@
+from copy import deepcopy
 from spydrnet.ir import FirstClassElement
 from spydrnet.ir import Definition
 from spydrnet.ir.views.listview import ListView
 from spydrnet.global_state import global_callback
 from spydrnet.global_state.global_callback import _call_create_library
-from copy import deepcopy, copy, error
 
 
 class Library(FirstClassElement):
@@ -12,7 +12,8 @@ class Library(FirstClassElement):
 
     Contains a pointer to parent netlist and definitions.
     """
-    __slots__ = ['_netlist', '_definitions']
+
+    __slots__ = ["_netlist", "_definitions"]
 
     def __init__(self, name=None, properties=None):
         """
@@ -27,14 +28,13 @@ class Library(FirstClassElement):
 
         super().__init__()
         self._netlist = None
-        self._definitions = list()
+        self._definitions = []
         _call_create_library(self)
-        if name != None:
+        if name is not None:
             self.name = name
 
-        if properties != None:
-            assert isinstance(
-                properties, dict), "properties must be a dictionary"
+        if properties is not None:
+            assert isinstance(properties, dict), "properties must be a dictionary"
             for key in properties:
                 self[key] = properties[key]
 
@@ -66,8 +66,10 @@ class Library(FirstClassElement):
         """
         value_list = list(value)
         value_set = set(value_list)
-        assert len(value_list) == len(value_set) and set(self._definitions) == value_set, \
-            "Set of values do not match, this function can only reorder values, values must be unique"
+        assert (
+            len(value_list) == len(value_set) and set(self._definitions) == value_set
+        ), "Set of values do not match, this function can only reorder values, values must \
+            be unique"
         self._definitions = value_list
 
     def create_definition(self, name=None, properties=None):
@@ -96,8 +98,18 @@ class Library(FirstClassElement):
         position - int, (default None)
             the index in the library list at which to add the definition
         """
-        assert definition.library is not self, "Definition " + str(definition) + " already included in library " + str(self)
-        assert definition.library is None, "Definition " + str(definition) + " already belongs to a different library " + str(definition.library)
+        assert definition.library is not self, (
+            "Definition "
+            + str(definition)
+            + " already included in library "
+            + str(self)
+        )
+        assert definition.library is None, (
+            "Definition "
+            + str(definition)
+            + " already belongs to a different library "
+            + str(definition.library)
+        )
         global_callback._call_library_add_definition(self, definition)
         if position is not None:
             self._definitions.insert(position, definition)
@@ -133,9 +145,10 @@ class Library(FirstClassElement):
             excluded_definitions = definitions
         else:
             excluded_definitions = set(definitions)
-        assert all(x.library == self for x in excluded_definitions), "Some definitions to remove are not included in " \
-                                                                     "the library "
-        included_definitions = list()
+        assert all(x.library == self for x in excluded_definitions), (
+            "Some definitions to remove are not included in " "the library "
+        )
+        included_definitions = []
         for definition in self._definitions:
             if definition not in excluded_definitions:
                 included_definitions.append(definition)
@@ -149,8 +162,10 @@ class Library(FirstClassElement):
         definition._library = None
 
     def _clone_rip_and_replace(self, memo):
-        """Remove from its current environment and place it into the new cloned environment with references held in the memo dictionary"""
-        pass  # this function will need to call rip and replace in library on each of the definitions when called from the netlist.
+        """Remove from its current environment and place it into the new cloned environment with
+        references held in the memo dictionary"""
+        pass  # this function will need to call rip and replace in library on each of
+              # the definitions when called from the netlist.
         for definition in self._definitions:
             definition._clone_rip_and_replace(memo)
 
@@ -175,13 +190,15 @@ class Library(FirstClassElement):
         clone leaving all references in tact.
         The element can then either be ripped or ripped and replaced
         """
-        assert self not in memo, "the object should not have been copied twice in this pass"
+        assert (
+            self not in memo
+        ), "the object should not have been copied twice in this pass"
         c = Library()
         memo[self] = c
         c._netlist = None
         c._data = deepcopy(self._data)
 
-        new_definitions = list()
+        new_definitions = []
         for definition in self._definitions:
             new_definitions.append(definition._clone(memo))
         c._definitions = new_definitions
@@ -196,13 +213,16 @@ class Library(FirstClassElement):
 
         The following describes the structure of the returned object:
 
-         * the instances that pointed to reference definitions within the library will have updated references
-         * the instances that pointed to reference definitions outside the library will maintain their definitions
-         * the references lists (of definitions) both inside and outsde the library will be updated to reflect the change
+         * the instances that pointed to reference definitions within the library will have updated
+           references
+         * the instances that pointed to reference definitions outside the library will maintain
+           their definitions
+         * the references lists (of definitions) both inside and outsde the library will be updated
+           to reflect the change
          * all definitions are cloned within the library.
 
-         """
-        memo = dict()
+        """
+        memo = {}
         c = self._clone(memo)
         c._clone_rip(memo)
         return c
@@ -210,12 +230,12 @@ class Library(FirstClassElement):
     def __str__(self):
         """Re-define the print function so it is easier to read"""
         rep = super().__str__()
-        rep = rep[:-1] + '; '
+        rep = rep[:-1] + "; "
         if self.netlist is None:
-            rep += 'parent netlist undefined'
+            rep += "parent netlist undefined"
         elif self.netlist.name is None:
-            rep += 'parent netlist.name undefined'
+            rep += "parent netlist.name undefined"
         else:
-            rep += 'parent netlist.name \'' + self.netlist.name + '\''
-        rep += '>'
+            rep += "parent netlist.name '" + self.netlist.name + "'"
+        rep += ">"
         return rep

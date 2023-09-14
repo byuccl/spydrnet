@@ -1,7 +1,7 @@
 import json
-from spydrnet.ir import *
 import inspect  # used for debug.
 from datetime import datetime
+from spydrnet.ir import *
 from spydrnet.composers.edif.edifify_names import EdififyNames
 
 
@@ -22,16 +22,19 @@ class ComposeEdif:
         Keyword Arguments:
         ir -- the object(environment) to be composed to edif (default None)
 
-        file_out -- the path and name of the file to which the edif will be written (default "out.edf")
+        file_out -- the path and name of the file to which the edif will be written (default
+                    "out.edf")
         """
         self.output_filename = file_out
         self._edifify_netlist(ir)
         self._data_ = ir
-        if (isinstance(ir, str)):
+        if isinstance(ir, str):
             self.filename = ir
             self._read_data_()  # only needed if we start to accept the json format files
             print(
-                "currently input files directly to the composer are unsupported! read in with the parser first.")
+                "currently input files directly to the composer are unsupported! read in with \
+                the parser first."
+            )
         else:
             self._data_ = ir
         self._open_output_()
@@ -39,7 +42,6 @@ class ComposeEdif:
         self._close_output_()
 
     def _edifify_netlist(self, netlist):
-
         # functions defined to be used as dependency getters in topological sort
         # declared here to be used more as functional oriented code.
         def _get_definition_dependency_same_library(definition):
@@ -55,18 +57,21 @@ class ComposeEdif:
             for definition in library.definitions:
                 for child in definition.children:
                     if child.reference is None:
-                        raise Exception("definition: ", child,
-                                        ".reference is undefined")
+                        raise Exception(
+                            "definition: ", child, ".reference is undefined"
+                        )
                     if child.reference.library != library:
                         depend_set.add(child.reference.library)
             return depend_set
 
         # try:
         netlist.libraries = self._topological_sort(
-            netlist.libraries, _get_library_dependency)
+            netlist.libraries, _get_library_dependency
+        )
         for library in netlist.libraries:
             library.definitions = self._topological_sort(
-                library.definitions, _get_definition_dependency_same_library)
+                library.definitions, _get_definition_dependency_same_library
+            )
         # except:
         #     #import pdb; pdb.set_trace()
 
@@ -84,13 +89,11 @@ class ComposeEdif:
                 for cable in definition.cables:
                     self._add_rename_property(cable, definition.cables, names)
                 for instance in definition.children:
-                    self._add_rename_property(
-                        instance, definition.children, names)
+                    self._add_rename_property(instance, definition.children, names)
                 for port in definition.ports:
                     self._add_rename_property(port, definition.ports, names)
 
     def _topological_sort(self, list_of_objects, dependecy_function):
-
         visited = set()
         output_list = []
         get_dependents = dependecy_function
@@ -100,7 +103,7 @@ class ComposeEdif:
             nonlocal output_list
             nonlocal get_dependents
             stack = [o]
-            while(len(stack) > 0):
+            while len(stack) > 0:
                 o = stack[-1]
                 for child in get_dependents(o):
                     if child not in visited:
@@ -129,7 +132,7 @@ class ComposeEdif:
 
     def _add_rename_property(self, obj, namespace_list, rename_helper):
         if obj.name is None:
-            raise Exception('obj, ', obj, '.name undefined')
+            raise Exception("obj, ", obj, ".name undefined")
         name = obj.name
         if "EDIF.identifier" in obj.data:
             return
@@ -144,7 +147,7 @@ class ComposeEdif:
             self._data_ = json.load(fi)
 
     def _open_output_(self):
-        self._output_ = open(self.output_filename, 'w', buffering=1)
+        self._output_ = open(self.output_filename, "w", buffering=1)
 
     def _output_environment_(self):
         self._lisp_increment_()
@@ -171,7 +174,7 @@ class ComposeEdif:
         self._output_status_()
         self._new_line_()
         for library in self._data_.libraries:
-            #if library.name != "SDN.verilog_primitives":
+            # if library.name != "SDN.verilog_primitives":
             self._output_library_(library)
 
         self._lisp_increment_()
@@ -183,12 +186,12 @@ class ComposeEdif:
         test = self._data_.top_instance
         if self._data_.top_instance.reference is None:
             raise Exception("netlist.reference undefined")
-        self._output_.write(
-            self._data_.top_instance.reference['EDIF.identifier'])
+        self._output_.write(self._data_.top_instance.reference["EDIF.identifier"])
         self._lisp_increment_()
         self._output_.write("libraryref ")
         self._output_.write(
-            self._data_.top_instance.reference.library['EDIF.identifier'])
+            self._data_.top_instance.reference.library["EDIF.identifier"]
+        )
         self._lisp_decrement_()
         self._lisp_decrement_()
         self._new_line_()
@@ -197,8 +200,11 @@ class ComposeEdif:
 
         self._lisp_decrement_()
 
-        assert self._lisp_depth_ == 0, "There was an error with parenthesis matching off by " + \
-            str(self._lisp_depth_)
+        assert (
+            self._lisp_depth_ == 0
+        ), "There was an error with parenthesis matching off by " + str(
+            self._lisp_depth_
+        )
 
     def _output_status_(self):
         self._new_line_()
@@ -214,21 +220,23 @@ class ComposeEdif:
         self._output_.write("{}".format(now.strftime("%Y %m %d %H %M %S")))
         self._lisp_decrement_()
         self._new_line_()
-        if 'EDIF.status.written.program' in self._data_:
+        if "EDIF.status.written.program" in self._data_:
             self._lisp_increment_()
             self._output_.write("program ")
-            self._output_.write('"{}" '.format(
-                self._data_['EDIF.status.written.program']))
-            if 'EDIF.status.written.program.version' in self._data_:
+            self._output_.write(
+                '"{}" '.format(self._data_["EDIF.status.written.program"])
+            )
+            if "EDIF.status.written.program.version" in self._data_:
                 self._lisp_increment_()
                 self._output_.write("version ")
-                self._output_.write('"{}"'.format(
-                    self._data_['EDIF.status.written.program.version']))
+                self._output_.write(
+                    '"{}"'.format(self._data_["EDIF.status.written.program.version"])
+                )
                 self._lisp_decrement_()
             self._lisp_decrement_()
         self._new_line_()
         self._lisp_increment_()
-        self._output_.write('comment "Built by \'BYU spydrnet tool\'"')
+        self._output_.write("comment \"Built by 'BYU spydrnet tool'\"")
         self._lisp_decrement_()
         self._new_line_()
         self._lisp_decrement_()
@@ -261,7 +269,9 @@ class ComposeEdif:
         self._new_line_()
 
     def _output_name_of_object_(self, obj):
-        # if '.NAME' not in obj or (obj['.NAME'] == obj['EDIF.identifier'] and obj.get('EDIF.rename', False) is False):
+        # if '.NAME' not in obj or
+        #       (obj['.NAME'] == obj['EDIF.identifier'] and
+        #           obj.get('EDIF.rename', False) is False):
         #     self._output_.write(obj['EDIF.identifier'])
         # else:
         #     identifier = obj['EDIF.identifier']
@@ -280,13 +290,16 @@ class ComposeEdif:
             self._output_.write(name)
 
     def _get_name_string_(self, obj):
-        if '.NAME' not in obj or (obj['.NAME'] == obj['EDIF.identifier'] and obj.get('EDIF.rename', False) is False):
+        if ".NAME" not in obj or (
+            obj[".NAME"] == obj["EDIF.identifier"]
+            and obj.get("EDIF.rename", False) is False
+        ):
             rename = False
-            name = obj['EDIF.identifier']
+            name = obj["EDIF.identifier"]
         else:
             rename = True
-            identifier = obj['EDIF.identifier']
-            rename_name = obj.get('.NAME', identifier)
+            identifier = obj["EDIF.identifier"]
+            rename_name = obj.get(".NAME", identifier)
             name = "rename " + identifier + ' "' + rename_name + '"'
         return rename, name
 
@@ -346,8 +359,9 @@ class ComposeEdif:
             self._output_.write(" ")
             self._lisp_increment_()
             self._output_.write("direction ")
-            self._output_.write(self._direction_to_string_(
-                port.direction))  # str(port.direction))
+            self._output_.write(
+                self._direction_to_string_(port.direction)
+            )  # str(port.direction))
             self._lisp_decrement_()
             self._lisp_decrement_()
             self._new_line_()
@@ -355,8 +369,9 @@ class ComposeEdif:
         self._output_name_of_object_(port)
         self._lisp_increment_()
         self._output_.write("direction ")
-        self._output_.write(self._direction_to_string_(
-            port.direction))  # str(port.direction))
+        self._output_.write(
+            self._direction_to_string_(port.direction)
+        )  # str(port.direction))
         self._lisp_decrement_()
         self._lisp_decrement_()
         self._new_line_()
@@ -409,7 +424,7 @@ class ComposeEdif:
             self._lisp_increment_()
             self._output_.write("joined")
             self._new_line_()
-            # for port in cable.getConnectionList(): #TODO fuction cable.getConnectionList() needs to be created
+            # for port in cable.getConnectionList(): #TODO create fuction cable.getConnectionList()
             for pin in wire.pins:
                 # port = pin.port
                 # print(type(pin))
@@ -417,8 +432,7 @@ class ComposeEdif:
                     self._output_inner_pin_(pin)
                     pin = pin.inner_pin
                 else:
-                    self._output_port_ref_(
-                        pin.port, self._get_edif_name_(cable), pin)
+                    self._output_port_ref_(pin.port, self._get_edif_name_(cable), pin)
             self._new_line_()
             self._lisp_decrement_()
             self._new_line_()
@@ -430,10 +444,8 @@ class ComposeEdif:
         else:
             # cable_name = self._get_name_string_(cable)
             cable_index = self._get_wire_index_(cable, wire)
-            identifier = cable['EDIF.identifier'] + \
-                "_" + str(cable_index) + "_"
-            rename_name = cable.get('.NAME', identifier) + \
-                "[" + str(cable_index) + "]"
+            identifier = cable["EDIF.identifier"] + "_" + str(cable_index) + "_"
+            rename_name = cable.get(".NAME", identifier) + "[" + str(cable_index) + "]"
             name = "rename " + identifier + ' "' + rename_name + '"'
             self._lisp_increment_()
             self._output_.write(name)
@@ -499,7 +511,7 @@ class ComposeEdif:
 
     def _get_edif_name_(self, netlistObj):
         name = netlistObj["EDIF.identifier"]
-        if not ("oldName" in netlistObj):
+        if not "oldName" in netlistObj:
             return name
         else:
             oldName = netlistObj["oldName"]
@@ -521,17 +533,17 @@ class ComposeEdif:
         # TODO this only handles string properties for now
         self._lisp_increment_()
         self._output_.write("property ")
-        if 'original_identifier' in prop:
+        if "original_identifier" in prop:
             self._lisp_increment_()
             self._output_.write("rename ")
-            self._output_.write(prop['identifier'])
+            self._output_.write(prop["identifier"])
             self._output_.write(' "')
-            self._output_.write(prop['original_identifier'])
+            self._output_.write(prop["original_identifier"])
             self._output_.write('"')
             self._lisp_decrement_()
         else:
-            self._output_.write(prop['identifier'])
-        value = prop['value']
+            self._output_.write(prop["identifier"])
+        value = prop["value"]
         self._output_.write(" ")
         self._lisp_increment_()
         if isinstance(value, str):
@@ -539,12 +551,12 @@ class ComposeEdif:
             self._output_.write(value)
             self._output_.write('"')
         elif isinstance(value, bool):
-            self._output_.write('boolean ')
+            self._output_.write("boolean ")
             self._lisp_increment_()
             self._output_.write(str(value))
             self._lisp_decrement_()
         else:
-            self._output_.write('integer ')
+            self._output_.write("integer ")
             self._output_.write(str(value))
         self._lisp_decrement_()
         self._lisp_decrement_()
