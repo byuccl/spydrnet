@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>spydrnet.util.get_hwires &mdash; SpyDrNet 1.13.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=f77edc46"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            SpyDrNet
+          </a>
+              <div class="version">
+                1.13
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview/index.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/index.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../credits.html">Credits</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SpyDrNet</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">spydrnet.util.get_hwires</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for spydrnet.util.get_hwires</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">spydrnet</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">FirstClassElement</span><span class="p">,</span>
+    <span class="n">InnerPin</span><span class="p">,</span>
+    <span class="n">OuterPin</span><span class="p">,</span>
+    <span class="n">Wire</span><span class="p">,</span>
+    <span class="n">Netlist</span><span class="p">,</span>
+    <span class="n">Library</span><span class="p">,</span>
+    <span class="n">Definition</span><span class="p">,</span>
+    <span class="n">Instance</span><span class="p">,</span>
+    <span class="n">Port</span><span class="p">,</span>
+    <span class="n">Cable</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">spydrnet.util.hierarchical_reference</span> <span class="kn">import</span> <span class="n">HRef</span>
+<span class="kn">from</span> <span class="nn">spydrnet.util.selection</span> <span class="kn">import</span> <span class="n">Selection</span>
+<span class="kn">from</span> <span class="nn">spydrnet.util.patterns</span> <span class="kn">import</span> <span class="n">_is_pattern_absolute</span><span class="p">,</span> <span class="n">_value_matches_pattern</span>
+
+
+<div class="viewcode-block" id="get_hwires"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.get_hwires.html#spydrnet.get_hwires">[docs]</a><span class="k">def</span> <span class="nf">get_hwires</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get_hwires(obj, ...)</span>
+
+<span class="sd">    Get hierarchical references to wires *within* an object.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    obj : object, Iterable - required</span>
+<span class="sd">        The object or objects associated with this query. Queries return a collection</span>
+<span class="sd">        of objects associated with the provided object or objects that match the query criteria.</span>
+<span class="sd">        For example, `sdn.get_instances(netlist, ...)` would return all of the instances *within*</span>
+<span class="sd">        the provided definition that match the additional criteria.</span>
+<span class="sd">    patterns : str, Iterable - optional, positional or named, default: wildcard</span>
+<span class="sd">        The search patterns. Patterns can be a single string or an Iterable collection of strings.</span>
+<span class="sd">        Patterns can be absolute or they can contain wildcards or regular expressions. If </span>
+<span class="sd">        `patterns` is not provided, then it defaults to a wildcard.</span>
+<span class="sd">    is_case : bool - optional, named, default: True</span>
+<span class="sd">        Specify if patterns should be treated as case sensitive. Only applies to patterns. Does not</span>
+<span class="sd">        alter fast lookup behavior (if namespace policy uses case insensitive indexing, this </span>
+<span class="sd">        parameter will not prevent a fast from returning a matching object even if the case is not</span>
+<span class="sd">        an exact match).</span>
+<span class="sd">    is_re: bool - optional, named, default: False</span>
+<span class="sd">        Specify if patterns are regular expressions. If `False`, a pattern can still contain `*` </span>
+<span class="sd">        and `?` wildcards. A `*` matches zero or more characters. A `?` matches upto a single </span>
+<span class="sd">        character.</span>
+<span class="sd">    recursive : bool - optional, default: False</span>
+<span class="sd">        Specify if search should be recursive or not meaning that sub hierarchical instances within</span>
+<span class="sd">        an instance are included or not.</span>
+<span class="sd">    selection : Selection.{INSIDE, OUTSIDE, BOTH, ALL}, default: INSIDE</span>
+<span class="sd">        This parameter determines the wires that are returned based on the instance associated with</span>
+<span class="sd">        the object that is being searched.</span>
+<span class="sd">    filter : function</span>
+<span class="sd">        This is a single input function that can be used to filter out unwanted virtual instances. </span>
+<span class="sd">        If not specifed, all matching virtual instances are returned. Otherwise, virtual instances</span>
+<span class="sd">        that cause the filter function to evaluate to true are the only items returned.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    href_wires : generator</span>
+<span class="sd">        The hierarchical references to wires associated with a particular object or collection</span>
+<span class="sd">        of objects.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check argument list</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="s2">&quot;patterns&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;get_hwires() got multiple values for argument &#39;patterns&#39;&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="nb">any</span><span class="p">(</span>
+        <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;patterns&quot;</span><span class="p">,</span> <span class="s2">&quot;selection&quot;</span><span class="p">,</span> <span class="s2">&quot;recursive&quot;</span><span class="p">,</span> <span class="s2">&quot;filter&quot;</span><span class="p">,</span> <span class="s2">&quot;is_case&quot;</span><span class="p">,</span> <span class="s2">&quot;is_re&quot;</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">kwargs</span>
+    <span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Unknown usage. Please see help for more information.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Default values</span>
+    <span class="n">selection</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;selection&quot;</span><span class="p">,</span> <span class="n">Selection</span><span class="o">.</span><span class="n">INSIDE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">selection</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">selection</span> <span class="ow">in</span> <span class="n">Selection</span><span class="o">.</span><span class="n">__members__</span><span class="p">:</span>
+            <span class="n">selection</span> <span class="o">=</span> <span class="n">Selection</span><span class="p">[</span><span class="n">selection</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">selection</span><span class="p">,</span> <span class="n">Selection</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="s2">&quot;selection must be &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;&#39;, &#39;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">Selection</span><span class="o">.</span><span class="n">__members__</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="p">)</span>
+
+    <span class="n">filter_func</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;filter&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">recursive</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;recursive&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">is_case</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;is_case&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">is_re</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;is_re&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">patterns</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;patterns&quot;</span><span class="p">,</span> <span class="s2">&quot;.*&quot;</span> <span class="k">if</span> <span class="n">is_re</span> <span class="k">else</span> <span class="s2">&quot;*&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="n">FirstClassElement</span><span class="p">,</span> <span class="n">InnerPin</span><span class="p">,</span> <span class="n">OuterPin</span><span class="p">,</span> <span class="n">Wire</span><span class="p">))</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">object_collection</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="n">object_collection</span> <span class="o">=</span> <span class="p">[</span><span class="n">obj</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">object_collection</span> <span class="o">=</span> <span class="p">[</span><span class="n">obj</span><span class="p">]</span>
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="nb">all</span><span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">HRef</span><span class="p">,</span> <span class="n">FirstClassElement</span><span class="p">,</span> <span class="n">InnerPin</span><span class="p">,</span> <span class="n">OuterPin</span><span class="p">,</span> <span class="n">Wire</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">object_collection</span>
+        <span class="p">)</span>
+        <span class="ow">is</span> <span class="kc">False</span>
+    <span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="s2">&quot;get_hwires() supports all netlist related objects and hierarchical references or a &quot;</span>
+            <span class="s2">&quot;collection of theses as the object searched, unsupported object provided&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">patterns</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">patterns</span> <span class="o">=</span> <span class="p">(</span><span class="n">patterns</span><span class="p">,)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">patterns</span><span class="p">,</span> <span class="p">(</span><span class="n">FirstClassElement</span><span class="p">,</span> <span class="n">InnerPin</span><span class="p">,</span> <span class="n">OuterPin</span><span class="p">,</span> <span class="n">Wire</span><span class="p">))</span> <span class="ow">is</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="n">_get_hwires</span><span class="p">(</span>
+        <span class="n">object_collection</span><span class="p">,</span> <span class="n">selection</span><span class="p">,</span> <span class="n">patterns</span><span class="p">,</span> <span class="n">recursive</span><span class="p">,</span> <span class="n">is_case</span><span class="p">,</span> <span class="n">is_re</span><span class="p">,</span> <span class="n">filter_func</span>
+    <span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_get_hwires</span><span class="p">(</span>
+    <span class="n">object_collection</span><span class="p">,</span> <span class="n">selection</span><span class="p">,</span> <span class="n">patterns</span><span class="p">,</span> <span class="n">recursive</span><span class="p">,</span> <span class="n">is_case</span><span class="p">,</span> <span class="n">is_re</span><span class="p">,</span> <span class="n">filter_func</span>
+<span class="p">):</span>
+    <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="nb">filter</span><span class="p">(</span>
+        <span class="n">filter_func</span><span class="p">,</span>
+        <span class="n">_get_hwires_raw</span><span class="p">(</span>
+            <span class="n">object_collection</span><span class="p">,</span> <span class="n">selection</span><span class="p">,</span> <span class="n">patterns</span><span class="p">,</span> <span class="n">recursive</span><span class="p">,</span> <span class="n">is_case</span><span class="p">,</span> <span class="n">is_re</span>
+        <span class="p">),</span>
+    <span class="p">):</span>
+        <span class="k">yield</span> <span class="n">result</span>
+
+
+<span class="k">def</span> <span class="nf">_get_hwires_raw</span><span class="p">(</span><span class="n">object_collection</span><span class="p">,</span> <span class="n">selection</span><span class="p">,</span> <span class="n">patterns</span><span class="p">,</span> <span class="n">recursive</span><span class="p">,</span> <span class="n">is_case</span><span class="p">,</span> <span class="n">is_re</span><span class="p">):</span>
+    <span class="n">in_namemap</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">in_yield</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">namemap</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">hpin_search</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">bypass_namesearch</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">while</span> <span class="n">object_collection</span><span class="p">:</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">object_collection</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">Netlist</span><span class="p">):</span>
+            <span class="n">top_instance</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">top_instance</span>
+            <span class="k">if</span> <span class="n">top_instance</span><span class="p">:</span>
+                <span class="n">href</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">top_instance</span><span class="p">)</span>
+                <span class="n">object_collection</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">href</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">HRef</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">is_valid</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">item</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Instance</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">selection</span> <span class="o">==</span> <span class="n">Selection</span><span class="o">.</span><span class="n">INSIDE</span> <span class="ow">and</span> <span class="n">obj</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">bypass_namesearch</span><span class="p">:</span>
+                    <span class="n">_update_hwire_namemap</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">recursive</span><span class="p">,</span> <span class="n">in_namemap</span><span class="p">,</span> <span class="n">namemap</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">bypass_namesearch</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+                    <span class="n">reference</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">reference</span>
+                    <span class="k">if</span> <span class="n">reference</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">selection</span> <span class="ow">in</span> <span class="p">{</span><span class="n">Selection</span><span class="o">.</span><span class="n">INSIDE</span><span class="p">,</span> <span class="n">Selection</span><span class="o">.</span><span class="n">ALL</span><span class="p">}:</span>
+                            <span class="c1"># Get all cables inside a hierarchical instance</span>
+                            <span class="k">for</span> <span class="n">cable</span> <span class="ow">in</span> <span class="n">reference</span><span class="o">.</span><span class="n">cables</span><span class="p">:</span>
+                                <span class="n">hcable</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">cable</span><span class="p">)</span>
+                                <span class="k">for</span> <span class="n">wire</span> <span class="ow">in</span> <span class="n">cable</span><span class="o">.</span><span class="n">wires</span><span class="p">:</span>
+                                    <span class="n">hwire</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">hcable</span><span class="p">,</span> <span class="n">wire</span><span class="p">)</span>
+                                    <span class="k">if</span> <span class="n">hwire</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">in_yield</span><span class="p">:</span>
+                                        <span class="n">in_yield</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">hwire</span><span class="p">)</span>
+                                        <span class="k">yield</span> <span class="p">(</span><span class="n">hwire</span><span class="p">)</span>
+                            <span class="c1"># get internal cables recursively</span>
+                            <span class="k">if</span> <span class="n">recursive</span> <span class="ow">or</span> <span class="n">selection</span> <span class="o">==</span> <span class="n">Selection</span><span class="o">.</span><span class="n">ALL</span><span class="p">:</span>
+                                <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">reference</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+                                    <span class="n">href_child</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+                                    <span class="n">bypass_namesearch</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">href_child</span><span class="p">)</span>
+                                    <span class="n">object_collection</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">href_child</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">selection</span> <span class="ow">in</span> <span class="p">{</span>
+                            <span class="n">Selection</span><span class="o">.</span><span class="n">OUTSIDE</span><span class="p">,</span>
+                            <span class="n">Selection</span><span class="o">.</span><span class="n">BOTH</span><span class="p">,</span>
+                            <span class="n">Selection</span><span class="o">.</span><span class="n">ALL</span><span class="p">,</span>
+                        <span class="p">}:</span>
+                            <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="n">reference</span><span class="o">.</span><span class="n">ports</span><span class="p">:</span>
+                                <span class="n">href_port</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+                                <span class="k">for</span> <span class="n">pin</span> <span class="ow">in</span> <span class="n">port</span><span class="o">.</span><span class="n">pins</span><span class="p">:</span>
+                                    <span class="n">href_pin</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">href_port</span><span class="p">,</span> <span class="n">pin</span><span class="p">)</span>
+                                    <span class="n">hpin_search</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">href_pin</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Port</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">pin</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">pins</span><span class="p">:</span>
+                    <span class="n">href_pin</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">pin</span><span class="p">)</span>
+                    <span class="n">hpin_search</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">href_pin</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Cable</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">wire</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">wires</span><span class="p">:</span>
+                    <span class="n">href_wire</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">wire</span><span class="p">)</span>
+                    <span class="n">object_collection</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">href_wire</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Wire</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">selection</span> <span class="o">==</span> <span class="n">Selection</span><span class="o">.</span><span class="n">INSIDE</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">obj</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">in_yield</span><span class="p">:</span>
+                        <span class="n">in_yield</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+                        <span class="k">yield</span> <span class="n">obj</span>
+                <span class="k">elif</span> <span class="n">selection</span> <span class="o">==</span> <span class="n">Selection</span><span class="o">.</span><span class="n">OUTSIDE</span><span class="p">:</span>
+                    <span class="n">href_parent_cable</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">parent</span>
+                    <span class="n">href_parent_instance</span> <span class="o">=</span> <span class="n">href_parent_cable</span><span class="o">.</span><span class="n">parent</span>
+                    <span class="k">for</span> <span class="n">pin</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">pins</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pin</span><span class="p">,</span> <span class="n">OuterPin</span><span class="p">):</span>
+                            <span class="n">href_inst</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span>
+                                <span class="n">href_parent_instance</span><span class="p">,</span> <span class="n">pin</span><span class="o">.</span><span class="n">instance</span>
+                            <span class="p">)</span>
+                            <span class="n">inner_wire</span> <span class="o">=</span> <span class="n">pin</span><span class="o">.</span><span class="n">inner_pin</span><span class="o">.</span><span class="n">wire</span>
+                            <span class="k">if</span> <span class="n">inner_wire</span><span class="p">:</span>
+                                <span class="n">inner_cable</span> <span class="o">=</span> <span class="n">inner_wire</span><span class="o">.</span><span class="n">cable</span>
+                                <span class="n">href_cable</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span>
+                                    <span class="n">href_inst</span><span class="p">,</span> <span class="n">inner_cable</span>
+                                <span class="p">)</span>
+                                <span class="n">href_wire</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span>
+                                    <span class="n">href_cable</span><span class="p">,</span> <span class="n">inner_wire</span>
+                                <span class="p">)</span>
+                                <span class="k">if</span> <span class="n">href_wire</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">in_yield</span><span class="p">:</span>
+                                    <span class="n">in_yield</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">href_wire</span><span class="p">)</span>
+                                    <span class="k">yield</span> <span class="n">href_wire</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">href_parent</span> <span class="o">=</span> <span class="n">href_parent_instance</span><span class="o">.</span><span class="n">parent</span>
+                            <span class="k">if</span> <span class="n">href_parent</span><span class="p">:</span>
+                                <span class="n">instance</span> <span class="o">=</span> <span class="n">href_parent_instance</span><span class="o">.</span><span class="n">item</span>
+                                <span class="k">if</span> <span class="n">pin</span> <span class="ow">in</span> <span class="n">instance</span><span class="o">.</span><span class="n">pins</span><span class="p">:</span>
+                                    <span class="n">outer_pin</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">pins</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span>
+                                    <span class="n">outer_wire</span> <span class="o">=</span> <span class="n">outer_pin</span><span class="o">.</span><span class="n">wire</span>
+                                    <span class="k">if</span> <span class="n">outer_wire</span><span class="p">:</span>
+                                        <span class="n">outer_cable</span> <span class="o">=</span> <span class="n">outer_wire</span><span class="o">.</span><span class="n">cable</span>
+                                        <span class="n">href_cable</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span>
+                                            <span class="n">href_parent</span><span class="p">,</span> <span class="n">outer_cable</span>
+                                        <span class="p">)</span>
+                                        <span class="n">href_wire</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span>
+                                            <span class="n">href_cable</span><span class="p">,</span> <span class="n">outer_wire</span>
+                                        <span class="p">)</span>
+                                        <span class="k">if</span> <span class="n">href_wire</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">in_yield</span><span class="p">:</span>
+                                            <span class="n">in_yield</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">href_wire</span><span class="p">)</span>
+                                            <span class="k">yield</span> <span class="n">href_wire</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">obj</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">in_yield</span><span class="p">:</span>
+                        <span class="n">in_yield</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+                        <span class="k">yield</span> <span class="n">obj</span>
+                    <span class="n">href_cable</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">parent</span>
+                    <span class="n">href_inst</span> <span class="o">=</span> <span class="n">href_cable</span><span class="o">.</span><span class="n">parent</span>
+                    <span class="k">for</span> <span class="n">pin</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">pins</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pin</span><span class="p">,</span> <span class="n">OuterPin</span><span class="p">):</span>
+                            <span class="n">href_sub_inst</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span>
+                                <span class="n">obj</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">pin</span><span class="o">.</span><span class="n">instance</span>
+                            <span class="p">)</span>
+                            <span class="n">inner_pin</span> <span class="o">=</span> <span class="n">pin</span><span class="o">.</span><span class="n">inner_pin</span>
+                            <span class="n">port</span> <span class="o">=</span> <span class="n">inner_pin</span><span class="o">.</span><span class="n">port</span>
+                            <span class="n">href_port</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">href_sub_inst</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+                            <span class="n">href_pin</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">href_port</span><span class="p">,</span> <span class="n">pin</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">port</span> <span class="o">=</span> <span class="n">pin</span><span class="o">.</span><span class="n">port</span>
+                            <span class="n">href_port</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">href_inst</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+                            <span class="n">href_pin</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">href_port</span><span class="p">,</span> <span class="n">pin</span><span class="p">)</span>
+                        <span class="n">object_collection</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">href_pin</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">InnerPin</span><span class="p">):</span>
+                <span class="n">hpin_search</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">Library</span><span class="p">):</span>
+            <span class="n">object_collection</span> <span class="o">+=</span> <span class="n">obj</span><span class="o">.</span><span class="n">definitions</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">Definition</span><span class="p">):</span>
+            <span class="n">hrefs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">HRef</span><span class="o">.</span><span class="n">get_all_hrefs_of_instances</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">references</span><span class="p">))</span>
+            <span class="n">bypass_namesearch</span> <span class="o">|=</span> <span class="n">hrefs</span>
+            <span class="n">object_collection</span> <span class="o">+=</span> <span class="n">hrefs</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">Instance</span><span class="p">):</span>
+            <span class="n">hrefs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">HRef</span><span class="o">.</span><span class="n">get_all_hrefs_of_instances</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+            <span class="n">bypass_namesearch</span> <span class="o">|=</span> <span class="n">hrefs</span>
+            <span class="n">object_collection</span> <span class="o">+=</span> <span class="n">hrefs</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="n">Port</span><span class="p">,</span> <span class="n">Cable</span><span class="p">,</span> <span class="n">InnerPin</span><span class="p">,</span> <span class="n">OuterPin</span><span class="p">,</span> <span class="n">Wire</span><span class="p">)):</span>
+            <span class="n">object_collection</span> <span class="o">+=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">get_all_hrefs_of_item</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">hpin_search</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">hwire</span> <span class="ow">in</span> <span class="n">_get_hwires_from_hpins</span><span class="p">(</span><span class="n">hpin_search</span><span class="p">,</span> <span class="n">selection</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">hwire</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">in_yield</span><span class="p">:</span>
+                <span class="n">in_yield</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">hwire</span><span class="p">)</span>
+                <span class="k">yield</span> <span class="n">hwire</span>
+
+    <span class="k">for</span> <span class="n">href</span> <span class="ow">in</span> <span class="n">in_yield</span><span class="p">:</span>
+        <span class="n">in_namemap</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">href</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">in_namemap</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">patterns</span><span class="p">:</span>
+            <span class="n">pattern_is_absolute</span> <span class="o">=</span> <span class="n">_is_pattern_absolute</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">is_case</span><span class="p">,</span> <span class="n">is_re</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">pattern_is_absolute</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">namemap</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">namemap</span><span class="p">[</span><span class="n">pattern</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">href</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">href</span> <span class="ow">in</span> <span class="n">in_namemap</span><span class="p">:</span>
+                            <span class="n">in_namemap</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">href</span><span class="p">)</span>
+                            <span class="k">yield</span> <span class="n">href</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">namemap</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">_value_matches_pattern</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">is_case</span><span class="p">,</span> <span class="n">is_re</span><span class="p">):</span>
+                        <span class="n">result</span> <span class="o">=</span> <span class="n">namemap</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                        <span class="k">for</span> <span class="n">href</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">href</span> <span class="ow">in</span> <span class="n">in_namemap</span><span class="p">:</span>
+                                <span class="n">in_namemap</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">href</span><span class="p">)</span>
+                                <span class="k">yield</span> <span class="n">href</span>
+
+
+<span class="k">def</span> <span class="nf">_update_hwire_namemap</span><span class="p">(</span><span class="n">href_instance</span><span class="p">,</span> <span class="n">recursive</span><span class="p">,</span> <span class="n">found</span><span class="p">,</span> <span class="n">namemap</span><span class="p">):</span>
+    <span class="n">search_stack</span> <span class="o">=</span> <span class="p">[(</span><span class="n">href_instance</span><span class="p">,</span> <span class="kc">False</span><span class="p">)]</span>
+    <span class="n">name_stack</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">while</span> <span class="n">search_stack</span><span class="p">:</span>
+        <span class="n">href_instance</span><span class="p">,</span> <span class="n">visited</span> <span class="o">=</span> <span class="n">search_stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">visited</span><span class="p">:</span>
+            <span class="n">name_stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">search_stack</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">href_instance</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+            <span class="n">name_stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">href_instance</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">href_instance</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">name</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="p">)</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">href_instance</span><span class="o">.</span><span class="n">item</span>
+            <span class="n">reference</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">reference</span>
+            <span class="k">if</span> <span class="n">reference</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">cable</span> <span class="ow">in</span> <span class="n">reference</span><span class="o">.</span><span class="n">cables</span><span class="p">:</span>
+                    <span class="n">hcable</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">href_instance</span><span class="p">,</span> <span class="n">cable</span><span class="p">)</span>
+                    <span class="n">name_stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cable</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">cable</span><span class="o">.</span><span class="n">name</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                    <span class="n">cable_hname</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">name_stack</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+                    <span class="k">for</span> <span class="n">wire_index</span><span class="p">,</span> <span class="n">wire</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cable</span><span class="o">.</span><span class="n">wires</span><span class="p">):</span>
+                        <span class="n">hwire</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">hcable</span><span class="p">,</span> <span class="n">wire</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">hwire</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">found</span><span class="p">:</span>
+                            <span class="n">found</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">hwire</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">cable</span><span class="o">.</span><span class="n">is_scalar</span><span class="p">:</span>
+                                <span class="n">hname</span> <span class="o">=</span> <span class="n">cable_hname</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">hname</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">[</span><span class="si">{}</span><span class="s2">]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                    <span class="n">cable_hname</span><span class="p">,</span> <span class="n">cable</span><span class="o">.</span><span class="n">lower_index</span> <span class="o">+</span> <span class="n">wire_index</span>
+                                <span class="p">)</span>
+                            <span class="k">if</span> <span class="n">hname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">namemap</span><span class="p">:</span>
+                                <span class="n">namemap</span><span class="p">[</span><span class="n">hname</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                            <span class="n">namemap</span><span class="p">[</span><span class="n">hname</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hwire</span><span class="p">)</span>
+                    <span class="n">name_stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">recursive</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">reference</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">reference</span> <span class="ow">and</span> <span class="n">child</span><span class="o">.</span><span class="n">reference</span><span class="o">.</span><span class="n">is_leaf</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                            <span class="n">href_child</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">href_instance</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+                            <span class="n">search_stack</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">href_child</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">_get_hwires_from_hpins</span><span class="p">(</span><span class="n">hpin_search</span><span class="p">,</span> <span class="n">selection</span><span class="p">):</span>
+    <span class="n">found_hwires</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">search_stack</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">hpin_search</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">search_stack</span><span class="p">:</span>
+        <span class="n">hpin</span> <span class="o">=</span> <span class="n">search_stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">selection</span> <span class="ow">in</span> <span class="p">{</span><span class="n">Selection</span><span class="o">.</span><span class="n">INSIDE</span><span class="p">,</span> <span class="n">Selection</span><span class="o">.</span><span class="n">BOTH</span><span class="p">,</span> <span class="n">Selection</span><span class="o">.</span><span class="n">ALL</span><span class="p">}:</span>
+            <span class="n">hwire_inside</span> <span class="o">=</span> <span class="n">_get_inner_hwire_from_hpin</span><span class="p">(</span><span class="n">hpin</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">hwire_inside</span> <span class="ow">and</span> <span class="n">hwire_inside</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">found_hwires</span><span class="p">:</span>
+                <span class="n">found_hwires</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">hwire_inside</span><span class="p">)</span>
+                <span class="k">yield</span> <span class="n">hwire_inside</span>
+                <span class="k">if</span> <span class="n">selection</span> <span class="ow">is</span> <span class="n">Selection</span><span class="o">.</span><span class="n">ALL</span><span class="p">:</span>
+                    <span class="n">search_stack</span> <span class="o">+=</span> <span class="p">(</span>
+                        <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">_get_hpins_from_hwire</span><span class="p">(</span><span class="n">hwire_inside</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="n">hpin</span>
+                    <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">selection</span> <span class="ow">in</span> <span class="p">{</span><span class="n">Selection</span><span class="o">.</span><span class="n">OUTSIDE</span><span class="p">,</span> <span class="n">Selection</span><span class="o">.</span><span class="n">BOTH</span><span class="p">,</span> <span class="n">Selection</span><span class="o">.</span><span class="n">ALL</span><span class="p">}:</span>
+            <span class="n">hwire_outside</span> <span class="o">=</span> <span class="n">_get_outer_hwire_from_hpin</span><span class="p">(</span><span class="n">hpin</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">hwire_outside</span> <span class="ow">and</span> <span class="n">hwire_outside</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">found_hwires</span><span class="p">:</span>
+                <span class="n">found_hwires</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">hwire_outside</span><span class="p">)</span>
+                <span class="k">yield</span> <span class="n">hwire_outside</span>
+                <span class="k">if</span> <span class="n">selection</span> <span class="ow">is</span> <span class="n">Selection</span><span class="o">.</span><span class="n">ALL</span><span class="p">:</span>
+                    <span class="n">search_stack</span> <span class="o">+=</span> <span class="p">(</span>
+                        <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">_get_hpins_from_hwire</span><span class="p">(</span><span class="n">hwire_outside</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="n">hpin</span>
+                    <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_get_inner_hwire_from_hpin</span><span class="p">(</span><span class="n">hpin</span><span class="p">):</span>
+    <span class="n">wire</span> <span class="o">=</span> <span class="n">hpin</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">wire</span>
+    <span class="k">if</span> <span class="n">wire</span><span class="p">:</span>
+        <span class="n">cable</span> <span class="o">=</span> <span class="n">wire</span><span class="o">.</span><span class="n">cable</span>
+        <span class="k">if</span> <span class="n">cable</span><span class="p">:</span>
+            <span class="n">hport</span> <span class="o">=</span> <span class="n">hpin</span><span class="o">.</span><span class="n">parent</span>
+            <span class="n">hinst</span> <span class="o">=</span> <span class="n">hport</span><span class="o">.</span><span class="n">parent</span>
+            <span class="n">hcable</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">hinst</span><span class="p">,</span> <span class="n">cable</span><span class="p">)</span>
+            <span class="n">hwire</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">hcable</span><span class="p">,</span> <span class="n">wire</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">hwire</span>
+
+
+<span class="k">def</span> <span class="nf">_get_outer_hwire_from_hpin</span><span class="p">(</span><span class="n">hpin</span><span class="p">):</span>
+    <span class="n">hport</span> <span class="o">=</span> <span class="n">hpin</span><span class="o">.</span><span class="n">parent</span>
+    <span class="n">hinst</span> <span class="o">=</span> <span class="n">hport</span><span class="o">.</span><span class="n">parent</span>
+    <span class="n">instance</span> <span class="o">=</span> <span class="n">hinst</span><span class="o">.</span><span class="n">item</span>
+    <span class="n">pin</span> <span class="o">=</span> <span class="n">hpin</span><span class="o">.</span><span class="n">item</span>
+    <span class="k">if</span> <span class="n">pin</span> <span class="ow">in</span> <span class="n">instance</span><span class="o">.</span><span class="n">pins</span><span class="p">:</span>
+        <span class="n">outer_pin</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">pins</span><span class="p">[</span><span class="n">hpin</span><span class="o">.</span><span class="n">item</span><span class="p">]</span>
+        <span class="n">outer_wire</span> <span class="o">=</span> <span class="n">outer_pin</span><span class="o">.</span><span class="n">wire</span>
+        <span class="k">if</span> <span class="n">outer_wire</span><span class="p">:</span>
+            <span class="n">cable</span> <span class="o">=</span> <span class="n">outer_wire</span><span class="o">.</span><span class="n">cable</span>
+            <span class="k">if</span> <span class="n">cable</span><span class="p">:</span>
+                <span class="n">hcable</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">hinst</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">cable</span><span class="p">)</span>
+                <span class="n">hwire</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">hcable</span><span class="p">,</span> <span class="n">outer_wire</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">hwire</span>
+
+
+<span class="k">def</span> <span class="nf">_get_hpins_from_hwire</span><span class="p">(</span><span class="n">hwire</span><span class="p">):</span>
+    <span class="n">hcable</span> <span class="o">=</span> <span class="n">hwire</span><span class="o">.</span><span class="n">parent</span>
+    <span class="n">hinst</span> <span class="o">=</span> <span class="n">hcable</span><span class="o">.</span><span class="n">parent</span>
+    <span class="k">for</span> <span class="n">pin</span> <span class="ow">in</span> <span class="n">hwire</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">pins</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pin</span><span class="p">,</span> <span class="n">InnerPin</span><span class="p">):</span>
+            <span class="n">port</span> <span class="o">=</span> <span class="n">pin</span><span class="o">.</span><span class="n">port</span>
+            <span class="k">if</span> <span class="n">port</span><span class="p">:</span>
+                <span class="n">hport</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">hinst</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+                <span class="n">hpin</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">hport</span><span class="p">,</span> <span class="n">pin</span><span class="p">)</span>
+                <span class="k">yield</span> <span class="n">hpin</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">instance</span> <span class="o">=</span> <span class="n">pin</span><span class="o">.</span><span class="n">instance</span>
+            <span class="n">inner_pin</span> <span class="o">=</span> <span class="n">pin</span><span class="o">.</span><span class="n">inner_pin</span>
+            <span class="k">if</span> <span class="n">instance</span> <span class="ow">and</span> <span class="n">inner_pin</span><span class="p">:</span>
+                <span class="n">port</span> <span class="o">=</span> <span class="n">inner_pin</span><span class="o">.</span><span class="n">port</span>
+                <span class="k">if</span> <span class="n">port</span><span class="p">:</span>
+                    <span class="n">other_hinst</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">hinst</span><span class="p">,</span> <span class="n">instance</span><span class="p">)</span>
+                    <span class="n">other_hport</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">other_hinst</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+                    <span class="n">other_hpin</span> <span class="o">=</span> <span class="n">HRef</span><span class="o">.</span><span class="n">from_parent_and_item</span><span class="p">(</span><span class="n">other_hport</span><span class="p">,</span> <span class="n">inner_pin</span><span class="p">)</span>
+                    <span class="k">yield</span> <span class="n">other_hpin</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Brigham Young Universitiy.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

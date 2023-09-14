@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clone &mdash; SpyDrNet 1.13.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=f77edc46"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Element Data" href="../element_data.html" />
+    <link rel="prev" title="Uniquify" href="uniquify.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            SpyDrNet
+          </a>
+              <div class="version">
+                1.13
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/index.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../classes/index.html">API Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../using_example_netlists.html">Using SpyDrNet Example Netlists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../netlist_types.html">Netlist Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../built_in_architecture.html">Built In FPGA Architectures</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Functions (Additional Information)</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="uniquify.html">Uniquify</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Clone</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#netlists">Netlists</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#libraries">libraries</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#definition">Definition</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#port">Port</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cable">Cable</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#instance">Instance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pins-and-wires">Pins and Wires</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#other-notes">Other notes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../element_data.html">Element Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../NamespaceManager.html">Namespace Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../verilog_support.html">Verilog Language Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../eblif_support.html">EBLIF Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Callback_Framework.html">Callback Framework</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extensions.html">Extensions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../archive/index.html">Archive</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../auto_examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../credits.html">Credits</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SpyDrNet</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Reference</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Functions (Additional Information)</a></li>
+      <li class="breadcrumb-item active">Clone</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/reference/functions/clone.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="clone">
+<h1>Clone<a class="headerlink" href="#clone" title="Permalink to this heading"></a></h1>
+<p>Several of the elements in SpyDrNet allow themselves to be cloned with a built in clone function.
+This funciton is accessable to the user through both a sdn.clone() call as well as element.clone()
+Clone operates differently on each of the elements on which it can be called but there are some
+principles they share in common.</p>
+<p>Clone will orphan each element that has a parent. For example libraries will be orphaned from
+netlists, dictionaries will be orphaned form libraries and so on. The elements will also try to
+maintain cloned downward connections but most side level connections will be severed. The following
+list attempts to outline the behaviour of each of these components</p>
+<section id="netlists">
+<h2>Netlists<a class="headerlink" href="#netlists" title="Permalink to this heading"></a></h2>
+<p>All components will be cloned and connections will be reestablished to the cloned counterpart in
+the new netlist. For example a definition named A with an instance a in the original netlist will
+have a definition A(clone) with an instance a(clone) that each referece the other. if instance a
+was instanced inside of definition B in the original netlist it will be instanced inside of B(clone)
+in the new netlist. All wires and pins will likewise maintain their connections</p>
+</section>
+<section id="libraries">
+<h2>libraries<a class="headerlink" href="#libraries" title="Permalink to this heading"></a></h2>
+<p>When cloning only a library the cross library references are maintained. All internal references in
+the cloned library will be updated to reference components in the new library. The library will also
+be orphaned.</p>
+<p>For example library A contains a definition B. library C contains a definition D. definition B has
+an instance that references definition D. if I were to clone library A I would have a library A(clone)
+that will contain definition B(clone) definition B will contain a cloned instance with a reference to
+D. D will have a new instance, the child of B(clone) in it’s references list.</p>
+</section>
+<section id="definition">
+<h2>Definition<a class="headerlink" href="#definition" title="Permalink to this heading"></a></h2>
+<p>When cloning a definition all sub elements of the definition will be cloned. this includes instances
+ports and cables. These elements will all connect to the new cloned elements the same way the old
+ones connected. The Definition will be orphaned from the library to which it belonged. The references
+of the definition will also be cleared so that there is no conflict between the clone and the
+existing definition with regards to which definition defines the instances that exist.</p>
+</section>
+<section id="port">
+<h2>Port<a class="headerlink" href="#port" title="Permalink to this heading"></a></h2>
+<p>The port will be cloned with all of its pins. It will belong to no definition and will not be
+connected to any wires.</p>
+</section>
+<section id="cable">
+<h2>Cable<a class="headerlink" href="#cable" title="Permalink to this heading"></a></h2>
+<p>The cable and all wires will be cloned. They will be disconnected from all pins. And the cable will
+not belong to any definition</p>
+</section>
+<section id="instance">
+<h2>Instance<a class="headerlink" href="#instance" title="Permalink to this heading"></a></h2>
+<p>The instance will maintain its reference but will not be connected to any wires and will not be the
+child of any definition. outer pins will maintain their connections to inner pins.</p>
+</section>
+<section id="pins-and-wires">
+<h2>Pins and Wires<a class="headerlink" href="#pins-and-wires" title="Permalink to this heading"></a></h2>
+<p>Pins and wires will be cloned but disconnected from all other pins and wires. outer pins connections
+to inner pins will also be disconnected.</p>
+</section>
+<section id="other-notes">
+<h2>Other notes<a class="headerlink" href="#other-notes" title="Permalink to this heading"></a></h2>
+<p>First class elements can contain other information in the form of dictionary entries. In the python
+implementation of SpyDrNet, these elements are cloned by calling python’s built in deep copy on them.
+Officially we support string, and other primative type entries in these dictionaries. However if you
+feel like aiming a gun at your feet (or you are trying to figure out how to add support for new
+constructs that you need), the clone function should probably work if you implement the deep copy
+function on your entry object.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="uniquify.html" class="btn btn-neutral float-left" title="Uniquify" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../element_data.html" class="btn btn-neutral float-right" title="Element Data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Brigham Young Universitiy.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

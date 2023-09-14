@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>spydrnet.flatten &mdash; SpyDrNet 1.13.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=f77edc46"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            SpyDrNet
+          </a>
+              <div class="version">
+                1.13
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/index.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../auto_examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../credits.html">Credits</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SpyDrNet</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">spydrnet.flatten</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for spydrnet.flatten</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2020 Dallin Skouson, Andrew Keller, Michael Wirthlin</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span>
+<span class="kn">from</span> <span class="nn">spydrnet.ir</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="sd">&quot;&quot;&quot;How to flatten (brainstorm):</span>
+<span class="sd">start at the top and take all of the subelements out and add them to the top definition</span>
+<span class="sd">Naming will be dificult but I will just skip that for now to get it working.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">unique_number</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">mod_name_uid</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+<span class="k">def</span> <span class="nf">_get_unique_name_modifier</span><span class="p">():</span>
+    <span class="k">global</span> <span class="n">mod_name_uid</span>
+    <span class="n">str_out</span> <span class="o">=</span> <span class="s2">&quot;sdn_flat_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mod_name_uid</span><span class="p">)</span>
+    <span class="n">mod_name_uid</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">str_out</span>
+
+
+<span class="k">def</span> <span class="nf">_rename_element</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">unique_number</span>
+    <span class="n">e</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_flat_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">unique_number</span><span class="p">)</span>
+    <span class="n">unique_number</span> <span class="o">+=</span> <span class="mi">1</span>
+
+
+<span class="k">def</span> <span class="nf">_redo_connections</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">pin</span> <span class="ow">in</span> <span class="n">port</span><span class="o">.</span><span class="n">pins</span><span class="p">:</span>
+        <span class="n">out_pin</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">pins</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span>
+        <span class="n">out_wire</span> <span class="o">=</span> <span class="n">out_pin</span><span class="o">.</span><span class="n">wire</span>
+        <span class="n">in_pin</span> <span class="o">=</span> <span class="n">pin</span>
+        <span class="n">in_wire</span> <span class="o">=</span> <span class="n">in_pin</span><span class="o">.</span><span class="n">wire</span>
+
+        <span class="k">if</span> <span class="n">in_wire</span><span class="p">:</span>
+            <span class="n">in_wire</span><span class="o">.</span><span class="n">disconnect_pin</span><span class="p">(</span><span class="n">in_pin</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">out_wire</span><span class="p">:</span>
+            <span class="n">out_wire</span><span class="o">.</span><span class="n">disconnect_pin</span><span class="p">(</span><span class="n">out_pin</span><span class="p">)</span>
+
+        <span class="n">pins_to_move</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">in_wire</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">in_wire</span><span class="o">.</span><span class="n">pins</span><span class="p">:</span>
+                <span class="c1"># if p != in_pin:</span>
+                <span class="n">pins_to_move</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">out_wire</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pins_to_move</span><span class="p">:</span>
+                <span class="n">in_wire</span><span class="o">.</span><span class="n">disconnect_pin</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+                <span class="n">out_wire</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_bring_to_top</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">add_to_name</span><span class="p">,</span> <span class="n">top_definition</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;move the cable that is internal to the top level.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;EDIF.identifier&quot;</span> <span class="ow">in</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">global</span> <span class="n">mod_name_uid</span>
+        <span class="n">good</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">mod_name_uid</span> <span class="o">==</span> <span class="mi">45773</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="s2">&quot;EDIF.identifier&quot;</span><span class="p">])</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="n">good</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">Cable</span><span class="p">):</span>
+            <span class="n">e</span><span class="p">[</span><span class="s2">&quot;EDIF.identifier&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;cable_&quot;</span> <span class="o">+</span> <span class="n">_get_unique_name_modifier</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">e</span><span class="p">[</span><span class="s2">&quot;EDIF.identifier&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;instance_&quot;</span> <span class="o">+</span> <span class="n">_get_unique_name_modifier</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">good</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="s2">&quot;EDIF.identifier&quot;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">Cable</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">definition</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">remove_cable</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">parent</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">remove_child</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="c1"># _rename_element(c)</span>
+    <span class="k">if</span> <span class="n">add_to_name</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">e</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">add_to_name</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">e</span><span class="o">.</span><span class="n">name</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">e</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">name</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">Cable</span><span class="p">):</span>
+        <span class="n">top_definition</span><span class="o">.</span><span class="n">add_cable</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">top_definition</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+
+<span class="c1"># def simple_recursive_netlist_visualizer(netlist):</span>
+<span class="c1">#     #TODO put this code somewhere where people can use it to visualize simple netlists</span>
+<span class="c1">#     top_instance = netlist.top_instance</span>
+<span class="c1">#     #should look something like this:</span>
+<span class="c1">#     #top</span>
+<span class="c1">#     #   child1</span>
+<span class="c1">#     #       child1.child</span>
+<span class="c1">#     #   child2</span>
+<span class="c1">#     #       child2.child</span>
+<span class="c1">#     def recurse(instance, depth):</span>
+<span class="c1">#         s = depth * &quot;\t&quot;</span>
+<span class="c1">#         print(s, instance.name, &quot;(&quot;, instance.reference.name, &quot;)&quot;)</span>
+<span class="c1">#         for c in instance.reference.children:</span>
+<span class="c1">#             recurse(c, depth + 1)</span>
+
+<span class="c1">#     recurse(top_instance, 0)</span>
+
+
+<div class="viewcode-block" id="flatten"><a class="viewcode-back" href="../../reference/classes/generated/spydrnet.flatten.flatten.html#spydrnet.flatten.flatten">[docs]</a><span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="n">netlist</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    starts at the top instance and brings all the different subelements to the top level.</span>
+<span class="sd">    and port boundries are redone into one net.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># get all the sub instances of the top instance</span>
+    <span class="n">instance_queue</span> <span class="o">=</span> <span class="n">deque</span><span class="p">()</span>
+    <span class="n">name_queue</span> <span class="o">=</span> <span class="n">deque</span><span class="p">()</span>
+    <span class="n">top_instance</span> <span class="o">=</span> <span class="n">netlist</span><span class="o">.</span><span class="n">top_instance</span>
+    <span class="n">top_definition</span> <span class="o">=</span> <span class="n">top_instance</span><span class="o">.</span><span class="n">reference</span>
+    <span class="c1"># put all of tops children on a stack</span>
+    <span class="k">for</span> <span class="n">chld</span> <span class="ow">in</span> <span class="n">top_definition</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+        <span class="n">instance_queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chld</span><span class="p">)</span>
+        <span class="n">name_queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="n">to_remove</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># for each of the children on the stack</span>
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">instance_queue</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">inst</span> <span class="o">=</span> <span class="n">instance_queue</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
+        <span class="n">parent_name</span> <span class="o">=</span> <span class="n">name_queue</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
+        <span class="c1"># simple_recursive_netlist_visualizer(netlist)</span>
+        <span class="n">_bring_to_top</span><span class="p">(</span><span class="n">inst</span><span class="p">,</span> <span class="n">parent_name</span><span class="p">,</span> <span class="n">top_definition</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">inst</span><span class="o">.</span><span class="n">reference</span><span class="o">.</span><span class="n">is_leaf</span><span class="p">():</span>
+            <span class="k">continue</span>
+        <span class="c1"># put their children on the stack</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">inst</span><span class="o">.</span><span class="n">reference</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+            <span class="n">instance_queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+            <span class="n">name_queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inst</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">temp_cables</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">cable</span> <span class="ow">in</span> <span class="n">inst</span><span class="o">.</span><span class="n">reference</span><span class="o">.</span><span class="n">cables</span><span class="p">:</span>
+            <span class="n">temp_cables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cable</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">cable</span> <span class="ow">in</span> <span class="n">temp_cables</span><span class="p">:</span>
+            <span class="n">_bring_to_top</span><span class="p">(</span><span class="n">cable</span><span class="p">,</span> <span class="n">inst</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">top_definition</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="n">inst</span><span class="o">.</span><span class="n">reference</span><span class="o">.</span><span class="n">ports</span><span class="p">:</span>
+            <span class="n">_redo_connections</span><span class="p">(</span><span class="n">inst</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+        <span class="n">to_remove</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inst</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">to_remove</span><span class="p">:</span>
+        <span class="n">top_definition</span><span class="o">.</span><span class="n">remove_child</span><span class="p">(</span><span class="n">i</span><span class="p">)</span></div>
+
+
+<span class="c1"># mkdir export</span>
+<span class="c1"># cd export</span>
+<span class="c1"># write_edif</span>
+<span class="c1"># write_xdc -constraints all leon3mp.xdc</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Brigham Young Universitiy.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

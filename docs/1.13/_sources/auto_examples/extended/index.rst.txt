@@ -1,0 +1,94 @@
+
+
+.. _sphx_glr_auto_examples_extended:
+
+Extended
+-------------
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Creates definitions for non-leaf instances so each instance has its own definition. Each librar...">
+
+.. only:: html
+
+  .. image:: /auto_examples/extended/images/thumb/sphx_glr_plot_single_use_definitions_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_extended_plot_single_use_definitions.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Make Instances Unique</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Extend a four bit counter to a 5 bit counter.">
+
+.. only:: html
+
+  .. image:: /auto_examples/extended/images/thumb/sphx_glr_plot_four_to_five_bit_counter_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_extended_plot_four_to_five_bit_counter.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Four Bit Counter To Five Bit Counter</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Remove hierarchy from a netlist. The original hierarchy and new hierarchy (after flattening) wi...">
+
+.. only:: html
+
+  .. image:: /auto_examples/extended/images/thumb/sphx_glr_plot_flatten_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_extended_plot_flatten.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Flatten A Netlist</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A connectivity graph is a mathematical view of the connections between components in a netlist....">
+
+.. only:: html
+
+  .. image:: /auto_examples/extended/images/thumb/sphx_glr_plot_connectivity_graph_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_extended_plot_connectivity_graph.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Connectivity Graph</div>
+    </div>
+
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/extended/plot_single_use_definitions
+   /auto_examples/extended/plot_four_to_five_bit_counter
+   /auto_examples/extended/plot_flatten
+   /auto_examples/extended/plot_connectivity_graph
+

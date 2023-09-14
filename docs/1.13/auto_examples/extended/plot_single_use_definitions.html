@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Make Instances Unique &mdash; SpyDrNet 1.13.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=f77edc46"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Four Bit Counter To Five Bit Counter" href="plot_four_to_five_bit_counter.html" />
+    <link rel="prev" title="Extended" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            SpyDrNet
+          </a>
+              <div class="version">
+                1.13
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/index.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../index.html#basic">Basic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#extended">Extended</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#vivado">Vivado</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../basic/index.html">Basic</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">Extended</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Make Instances Unique</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_four_to_five_bit_counter.html">Four Bit Counter To Five Bit Counter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_flatten.html">Flatten A Netlist</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_connectivity_graph.html">Connectivity Graph</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../vivado/index.html">Vivado</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../credits.html">Credits</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SpyDrNet</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Examples</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Extended</a></li>
+      <li class="breadcrumb-item active">Make Instances Unique</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/auto_examples/extended/plot_single_use_definitions.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-extended-plot-single-use-definitions-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code</p>
+</div>
+<section class="sphx-glr-example-title" id="make-instances-unique">
+<span id="sphx-glr-auto-examples-extended-plot-single-use-definitions-py"></span><h1>Make Instances Unique<a class="headerlink" href="#make-instances-unique" title="Permalink to this heading"></a></h1>
+<p>Creates definitions for non-leaf instances so each instance has its own definition. Each library in both the original and the uniquified netlist will be printed along with each’s definitions.</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>ORIGINAL
+   DEFINITIONS IN &#39; hdi_primitives &#39;: [&#39;LUT2&#39;, &#39;LUT3&#39;, &#39;IBUF&#39;, &#39;OBUF&#39;, &#39;INV&#39;]
+   DEFINITIONS IN &#39; work &#39;: [&#39;c&#39;, &#39;b&#39;, &#39;a&#39;, &#39;top&#39;]
+UNIQUE
+   DEFINITIONS IN &#39; hdi_primitives &#39;: [&#39;LUT2&#39;, &#39;LUT3&#39;, &#39;IBUF&#39;, &#39;OBUF&#39;, &#39;INV&#39;]
+   DEFINITIONS IN &#39; work &#39;: [&#39;c_UNIQUE_0&#39;, &#39;c_UNIQUE_1&#39;, &#39;c_UNIQUE_2&#39;, &#39;c_UNIQUE_3&#39;, &#39;c_UNIQUE_4&#39;, &#39;c_UNIQUE_5&#39;, &#39;c_UNIQUE_6&#39;, &#39;c_UNIQUE_7&#39;, &#39;c_UNIQUE_8&#39;, &#39;c_UNIQUE_9&#39;, &#39;c_UNIQUE_10&#39;, &#39;c_UNIQUE_11&#39;, &#39;c_UNIQUE_12&#39;, &#39;c_UNIQUE_13&#39;, &#39;c_UNIQUE_14&#39;, &#39;c_UNIQUE_15&#39;, &#39;c_UNIQUE_16&#39;, &#39;c_UNIQUE_17&#39;, &#39;c_UNIQUE_18&#39;, &#39;c_UNIQUE_19&#39;, &#39;c_UNIQUE_20&#39;, &#39;c_UNIQUE_21&#39;, &#39;c_UNIQUE_22&#39;, &#39;c_UNIQUE_23&#39;, &#39;c_UNIQUE_24&#39;, &#39;c_UNIQUE_25&#39;, &#39;c&#39;, &#39;b_UNIQUE_0&#39;, &#39;b_UNIQUE_1&#39;, &#39;b_UNIQUE_2&#39;, &#39;b_UNIQUE_3&#39;, &#39;b_UNIQUE_4&#39;, &#39;b_UNIQUE_5&#39;, &#39;b_UNIQUE_6&#39;, &#39;b_UNIQUE_7&#39;, &#39;b&#39;, &#39;a_UNIQUE_0&#39;, &#39;a_UNIQUE_1&#39;, &#39;a&#39;, &#39;top&#39;]
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">spydrnet</span> <span class="k">as</span> <span class="nn">sdn</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+
+<span class="c1"># Check if given instance is a black box</span>
+<span class="c1"># instance: std.Instance to check</span>
+<span class="c1"># Return True if instance is a black box</span>
+<span class="c1"># (defined by no listed cables or child within child&#39;s reference), else return False</span>
+<span class="k">def</span> <span class="nf">is_black_box</span><span class="p">(</span><span class="n">instance</span><span class="p">):</span>
+    <span class="n">definition</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">reference</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">definition</span><span class="o">.</span><span class="n">cables</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">definition</span><span class="o">.</span><span class="n">children</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span>
+
+
+<span class="k">def</span> <span class="nf">increment_definition_count</span><span class="p">(</span><span class="n">definition</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">definition</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">definition_count</span><span class="p">:</span>
+        <span class="n">definition_count</span><span class="p">[</span><span class="n">definition</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">definition_count</span><span class="p">[</span><span class="n">definition</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+
+<span class="k">def</span> <span class="nf">trace_definition</span><span class="p">(</span><span class="n">definition</span><span class="p">):</span>
+    <span class="n">top_order</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">deque</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">definition</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">pins</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">top_order</span>
+        <span class="n">inner_pin</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">pins</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">inner_pin</span><span class="o">.</span><span class="n">wire</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">top_order</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">trace_definition</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">reference</span><span class="p">))</span>
+    <span class="n">top_order</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">definition</span><span class="p">)</span>
+    <span class="n">increment_definition_count</span><span class="p">(</span><span class="n">definition</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">top_order</span>
+
+
+<span class="k">def</span> <span class="nf">get_reverse_topological_order</span><span class="p">(</span><span class="n">ir</span><span class="p">):</span>
+    <span class="n">depth_first_search</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">deque</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">top_def</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_black_box</span><span class="p">(</span><span class="n">child</span><span class="p">):</span>
+            <span class="n">depth_first_search</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">trace_definition</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">reference</span><span class="p">))</span>
+    <span class="n">visited</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">reverse_topological_order</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">depth_first_search</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">definition</span> <span class="o">=</span> <span class="n">depth_first_search</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">definition</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+            <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">definition</span><span class="p">)</span>
+            <span class="n">reverse_topological_order</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">definition</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">reverse_topological_order</span>
+
+
+<span class="k">def</span> <span class="nf">copy_metadata</span><span class="p">(</span><span class="n">original</span><span class="p">,</span> <span class="n">copy</span><span class="p">,</span> <span class="n">copy_num</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">original</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">copy</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">original</span><span class="p">)</span> <span class="ow">is</span> <span class="n">sdn</span><span class="o">.</span><span class="n">Definition</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;EDIF.identifier&#39;</span> <span class="ow">in</span> <span class="n">copy</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+            <span class="k">while</span> <span class="n">copy</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_UNIQUE_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">copy_num</span><span class="p">)</span> <span class="ow">in</span> <span class="n">definition_count</span><span class="p">:</span>
+                <span class="n">copy_num</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">definition_count</span><span class="p">[</span><span class="n">copy</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">+</span>
+                             <span class="s1">&#39;_UNIQUE_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">copy_num</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">copy</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span> <span class="o">+</span> \
+                <span class="s1">&#39;_UNIQUE_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">copy_num</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;.NAME&#39;</span> <span class="ow">in</span> <span class="n">copy</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+            <span class="n">copy</span><span class="p">[</span><span class="s1">&#39;.NAME&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="p">[</span><span class="s1">&#39;.NAME&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_UNIQUE_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">copy_num</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">copy_ports</span><span class="p">(</span><span class="n">original</span><span class="p">,</span> <span class="n">copy</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">original_port</span> <span class="ow">in</span> <span class="n">original</span><span class="o">.</span><span class="n">ports</span><span class="p">:</span>
+        <span class="n">new_port</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">create_port</span><span class="p">()</span>
+        <span class="n">copy_metadata</span><span class="p">(</span><span class="n">original_port</span><span class="p">,</span> <span class="n">new_port</span><span class="p">)</span>
+        <span class="n">new_port</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">original_port</span><span class="o">.</span><span class="n">direction</span>
+        <span class="k">for</span> <span class="n">original_inner_pin</span> <span class="ow">in</span> <span class="n">original_port</span><span class="o">.</span><span class="n">pins</span><span class="p">:</span>
+            <span class="n">original_inner_pin_to_new_inner_pin</span><span class="p">[</span><span class="n">original_inner_pin</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_port</span><span class="o">.</span><span class="n">create_pin</span><span class="p">(</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">original_port</span><span class="p">,</span> <span class="s1">&#39;is_array&#39;</span><span class="p">):</span>
+            <span class="n">new_port</span><span class="o">.</span><span class="n">is_array</span> <span class="o">=</span> <span class="n">original_port</span><span class="o">.</span><span class="n">is_array</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">original_port</span><span class="p">,</span> <span class="s1">&#39;is_scalar&#39;</span><span class="p">):</span>
+            <span class="n">new_port</span><span class="o">.</span><span class="n">is_scalar</span> <span class="o">=</span> <span class="n">original_port</span><span class="o">.</span><span class="n">is_scalar</span>
+
+
+<span class="k">def</span> <span class="nf">make_instances_unique</span><span class="p">(</span><span class="n">instance</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">definition_copies</span><span class="p">[</span><span class="n">instance</span><span class="o">.</span><span class="n">reference</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">definition</span> <span class="o">=</span> <span class="n">definition_copies</span><span class="p">[</span><span class="n">instance</span><span class="o">.</span><span class="n">reference</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+    <span class="c1"># instance.reference = None</span>
+    <span class="n">instance</span><span class="o">.</span><span class="n">reference</span> <span class="o">=</span> <span class="n">definition</span>
+
+
+<span class="k">def</span> <span class="nf">copy_children</span><span class="p">(</span><span class="n">original</span><span class="p">,</span> <span class="n">copy</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">original_child</span> <span class="ow">in</span> <span class="n">original</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+        <span class="n">new_child</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">create_child</span><span class="p">()</span>
+        <span class="n">copy_metadata</span><span class="p">(</span><span class="n">original_child</span><span class="p">,</span> <span class="n">new_child</span><span class="p">)</span>
+        <span class="n">new_child</span><span class="o">.</span><span class="n">reference</span> <span class="o">=</span> <span class="n">original_child</span><span class="o">.</span><span class="n">reference</span>
+        <span class="k">for</span> <span class="n">pin</span> <span class="ow">in</span> <span class="n">original_child</span><span class="o">.</span><span class="n">pins</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">outer_pin_map</span><span class="p">[</span><span class="n">original_child</span><span class="o">.</span><span class="n">pins</span><span class="p">[</span><span class="n">pin</span><span class="p">]]</span> <span class="o">=</span> <span class="n">new_child</span><span class="o">.</span><span class="n">pins</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_black_box</span><span class="p">(</span><span class="n">original_child</span><span class="p">):</span>
+            <span class="n">make_instances_unique</span><span class="p">(</span><span class="n">new_child</span><span class="p">)</span>
+        <span class="n">instance_map</span><span class="p">[</span><span class="n">original_child</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_child</span>
+
+
+<span class="k">def</span> <span class="nf">copy_cable</span><span class="p">(</span><span class="n">original</span><span class="p">,</span> <span class="n">copy</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">original_cable</span> <span class="ow">in</span> <span class="n">original</span><span class="o">.</span><span class="n">cables</span><span class="p">:</span>
+        <span class="n">new_cable</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">create_cable</span><span class="p">()</span>
+        <span class="n">copy_metadata</span><span class="p">(</span><span class="n">original_cable</span><span class="p">,</span> <span class="n">new_cable</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">original_wire</span> <span class="ow">in</span> <span class="n">original_cable</span><span class="o">.</span><span class="n">wires</span><span class="p">:</span>
+            <span class="n">new_wire</span> <span class="o">=</span> <span class="n">new_cable</span><span class="o">.</span><span class="n">create_wire</span><span class="p">()</span>
+
+            <span class="k">for</span> <span class="n">original_pin</span> <span class="ow">in</span> <span class="n">original_wire</span><span class="o">.</span><span class="n">pins</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">original_pin</span><span class="p">,</span> <span class="n">sdn</span><span class="o">.</span><span class="n">InnerPin</span><span class="p">):</span>
+                    <span class="n">new_wire</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span>
+                        <span class="n">original_inner_pin_to_new_inner_pin</span><span class="p">[</span><span class="n">original_pin</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">new_wire</span><span class="o">.</span><span class="n">connect_pin</span><span class="p">(</span><span class="n">outer_pin_map</span><span class="p">[</span><span class="n">original_pin</span><span class="p">])</span>
+
+
+<span class="k">def</span> <span class="nf">copy_definition</span><span class="p">(</span><span class="n">def_to_copy</span><span class="p">,</span> <span class="n">def_copy</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+    <span class="n">copy_metadata</span><span class="p">(</span><span class="n">def_to_copy</span><span class="p">,</span> <span class="n">def_copy</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">copy_ports</span><span class="p">(</span><span class="n">def_to_copy</span><span class="p">,</span> <span class="n">def_copy</span><span class="p">)</span>
+    <span class="n">copy_children</span><span class="p">(</span><span class="n">def_to_copy</span><span class="p">,</span> <span class="n">def_copy</span><span class="p">)</span>
+    <span class="n">copy_cable</span><span class="p">(</span><span class="n">def_to_copy</span><span class="p">,</span> <span class="n">def_copy</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">definition_clean_up</span><span class="p">(</span><span class="n">definition</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">definition</span> <span class="ow">in</span> <span class="n">definition_copies</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">definition</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">reference</span> <span class="ow">in</span> <span class="n">definition_copies</span><span class="p">:</span>
+                <span class="n">make_instances_unique</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">make_definition_copies</span><span class="p">(</span><span class="n">def_to_copy</span><span class="p">,</span> <span class="n">num_of_copies</span><span class="p">):</span>
+    <span class="n">copies</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">copies</span><span class="p">[</span><span class="n">def_to_copy</span><span class="p">]</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">deque</span><span class="p">()</span>
+    <span class="n">definition_copies</span><span class="p">[</span><span class="n">def_to_copy</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_of_copies</span><span class="p">):</span>
+        <span class="n">def_copy</span> <span class="o">=</span> <span class="n">sdn</span><span class="o">.</span><span class="n">Definition</span><span class="p">()</span>
+        <span class="n">copy_definition</span><span class="p">(</span><span class="n">def_to_copy</span><span class="p">,</span> <span class="n">def_copy</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+        <span class="n">definition_copies</span><span class="p">[</span><span class="n">def_to_copy</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">def_copy</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">def_to_copy</span><span class="o">.</span><span class="n">library</span><span class="o">.</span><span class="n">definitions</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">def_to_copy</span> <span class="o">==</span> <span class="n">def_to_copy</span><span class="o">.</span><span class="n">library</span><span class="o">.</span><span class="n">definitions</span><span class="p">[</span><span class="n">y</span><span class="p">]:</span>
+                <span class="k">break</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">def_to_copy</span><span class="o">.</span><span class="n">library</span><span class="o">.</span><span class="n">add_definition</span><span class="p">(</span><span class="n">def_copy</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">def_to_copy</span><span class="p">[</span><span class="s1">&#39;EDIF.identifier&#39;</span><span class="p">]</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;Try to add a definition with name of &#39;</span> <span class="o">+</span> \
+                <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;but the name was already use&#39;</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="n">definition_clean_up</span><span class="p">(</span><span class="n">def_to_copy</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">definition_copies</span>
+
+
+<span class="k">def</span> <span class="nf">clean</span><span class="p">(</span><span class="n">definition</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">definition</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">reference</span> <span class="ow">in</span> <span class="n">definition_copies</span><span class="p">:</span>
+            <span class="n">make_instances_unique</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+
+<span class="c1">#print a list of all libraries and definitions in a netlist</span>
+<span class="k">def</span> <span class="nf">libraries_definitions</span><span class="p">(</span><span class="n">my_netlist</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">library</span> <span class="ow">in</span> <span class="n">my_netlist</span><span class="o">.</span><span class="n">libraries</span><span class="p">:</span>
+        <span class="n">definitions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">definition</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">definition</span> <span class="ow">in</span> <span class="n">library</span><span class="o">.</span><span class="n">definitions</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;   DEFINITIONS IN &#39;&quot;</span><span class="p">,</span><span class="n">library</span><span class="o">.</span><span class="n">name</span><span class="p">,</span><span class="s2">&quot;&#39;:&quot;</span><span class="p">,</span><span class="n">definitions</span><span class="p">)</span>
+
+
+<span class="n">definition_count</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">original_inner_pin_to_new_inner_pin</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">instance_map</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">outer_pin_map</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">definition_copies</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="n">example_name</span> <span class="o">=</span> <span class="s1">&#39;unique_challenge&#39;</span>
+<span class="n">ir</span> <span class="o">=</span> <span class="n">sdn</span><span class="o">.</span><span class="n">load_example_netlist_by_name</span><span class="p">(</span><span class="n">example_name</span><span class="p">)</span>
+<span class="n">ir_orig</span> <span class="o">=</span> <span class="n">sdn</span><span class="o">.</span><span class="n">load_example_netlist_by_name</span><span class="p">(</span><span class="n">example_name</span><span class="p">)</span> <span class="c1">#store the original netlist for display later</span>
+<span class="n">top_def</span> <span class="o">=</span> <span class="n">ir</span><span class="o">.</span><span class="n">top_instance</span><span class="o">.</span><span class="n">reference</span>
+
+<span class="n">reverse_topological_order</span> <span class="o">=</span> <span class="n">get_reverse_topological_order</span><span class="p">(</span><span class="n">ir</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">definition</span> <span class="ow">in</span> <span class="n">reverse_topological_order</span><span class="p">:</span>
+    <span class="n">make_definition_copies</span><span class="p">(</span><span class="n">definition</span><span class="p">,</span> <span class="n">definition_count</span><span class="p">[</span><span class="n">definition</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">clean</span><span class="p">(</span><span class="n">top_def</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">td</span><span class="p">:</span>
+    <span class="n">file_name</span> <span class="o">=</span> <span class="n">example_name</span> <span class="o">+</span> <span class="s1">&#39;_unique.edf&#39;</span>
+    <span class="n">sdn</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span><span class="n">ir</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">td</span><span class="p">,</span> <span class="n">file_name</span><span class="p">))</span>
+
+<span class="c1">#show the original netlist with its definitions and the new netlist with each instance now as a unique definition</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ORIGINAL&quot;</span><span class="p">)</span>
+<span class="n">libraries_definitions</span><span class="p">(</span><span class="n">ir_orig</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;UNIQUE&quot;</span><span class="p">)</span>
+<span class="n">libraries_definitions</span><span class="p">(</span><span class="n">ir</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.055 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-extended-plot-single-use-definitions-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/a3c58d31cb1d622603913c9a1f7e5bea/plot_single_use_definitions.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_single_use_definitions.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/4c56f6caae7743c8f0410fb9de546486/plot_single_use_definitions.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_single_use_definitions.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Extended" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="plot_four_to_five_bit_counter.html" class="btn btn-neutral float-right" title="Four Bit Counter To Five Bit Counter" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Brigham Young Universitiy.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

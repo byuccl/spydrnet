@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>spydrnet.ir.netlist &mdash; SpyDrNet 1.13.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=f77edc46"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            SpyDrNet
+          </a>
+              <div class="version">
+                1.13
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview/index.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/index.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../credits.html">Credits</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SpyDrNet</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">spydrnet.ir.netlist</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for spydrnet.ir.netlist</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">spydrnet.ir</span> <span class="kn">import</span> <span class="n">FirstClassElement</span>
+<span class="kn">from</span> <span class="nn">spydrnet.ir</span> <span class="kn">import</span> <span class="n">Library</span>
+<span class="kn">from</span> <span class="nn">spydrnet.ir</span> <span class="kn">import</span> <span class="n">Instance</span>
+<span class="kn">from</span> <span class="nn">spydrnet.ir.views.listview</span> <span class="kn">import</span> <span class="n">ListView</span>
+<span class="kn">from</span> <span class="nn">spydrnet.global_state</span> <span class="kn">import</span> <span class="n">global_callback</span>
+<span class="kn">from</span> <span class="nn">spydrnet.global_state.global_callback</span> <span class="kn">import</span> <span class="n">_call_create_netlist</span>
+<span class="kn">from</span> <span class="nn">spydrnet.ir</span> <span class="kn">import</span> <span class="n">Definition</span>
+
+
+<span class="k">class</span> <span class="nc">Netlist</span><span class="p">(</span><span class="n">FirstClassElement</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a netlist object.</span>
+
+<span class="sd">    Contains a top level instance and libraries</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    After importing the spydrnet package, we can initialize the netlist from scratch</span>
+
+<span class="sd">    &gt;&gt;&gt; import spydrnet as sdn</span>
+<span class="sd">    &gt;&gt;&gt; netlist = sdn.Netlist()</span>
+
+<span class="sd">    We can also initalize an top instance for the netlist. For more info: :ref:`Instance`</span>
+
+<span class="sd">    &gt;&gt;&gt; top_instance = sdn.Instance()</span>
+<span class="sd">    &gt;&gt;&gt; netlist.top_instance = top_instance</span>
+
+<span class="sd">    This is the way to set up a top level definition for the netlist</span>
+
+<span class="sd">    &gt;&gt;&gt; top_definition = sdn.Definition()</span>
+<span class="sd">    &gt;&gt;&gt; netlist.top_instance = top_definition</span>
+
+<span class="sd">    We can initialize a &quot;primatives&quot; and a &quot;work&quot; library this way:</span>
+
+<span class="sd">    &gt;&gt;&gt; primitives_library = netlist.create_library()</span>
+<span class="sd">    &gt;&gt;&gt; primitives_library[&#39;EDIF.identifier&#39;] = &#39;hdi_primitives&#39;</span>
+
+<span class="sd">    &gt;&gt;&gt; work_library = netlist.create_library()</span>
+<span class="sd">    &gt;&gt;&gt; work_library[&#39;EDIF.identifier&#39;] = &#39;work&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;_libraries&quot;</span><span class="p">,</span> <span class="s2">&quot;_top_instance&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Netlist.__init__"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.Netlist.__init__.html#spydrnet.Netlist.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        creates an empty object of type netlist</span>
+
+<span class="sd">        parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        name - (str) the name of this instance</span>
+<span class="sd">        properties - (dict) the dictionary which holds the properties</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_libraries</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_top_instance</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">_call_create_netlist</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="k">if</span> <span class="n">properties</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">properties</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span> <span class="s2">&quot;properties must be a dictionary&quot;</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">properties</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">properties</span><span class="p">[</span><span class="n">key</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Netlist.compose"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.Netlist.compose.html#spydrnet.Netlist.compose">[docs]</a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compose a netlist into a file format.</span>
+
+<span class="sd">        Compose(filename).</span>
+<span class="sd">        Shortcut to :func:`~spydrnet.compose`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">spydrnet.composers</span> <span class="kn">import</span> <span class="n">compose</span>
+
+        <span class="n">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">libraries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a list of all libraries included in the netlist.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ListView</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_libraries</span><span class="p">)</span>
+
+    <span class="nd">@libraries</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">libraries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the libraries.</span>
+
+<span class="sd">        This function can only be used to reorder the libraries. Use the remove_library and</span>
+<span class="sd">        add_library functions to add and remove libraries.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        value - the reordered list of libraries</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">value_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">value_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">value_list</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">value_list</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">value_set</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_libraries</span><span class="p">)</span> <span class="o">==</span> <span class="n">value_set</span>
+        <span class="p">),</span> <span class="s2">&quot;Set of values do not match, this assignment can only reorder values, </span><span class="se">\</span>
+<span class="s2">            values must be unique&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_libraries</span> <span class="o">=</span> <span class="n">value_list</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">top_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the top instance in the netlist.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Instance</span>
+<span class="sd">            The top level instance in the environment</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_top_instance</span>
+
+    <span class="nd">@top_instance</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">top_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the top instance of the design.</span>
+
+<span class="sd">        The instance must not be null and should probably come from this netlist</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        instance - (Instance or Definition) the instance to set as the top instance. If a definition</span>
+<span class="sd">                    is passed into the funciton,</span>
+<span class="sd">        creates a new instance with that definition and set it as the top instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">instance</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">Instance</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">Definition</span><span class="p">)</span>
+        <span class="p">),</span> <span class="s2">&quot;Must specify an instance&quot;</span>
+        <span class="n">global_callback</span><span class="o">.</span><span class="n">_call_netlist_top_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">)</span>
+        <span class="c1"># TODO: should We have a DRC that makes sure the instance is of a definition contained in</span>
+        <span class="c1"># netlist? I think no but I am open to hear other points of veiw.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">top_instance</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">top_instance</span><span class="o">.</span><span class="n">is_top_instance</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">Definition</span><span class="p">):</span>
+            <span class="n">top</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">()</span>
+            <span class="n">top</span><span class="o">.</span><span class="n">reference</span> <span class="o">=</span> <span class="n">instance</span>
+            <span class="n">top</span><span class="o">.</span><span class="n">is_top_instance</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">top_instance</span> <span class="o">=</span> <span class="n">top</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_top_instance</span> <span class="o">=</span> <span class="n">instance</span>
+            <span class="k">if</span> <span class="n">instance</span><span class="p">:</span>
+                <span class="n">instance</span><span class="o">.</span><span class="n">is_top_instance</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">set_top_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">instance_name</span><span class="o">=</span><span class="s2">&quot;instance&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the top instance of the design.</span>
+
+<span class="sd">        The instance must not be null and should probably come from this netlist</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        instance - (Instance or Definition) the instance to set as the top instance. If a definition</span>
+<span class="sd">                    is passed into the funciton,</span>
+<span class="sd">        creates a new instance with that definition and set it as the top instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">instance</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">Instance</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">Definition</span><span class="p">)</span>
+        <span class="p">),</span> <span class="s2">&quot;Must specify an instance&quot;</span>
+        <span class="n">global_callback</span><span class="o">.</span><span class="n">_call_netlist_top_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">)</span>
+        <span class="c1"># TODO: should We have a DRC that makes sure the instance is of a definition contained in</span>
+        <span class="c1"># netlist? I think no but I am open to hear other points of veiw.</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">Definition</span><span class="p">):</span>
+            <span class="n">top</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">()</span>
+            <span class="n">top</span><span class="o">.</span><span class="n">reference</span> <span class="o">=</span> <span class="n">instance</span>
+            <span class="n">instance</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">instance_name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">top_instance</span> <span class="o">=</span> <span class="n">top</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">top_instance</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">instance_name</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_top_instance</span> <span class="o">=</span> <span class="n">instance</span>
+
+<div class="viewcode-block" id="Netlist.create_library"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.Netlist.create_library.html#spydrnet.Netlist.create_library">[docs]</a>    <span class="k">def</span> <span class="nf">create_library</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a library and add it to the netlist and return that library</span>
+
+<span class="sd">        parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        name - (str) the name of the library</span>
+<span class="sd">        properties - (dict) the dictionary which holds the properties of the library</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">library</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">properties</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_library</span><span class="p">(</span><span class="n">library</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">library</span></div>
+
+<div class="viewcode-block" id="Netlist.add_library"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.Netlist.add_library.html#spydrnet.Netlist.add_library">[docs]</a>    <span class="k">def</span> <span class="nf">add_library</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">library</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;add an already existing library to the netlist.</span>
+
+<span class="sd">        This library should not belong to another netlist. Use</span>
+<span class="sd">        remove_library from other netlists before adding</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        library - Library</span>
+<span class="sd">            The library to be added to the netlist.</span>
+<span class="sd">        position - int, (default None)</span>
+<span class="sd">            When set, it is the index at which to add the library in the libraries list.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">library</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_libraries</span><span class="p">,</span> <span class="s2">&quot;Library already included in netlist&quot;</span>
+        <span class="k">assert</span> <span class="n">library</span><span class="o">.</span><span class="n">netlist</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Library already belongs to a different netlist&quot;</span>
+        <span class="n">global_callback</span><span class="o">.</span><span class="n">_call_netlist_add_library</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">library</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">position</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_libraries</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">library</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_libraries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">library</span><span class="p">)</span>
+        <span class="n">library</span><span class="o">.</span><span class="n">_netlist</span> <span class="o">=</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Netlist.remove_library"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.Netlist.remove_library.html#spydrnet.Netlist.remove_library">[docs]</a>    <span class="k">def</span> <span class="nf">remove_library</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">library</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Removes the given library if it is in the netlist</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        library - Library</span>
+<span class="sd">            The library to be removed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">library</span><span class="o">.</span><span class="n">netlist</span> <span class="o">==</span> <span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;Library is not included in netlist&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_remove_library</span><span class="p">(</span><span class="n">library</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_libraries</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">library</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Netlist.remove_libraries_from"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.Netlist.remove_libraries_from.html#spydrnet.Netlist.remove_libraries_from">[docs]</a>    <span class="k">def</span> <span class="nf">remove_libraries_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">libraries</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Removes all the given libraries from the netlist.</span>
+
+<span class="sd">        All libraries must be in the netlist.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        libraries - Set</span>
+<span class="sd">            Libraries to be removed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">libraries</span><span class="p">,</span> <span class="nb">set</span><span class="p">):</span>
+            <span class="n">excluded_libraries</span> <span class="o">=</span> <span class="n">libraries</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">excluded_libraries</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">libraries</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">netlist</span> <span class="o">==</span> <span class="bp">self</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">excluded_libraries</span><span class="p">),</span> <span class="p">(</span>
+            <span class="s2">&quot;Some libraries to remove are not included in &quot;</span> <span class="s2">&quot;netlist &quot;</span>
+        <span class="p">)</span>
+        <span class="n">included_libraries</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">library</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_libraries</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">library</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">excluded_libraries</span><span class="p">:</span>
+                <span class="n">included_libraries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">library</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_remove_library</span><span class="p">(</span><span class="n">library</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_libraries</span> <span class="o">=</span> <span class="n">included_libraries</span></div>
+
+    <span class="k">def</span> <span class="nf">_remove_library</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">library</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Internal function which will separate a particular libraries binding from the netlist.&quot;&quot;&quot;</span>
+        <span class="n">global_callback</span><span class="o">.</span><span class="n">_call_netlist_remove_library</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">library</span><span class="p">)</span>
+        <span class="n">library</span><span class="o">.</span><span class="n">_netlist</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_clone_rip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Need to remove any extraneous references to floating, no parent instances&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">lib</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_libraries</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">defin</span> <span class="ow">in</span> <span class="n">lib</span><span class="o">.</span><span class="n">_definitions</span><span class="p">:</span>
+                <span class="n">new_ref</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">defin</span><span class="o">.</span><span class="n">_references</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">ref</span> <span class="ow">in</span> <span class="n">memo</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                        <span class="n">new_ref</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
+                <span class="n">defin</span><span class="o">.</span><span class="n">_references</span> <span class="o">=</span> <span class="n">new_ref</span>
+
+    <span class="k">def</span> <span class="nf">_clone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clone leaving all references in tact.</span>
+
+<span class="sd">        The element can then either be ripped or ripped and replaced.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="bp">self</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">memo</span>
+        <span class="p">),</span> <span class="s2">&quot;the object should not have been copied twice in this pass&quot;</span>
+        <span class="kn">from</span> <span class="nn">spydrnet.ir</span> <span class="kn">import</span> <span class="n">Netlist</span> <span class="k">as</span> <span class="n">NetlistExtended</span>
+
+        <span class="n">c</span> <span class="o">=</span> <span class="n">NetlistExtended</span><span class="p">()</span>
+        <span class="n">memo</span><span class="p">[</span><span class="bp">self</span><span class="p">]</span> <span class="o">=</span> <span class="n">c</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
+
+        <span class="n">new_libraries</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">library</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_libraries</span><span class="p">:</span>
+            <span class="n">new_libraries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">library</span><span class="o">.</span><span class="n">_clone</span><span class="p">(</span><span class="n">memo</span><span class="p">))</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">_libraries</span> <span class="o">=</span> <span class="n">new_libraries</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_top_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">_top_instance</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_top_instance</span> <span class="ow">in</span> <span class="n">memo</span><span class="p">:</span>
+                <span class="n">c</span><span class="o">.</span><span class="n">_top_instance</span> <span class="o">=</span> <span class="n">memo</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_top_instance</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_top</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">top_instance</span><span class="o">.</span><span class="n">_clone</span><span class="p">(</span><span class="n">memo</span><span class="p">)</span>
+                <span class="n">new_top</span><span class="o">.</span><span class="n">_clone_rip_and_replace_in_definition</span><span class="p">(</span><span class="n">memo</span><span class="p">)</span>
+                <span class="n">new_top</span><span class="o">.</span><span class="n">_clone_rip_and_replace_in_library</span><span class="p">(</span><span class="n">memo</span><span class="p">)</span>
+                <span class="n">c</span><span class="o">.</span><span class="n">_top_instance</span> <span class="o">=</span> <span class="n">new_top</span>
+
+        <span class="k">for</span> <span class="n">library</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">_libraries</span><span class="p">:</span>
+            <span class="n">library</span><span class="o">.</span><span class="n">_netlist</span> <span class="o">=</span> <span class="n">c</span>
+            <span class="n">library</span><span class="o">.</span><span class="n">_clone_rip_and_replace</span><span class="p">(</span><span class="n">memo</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">c</span>
+
+<div class="viewcode-block" id="Netlist.clone"><a class="viewcode-back" href="../../../reference/classes/generated/spydrnet.Netlist.clone.html#spydrnet.Netlist.clone">[docs]</a>    <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;API safe clone on a netlist.</span>
+
+<span class="sd">        This clone function should act just the way you would expect</span>
+<span class="sd">        All references are internal to the netlist that has been cloned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">memo</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clone</span><span class="p">(</span><span class="n">memo</span><span class="p">)</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">_clone_rip</span><span class="p">(</span><span class="n">memo</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">c</span></div>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Re-define the print function so it is easier to read&quot;&quot;&quot;</span>
+        <span class="n">rep</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+        <span class="n">rep</span> <span class="o">=</span> <span class="n">rep</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;; &quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">top_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rep</span> <span class="o">+=</span> <span class="s2">&quot;top_instance undefined&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">top_instance</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rep</span> <span class="o">+=</span> <span class="s2">&quot;top_instance.name undefined&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rep</span> <span class="o">+=</span> <span class="s2">&quot;top_instance.name &#39;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">top_instance</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span>
+        <span class="n">rep</span> <span class="o">+=</span> <span class="s2">&quot;&gt;&quot;</span>
+        <span class="k">return</span> <span class="n">rep</span>
+
+    <span class="k">def</span> <span class="nf">is_unique</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        checks whether all of the instances in the netlist are unique or not</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">instance</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_instances</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">instance</span><span class="o">.</span><span class="n">reference</span><span class="o">.</span><span class="n">references</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">instance</span><span class="o">.</span><span class="n">reference</span><span class="o">.</span><span class="n">is_leaf</span><span class="p">():</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Brigham Young Universitiy.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

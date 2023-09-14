@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Extended &mdash; SpyDrNet 1.13.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=f77edc46"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Make Instances Unique" href="plot_single_use_definitions.html" />
+    <link rel="prev" title="Minimal Script" href="../basic/minimal.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            SpyDrNet
+          </a>
+              <div class="version">
+                1.13
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/index.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../index.html#basic">Basic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#extended">Extended</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#vivado">Vivado</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../basic/index.html">Basic</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Extended</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="plot_single_use_definitions.html">Make Instances Unique</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_four_to_five_bit_counter.html">Four Bit Counter To Five Bit Counter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_flatten.html">Flatten A Netlist</a></li>
+<li class="toctree-l4"><a class="reference internal" href="plot_connectivity_graph.html">Connectivity Graph</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../vivado/index.html">Vivado</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../credits.html">Credits</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SpyDrNet</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Examples</a></li>
+      <li class="breadcrumb-item active">Extended</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/auto_examples/extended/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="extended">
+<span id="sphx-glr-auto-examples-extended"></span><h1>Extended<a class="headerlink" href="#extended" title="Permalink to this heading"></a></h1>
+<div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="Creates definitions for non-leaf instances so each instance has its own definition. Each librar..."><img alt="" src="../../_images/sphx_glr_plot_single_use_definitions_thumb.png" />
+<p><a class="reference internal" href="plot_single_use_definitions.html#sphx-glr-auto-examples-extended-plot-single-use-definitions-py"><span class="std std-ref">Make Instances Unique</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Make Instances Unique</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Extend a four bit counter to a 5 bit counter."><img alt="" src="../../_images/sphx_glr_plot_four_to_five_bit_counter_thumb.png" />
+<p><a class="reference internal" href="plot_four_to_five_bit_counter.html#sphx-glr-auto-examples-extended-plot-four-to-five-bit-counter-py"><span class="std std-ref">Four Bit Counter To Five Bit Counter</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Four Bit Counter To Five Bit Counter</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Remove hierarchy from a netlist. The original hierarchy and new hierarchy (after flattening) wi..."><img alt="" src="../../_images/sphx_glr_plot_flatten_thumb.png" />
+<p><a class="reference internal" href="plot_flatten.html#sphx-glr-auto-examples-extended-plot-flatten-py"><span class="std std-ref">Flatten A Netlist</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Flatten A Netlist</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="A connectivity graph is a mathematical view of the connections between components in a netlist...."><img alt="" src="../../_images/sphx_glr_plot_connectivity_graph_thumb.png" />
+<p><a class="reference internal" href="plot_connectivity_graph.html#sphx-glr-auto-examples-extended-plot-connectivity-graph-py"><span class="std std-ref">Connectivity Graph</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Connectivity Graph</div>
+</div></div><div class="toctree-wrapper compound">
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../basic/minimal.html" class="btn btn-neutral float-left" title="Minimal Script" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="plot_single_use_definitions.html" class="btn btn-neutral float-right" title="Make Instances Unique" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Brigham Young Universitiy.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

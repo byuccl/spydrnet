@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modify Netlist with SpyDrNet &mdash; SpyDrNet 1.13.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=f77edc46"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Create Netlist with SpyDrNet" href="LUT_builder.html" />
+    <link rel="prev" title="Create/View a Netlist with Vivado" href="vivado_netlist.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            SpyDrNet
+          </a>
+              <div class="version">
+                1.13
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/index.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../index.html#basic">Basic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#extended">Extended</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#vivado">Vivado</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../basic/index.html">Basic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../extended/index.html">Extended</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">Vivado</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="vivado_netlist.html">Create/View a Netlist with Vivado</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Modify Netlist with SpyDrNet</a></li>
+<li class="toctree-l4"><a class="reference internal" href="LUT_builder.html">Create Netlist with SpyDrNet</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../credits.html">Credits</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SpyDrNet</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Examples</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Vivado</a></li>
+      <li class="breadcrumb-item active">Modify Netlist with SpyDrNet</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/auto_examples/vivado/AND_to_OR.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-vivado-and-to-or-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code</p>
+</div>
+<section class="sphx-glr-example-title" id="modify-netlist-with-spydrnet">
+<span id="sphx-glr-auto-examples-vivado-and-to-or-py"></span><h1>Modify Netlist with SpyDrNet<a class="headerlink" href="#modify-netlist-with-spydrnet" title="Permalink to this heading"></a></h1>
+<p>This example shows how SpyDrNet can parse in a netlist, modify it, and compose a new netlist.</p>
+<p>The script parses in a simple example netlist that is just an AND gate implemented with a LUT. The instance of the LUT2 primitive definition is found, and then the properties of it are modified to change the configuration of the LUT.</p>
+<p>Below are tables of an AND gate and an OR gate. A LUT is configured by setting the <code class="docutils literal notranslate"><span class="pre">'value':'&lt;LUT_configuation&gt;'</span></code> pair in the metadata <code class="docutils literal notranslate"><span class="pre">[EDIF.properties]</span></code> dictionary associated with the LUT2 instance. The <code class="docutils literal notranslate"><span class="pre">'&lt;LUT_configuration&gt;'</span></code> string is composed from the output of an n-input truth table in hexadecimal. Below is a demonstration of how to determine the <code class="docutils literal notranslate"><span class="pre">'&lt;LUT_configuration&gt;'</span></code> string.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head" colspan="3"><p>AND gate</p></th>
+</tr>
+<tr class="row-even"><th class="head"><p>A</p></th>
+<th class="head"><p>B</p></th>
+<th class="head"><p>Q</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-odd"><td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+</tr>
+</tbody>
+</table>
+<p>The output Q for the AND gate is the following: <code class="docutils literal notranslate"><span class="pre">Q</span> <span class="pre">=</span> <span class="pre">4'b1000</span></code>, or in hexadecimal, <code class="docutils literal notranslate"><span class="pre">Q=4'h8</span></code>. Replace ‘&lt;LUT_configuration&gt;’ with <code class="docutils literal notranslate"><span class="pre">'4'h8'</span></code></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head" colspan="3"><p>OR gate</p></th>
+</tr>
+<tr class="row-even"><th class="head"><p>A</p></th>
+<th class="head"><p>B</p></th>
+<th class="head"><p>Q</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-odd"><td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+</tr>
+</tbody>
+</table>
+<p>The output Q for the OR gate is the following: <code class="docutils literal notranslate"><span class="pre">Q</span> <span class="pre">=</span> <span class="pre">4'b1110</span></code>, or in hexadecimal, <code class="docutils literal notranslate"><span class="pre">Q=4'hE</span></code>.</p>
+<p>The netlist example that is loaded in has a LUT configured to be an AND gate, but with SpyDrNet, you can modify that LUT to be something else. The LUT configuration <code class="docutils literal notranslate"><span class="pre">'4'h8'</span></code> (an AND gate) for the LUT in the netlist will be changed to <code class="docutils literal notranslate"><span class="pre">'4'hE'</span></code> (an OR gate) in this example.</p>
+<p>After making this configuration, the new netlist will be composed twice, showing that SpyDrNet can either create an EDIF netlist file or a Verilog netlist file that both represent the same netlist.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">spydrnet</span> <span class="k">as</span> <span class="nn">sdn</span>
+
+
+<span class="c1"># Change this line to change the configuration of the LUT in the design.</span>
+<span class="n">LUT_CONFIG</span> <span class="o">=</span> <span class="mh">0xE</span>
+
+<span class="n">logic_gate_netlist</span> <span class="o">=</span> <span class="n">sdn</span><span class="o">.</span><span class="n">load_example_netlist_by_name</span><span class="p">(</span><span class="s2">&quot;AND_gate&quot;</span><span class="p">)</span>
+
+<span class="c1"># Alternatively you can parse in your own netlist by changing the line below.</span>
+<span class="c1"># logic_gate_netlist = sdn.parse(&#39;&lt;my_netlist.edf&gt;&#39;)</span>
+
+
+<span class="c1"># Find the LUT2 definition</span>
+<span class="k">for</span> <span class="n">definition</span> <span class="ow">in</span> <span class="n">logic_gate_netlist</span><span class="o">.</span><span class="n">get_definitions</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">definition</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;LUT2&quot;</span><span class="p">:</span>
+        <span class="n">lut_instances</span> <span class="o">=</span> <span class="n">definition</span><span class="o">.</span><span class="n">references</span>
+        <span class="c1"># Once the LUT2 definition has been found, go through its instances</span>
+        <span class="k">for</span> <span class="n">instance</span> <span class="ow">in</span> <span class="n">lut_instances</span><span class="p">:</span>
+            <span class="n">properties</span> <span class="o">=</span> <span class="n">instance</span><span class="p">[</span><span class="s2">&quot;EDIF.properties&quot;</span><span class="p">]</span>
+            <span class="c1"># Change the value in the properties of the LUT2 instance</span>
+            <span class="n">properties</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;4&#39;h&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="n">LUT_CONFIG</span><span class="p">))</span><span class="o">.</span><span class="n">upper</span><span class="p">()[</span><span class="mi">2</span><span class="p">:]</span>
+
+<span class="c1"># The netlist is composed into both an EDIF file and also in a Verliog file</span>
+<span class="n">sdn</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span><span class="n">logic_gate_netlist</span><span class="p">,</span> <span class="s2">&quot;OR_gate.edf&quot;</span><span class="p">)</span>
+<span class="n">sdn</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span><span class="n">logic_gate_netlist</span><span class="p">,</span> <span class="s2">&quot;OR_gate.v&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.000 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-vivado-and-to-or-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/02c64ae1416d06ad83507b47b197c004/AND_to_OR.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">AND_to_OR.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/c957dd9d87640e9003aebcbd7f034bcd/AND_to_OR.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">AND_to_OR.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="vivado_netlist.html" class="btn btn-neutral float-left" title="Create/View a Netlist with Vivado" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="LUT_builder.html" class="btn btn-neutral float-right" title="Create Netlist with SpyDrNet" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Brigham Young Universitiy.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
