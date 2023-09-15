@@ -1177,11 +1177,7 @@ class VerilogParser:
             token = self.next_token()
             while(token != vt.CLOSE_BRACE):
                 cable_lr_list = self.parse_variable_instantiation()
-                assert len(cable_lr_list) == 1, self.error_string(
-                    'one entity declaration', "assign statement", token
-                )
-                cable, left, right = cable_lr_list[0]
-                raw_cables_list.append((cable, left, right))
+                raw_cables_list.extend(cable_lr_list)
                 token = self.next_token()
         else:
             cable_lr_list = self.parse_variable_instantiation()
