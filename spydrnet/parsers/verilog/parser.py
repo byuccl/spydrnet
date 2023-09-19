@@ -386,34 +386,8 @@ class VerilogParser:
             assert token == vt.PARAMETER, self.error_string(
                 vt.PARAMETER, "parameter declaration", token
             )
-
-            key = ""
-            token = self.peek_token()
-            if token == vt.OPEN_BRACKET:
-                left, right = self.parse_brackets()
-                if right is not None:
-                    key = "[" + str(left) + ":" + str(right) + "] "
-                else:
-                    key = "[" + str(left) + "] "
-
-            token = self.next_token()
-            assert vt.is_valid_identifier(token), self.error_string(
-                "identifer", "in parameter list", token
-            )
-            key += token.strip()
-
-            token = self.next_token()
-            if key == vt.INTEGER:
-                key += " " + token
-                token = self.next_token()
-
-            assert token == vt.EQUAL, self.error_string(
-                vt.EQUAL, "in parameter list", token
-            )
-
-            token = self.next_token()
-            # not really sure what to assert here.
-            value = token
+            
+            key, value = self.parse_parameter_keyvalue()
 
             parameter_dictionary[key] = value
             token = self.next_token()
@@ -429,20 +403,57 @@ class VerilogParser:
 
         self.set_definition_parameters(self.current_definition, parameter_dictionary)
 
-    def parse_parameter_declaration(self):
+    def parse_body_parameter_declarations(self):
+        """parse a parameters definition structure and add them to the module
+
+        this looks like:
+
+        parameter [2:0] PARAM1 = 3'b110, PARAM2 = "false";
+
+        and must come after the associated module
+        """
+        
+        token = self.next_token()
+        assert token == vt.PARAMETER, self.error_string(
+            vt.PARAMETER, "to being parameter statement", token
+        )
+        
+        token = self.peek_token()
+        parameter_dictionary = {}
+        
+        while token != vt.SEMI_COLON:
+            key, value = self.parse_parameter_keyvalue()
+            parameter_dictionary[key] = value
+            
+            token = self.next_token()
+            assert token == vt.SEMI_COLON or token == vt.COMMA, self.error_string(
+                ',;', "after parameter declaration", token
+            )
+        
+        assert len(parameter_dictionary) > 0, self.error_string(
+            'declarations', "in parameter declaration", token
+        )
+        
+        self.set_definition_parameters(self.current_definition, parameter_dictionary)
+        
+    
+    def parse_parameter_keyvalue(self):
+        """parses and returns key name and assigned value of a parameter declaration"""
+
         key = ""
         token = self.peek_token()
         if token == vt.OPEN_BRACKET:
             left, right = self.parse_brackets()
-            if right != None:
+            if right is not None:
                 key = "[" + str(left) + ":" + str(right) + "] "
             else:
                 key = "[" + str(left) + "] "
 
         token = self.next_token()
         assert vt.is_valid_identifier(token), self.error_string(
-            'identifer', "in parameter list", token)
-        key += token
+            "identifer", "in parameter list", token
+        )
+        key += token.strip()
 
         token = self.next_token()
         if key == vt.INTEGER:
@@ -450,13 +461,17 @@ class VerilogParser:
             token = self.next_token()
 
         assert token == vt.EQUAL, self.error_string(
-            vt.EQUAL, "in parameter list", token)
+            vt.EQUAL, "in parameter list", token
+        )
 
         token = self.next_token()
         # not really sure what to assert here.
         value = token
-        
+
         return key, value
+    
+    
+    
     def parse_module_header_ports(self):
         """parse port declarations in the module header and add them to the definition"""
         token = self.next_token()
@@ -647,15 +662,7 @@ class VerilogParser:
                 self.parse_cable_declaration(params)
                 params = {}
             elif token == vt.PARAMETER:
-                token = self.next_token()
-                key, value = self.parse_parameter_declaration()
-                
-                token = self.next_token()
-                assert token == vt.SEMI_COLON, self.error_string(
-                    ';', "after parameter declaration", token
-                )
-                self.set_definition_parameters(
-                    self.current_definition, {key : value})
+                self.parse_body_parameter_declarations()
             elif token == vt.ASSIGN:
                 assigns_list = self.parse_assign()
                 for assign_tuple in assigns_list:
