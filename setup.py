@@ -60,5 +60,6 @@ if __name__ == "__main__":
         packages=setuptools.find_packages(),
         extras_require=extras_require,
         python_requires='>=3.6',
+        install_requires=["requests"],
         zip_safe=False
     )
