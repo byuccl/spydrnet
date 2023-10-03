@@ -49,6 +49,17 @@ Of course the admin's have the final say in granting permissions and reserve the
 right to deny privileges for any reason or no reason at all even if the above 
 criteria are met.
 
+Writing Code
+------------
+
+We try to write good working code. Going back through complex code segments and thinking about other ways of acomplishing the same task has been very useful. Sometimes two pairs of eyes on a segement of code can help see a way to simplify it as well.
+
+When commiting the code to the git repository, creating a new branch with a related name is useful. In general we have merged all our task branches into the next_release branch before merging with master. Merges with master need a review which is useful to help see if there are any issues.
+
+Additionally when making a pull request the branch will be run against the tests to help ensure that the merge does not break the tool.
+
+Tests should be written with the code. As changes/improvements are made, tests should be created/updated.
+
 Testing
 -------
 
