@@ -212,7 +212,9 @@ class VerilogParser:
                 if time_scale is not None:
                     self.current_definition["VERILOG.TimeScale"] = time_scale
                 if len(star_properties.keys()) > 0:
-                    self.current_definition["VERILOG.InlineConstraints"] = star_properties
+                    self.current_definition[
+                        "VERILOG.InlineConstraints"
+                    ] = star_properties
                     star_properties = {}
 
             elif token == vt.PRIMITIVE:
@@ -306,7 +308,9 @@ class VerilogParser:
 
         while token != vt.END_MODULE and token != vt.END_PRIMITIVE:
             token = self.peek_token()
-            if token == vt.FUNCTION:  # these constructs may contain input output or inout
+            if (
+                token == vt.FUNCTION
+            ):  # these constructs may contain input output or inout
                 while token != vt.END_FUNCTION:
                     token = self.next_token()
             elif token == vt.TASK:  # these constructs may contain input output or inout
@@ -718,7 +722,18 @@ class VerilogParser:
                 "reg, tri1, tri0, or wire", "for cable declaration", token
             )
             var_type = token
+            self.parse_cable_declaration_helper(properties, var_type)
 
+            token = self.next_token()
+            while token == vt.COMMA:
+                self.parse_cable_declaration_helper({}, var_type)
+                token = self.next_token()
+
+            assert token == vt.SEMI_COLON, self.error_string(
+                vt.SEMI_COLON, "to end cable declaration", token
+            )
+
+    def parse_cable_declaration_helper(self, properties, var_type=None):
         token = self.peek_token()
         if token == vt.OPEN_BRACKET:
             left, right = self.parse_brackets()
@@ -736,14 +751,6 @@ class VerilogParser:
             name, left_index=left, right_index=right, var_type=var_type
         )
         cable["VERILOG.InlineConstraints"] = properties
-
-        token = self.next_token()
-        if token == vt.COMMA:  # continue listing wires
-            self.parse_cable_declaration({}, var_type)
-        else:
-            assert token == vt.SEMI_COLON, self.error_string(
-                vt.SEMI_COLON, "to end cable declaration", token
-            )
 
     def parse_instantiation(self, properties):
         token = self.next_token()
@@ -1040,7 +1047,9 @@ class VerilogParser:
                     cable, left, right = self.parse_variable_instantiation()
                     wires = self.get_wires_from_cable(cable, left, right)
 
-                if (index > len(port_list) - 1):  # no port exists yet i.e. no module information in netlist
+                if (
+                    index > len(port_list) - 1
+                ):  # no port exists yet i.e. no module information in netlist
                     # print("Not enough ports for "+ instance.name)
                     port = instance.reference.create_port()
                     self.populate_new_port(port, None, len(wires) - 1, 0, None)
@@ -1248,7 +1257,9 @@ class VerilogParser:
         instance.reference = definition
         return instance
 
-    def connect_wires_for_assign(self, l_cable, l_left, l_right, r_cable, r_left, r_right):
+    def connect_wires_for_assign(
+        self, l_cable, l_left, l_right, r_cable, r_left, r_right
+    ):
         """connect the wires in r_left to the wires in l_left"""
 
         out_wires = self.get_wires_from_cable(l_cable, l_left, l_right)
@@ -1420,7 +1431,9 @@ class VerilogParser:
             in_upper = None
             in_lower = None
 
-        if (defining and in_lower is not None):  # if the cable width is being defined then recenter the cable
+        if (
+            defining and in_lower is not None
+        ):  # if the cable width is being defined then recenter the cable
             cable.lower_index = in_lower
             cable_lower = cable.lower_index
             cable_upper = cable.lower_index + len(cable.wires) - 1
@@ -1524,7 +1537,9 @@ class VerilogParser:
             in_upper = None
             in_lower = None
 
-        if (defining and in_lower is not None):  # if the cable width is being defined then recenter the cable
+        if (
+            defining and in_lower is not None
+        ):  # if the cable width is being defined then recenter the cable
             port.lower_index = in_lower
             port_lower = port.lower_index
             port_upper = port.lower_index + len(port.pins) - 1

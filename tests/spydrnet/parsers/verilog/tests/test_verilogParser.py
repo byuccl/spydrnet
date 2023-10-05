@@ -1906,6 +1906,36 @@ class TestVerilogParser(unittest.TestCase):
         cable, _, _ = parser.parse_variable_instantiation()
         self.assertEqual(cable.name, "\\<const1>", "Check const wire name")
 
+    def test_parse_multi_cable_declaration(self):
+        """
+        make sure that parser can properly handle a line with a large number of
+        wire declarations
+        """
+        parser = VerilogParser()
+        parser.current_definition = sdn.Definition()
+
+        wire_names = []
+        token_list = ["wire"]
+        i = 0
+        abc = list(x for x in "abcdefghijklmnopqrstuvwxyz")
+        for letter in abc:
+            for letter2 in abc:
+                for letter3 in abc:
+                    name = letter + letter2 + letter3
+                    token_list.append(name)
+                    token_list.append(",")
+                    wire_names.append(name)
+                    i += 1
+        token_list.append("final")
+        token_list.append(";")
+        wire_names.append("final")
+
+        tokenizer = self.TestTokenizer(token_list)
+        parser.tokenizer = tokenizer
+        parser.parse_cable_declaration({})
+        cable_list = list(x for x in parser.current_definition.get_cables())
+        self.assertEqual(len(cable_list), i + 1)
+
 
 if __name__ == "__main__":
     unittest.main()
