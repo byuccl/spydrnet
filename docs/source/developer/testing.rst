@@ -8,11 +8,11 @@ Running Tests
 
 There are many ways to execute the suite of tests that have been developed for SpyDrNet. SpyDrNet source code can be tested by executing the following command from within the directory of the repository::
 
-    pytest spydrnet
+    pytest tests
     
 If SpyDrNet has been installed (as a release or in developer mode) the tests can run using the following command::
 
-   pytest --pyargs spydrnet
+   pytest --pyargs tests
 
 If SpyDrNet can be imported, then its tests can be run::
 

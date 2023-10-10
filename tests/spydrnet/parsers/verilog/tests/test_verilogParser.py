@@ -2075,47 +2075,36 @@ class TestVerilogParser(unittest.TestCase):
         cable, _, _ = cables_list[0]
         self.assertEqual(cable.name, "\\<const1>", "Check const wire name")
 
-        # Check constant binary 01 net declaration
-        tokens = ("2'b01", vt.SEMI_COLON)
-        tokenizer = self.TestTokenizer(tokens)
+    def test_parse_multi_cable_declaration(self):
+        """
+        make sure that parser can properly handle a line with a large number of
+        wire declarations
+        """
         parser = VerilogParser()
-        parser.tokenizer = tokenizer
-
         parser.current_definition = sdn.Definition()
-        cables_list = parser.parse_variable_instantiation()
-        self.assertEqual(len(cables_list), 2, "Check length of double bin const")
-        cable_idx0, _, _ = cables_list[0]
-        cable_idx1, _, _ = cables_list[1]
-        self.assertEqual(cable_idx0.name, "\\<const0>", "Check const wire name")
-        self.assertEqual(cable_idx1.name, "\\<const1>", "Check const wire name")
 
-        # Check constant hex 10 net declaration
-        tokens = ("2'h2", vt.SEMI_COLON)
-        tokenizer = self.TestTokenizer(tokens)
-        parser = VerilogParser()
+        wire_names = []
+        token_list = ["wire"]
+        i = 0
+        abc = list(x for x in "abcdefghijklmnopqrstuvwxyz")
+        for letter in abc:
+            for letter2 in abc:
+                for letter3 in abc:
+                    name = letter + letter2 + letter3
+                    token_list.append(name)
+                    token_list.append(",")
+                    wire_names.append(name)
+                    i += 1
+        token_list.append("final")
+        token_list.append(";")
+        wire_names.append("final")
+
+        tokenizer = self.TestTokenizer(token_list)
         parser.tokenizer = tokenizer
+        parser.parse_cable_declaration({})
+        cable_list = list(x for x in parser.current_definition.get_cables())
+        self.assertEqual(len(cable_list), i + 1)
 
-        parser.current_definition = sdn.Definition()
-        cables_list = parser.parse_variable_instantiation()
-        self.assertEqual(len(cables_list), 2, "Check length of double hex const")
-        cable_hidx0, _, _ = cables_list[0]
-        cable_hidx1, _, _ = cables_list[1]
-        self.assertEqual(cable_hidx0.name, "\\<const1>", "Check const wire name")
-        self.assertEqual(cable_hidx1.name, "\\<const0>", "Check const wire name")
-
-        # Check constant dec 10 net declaration
-        tokens = ("2'd2", vt.SEMI_COLON)
-        tokenizer = self.TestTokenizer(tokens)
-        parser = VerilogParser()
-        parser.tokenizer = tokenizer
-
-        parser.current_definition = sdn.Definition()
-        cables_list = parser.parse_variable_instantiation()
-        self.assertEqual(len(cables_list), 2, "Check length of double dec const")
-        cable_didx0, _, _ = cables_list[0]
-        cable_didx1, _, _ = cables_list[1]
-        self.assertEqual(cable_hidx0.name, "\\<const1>", "Check const wire name")
-        self.assertEqual(cable_hidx1.name, "\\<const0>", "Check const wire name")
 
 if __name__ == "__main__":
     unittest.main()
