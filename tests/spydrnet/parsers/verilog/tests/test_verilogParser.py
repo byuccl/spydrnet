@@ -94,6 +94,59 @@ class TestVerilogParser(unittest.TestCase):
                 "unexpected value " + k + " in the definition parameters"
             )
 
+    def test_module_body_parameter_parsing(self):
+        expected = {}
+        expected["INIT"] = "1'h1"
+        expected["[1:0] INIT0"] = "2'h0"
+        expected["[0] INIT1"] = "1'b0"
+        tokens = [
+            "parameter",
+            "INIT",
+            "=",
+            "1'h1",
+            ",",
+            "[",
+            "1",
+            ":",
+            "0",
+            "]",
+            "INIT0",
+            "=",
+            "2'h0",
+            ",",
+            "[",
+            "0",
+            "]",
+            "INIT1",
+            "=",
+            "1'b0",
+            ";",
+        ]
+
+        tokenizer = self.TestTokenizer(tokens)
+        parser = VerilogParser()
+        parser.tokenizer = tokenizer
+        parser.current_definition = sdn.Definition()
+
+        parser.parse_body_parameter_declarations()
+
+        assert (
+            "VERILOG.Parameters" in parser.current_definition
+        ), "expected parameters in the body definition"
+        parameters = parser.current_definition["VERILOG.Parameters"]
+        for k, v in expected.items():
+            assert k in parameters, (
+                "expected to see " + k + " in the body definition parameters"
+            )
+            assert parameters[k] == v, (
+                "expected value of k to be " + v + " but got instead " + parameters[k]
+            )
+
+        for k, v in parameters.items():
+            assert k in expected, (
+                "unexpected value " + k + " in the body definition parameters"
+            )
+
     def test_module_header_port_name_only(self):
         # expected = [(direction, left, right, name)]
         expected = ["PORT0", "PORT1", "PORT2", "PORT3", "PORT4"]
@@ -1567,7 +1620,7 @@ class TestVerilogParser(unittest.TestCase):
         assert inst1.name == "SDN_VERILOG_ASSIGNMENT_" + str(width) + "_" + str(0)
         assert inst2.name == "SDN_VERILOG_ASSIGNMENT_" + str(width) + "_" + str(1)
 
-    def test_parse_assign(self):
+    def test_parse_assign_single(self):
         parser = VerilogParser()
         parser.netlist = sdn.Netlist()
         parser.current_definition = sdn.Definition()
@@ -1584,24 +1637,136 @@ class TestVerilogParser(unittest.TestCase):
             "]",
             "=",
             "\\<const0> ",
-            ";",
+            ";"
         ]
         tokenizer = self.TestTokenizer(tokens)
         parser.tokenizer = tokenizer
-        c1, o_left, o_right, c2, i_left, i_right = parser.parse_assign()
+        
+        assigns_list = parser.parse_assign()
+        self.assertEqual(len(assigns_list), 1, "Number of assigned wires")
+        c1, o_left, o_right, c2, i_left, i_right = assigns_list[0]
         assert c1.name == "cable1"
         assert c2.name == "cable2"
         assert o_left is None
         assert o_right is None
         assert i_left is None
         assert i_right is None
-        c1, o_left, o_right, c2, i_left, i_right = parser.parse_assign()
+        
+        assigns_list = parser.parse_assign()
+        self.assertEqual(len(assigns_list), 1, "Number of assigned wires")
+        c1, o_left, o_right, c2, i_left, i_right = assigns_list[0]
         assert c1.name == "SR2"
         assert c2.name == "\\<const0>"
         assert o_left == 2
         assert o_right is None
         assert i_left is None
         assert i_right is None
+        
+
+    def test_parse_assign_bus(self):
+        """make sure individual bus bits are assigned correctly"""
+        parser = VerilogParser()
+        parser.netlist = sdn.Netlist()
+        parser.current_definition = sdn.Definition()
+        tokens = [
+            "assign", 
+            "Q", 
+            "[", 
+            "1", 
+            ":", 
+            "0", 
+            "]", 
+            "=", 
+            "A", 
+            "[", 
+            "0", 
+            ":", 
+            "1", 
+            "]", 
+            ";"
+        ]
+        tokenizer = self.TestTokenizer(tokens)
+        parser.tokenizer = tokenizer
+        
+        assigns_list = parser.parse_assign()
+        self.assertEqual(len(assigns_list), 2, "Number of assigned wires in bundle")
+        c1, o_left, o_right, c2, i_left, i_right = assigns_list[0]
+        assert c1.name == "Q"
+        assert c2.name == "A"
+        assert o_left == 1
+        assert o_right is None
+        assert i_left == 0
+        assert i_right is None
+        c1, o_left, o_right, c2, i_left, i_right = assigns_list[1]
+        assert c1.name == "Q"
+        assert c2.name == "A"
+        assert o_left == 0
+        assert o_right is None
+        assert i_left == 1
+        assert i_right is None
+        
+    def test_parse_assign_bundle(self):
+        """make sure correct objects from bundle are matched to individual bus bits"""
+        parser = VerilogParser()
+        parser.netlist = sdn.Netlist()
+        parser.current_definition = sdn.Definition()
+        tokens = [
+            "assign",
+            "Q",
+            "[",
+            "3",
+            ":",
+            "0",
+            "]",
+            "=", 
+            "{",
+            "A",
+            "[",
+            "0",
+            ":",
+            "1",
+            "]",
+            ",",
+            "2'b01",
+            "}",
+            ";"
+        ]
+        tokenizer = self.TestTokenizer(tokens)
+        parser.tokenizer = tokenizer
+        
+        assigns_list = parser.parse_assign()
+        self.assertEqual(len(assigns_list), 4, "Number of assigned wires in bundle")
+        c1, o_left, o_right, c2, i_left, i_right = assigns_list[0]
+        assert c1.name == "Q"
+        assert c2.name == "A"
+        assert o_left == 3
+        assert o_right is None
+        assert i_left == 0
+        assert i_right is None
+        c1, o_left, o_right, c2, i_left, i_right = assigns_list[1]
+        assert c1.name == "Q"
+        assert c2.name == "A"
+        assert o_left == 2
+        assert o_right is None
+        assert i_left == 1
+        assert i_right is None
+        c1, o_left, o_right, c2, i_left, i_right = assigns_list[2]
+        assert c1.name == "Q"
+        assert c2.name == "\\<const0>"
+        assert o_left == 1
+        assert o_right is None
+        assert o_right is None
+        assert i_left is None
+        assert i_right is None
+        c1, o_left, o_right, c2, i_left, i_right = assigns_list[3]
+        assert c1.name == "Q"
+        assert c2.name == "\\<const1>"
+        assert o_left == 0
+        assert o_right is None
+        assert o_right is None
+        assert i_left is None
+        assert i_right is None
+        
 
     ############################################
     ##Parse star parameters
@@ -1893,7 +2058,9 @@ class TestVerilogParser(unittest.TestCase):
         parser.tokenizer = tokenizer
 
         parser.current_definition = sdn.Definition()
-        cable, _, _ = parser.parse_variable_instantiation()
+        cables_list = parser.parse_variable_instantiation()
+        self.assertEqual(len(cables_list), 1, "Check length of zero binary const")
+        cable, _, _ = cables_list[0]
         self.assertEqual(cable.name, "\\<const0>", "Check const wire name")
 
         # Check constant 1 net declaration
@@ -1903,7 +2070,9 @@ class TestVerilogParser(unittest.TestCase):
         parser.tokenizer = tokenizer
 
         parser.current_definition = sdn.Definition()
-        cable, _, _ = parser.parse_variable_instantiation()
+        cables_list = parser.parse_variable_instantiation()
+        self.assertEqual(len(cables_list), 1, "Check length of zero binary const")
+        cable, _, _ = cables_list[0]
         self.assertEqual(cable.name, "\\<const1>", "Check const wire name")
 
     def test_parse_multi_cable_declaration(self):
