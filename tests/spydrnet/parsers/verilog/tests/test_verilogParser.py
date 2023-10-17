@@ -1554,7 +1554,26 @@ class TestVerilogParser(unittest.TestCase):
         i_cable = parser.current_definition.create_cable(name="c2")
         o_cable.create_wires(4)
         i_cable.create_wires(4)
-        parser.connect_wires_for_assign(o_cable, 1, 0, i_cable, 3, 2)
+        l_wires = parser.get_wires_from_cable(o_cable, 1, 0)
+        r_wires = parser.get_wires_from_cable(i_cable, 3, 2)
+        parser.connect_wires_for_assign(l_wires, r_wires)
+
+        instance = next(parser.current_definition.get_instances("SDN_VERILOG_ASSIGNMENT*"))
+        for pin in instance.pins:
+            pin_index = pin.inner_pin.port.pins.index(pin.inner_pin)
+            port_name = pin.inner_pin.port.name
+            if (port_name == "o"):
+                if (pin_index == 0 or pin_index == 1):
+                    self.assertTrue(pin.wire.cable.name == "c1")
+                else:
+                    self.fail()
+            elif (port_name == "i"):
+                if (pin_index == 0 or pin_index == 1):
+                    self.assertTrue(pin.wire.cable.name == "c2")
+                else:
+                    self.fail()
+            else:
+                self.fail()
 
     def test_names_of_instances_are_different(self):
         """make sure the names of multiple instances of the same width are different"""
@@ -1588,20 +1607,62 @@ class TestVerilogParser(unittest.TestCase):
         ]
         tokenizer = self.TestTokenizer(tokens)
         parser.tokenizer = tokenizer
-        c1, o_left, o_right, c2, i_left, i_right = parser.parse_assign()
+
+        output_wires, input_wires = parser.parse_assign()
+        c1 = output_wires[0].cable
+        c2 = input_wires[0].cable
         assert c1.name == "cable1"
         assert c2.name == "cable2"
-        assert o_left is None
-        assert o_right is None
-        assert i_left is None
-        assert i_right is None
-        c1, o_left, o_right, c2, i_left, i_right = parser.parse_assign()
+        assert len(c1.wires) == 1
+        assert len(c2.wires) == 1
+        assert c1.lower_index == 0
+        assert c2.lower_index == 0
+
+        output_wires, input_wires = parser.parse_assign()
+        c1 = output_wires[0].cable
+        c2 = input_wires[0].cable
         assert c1.name == "SR2"
         assert c2.name == "\\<const0>"
-        assert o_left == 2
-        assert o_right is None
-        assert i_left is None
-        assert i_right is None
+        assert len(c1.wires) == 1
+        assert len(c2.wires) == 1
+        assert c1.lower_index == 2
+        assert c2.lower_index == 0
+
+    def test_parse_assign_multi_bit(self):
+        parser = VerilogParser()
+        parser.netlist = sdn.Netlist()
+        parser.current_definition = sdn.Definition()
+        tokens = [
+            "assign",
+            "cable1",
+            "[",
+            "1",
+            ":",
+            "0",
+            "]",
+            "=",
+            "{",
+            "cable2",
+            "[",
+            "3",
+            ":",
+            "2",
+            "]",
+            "}",
+            ";",
+        ]
+        tokenizer = self.TestTokenizer(tokens)
+        parser.tokenizer = tokenizer
+
+        output_wires, input_wires = parser.parse_assign()
+        c1 = output_wires[0].cable
+        c2 = input_wires[0].cable
+        assert c1.name == "cable1"
+        assert c2.name == "cable2"
+        assert len(c1.wires) == 2
+        assert len(c2.wires) == 2
+        assert c1.lower_index == 0
+        assert c2.lower_index == 2
 
     ############################################
     ##Parse star parameters

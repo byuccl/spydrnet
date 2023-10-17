@@ -614,9 +614,10 @@ class VerilogParser:
                 self.parse_cable_declaration(params)
                 params = {}
             elif token == vt.ASSIGN:
-                o_cable, o_left, o_right, i_cable, i_left, i_right = self.parse_assign()
-                self.connect_wires_for_assign(
-                    o_cable, o_left, o_right, i_cable, i_left, i_right
+                # o_cable, o_left, o_right, i_cable, i_left, i_right = self.parse_assign()
+                out_wires, in_wires = self.parse_assign()
+                self.connect_wires_for_assign(out_wires, in_wires
+                    # o_cable, o_left, o_right, i_cable, i_left, i_right
                 )
             elif token == vt.DEFPARAM:
                 self.parse_defparam_parameters()
@@ -1091,17 +1092,24 @@ class VerilogParser:
             vt.ASSIGN, "to begin assignment statement", token
         )
         l_cable, l_left, l_right = self.parse_variable_instantiation()
+        out_wires = self.get_wires_from_cable(l_cable, l_left, l_right)
         token = self.next_token()
         assert token == vt.EQUAL, self.error_string(
             vt.EQUAL, "in assigment statment", token
         )
-        r_cable, r_left, r_right = self.parse_variable_instantiation()
+        in_wires = None
+        if self.peek_token() == vt.OPEN_BRACE:
+            in_wires = self.parse_cable_concatenation()
+        else:
+            r_cable, r_left, r_right = self.parse_variable_instantiation()
+            in_wires = self.get_wires_from_cable(r_cable, r_left, r_right)
         token = self.next_token()
         assert token == vt.SEMI_COLON, self.error_string(
             vt.SEMI_COLON, "to terminate assign statement", token
         )
 
-        return l_cable, l_left, l_right, r_cable, r_left, r_right
+        return out_wires, in_wires
+        # return l_cable, l_left, l_right, r_cable, r_left, r_right
 
     def parse_variable_instantiation(self):
         """parse the cable name and its indicies if any
@@ -1257,13 +1265,13 @@ class VerilogParser:
         instance.reference = definition
         return instance
 
-    def connect_wires_for_assign(
-        self, l_cable, l_left, l_right, r_cable, r_left, r_right
+    def connect_wires_for_assign(self, out_wires, in_wires
+        # self, l_cable, l_left, l_right, r_cable, r_left, r_right
     ):
         """connect the wires in r_left to the wires in l_left"""
 
-        out_wires = self.get_wires_from_cable(l_cable, l_left, l_right)
-        in_wires = self.get_wires_from_cable(r_cable, r_left, r_right)
+        # out_wires = self.get_wires_from_cable(l_cable, l_left, l_right)
+        # in_wires = self.get_wires_from_cable(r_cable, r_left, r_right)
 
         # min because we don't need extra pins since only what can will assign.
         width = min(len(out_wires), len(in_wires))

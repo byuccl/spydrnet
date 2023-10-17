@@ -378,20 +378,10 @@ class Composer:
             in_pins.append(instance.pins[p])
         for p in out_port.pins:
             out_pins.append(instance.pins[p])
+        in_pins.sort(reverse=False, key=self.pin_sort_func)
+        out_pins.sort(reverse=True, key=self.pin_sort_func)
         in_wires, in_cables = self._all_wires_and_cables_from_pinset(in_pins)
         out_wires, out_cables = self._all_wires_and_cables_from_pinset(out_pins)
-        assert not self._is_pinset_concatenated(
-            in_pins, in_wires[0].cable.name
-        ), self._error_string(
-            "multiple cables appear to be connected to a single assignment input",
-            instance,
-        )
-        assert not self._is_pinset_concatenated(
-            out_pins, out_wires[0].cable.name
-        ), self._error_string(
-            "multiple cables appear to be connected to a single assignment output",
-            instance,
-        )
         self.file.write(vt.ASSIGN)
         self.file.write(vt.SPACE)
         hi = self._index_of_wire_in_cable(out_wires[-1])
@@ -400,9 +390,24 @@ class Composer:
         self.file.write(vt.SPACE)
         self.file.write(vt.EQUAL)
         self.file.write(vt.SPACE)
-        hi = self._index_of_wire_in_cable(in_wires[-1])
-        li = self._index_of_wire_in_cable(in_wires[0])
-        self._write_bundle_with_indicies(in_cables[0], li, hi)
+
+        if self._is_pinset_concatenated(in_pins, in_pins[0].wire.cable.name):
+            self._write_concatenation(in_wires)
+        else:
+            if len(in_wires) > 1:
+                self.file.write(vt.OPEN_BRACE)
+            i = 0
+            for w in in_wires:
+                li = self._index_of_wire_in_cable(w)
+                hi = None
+                self._write_bundle_with_indicies(w.cable, li, hi)
+                if i < len(in_wires)-1:
+                    self.file.write(vt.COMMA)
+                    self.file.write(vt.SPACE)
+                i+=1
+            if len(in_wires) > 1:
+                self.file.write(vt.CLOSE_BRACE)
+
         self.file.write(vt.SEMI_COLON)
         self.file.write(vt.NEW_LINE)
 
@@ -701,14 +706,26 @@ class Composer:
         # don't count as aliased. Otherwise, return previous answer
         # TODO maybe also check if all of the cable is used. So no skipped wires.
         # name = None
+        # prev_index = None
         # for p in pins:
+        #     current_index = None
+        #     if isinstance(p, sdn.InnerPin):
+        #         current_index = p.port.pins.index(p)
+        #     else:
+        #         current_index = p.inner_pin.port.pins.index(p.inner_pin)
+        #     if not prev_index:
+        #         prev_index = current_index
         #     if p.wire is None:
         #         continue
         #     if not name:
         #         name = p.wire.cable.name
         #         continue
         #     if p.wire.cable.name is not name:
-        #         return aliased
+        #          return aliased
+        #     if current_index != prev_index:
+        #         if not (current_index == (prev_index+1) or current_index == (prev_index-1)):
+        #             print(str(current_index) + " " + str(prev_index))
+        #             return aliased
         # return False
         return aliased
 
