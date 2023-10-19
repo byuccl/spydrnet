@@ -113,7 +113,8 @@ class NamespaceManager(CallbackListener, ABC):
                 target_policy = self.policies[element[".NS"]]
                 if target_policy.is_name_valid(key, value) is False:
                     raise ValueError(
-                        "Target name not valid for the current namespace policy."
+                        "Target name not valid for the current namespace policy. Target name: "
+                        + value
                     )
 
             parent = self.get_parent(element)
@@ -122,7 +123,10 @@ class NamespaceManager(CallbackListener, ABC):
                 if namespace.no_conflict(element, key, value):
                     namespace.update(element, key, value)
                 else:
-                    raise ValueError("Applying name would result in a naming conflict")
+                    raise ValueError(
+                        "Applying name would result in a naming conflict. Name: "
+                        + value
+                    )
 
     def dictionary_delete(self, element, key):
         if key == ".NS":
