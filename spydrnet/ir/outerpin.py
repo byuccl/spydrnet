@@ -48,6 +48,13 @@ class OuterPin(Pin):
         """get the inner pin associated with this outer pin"""
         return self._inner_pin
 
+    @property
+    def port(self):
+        """Return the port that the inner pin is a part of.
+
+        This object cannot be modified directly by the end user."""
+        return self._inner_pin._port
+
     def __eq__(self, other):
         if isinstance(other, OuterPin):
             return (
