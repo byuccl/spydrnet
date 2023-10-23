@@ -1607,9 +1607,7 @@ class TestVerilogParser(unittest.TestCase):
         i_cable = parser.current_definition.create_cable(name="c2")
         o_cable.create_wires(4)
         i_cable.create_wires(4)
-        l_wires = parser.get_wires_from_cable(o_cable, 1, 0)
-        r_wires = parser.get_wires_from_cable(i_cable, 3, 2)
-        parser.connect_wires_for_assign(l_wires, r_wires)
+        parser.connect_wires_for_assign(o_cable, 1, 0, i_cable, 3, 2)
 
         instance = next(parser.current_definition.get_instances("SDN_VERILOG_ASSIGNMENT*"))
         for pin in instance.pins:

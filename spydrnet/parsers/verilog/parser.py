@@ -1397,13 +1397,13 @@ class VerilogParser:
         instance.reference = definition
         return instance
 
-    def connect_wires_for_assign(self, out_wires, in_wires
-        # self, l_cable, l_left, l_right, r_cable, r_left, r_right
+    def connect_wires_for_assign(
+        self, l_cable, l_left, l_right, r_cable, r_left, r_right
     ):
         """connect the wires in r_left to the wires in l_left"""
 
-        # out_wires = self.get_wires_from_cable(l_cable, l_left, l_right)
-        # in_wires = self.get_wires_from_cable(r_cable, r_left, r_right)
+        out_wires = self.get_wires_from_cable(l_cable, l_left, l_right)
+        in_wires = self.get_wires_from_cable(r_cable, r_left, r_right)
 
         # min because we don't need extra pins since only what can will assign.
         width = min(len(out_wires), len(in_wires))
