@@ -732,11 +732,18 @@ class EdifParser:
 
     def parse_joined(self):
         self.expect(JOINED)
+        pins = []
+        other_wire = None
         while self.begin_construct():
             if self.construct_is(PORT_REF):
                 pin = self.parse_portRef()
-                wire = self.elements[-1].wires[0]
-                wire.connect_pin(pin)
+                pins.append(pin)
+                if pin.wire:
+                    # print("Warning, pin already connected to other wire. Connection will not be changed")
+                    other_wire = pin.wire
+                else:
+                    wire = self.elements[-1].wires[0]
+                    wire.connect_pin(pin)
             elif self.construct_is(PORT_LIST):
                 raise NotImplementedError()
             elif self.construct_is(GLOBAL_PORT_REF):
@@ -744,6 +751,23 @@ class EdifParser:
             else:
                 self.expect(PORT_REF)
             self.expect_end_construct()
+        if other_wire:
+            self.update_pins_to_other_wire(pins, other_wire)
+    
+    def update_pins_to_other_wire(self, pins, other_wire):
+        """
+        This is a fix for when multiple connections to GND or VCC are 
+        separated into different nets. This puts them onto the same net
+        (the first one created) and deletes the created net if it is now empty.
+        """
+        for pin in pins:
+            if pin.wire is other_wire:
+                continue
+            orig_wire = pin.wire
+            orig_wire.disconnect_pin(pin)
+            if len(orig_wire.pins) == 0:
+                orig_wire.cable.remove_wire(orig_wire)
+            other_wire.connect_pin(pin)
 
     def parse_portRef(self):
         self.prefix_append("portRef")
