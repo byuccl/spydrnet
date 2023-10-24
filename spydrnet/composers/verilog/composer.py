@@ -239,6 +239,8 @@ class Composer:
         cable_list = list(c for c in definition.cables)
         cable_list.reverse()
         for c in cable_list:
+            if c.name in [vt.CONST0, vt.CONST1] and not self._has_driver(c):
+                continue
             self._write_module_body_cable(c)
         self.file.write(vt.NEW_LINE)
 
@@ -560,9 +562,38 @@ class Composer:
         In the future this could be changed to add a name to os that do not have a name set
         """
         name = o.name
+        if isinstance(o, Cable):
+            if name in [vt.CONST0, vt.CONST1]:
+                name = self._rename_constant(o)
+
         assert name is not None, self._error_string("name of o is not set", o)
         name = self._fix_name(name)
         self.file.write(name)
+    
+    def _rename_constant(self, cable):
+        """
+        \<const0> and \<const1> wires without a driver should be renamed to 1'b0 and 1'b1
+        Otherwise keep the original name
+        """
+        name = cable.name
+        if isinstance(cable, Cable):
+            if not self._has_driver(cable):
+                if name == vt.CONST0:
+                    name = "1'b0"
+                if name == vt.CONST1:
+                    name = "1'b1"
+        return name
+
+    def _has_driver(self, cable):
+        for wire in cable.wires:
+            for pin in wire.pins:
+                if isinstance(pin, sdn.InnerPin):
+                    if pin.port.definition is cable.definition:
+                        if pin.port.direction is sdn.IN:
+                            return True
+                elif pin.inner_pin.port.direction is sdn.OUT:
+                    return True
+        return False
 
     def _fix_name(self, name):
         if name[0] == "\\":

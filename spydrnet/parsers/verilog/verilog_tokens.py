@@ -109,6 +109,8 @@ INTEGER = "integer"
 TRI0 = "tri0"
 TRI1 = "tri1"
 DEFPARAM = "defparam"
+CONST0 = "\\<const0>"
+CONST1 = "\\<const1>"
 
 # SET OF ALL THINGS THAT WILL END AN IDENTIFIER IF THEY ARE NOT ESCAPED.
 # elif ch in {'(', ')', '.', ',', ';', '[', ']', ':', "{", "}", "*", "#", "`"}:

@@ -709,3 +709,29 @@ class TestVerilogComposerUnit(unittest.TestCase):
 
     def test_assignment_multi_bit(self):
         pass
+
+    def test_rename_constant_wire(self):
+        """
+        Make sure \\<const0> and \\<const1> wires
+        are being renamed/written out at the appropriate times
+        """
+        composer = self.initialize_tests()
+        definition = self.initialize_definition()
+
+        c1 = definition.create_cable("\\<const0>")
+        c1.create_wire()
+        self.assertFalse(composer._has_driver(c1))
+        composer._write_module_body_cables(definition)
+        self.assertTrue(composer.file.compare(""))
+
+        port = definition.create_port()
+        port.name = "name"
+        port.create_pins(1)
+        port.direction = sdn.Port.Direction.IN
+
+        c1.wires[0].connect_pin(port.pins[0])
+        self.assertTrue(composer._has_driver(c1))
+
+        composer._write_module_body_cables(definition)
+        self.assertTrue(composer.file.compare("wire " + c1.name + " ;\n\n"))
+        
