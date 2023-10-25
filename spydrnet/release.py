@@ -122,7 +122,6 @@ def update_versionfile():
         git_describe_output = git_subprocess.stdout.read().decode()
 
         git_version = git_describe_output.strip()
-        print(git_version)
         if git_version.startswith("v"):
             # Mimic setuptools_scm behavior
             # See https://stackoverflow.com/questions/35522047/pep440-compliant-and-git-describe-info-available-from-deployed-package
