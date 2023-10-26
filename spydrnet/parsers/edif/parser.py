@@ -739,7 +739,7 @@ class EdifParser:
                 pin = self.parse_portRef()
                 pins.append(pin)
                 if pin.wire:
-                    # print("Warning, pin already connected to other wire. Connection will not be changed")
+                    print("EDIF Parser: Warning, pin already connected to other wire. Connection will not be changed")
                     other_wire = pin.wire
                 else:
                     wire = self.elements[-1].wires[0]
