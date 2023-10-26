@@ -123,6 +123,11 @@ def update_versionfile():
 
         git_version = git_describe_output.strip()
         if git_version.startswith("v"):
+            # Mimic setuptools_scm behavior
+            # See https://stackoverflow.com/questions/35522047/pep440-compliant-and-git-describe-info-available-from-deployed-package
+            dash_idx = git_version.find("-")
+            git_version = git_version[:dash_idx] + "+g" + git_version[dash_idx + 1 :]
+
             version_file = Path(directory, "VERSION")
             with open(version_file, "w") as fh:
                 fh.write(git_version + "\n")
