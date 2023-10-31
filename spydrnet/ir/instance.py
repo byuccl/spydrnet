@@ -114,6 +114,17 @@ class Instance(FirstClassElement):
 
         return get_ports(self, *args, **kwargs)
 
+    def get_pin(self, name, index=0):
+        """Returns the pin connected to a port of the specified name and 
+        at the specified index. Returns None if no pin is found"""
+        for pin in self.pins:
+            if pin.inner_pin.port.name != name:
+                continue
+            if pin.index != index:
+                continue
+            return pin
+        return None
+
     @property
     def pins(self):
         """Get the pins on this instance.

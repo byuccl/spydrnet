@@ -21,6 +21,13 @@ class InnerPin(Pin):
         This object cannot be modified directly by the end user."""
         return self._port
 
+    @property
+    def index(self):
+        """Returns the index of the pin
+
+        This property cannot be modified directly by the end user."""
+        return self._port.pins.index(self)
+
     def _clone_rip_and_replace(self, memo):
         """Remove from its current environment and place it into the new cloned environment with
         references held in the memo dictionary"""
@@ -64,3 +71,16 @@ class InnerPin(Pin):
         c = self._clone({})
         c._clone_rip()
         return c
+
+    def __str__(self):
+        """Re-define the print function so it is easier to read"""
+        rep = str(type(self))
+        rep = rep[:-1] + "; "
+        rep+= "Index: " + str(self.index) + "; "
+        rep+= "Port: " + str(self.port) + "; "
+        if self.wire is None:
+            rep += "Wire connected undefined"
+        else:
+            rep += "connected to'" + str(self.wire) + "'"
+        rep += ">"
+        return rep

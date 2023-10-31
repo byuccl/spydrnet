@@ -201,3 +201,20 @@ class TestInstance(unittest.TestCase):
         instance_2.reference = definition
         self.assertFalse(instance_1.is_unique())
         self.assertFalse(instance_2.is_unique())
+
+    def test_get_pin(self):
+        definition = sdn.Definition()
+        self.instance.reference = definition
+        port = definition.create_port("Port_A")
+        pin0 = port.create_pin()
+        pin1 = port.create_pin()
+
+        outer_pin0 = self.instance.pins[pin0]
+        outer_pin1 = self.instance.pins[pin1]
+
+        self.assertEqual(self.instance.get_pin("Port_A", 0), outer_pin0)
+        self.assertEqual(self.instance.get_pin("Port_A", 1), outer_pin1)
+        self.assertIsNone(self.instance.get_pin("Port_A", 2))
+        self.assertIsNone(self.instance.get_pin("Fake Name", 0))
+        self.assertIsNone(self.instance.get_pin("Fake Name", 10))
+

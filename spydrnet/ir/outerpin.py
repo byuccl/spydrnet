@@ -44,6 +44,13 @@ class OuterPin(Pin):
         return self._instance
 
     @property
+    def index(self):
+        """Returns the index of the pin
+
+        This property cannot be modified directly by the end user."""
+        return self._inner_pin.index
+
+    @property
     def inner_pin(self):
         """get the inner pin associated with this outer pin"""
         return self._inner_pin
@@ -106,5 +113,15 @@ class OuterPin(Pin):
         c._clone_rip()
         return c
 
-    def index(self):
-        return self._inner_pin.port.pins.index(self._inner_pin)
+    def __str__(self):
+        """Re-define the print function so it is easier to read"""
+        rep = str(type(self))
+        rep = rep[:-1] + "; "
+        rep+= "Index: " + str(self.index) + "; "
+        rep+= "Port: " + str(self.inner_pin.port) + "; "
+        if self.wire is None:
+            rep += "Wire connected undefined"
+        else:
+            rep += "connected to'" + str(self.wire) + "'"
+        rep += ">"
+        return rep
