@@ -123,7 +123,7 @@ from spydrnet.util.selection import ALL, BOTH, INSIDE, OUTSIDE
 from spydrnet.util.netlist_type import EDIF, VERILOG, EBLIF
 
 
-def determine_example_netlists_path(download_option):
+def determine_example_netlists_path(download_option, force_download=False):
     example_netlists_path = pathlib.Path("example_netlists")
     temp_dir_loc = pathlib.Path(
         "/tmp/spydrnet_example_netlists/spydrnet-next_release/example_netlists/"
@@ -136,11 +136,13 @@ def determine_example_netlists_path(download_option):
         None
 
     if not example_netlists_path.exists() and download_option:
-        print(
+        response = None
+        if not force_download:
+            print(
             "Could not find example netlists. Download to /tmp/spydrnet_example_netlists? y/n"
-        )
-        response = input()
-        if response == "y":
+            )
+            response = input()
+        if response == "y" or force_download:
             print("Downloading example netlists...")
             url = (
                 "https://github.com/byuccl/spydrnet/archive/refs/heads/next_release.zip"
@@ -198,8 +200,8 @@ def get_example_netlist_names(path):
 get_example_netlist_names(example_netlists_path)
 
 
-def load_example_netlist_by_name(name, netlist_format=EDIF):
-    example_netlists_path = determine_example_netlists_path(True)
+def load_example_netlist_by_name(name, netlist_format=EDIF, force_download=False):
+    example_netlists_path = determine_example_netlists_path(True, force_download)
     get_example_netlist_names(example_netlists_path)
     error_message = "Example netlist not found. Either run 'export EXAMPLE_NETLISTS_PATH=<path>' \
                         or allow downloading to /tmp/spydrnet_example_netlists."
