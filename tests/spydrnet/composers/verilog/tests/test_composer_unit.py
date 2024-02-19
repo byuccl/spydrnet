@@ -349,6 +349,12 @@ class TestVerilogComposerUnit(unittest.TestCase):
         assert composer.file.compare("[2:1]")
         composer.file.clear()
 
+        # big endian declaration
+        cable.is_downto = False
+        composer._write_brackets(cable, 1, 2)
+        assert composer.file.compare("[1:2]")
+        composer.file.clear()
+
     def test_write_brackets_multi_bit_offset(self):
         composer = self.initialize_tests()
 
@@ -412,12 +418,12 @@ class TestVerilogComposerUnit(unittest.TestCase):
     def test_write_brackets_defining(self):
         composer = self.initialize_tests()
 
-        def initialize_bundle(bundle, offset, width):
+        def initialize_bundle(bundle, offset, width, is_downto=True):
             if isinstance(bundle, sdn.Port):
                 bundle.create_pins(width)
             else:  # it's a cable
                 bundle.create_wires(width)
-            bundle.is_downto = True
+            bundle.is_downto = is_downto
             bundle.lower_index = offset
             return bundle
 
@@ -425,6 +431,8 @@ class TestVerilogComposerUnit(unittest.TestCase):
         b2 = initialize_bundle(sdn.Cable(), 4, 1)
         b3 = initialize_bundle(sdn.Port(), 0, 4)
         b4 = initialize_bundle(sdn.Cable(), 4, 4)
+        b5 = initialize_bundle(sdn.Cable(), 0, 3, False)
+        b6 = initialize_bundle(sdn.Cable(), 4, 8, False)
 
         composer._write_brackets_defining(b1)
         assert composer.file.compare("")
@@ -440,6 +448,14 @@ class TestVerilogComposerUnit(unittest.TestCase):
 
         composer._write_brackets_defining(b4)
         assert composer.file.compare("[7:4]")
+        composer.file.clear()
+
+        composer._write_brackets_defining(b5)
+        assert composer.file.compare("[0:2]")
+        composer.file.clear()
+
+        composer._write_brackets_defining(b6)
+        assert composer.file.compare("[4:11]")
         composer.file.clear()
 
     def test_write_name(self):
