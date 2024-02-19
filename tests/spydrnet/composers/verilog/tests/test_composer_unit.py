@@ -355,6 +355,14 @@ class TestVerilogComposerUnit(unittest.TestCase):
         assert composer.file.compare("[1:2]")
         composer.file.clear()
 
+        composer._write_brackets(cable, 0, 3)
+        assert composer.file.compare("[0:3]")
+        composer.file.clear()
+
+        composer._write_brackets(cable, 3, 3)
+        assert composer.file.compare("[3]")
+        composer.file.clear()
+
     def test_write_brackets_multi_bit_offset(self):
         composer = self.initialize_tests()
 
@@ -750,4 +758,4 @@ class TestVerilogComposerUnit(unittest.TestCase):
 
         composer._write_module_body_cables(definition)
         self.assertTrue(composer.file.compare("wire " + c1.name + " ;\n\n"))
-        
+
