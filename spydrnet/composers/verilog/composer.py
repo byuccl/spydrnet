@@ -569,7 +569,7 @@ class Composer:
         assert name is not None, self._error_string("name of o is not set", o)
         name = self._fix_name(name)
         self.file.write(name)
-    
+
     def _rename_constant(self, cable):
         """
         \<const0> and \<const1> wires without a driver should be renamed to 1'b0 and 1'b1
@@ -700,7 +700,12 @@ class Composer:
             ), self._error_string(
                 "attempted to write an index out of bounds: " + str(high_index), bundle
             )
-            self.file.write("[" + str(high_index) + ":" + str(low_index) + "]")
+            if bundle.is_downto:
+                self.file.write(
+                    "[" + str(high_index) + ":" + str(low_index) + "]")
+            else:
+                self.file.write(
+                    "[" + str(low_index) + ":" + str(high_index) + "]")
 
     ###############################################################################
     # helper functions for composing
