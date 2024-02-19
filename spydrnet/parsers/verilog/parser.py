@@ -1577,6 +1577,7 @@ class VerilogParser:
             cable.lower_index = in_lower
             cable_lower = cable.lower_index
             cable_upper = cable.lower_index + len(cable.wires) - 1
+            cable.is_downto = right_index <= left_index
 
         if in_upper is not None and in_lower is not None:
             if in_lower < cable_lower:
@@ -1683,6 +1684,7 @@ class VerilogParser:
             port.lower_index = in_lower
             port_lower = port.lower_index
             port_upper = port.lower_index + len(port.pins) - 1
+            port.is_downto = right_index <= left_index
 
         if in_upper is not None and in_lower is not None:
             # to prevent unneccessary pins being added, check to see if port
