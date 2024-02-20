@@ -270,7 +270,9 @@ class Composer:
             if w is not None:
                 index = self._index_of_wire_in_cable(w)
                 if w.cable.name == previous_cable.name:
-                    if index == (previous_index - 1):
+                    if (index == (previous_index - 1)) and w.cable.is_downto:
+                        previous_index = index
+                    elif (index == (previous_index + 1)) and not w.cable.is_downto:
                         previous_index = index
                     else:
                         # write the previous and save new stuff
