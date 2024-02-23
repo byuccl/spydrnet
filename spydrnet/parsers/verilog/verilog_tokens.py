@@ -111,6 +111,7 @@ TRI1 = "tri1"
 DEFPARAM = "defparam"
 CONST0 = "\\<const0>"
 CONST1 = "\\<const1>"
+DEFUALT_NETTYPE = "`default_nettype"
 
 # SET OF ALL THINGS THAT WILL END AN IDENTIFIER IF THEY ARE NOT ESCAPED.
 # elif ch in {'(', ')', '.', ',', ';', '[', ']', ':', "{", "}", "*", "#", "`"}:
