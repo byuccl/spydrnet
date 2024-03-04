@@ -277,7 +277,9 @@ class Composer:
             if w is not None:
                 index = self._index_of_wire_in_cable(w)
                 if w.cable.name == previous_cable.name:
-                    if index == (previous_index - 1):
+                    if (index == (previous_index - 1)) and w.cable.is_downto:
+                        previous_index = index
+                    elif (index == (previous_index + 1)) and not w.cable.is_downto:
                         previous_index = index
                     else:
                         # write the previous and save new stuff
@@ -626,9 +628,14 @@ class Composer:
             return  # no need to write because this is assumed
 
         self.file.write(vt.OPEN_BRACKET)
-        self.file.write(str(bundle.lower_index + width - 1))
-        self.file.write(vt.COLON)
-        self.file.write(str(bundle.lower_index))
+        if bundle.is_downto:
+            self.file.write(str(bundle.lower_index + width - 1))
+            self.file.write(vt.COLON)
+            self.file.write(str(bundle.lower_index))
+        else:
+            self.file.write(str(bundle.lower_index))
+            self.file.write(vt.COLON)
+            self.file.write(str(bundle.lower_index + width - 1))
         self.file.write(vt.CLOSE_BRACKET)
 
     def _write_brackets(self, bundle, low_index, high_index):
@@ -665,7 +672,12 @@ class Composer:
         elif (low_index == lower_bundle and high_index == upper_bundle) or (
             low_index is None and high_index is None
         ):
-            self.file.write("[" + str(high_index) + ":" + str(low_index) + "]")
+            if bundle.is_downto:
+                self.file.write(
+                    "[" + str(high_index) + ":" + str(low_index) + "]")
+            else:
+                self.file.write(
+                    "[" + str(low_index) + ":" + str(high_index) + "]")
             return
         elif low_index == high_index or low_index is None or high_index is None:
             index = low_index
@@ -702,7 +714,12 @@ class Composer:
             ), self._error_string(
                 "attempted to write an index out of bounds: " + str(high_index), bundle
             )
-            self.file.write("[" + str(high_index) + ":" + str(low_index) + "]")
+            if bundle.is_downto:
+                self.file.write(
+                    "[" + str(high_index) + ":" + str(low_index) + "]")
+            else:
+                self.file.write(
+                    "[" + str(low_index) + ":" + str(high_index) + "]")
 
     ###############################################################################
     # helper functions for composing
