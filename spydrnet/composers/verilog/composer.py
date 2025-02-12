@@ -571,9 +571,6 @@ class Composer:
         In the future this could be changed to add a name to os that do not have a name set
         """
         name = o.name
-        if isinstance(o, Cable):
-            if name in [vt.CONST0, vt.CONST1]:
-                name = self._rename_constant(o)
 
         assert name is not None, self._error_string("name of o is not set", o)
         name = self._fix_name(name)
