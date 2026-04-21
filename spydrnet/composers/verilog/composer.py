@@ -577,7 +577,7 @@ class Composer:
         self.file.write(name)
 
     def _rename_constant(self, cable):
-        """
+        r"""
         \<const0> and \<const1> wires without a driver should be renamed to 1'b0 and 1'b1
         Otherwise keep the original name
         """
