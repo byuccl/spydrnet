@@ -90,6 +90,8 @@ class EdifTokenizer:
                 for ch in buffer:
                     if ch == "\n":
                         self.line_number += 1
+                        if ((self.line_number % 100000) == 0):
+                            print(f"Reached line {self.line_number}")
                     if in_quote:
                         if ch in {"\n", "\r"}:
                             continue

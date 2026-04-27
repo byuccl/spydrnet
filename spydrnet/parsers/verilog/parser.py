@@ -1174,7 +1174,7 @@ class VerilogParser:
         properties_dict = {}
         token = self.next_token()
         while token != vt.STAR:
-            assert vt.is_valid_identifier(token)
+            assert vt.is_valid_identifier(token), f"{token} on line {self.tokenizer.line_number} is not a valid identifier"
             key = token.strip()
             token = self.next_token()
             assert token in [vt.EQUAL, vt.STAR, vt.COMMA], self.error_string(

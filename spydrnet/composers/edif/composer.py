@@ -362,9 +362,16 @@ class ComposeEdif:
             self._output_.write(
                 self._direction_to_string_(port.direction)
             )  # str(port.direction))
-            self._lisp_decrement_()
+            # self._lisp_decrement_()
             self._lisp_decrement_()
             self._new_line_()
+            if "EDIF.properties" in port:
+                properties = port["EDIF.properties"]
+                for prop in properties:
+                    self._output_property_(prop)
+            self._lisp_decrement_()
+            if "EDIF.properties" in port:
+                self._new_line_()
             return
         self._output_name_of_object_(port)
         self._lisp_increment_()
@@ -372,9 +379,16 @@ class ComposeEdif:
         self._output_.write(
             self._direction_to_string_(port.direction)
         )  # str(port.direction))
-        self._lisp_decrement_()
+        # self._lisp_decrement_()
         self._lisp_decrement_()
         self._new_line_()
+        if "EDIF.properties" in port:
+            properties = port["EDIF.properties"]
+            for prop in properties:
+                self._output_property_(prop)
+        self._lisp_decrement_()
+        if "EDIF.properties" in port:
+            self._new_line_()
 
     def _direction_to_string_(self, direction):
         if direction == Port.Direction.INOUT:
