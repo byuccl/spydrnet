@@ -30,6 +30,37 @@ class TestEdififyNames(unittest.TestCase):
         l = [i, i2]
         assert ed.make_valid(i2, l) == "name_sdn_1_"
 
+    def test_duplicate_name_is_case_insensitive(self):
+        ed = EdififyNames()
+        existing = sdn.Instance()
+        existing.name = "Name"
+        duplicate = sdn.Instance()
+        duplicate.name = "name"
+
+        assert ed.make_valid(duplicate, [existing, duplicate]) == "name_sdn_1_"
+
+    def test_duplicate_edif_identifier_is_case_insensitive(self):
+        ed = EdififyNames()
+        existing = sdn.Instance()
+        existing.name = "original_name"
+        existing["EDIF.identifier"] = "Name"
+        duplicate = sdn.Instance()
+        duplicate.name = "name"
+
+        assert ed.make_valid(duplicate, [existing, duplicate]) == "name_sdn_1_"
+
+    def test_case_insensitive_suffix_conflict_increments(self):
+        ed = EdififyNames()
+        existing = sdn.Instance()
+        existing.name = "NAME"
+        existing_suffix = sdn.Instance()
+        existing_suffix.name = "NAME_SDN_1_"
+        duplicate = sdn.Instance()
+        duplicate.name = "name"
+
+        objects = [existing, existing_suffix, duplicate]
+        assert ed.make_valid(duplicate, objects) == "name_sdn_2_"
+
     def test_duplicate_number_increment(self):
         ed = EdififyNames()
         l = []
