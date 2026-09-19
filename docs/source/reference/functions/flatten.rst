@@ -1,5 +1,5 @@
 Flatten
-=======
+-------
 
 ``flatten`` removes hierarchy below the top instance by moving its children
 and cables into the top definition. Before calling it, run ``uniquify`` on the
