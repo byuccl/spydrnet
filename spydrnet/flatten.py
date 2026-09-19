@@ -103,8 +103,11 @@ def _bring_to_top(e, add_to_name, top_definition):
 
 def flatten(netlist):
     """
-    starts at the top instance and brings all the different subelements to the top level.
-    and port boundries are redone into one net.
+    Move subelements to the top instance and reconnect their port boundaries.
+
+    Run ``spydrnet.uniquify.uniquify(netlist)`` first. Flattening moves cables
+    and children out of their definitions, so shared non-leaf definitions must
+    be made unique before they are flattened.
     """
 
     # get all the sub instances of the top instance

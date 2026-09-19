@@ -9,4 +9,5 @@ Included are some SpyDrNet functions that are worth highlighting:
    :maxdepth: 2
 
    uniquify
+   flatten
    clone
