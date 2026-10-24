@@ -117,12 +117,22 @@ class EdififyNames:
         return identifier
 
     def _conflicts_good(self, obj, identifier, objects):
+        identifier_lower = identifier.lower()
         for element in objects:
             if element == obj:
                 continue
-            if element.name == identifier or (
-                "EDIF.identifier" in element.data
-                and element["EDIF.identifier"] == identifier
+            element_name = element.name
+            element_identifier = (
+                element["EDIF.identifier"]
+                if "EDIF.identifier" in element.data
+                else None
+            )
+            if (
+                isinstance(element_name, str)
+                and element_name.lower() == identifier_lower
+            ) or (
+                isinstance(element_identifier, str)
+                and element_identifier.lower() == identifier_lower
             ):
                 return False
         return True
